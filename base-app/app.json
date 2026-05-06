@@ -1,0 +1,40 @@
+{
+	"expo": {
+		"name": "app-base",
+		"slug": "app-base",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "automatic",
+		"newArchEnabled": true,
+		"scheme": "app-base",
+		"backgroundColor": "#ffffff",
+		"splash": {
+			"image": "./assets/splash-screen.png",
+			"resizeMode": "cover"
+		},
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "com.example.baseapp",
+			"appleTeamId": "XXXXXXXXXX",
+			"usesAppleSignIn": true
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"package": "com.example.baseapp",
+			"edgeToEdgeEnabled": true,
+			"predictiveBackGestureEnabled": false
+		},
+		"web": {
+			"favicon": "./assets/icon.png"
+		},
+		"plugins": [
+			"expo-font",
+			"expo-router",
+			"expo-localization"
+		]
+	}
+}

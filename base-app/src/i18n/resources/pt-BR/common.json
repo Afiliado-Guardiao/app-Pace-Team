@@ -1,0 +1,30 @@
+{
+	"ok": "OK",
+	"tabs": {
+		"home": "Início",
+		"profile": "Perfil"
+	},
+	"buttons": {
+		"continue": "Continuar",
+		"cancel": "Cancelar",
+		"confirm": "Confirmar",
+		"save": "Salvar",
+		"back": "Voltar",
+		"next": "Próximo",
+		"finish": "Finalizar",
+		"retry": "Tentar Novamente"
+	},
+	"errors": {
+		"generic": "Algo deu errado. Tente novamente.",
+		"network": "Erro de conexão. Verifique sua internet.",
+		"notFound": "Não encontrado",
+		"unauthorized": "Não autorizado",
+		"serverError": "Erro no servidor"
+	},
+	"messages": {
+		"loading": "Carregando...",
+		"success": "Sucesso!",
+		"error": "Erro!",
+		"noData": "Nenhum dado disponível"
+	}
+}

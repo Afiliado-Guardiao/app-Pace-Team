@@ -1,0 +1,20 @@
+{
+	"EMAIL_ALREADY_EXISTS": "Este correo electrónico ya está en uso",
+	"INVALID_CREDENTIALS": "Correo electrónico o contraseña inválidos",
+	"USER_NOT_FOUND": "Usuario no encontrado",
+	"INVALID_TOKEN": "Sesión expirada. Inicie sesión nuevamente",
+	"UNAUTHORIZED": "Acceso no autorizado",
+	"UNAUTHORIZED_ACCESS": "No tienes permiso para acceder a este recurso",
+	"VALIDATION_ERROR": "Error de validación",
+	"INTERNAL_SERVER_ERROR": "Ocurrió un error inesperado",
+	"SUBSCRIPTION_REQUIRED": "Se requiere una suscripción activa",
+	"INVALID_PASSWORD": "La contraseña actual es incorrecta",
+	"INVALID_USER_ID": "ID de usuario inválido",
+	"REFERRAL_CODE_ALREADY_EXISTS": "El código de referido ya existe",
+	"ONBOARDING_NOT_FOUND": "Datos de onboarding no encontrados",
+	"INVALID_ONBOARDING": "Datos de onboarding inválidos",
+	"INVALID_WEBHOOK": "Error de procesamiento",
+	"DUPLICATE_EVENT": "Esta acción ya ha sido procesada",
+	"NETWORK_ERROR": "Error de conexión. Verifica tu internet",
+	"TIMEOUT_ERROR": "Tiempo de espera agotado. Intenta de nuevo"
+}

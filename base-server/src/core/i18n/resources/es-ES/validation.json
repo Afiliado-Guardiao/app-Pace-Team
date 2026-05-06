@@ -1,0 +1,11 @@
+{
+	"emailInvalid": "Formato de correo electrónico inválido",
+	"emailRequired": "El correo electrónico es obligatorio",
+	"passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+	"passwordRequired": "La contraseña es obligatoria",
+	"nameMinLength": "El nombre debe tener al menos 2 caracteres",
+	"nameRequired": "El nombre es obligatorio",
+	"onboardingIdInvalid": "Formato de ID de onboarding inválido",
+	"socialIdRequired": "El ID social es obligatorio",
+	"idTokenRequired": "El token de ID es obligatorio"
+}

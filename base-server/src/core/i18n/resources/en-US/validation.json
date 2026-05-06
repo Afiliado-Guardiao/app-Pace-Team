@@ -1,0 +1,11 @@
+{
+	"emailInvalid": "Invalid email format",
+	"emailRequired": "Email is required",
+	"passwordMinLength": "Password must be at least 8 characters",
+	"passwordRequired": "Password is required",
+	"nameMinLength": "Name must be at least 2 characters",
+	"nameRequired": "Name is required",
+	"onboardingIdInvalid": "Invalid onboarding ID format",
+	"socialIdRequired": "Social ID is required",
+	"idTokenRequired": "ID token is required"
+}

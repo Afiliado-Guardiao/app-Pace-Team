@@ -1,0 +1,87 @@
+{
+	"title": "Profile",
+	"header": {
+		"title": "Profile"
+	},
+	"sections": {
+		"personal": {
+			"title": "Personal information",
+			"name": "Name",
+			"email": "Email",
+			"birthday": "Date of birth",
+			"password": "Password"
+		},
+		"customization": "Customization",
+		"indication": "Referral",
+		"legal": "Legal",
+		"support": "Support"
+	},
+	"referral": {
+		"title": "Referral",
+		"copy": "Copy",
+		"copied": "Code copied!",
+		"applyPlaceholder": "Enter a code",
+		"applyCta": "Apply",
+		"count_one": "{{count}} friend referred",
+		"count_other": "{{count}} friends referred",
+		"usedCode": "You used the code {{code}}",
+		"applySuccess": "Code applied!",
+		"applyError": "Could not apply the code",
+		"applyErrorInvalid": "Invalid or already used code"
+	},
+	"menu": {
+		"personalDetails": "Personal Details",
+		"adjustGoals": "Adjust Goals",
+		"password": "Password",
+		"affiliate": "Affiliate Program",
+		"privacy": "Privacy Policy",
+		"terms": "Terms of Use",
+		"help": "Help & Support"
+	},
+	"danger": {
+		"title": "Danger Zone",
+		"description": "Irreversible actions. Be careful.",
+		"logout": "Logout",
+		"deleteAccount": "Delete Account"
+	},
+	"alerts": {
+		"edit": {
+			"title": {
+				"name": "Edit name",
+				"email": "Edit email",
+				"birthday": "Edit date of birth"
+			},
+			"placeholder": {
+				"name": "Your name",
+				"email": "you@email.com",
+				"birthday": "YYYY-MM-DD"
+			},
+			"error": "Could not save. Try again."
+		},
+		"password": {
+			"currentTitle": "Current password",
+			"newTitle": "New password",
+			"success": "Password updated!",
+			"error": "Could not update password."
+		},
+		"comingSoon": {
+			"title": "Coming Soon",
+			"message": "This feature will be available soon."
+		},
+		"logout": {
+			"title": "Logout",
+			"message": "Are you sure you want to logout?",
+			"cancel": "Cancel",
+			"confirm": "Confirm"
+		},
+		"deleteAccount": {
+			"title": "Delete Account",
+			"message": "This action is IRREVERSIBLE. All your data will be permanently deleted. Are you sure?",
+			"confirmTitle": "Confirm deletion",
+			"confirmMessage": "Confirm account deletion?",
+			"cancel": "Cancel",
+			"continue": "Continue",
+			"delete": "Delete"
+		}
+	}
+}

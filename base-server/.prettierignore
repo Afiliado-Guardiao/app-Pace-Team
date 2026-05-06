@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+coverage
+docker
+prisma/migrations
+.claude
+.env*
+*.log
+*.lock
+package-lock.json
+pnpm-lock.yaml

@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid()) @db.Uuid
+  email          String?  @unique
+  name           String
+  birthday       String?
+  passwordHash   String?  @map("password_hash")
+  socialId       String?  @unique @map("social_id")
+  socialProvider String?  @map("social_provider")
+  referralCode   String   @unique @map("referral_code")
+  referredByCode String?  @map("referred_by_code")
+  referredById   String?  @map("referred_by_id") @db.Uuid
+  loginVersion   Int      @default(1) @map("login_version")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  onboarding Onboarding?
+  referredBy User?  @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals  User[] @relation("UserReferrals")
+
+  @@index([email], name: "users_email_idx")
+  @@index([socialId], name: "users_social_id_idx")
+  @@index([referralCode], name: "users_referral_code_idx")
+  @@index([referredByCode], name: "users_referred_by_code_idx")
+  @@index([referredById], name: "users_referred_by_id_idx")
+  @@map("users")
+}
+
+model Onboarding {
+  id              String    @id @default(uuid()) @db.Uuid
+  anonymousUserId String?   @unique @map("anonymous_user_id")
+  userId          String?   @unique @map("user_id") @db.Uuid
+  name            String?
+  email           String?
+  birthday        String?
+  completed       Boolean   @default(false)
+  completedAt     DateTime? @map("completed_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([anonymousUserId], name: "onboardings_anonymous_user_id_idx")
+  @@index([userId], name: "onboardings_user_id_idx")
+  @@map("onboardings")
+}
+

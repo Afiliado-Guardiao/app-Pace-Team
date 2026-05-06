@@ -1,0 +1,4 @@
+export const SECURITY_CONSTANTS = {
+	SALT_ROUNDS: 10,
+	MAX_REFERRAL_CODE_ATTEMPTS: 10,
+} as const;

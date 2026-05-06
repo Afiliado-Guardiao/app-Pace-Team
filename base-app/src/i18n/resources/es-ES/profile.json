@@ -1,0 +1,87 @@
+{
+	"title": "Perfil",
+	"header": {
+		"title": "Perfil"
+	},
+	"sections": {
+		"personal": {
+			"title": "Información personal",
+			"name": "Nombre",
+			"email": "Correo electrónico",
+			"birthday": "Fecha de nacimiento",
+			"password": "Contraseña"
+		},
+		"customization": "Personalización",
+		"indication": "Referencia",
+		"legal": "Legal",
+		"support": "Soporte"
+	},
+	"referral": {
+		"title": "Referencia",
+		"copy": "Copiar",
+		"copied": "¡Código copiado!",
+		"applyPlaceholder": "Ingresa un código",
+		"applyCta": "Aplicar",
+		"count_one": "{{count}} amigo referido",
+		"count_other": "{{count}} amigos referidos",
+		"usedCode": "Usaste el código {{code}}",
+		"applySuccess": "¡Código aplicado!",
+		"applyError": "No se pudo aplicar el código",
+		"applyErrorInvalid": "Código inválido o ya usado"
+	},
+	"menu": {
+		"personalDetails": "Detalles Personales",
+		"adjustGoals": "Ajustar Objetivos",
+		"password": "Contraseña",
+		"affiliate": "Programa de Afiliados",
+		"privacy": "Política de Privacidad",
+		"terms": "Términos de Uso",
+		"help": "Ayuda y Soporte"
+	},
+	"danger": {
+		"title": "Zona de Peligro",
+		"description": "Acciones irreversibles. Ten cuidado.",
+		"logout": "Cerrar Sesión",
+		"deleteAccount": "Eliminar Cuenta"
+	},
+	"alerts": {
+		"edit": {
+			"title": {
+				"name": "Editar nombre",
+				"email": "Editar correo",
+				"birthday": "Editar fecha de nacimiento"
+			},
+			"placeholder": {
+				"name": "Tu nombre",
+				"email": "tu@correo.com",
+				"birthday": "AAAA-MM-DD"
+			},
+			"error": "No se pudo guardar. Intenta de nuevo."
+		},
+		"password": {
+			"currentTitle": "Contraseña actual",
+			"newTitle": "Nueva contraseña",
+			"success": "¡Contraseña actualizada!",
+			"error": "No se pudo actualizar la contraseña."
+		},
+		"comingSoon": {
+			"title": "Próximamente",
+			"message": "Esta funcionalidad estará disponible pronto."
+		},
+		"logout": {
+			"title": "Cerrar Sesión",
+			"message": "¿Estás seguro de que deseas cerrar sesión?",
+			"cancel": "Cancelar",
+			"confirm": "Confirmar"
+		},
+		"deleteAccount": {
+			"title": "Eliminar Cuenta",
+			"message": "Esta acción es IRREVERSIBLE. Todos tus datos serán eliminados permanentemente. ¿Estás seguro?",
+			"confirmTitle": "Confirmar eliminación",
+			"confirmMessage": "¿Confirmar eliminación de cuenta?",
+			"cancel": "Cancelar",
+			"continue": "Continuar",
+			"delete": "Eliminar"
+		}
+	}
+}

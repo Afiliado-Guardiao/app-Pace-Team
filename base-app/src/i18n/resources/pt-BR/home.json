@@ -1,0 +1,33 @@
+{
+	"title": "Início",
+	"welcome": "Bem-vindo ao app",
+	"greeting": {
+		"morning": "Bom dia, {{name}}!",
+		"afternoon": "Boa tarde, {{name}}!",
+		"evening": "Boa noite, {{name}}!",
+		"morningNoName": "Bom dia!",
+		"afternoonNoName": "Boa tarde!",
+		"eveningNoName": "Boa noite!"
+	},
+	"yourData": {
+		"title": "Seus dados",
+		"email": "E-mail",
+		"birthday": "Aniversário",
+		"memberSince": "Membro desde",
+		"notProvided": "Não informado"
+	},
+	"starter": {
+		"title": "Seu ponto de partida",
+		"subtitle": "Este é o esqueleto do seu app. Comece a construir a partir daqui."
+	},
+	"referralPrompt": {
+		"title": "Você foi indicado?",
+		"message": "Se alguém te indicou, insira o código. (Opcional)",
+		"confirmLabel": "Sim, tenho um código",
+		"skipLabel": "Pular",
+		"inputTitle": "Código de indicação",
+		"inputPlaceholder": "Ex: ABC123",
+		"applied": "Código aplicado com sucesso",
+		"errorInvalid": "Código inválido"
+	}
+}

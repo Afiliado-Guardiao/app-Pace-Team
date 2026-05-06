@@ -1,0 +1,12 @@
+{
+	"emailRequired": "El correo electrónico es obligatorio",
+	"emailInvalid": "Correo electrónico inválido",
+	"passwordRequired": "La contraseña es obligatoria",
+	"passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+	"nameRequired": "El nombre es obligatorio",
+	"confirmPasswordRequired": "La confirmación de contraseña es obligatoria",
+	"passwordsMismatch": "Las contraseñas no coinciden",
+	"currentPasswordRequired": "La contraseña actual es obligatoria",
+	"newPasswordRequired": "La nueva contraseña es obligatoria",
+	"newPasswordMinLength": "La nueva contraseña debe tener al menos 8 caracteres"
+}

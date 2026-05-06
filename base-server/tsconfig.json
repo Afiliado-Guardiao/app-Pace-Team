@@ -1,0 +1,48 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "commonjs",
+		"lib": ["ES2022"],
+		"moduleResolution": "node",
+		"rootDir": ".",
+		"outDir": "dist",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"importHelpers": false,
+		"alwaysStrict": true,
+		"sourceMap": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+
+		// STRICT MODE - ZERO 'any' TYPES ALLOWED
+		"strict": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		"strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"noUncheckedIndexedAccess": true,
+
+		// Path mapping
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"],
+			"@/core/*": ["src/core/*"],
+			"@/domain/*": ["src/domain/*"],
+			"@/infrastructure/*": ["src/infrastructure/*"],
+			"@/shared/*": ["src/shared/*"],
+			"@/utils/*": ["src/utils/*"]
+		},
+
+		"types": ["jest", "node"]
+	},
+	"include": ["src/**/*", "scripts/**/*", "tests/**/*", "prisma/**/*"],
+	"exclude": ["node_modules", "dist", "__mocks__"]
+}

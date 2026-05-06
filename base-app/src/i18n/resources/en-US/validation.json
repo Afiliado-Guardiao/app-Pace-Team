@@ -1,0 +1,12 @@
+{
+	"emailRequired": "Email is required",
+	"emailInvalid": "Invalid email",
+	"passwordRequired": "Password is required",
+	"passwordMinLength": "Password must be at least 8 characters",
+	"nameRequired": "Name is required",
+	"confirmPasswordRequired": "Password confirmation is required",
+	"passwordsMismatch": "Passwords do not match",
+	"currentPasswordRequired": "Current password is required",
+	"newPasswordRequired": "New password is required",
+	"newPasswordMinLength": "New password must be at least 8 characters"
+}

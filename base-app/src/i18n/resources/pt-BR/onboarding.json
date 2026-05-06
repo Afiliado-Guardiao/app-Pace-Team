@@ -1,0 +1,58 @@
+{
+	"navigation": {
+		"back": "Voltar",
+		"continue": "Continuar",
+		"skip": "Pular",
+		"finish": "Finalizar"
+	},
+	"errors": {
+		"finalizationFailed": "Não foi possível finalizar",
+		"checkConnectionAndRetry": "Verifique sua conexão e tente novamente"
+	},
+	"sync": {
+		"errorTitle": "Erro ao salvar dados",
+		"errorMessage": "Não foi possível salvar suas informações. Verifique sua conexão e tente novamente.",
+		"retry": "Tentar novamente"
+	},
+	"validation": {
+		"required": "Campo obrigatório",
+		"invalidEmail": "E-mail inválido"
+	},
+	"transition": {
+		"title": "Vamos te conhecer",
+		"subtitle": "Leva menos de um minuto"
+	},
+	"steps": {
+		"name": {
+			"title": "Como podemos te chamar?",
+			"placeholder": "Seu nome"
+		},
+		"email": {
+			"title": "Qual seu e-mail?",
+			"placeholder": "seu@email.com"
+		},
+		"birthday": {
+			"title": "Quando você nasceu?",
+			"subtitle": "Selecione sua data de nascimento",
+			"pickers": {
+				"day": "Dia",
+				"month": "Mês",
+				"year": "Ano"
+			},
+			"months": {
+				"january": "Janeiro",
+				"february": "Fevereiro",
+				"march": "Março",
+				"april": "Abril",
+				"may": "Maio",
+				"june": "Junho",
+				"july": "Julho",
+				"august": "Agosto",
+				"september": "Setembro",
+				"october": "Outubro",
+				"november": "Novembro",
+				"december": "Dezembro"
+			}
+		}
+	}
+}

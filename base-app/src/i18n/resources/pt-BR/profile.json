@@ -1,0 +1,87 @@
+{
+	"title": "Perfil",
+	"header": {
+		"title": "Perfil"
+	},
+	"sections": {
+		"personal": {
+			"title": "Informações pessoais",
+			"name": "Nome",
+			"email": "E-mail",
+			"birthday": "Data de nascimento",
+			"password": "Senha"
+		},
+		"customization": "Personalização",
+		"indication": "Indicação",
+		"legal": "Legal",
+		"support": "Suporte"
+	},
+	"referral": {
+		"title": "Indicação",
+		"copy": "Copiar",
+		"copied": "Código copiado!",
+		"applyPlaceholder": "Insira um código",
+		"applyCta": "Aplicar",
+		"count_one": "{{count}} amigo indicado",
+		"count_other": "{{count}} amigos indicados",
+		"usedCode": "Você usou o código {{code}}",
+		"applySuccess": "Código aplicado!",
+		"applyError": "Não foi possível aplicar o código",
+		"applyErrorInvalid": "Código inválido ou já utilizado"
+	},
+	"menu": {
+		"personalDetails": "Detalhes Pessoais",
+		"adjustGoals": "Ajustar Objetivos",
+		"password": "Senha",
+		"affiliate": "Programa de Afiliados",
+		"privacy": "Política de Privacidade",
+		"terms": "Termos de Uso",
+		"help": "Ajuda e Suporte"
+	},
+	"danger": {
+		"title": "Zona de Perigo",
+		"description": "Ações irreversíveis. Tenha cuidado.",
+		"logout": "Sair",
+		"deleteAccount": "Excluir Conta"
+	},
+	"alerts": {
+		"edit": {
+			"title": {
+				"name": "Editar nome",
+				"email": "Editar e-mail",
+				"birthday": "Editar data de nascimento"
+			},
+			"placeholder": {
+				"name": "Seu nome",
+				"email": "seu@email.com",
+				"birthday": "AAAA-MM-DD"
+			},
+			"error": "Não foi possível salvar. Tente novamente."
+		},
+		"password": {
+			"currentTitle": "Senha atual",
+			"newTitle": "Nova senha",
+			"success": "Senha atualizada!",
+			"error": "Não foi possível atualizar a senha."
+		},
+		"comingSoon": {
+			"title": "Em breve",
+			"message": "Esta funcionalidade estará disponível em breve."
+		},
+		"logout": {
+			"title": "Sair",
+			"message": "Tem certeza que deseja sair?",
+			"cancel": "Cancelar",
+			"confirm": "Confirmar"
+		},
+		"deleteAccount": {
+			"title": "Excluir Conta",
+			"message": "Esta ação é IRREVERSÍVEL. Todos os seus dados serão permanentemente excluídos. Tem certeza?",
+			"confirmTitle": "Confirmar exclusão",
+			"confirmMessage": "Confirmar exclusão de conta?",
+			"cancel": "Cancelar",
+			"continue": "Continuar",
+			"delete": "Excluir"
+		}
+	}
+}

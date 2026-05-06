@@ -1,0 +1,33 @@
+{
+	"title": "Home",
+	"welcome": "Welcome to the app",
+	"greeting": {
+		"morning": "Good morning, {{name}}!",
+		"afternoon": "Good afternoon, {{name}}!",
+		"evening": "Good evening, {{name}}!",
+		"morningNoName": "Good morning!",
+		"afternoonNoName": "Good afternoon!",
+		"eveningNoName": "Good evening!"
+	},
+	"yourData": {
+		"title": "Your data",
+		"email": "Email",
+		"birthday": "Birthday",
+		"memberSince": "Member since",
+		"notProvided": "Not provided"
+	},
+	"starter": {
+		"title": "Your starting point",
+		"subtitle": "This is your app skeleton. Start building from here."
+	},
+	"referralPrompt": {
+		"title": "Were you referred?",
+		"message": "If someone referred you, enter the code. (Optional)",
+		"confirmLabel": "Yes, I have a code",
+		"skipLabel": "Skip",
+		"inputTitle": "Referral code",
+		"inputPlaceholder": "e.g.: ABC123",
+		"applied": "Code applied successfully",
+		"errorInvalid": "Invalid code"
+	}
+}

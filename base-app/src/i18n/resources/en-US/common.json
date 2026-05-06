@@ -1,0 +1,30 @@
+{
+	"ok": "OK",
+	"tabs": {
+		"home": "Home",
+		"profile": "Profile"
+	},
+	"buttons": {
+		"continue": "Continue",
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"save": "Save",
+		"back": "Back",
+		"next": "Next",
+		"finish": "Finish",
+		"retry": "Retry"
+	},
+	"errors": {
+		"generic": "Something went wrong. Please try again.",
+		"network": "Connection error. Check your internet.",
+		"notFound": "Not found",
+		"unauthorized": "Unauthorized",
+		"serverError": "Server error"
+	},
+	"messages": {
+		"loading": "Loading...",
+		"success": "Success!",
+		"error": "Error!",
+		"noData": "No data available"
+	}
+}

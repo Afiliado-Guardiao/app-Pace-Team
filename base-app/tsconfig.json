@@ -1,0 +1,26 @@
+{
+	"extends": "expo/tsconfig.base",
+	"compilerOptions": {
+		"jsx": "react-native",
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"forceConsistentCasingInFileNames": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@/components": ["./src/components"],
+			"@/theme": ["./src/theme"],
+			"@/features": ["./src/features"],
+			"@/lib": ["./src/lib"],
+			"@/store": ["./src/store"],
+			"@/i18n": ["./src/i18n"],
+			"@/types": ["./src/types"]
+		}
+	},
+	"exclude": ["node_modules", "reference", "**/__tests__/**"]
+}

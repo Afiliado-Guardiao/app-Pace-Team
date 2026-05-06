@@ -1,0 +1,58 @@
+{
+	"navigation": {
+		"back": "Back",
+		"continue": "Continue",
+		"skip": "Skip",
+		"finish": "Finish"
+	},
+	"errors": {
+		"finalizationFailed": "Could not finalize",
+		"checkConnectionAndRetry": "Check your connection and try again"
+	},
+	"sync": {
+		"errorTitle": "Error saving data",
+		"errorMessage": "Could not save your information. Check your connection and try again.",
+		"retry": "Try again"
+	},
+	"validation": {
+		"required": "Required field",
+		"invalidEmail": "Invalid email"
+	},
+	"transition": {
+		"title": "Let's get to know you",
+		"subtitle": "It takes less than a minute"
+	},
+	"steps": {
+		"name": {
+			"title": "What should we call you?",
+			"placeholder": "Your name"
+		},
+		"email": {
+			"title": "What's your email?",
+			"placeholder": "you@email.com"
+		},
+		"birthday": {
+			"title": "When were you born?",
+			"subtitle": "Select your birthday",
+			"pickers": {
+				"day": "Day",
+				"month": "Month",
+				"year": "Year"
+			},
+			"months": {
+				"january": "January",
+				"february": "February",
+				"march": "March",
+				"april": "April",
+				"may": "May",
+				"june": "June",
+				"july": "July",
+				"august": "August",
+				"september": "September",
+				"october": "October",
+				"november": "November",
+				"december": "December"
+			}
+		}
+	}
+}

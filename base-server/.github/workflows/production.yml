@@ -1,0 +1,57 @@
+name: Production Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  backup-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Database Backup
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Criar diretório de backup se não existir
+            mkdir -p ~/projects/pushtime/backups
+
+            # Backup com timestamp
+            timestamp=$(date +%Y%m%d_%H%M%S)
+            echo "Creating database backup..."
+            docker exec pushtime-postgres-prod pg_dump -U postgres pushtime_prod > ~/projects/pushtime/backups/db_${timestamp}.sql
+
+            # Manter apenas os últimos 7 backups
+            cd ~/projects/pushtime/backups
+            ls -t | tail -n +8 | xargs -r rm --
+
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/projects/pushtime/production
+
+            # Descartar alterações locais
+            echo "📥 Descartando alterações locais..."
+            git reset --hard
+            git clean -fd
+
+            # Pull latest changes
+            echo "📥 Atualizando código..."
+            git pull origin main
+
+            # Install dependencies
+            echo "📦 Instalando dependências..."
+            npm ci --prefer-offline
+
+            # Deploy with automated health checks and rollback
+            echo "🚀 Executando deploy com health checks e rollback automático..."
+            NODE_ENV=production npm run docker:deploy --verbose
+
+            echo "✅ Production deployed successfully!"
