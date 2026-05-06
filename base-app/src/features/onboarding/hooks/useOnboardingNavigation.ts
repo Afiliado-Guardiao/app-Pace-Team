@@ -71,9 +71,11 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 
 	const isLastStep = currentStepIndex === ONBOARDING_STEPS.length - 1;
 
-	const { getOrCreateOnboardingId, fireStepUpdate, deviceMetadataRef } = useOnboardingStepUpdater(
-		{ currentStepIndex, currentStep, currentAnswer },
-	);
+	const { getOrCreateOnboardingId, fireStepUpdate, deviceMetadataRef } = useOnboardingStepUpdater({
+		currentStepIndex,
+		currentStep,
+		currentAnswer,
+	});
 
 	const handleNext = useCallback(async () => {
 		const validation = validateStep(currentStep, currentAnswer);

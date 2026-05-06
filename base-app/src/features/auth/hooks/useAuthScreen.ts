@@ -21,14 +21,18 @@ export const useAuthScreen = (): IAuthScreenData => {
 	const handleAppleSignIn = useCallback(async (): Promise<void> => {
 		await modal.alert({
 			title: t("comingSoon.title", { defaultValue: "Em breve" }),
-			message: t("comingSoon.apple", { defaultValue: "Login com Apple estará disponível em breve." }),
+			message: t("comingSoon.apple", {
+				defaultValue: "Login com Apple estará disponível em breve.",
+			}),
 		});
 	}, [modal, t]);
 
 	const handleGoogleSignIn = useCallback(async (): Promise<void> => {
 		await modal.alert({
 			title: t("comingSoon.title", { defaultValue: "Em breve" }),
-			message: t("comingSoon.google", { defaultValue: "Login com Google estará disponível em breve." }),
+			message: t("comingSoon.google", {
+				defaultValue: "Login com Google estará disponível em breve.",
+			}),
 		});
 	}, [modal, t]);
 

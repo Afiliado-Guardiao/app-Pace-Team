@@ -114,7 +114,12 @@ export const ModalProvider: React.FC<IModalProviderProps> = ({ children }) => {
 					style={styles.backdrop}
 					onPress={handleBackdropPress}
 				>
-					<Pressable style={styles.sheet} onPress={(e) => { e.stopPropagation(); }}>
+					<Pressable
+						style={styles.sheet}
+						onPress={(e) => {
+							e.stopPropagation();
+						}}
+					>
 						<View>{renderActive()}</View>
 					</Pressable>
 				</Pressable>

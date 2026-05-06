@@ -207,9 +207,7 @@ describe("useProfileActions", () => {
 
 	describe("editPassword", () => {
 		it("happy path: collects current + new password, calls updatePassword, shows success", async () => {
-			mockInput
-				.mockResolvedValueOnce("currentPass123")
-				.mockResolvedValueOnce("newPass456");
+			mockInput.mockResolvedValueOnce("currentPass123").mockResolvedValueOnce("newPass456");
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editPassword();
@@ -234,9 +232,7 @@ describe("useProfileActions", () => {
 		});
 
 		it("does nothing when new password input returns null", async () => {
-			mockInput
-				.mockResolvedValueOnce("currentPass123")
-				.mockResolvedValueOnce(null);
+			mockInput.mockResolvedValueOnce("currentPass123").mockResolvedValueOnce(null);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editPassword();
@@ -246,9 +242,7 @@ describe("useProfileActions", () => {
 		});
 
 		it("shows error alert when updatePassword throws", async () => {
-			mockInput
-				.mockResolvedValueOnce("currentPass123")
-				.mockResolvedValueOnce("newPass456");
+			mockInput.mockResolvedValueOnce("currentPass123").mockResolvedValueOnce("newPass456");
 			mockUpdatePassword.mockRejectedValue(new Error("wrong password"));
 
 			const { result } = renderHook(() => useProfileActions());
@@ -305,9 +299,7 @@ describe("useProfileActions", () => {
 
 	describe("handleDeleteAccount", () => {
 		it("happy path: double confirm, calls deleteMe, clears store, redirects", async () => {
-			mockConfirm
-				.mockResolvedValueOnce(true)
-				.mockResolvedValueOnce(true);
+			mockConfirm.mockResolvedValueOnce(true).mockResolvedValueOnce(true);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.handleDeleteAccount();
@@ -331,9 +323,7 @@ describe("useProfileActions", () => {
 		});
 
 		it("aborts after second confirm is rejected", async () => {
-			mockConfirm
-				.mockResolvedValueOnce(true)
-				.mockResolvedValueOnce(false);
+			mockConfirm.mockResolvedValueOnce(true).mockResolvedValueOnce(false);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.handleDeleteAccount();
@@ -344,9 +334,7 @@ describe("useProfileActions", () => {
 		});
 
 		it("still clears store and redirects even when deleteMe throws", async () => {
-			mockConfirm
-				.mockResolvedValueOnce(true)
-				.mockResolvedValueOnce(true);
+			mockConfirm.mockResolvedValueOnce(true).mockResolvedValueOnce(true);
 			mockDeleteMe.mockRejectedValue(new Error("API error"));
 
 			const { result } = renderHook(() => useProfileActions());

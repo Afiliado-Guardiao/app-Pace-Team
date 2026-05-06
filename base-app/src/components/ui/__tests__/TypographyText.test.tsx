@@ -13,10 +13,13 @@ describe("Typography/Text", () => {
 		expect(screen.getByText("Hello world")).toBeTruthy();
 	});
 
-	it.each(["body", "caption", "label"] as const)("renders variant %s without crashing", (variant) => {
-		render(<Text variant={variant}>Sample text</Text>);
-		expect(screen.getByText("Sample text")).toBeTruthy();
-	});
+	it.each(["body", "caption", "label"] as const)(
+		"renders variant %s without crashing",
+		(variant) => {
+			render(<Text variant={variant}>Sample text</Text>);
+			expect(screen.getByText("Sample text")).toBeTruthy();
+		},
+	);
 
 	it("defaults to body variant", () => {
 		const { toJSON } = render(<Text>Default text</Text>);

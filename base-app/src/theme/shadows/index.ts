@@ -1,11 +1,7 @@
 import { Platform } from "react-native";
 
 // Sombras minimalistas — muito leves, sem elevação pesada
-const iosShadow = (
-	height: number,
-	opacity: number,
-	radius: number,
-): Record<string, unknown> => ({
+const iosShadow = (height: number, opacity: number, radius: number): Record<string, unknown> => ({
 	shadowColor: "#000000",
 	shadowOffset: { width: 0, height },
 	shadowOpacity: opacity,

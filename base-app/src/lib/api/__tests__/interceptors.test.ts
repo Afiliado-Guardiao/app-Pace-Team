@@ -55,11 +55,10 @@ const makeAxiosError = (
 		data: unknown;
 	}> = {},
 ): AxiosError => {
-	const error = new AxiosError(
-		overrides.message ?? "Request failed",
-		overrides.code,
-		{ url: "/test", method: "get" } as InternalAxiosRequestConfig,
-	);
+	const error = new AxiosError(overrides.message ?? "Request failed", overrides.code, {
+		url: "/test",
+		method: "get",
+	} as InternalAxiosRequestConfig);
 
 	if (overrides.status !== undefined) {
 		error.response = {

@@ -37,13 +37,6 @@ export const useIndexRedirect = () => {
 
 			const targetRoute = lastRoute || ROUTES.WELCOME;
 			router.replace(targetRoute);
-		}, [
-			hasHydrated,
-			pathname,
-			lastRoute,
-			isAuthenticated,
-			isOnboardingCompleted,
-			router,
-		]),
+		}, [hasHydrated, pathname, lastRoute, isAuthenticated, isOnboardingCompleted, router]),
 	);
 };

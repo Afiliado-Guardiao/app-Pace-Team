@@ -51,7 +51,12 @@ export const EmailAuthInput: React.FC<IEmailAuthInputProps> = ({
 				/>
 
 				{secureTextEntry && (
-					<Pressable testID="btn-toggle-password" accessibilityLabel="Toggle password visibility" onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+					<Pressable
+						testID="btn-toggle-password"
+						accessibilityLabel="Toggle password visibility"
+						onPress={togglePasswordVisibility}
+						style={styles.eyeIcon}
+					>
 						{showPassword ? (
 							<EyeSlashIcon size={20} color={theme.colors.textSecondary} />
 						) : (

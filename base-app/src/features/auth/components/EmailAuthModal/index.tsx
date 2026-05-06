@@ -49,7 +49,13 @@ export const EmailAuthModal: React.FC<IEmailAuthModalProps> = ({ visible, onClos
 						<Text style={styles.title}>
 							{authMode === "login" ? t("email.login.title") : t("email.register.title")}
 						</Text>
-						<Pressable testID="btn-email-auth-close" accessibilityLabel="Close" onPress={handleClose} style={styles.closeButton} disabled={isLoading}>
+						<Pressable
+							testID="btn-email-auth-close"
+							accessibilityLabel="Close"
+							onPress={handleClose}
+							style={styles.closeButton}
+							disabled={isLoading}
+						>
 							<XIcon size={24} color={theme.colors.text} />
 						</Pressable>
 					</View>
@@ -121,7 +127,9 @@ export const EmailAuthModal: React.FC<IEmailAuthModalProps> = ({ visible, onClos
 
 							<Button
 								testID="btn-email-auth-submit"
-								accessibilityLabel={authMode === "login" ? t("email.actions.login") : t("email.actions.register")}
+								accessibilityLabel={
+									authMode === "login" ? t("email.actions.login") : t("email.actions.register")
+								}
 								onPress={handleSubmit}
 								loading={isLoading}
 								disabled={isLoading}
@@ -132,7 +140,13 @@ export const EmailAuthModal: React.FC<IEmailAuthModalProps> = ({ visible, onClos
 								{authMode === "login" ? t("email.actions.login") : t("email.actions.register")}
 							</Button>
 
-							<Pressable testID="btn-auth-mode-switch" accessibilityLabel="Switch auth mode" onPress={toggleAuthMode} style={styles.switchButton} disabled={isLoading}>
+							<Pressable
+								testID="btn-auth-mode-switch"
+								accessibilityLabel="Switch auth mode"
+								onPress={toggleAuthMode}
+								style={styles.switchButton}
+								disabled={isLoading}
+							>
 								<Text style={styles.switchText}>
 									{authMode === "login"
 										? t("email.actions.switchToRegister")

@@ -7,17 +7,10 @@ import { useInputModal } from "./hooks/useInputModal";
 import { createInputModalStyles } from "./styles";
 import { IInputModalProps } from "./types";
 
-export const InputModal: React.FC<IInputModalProps> = ({
-	options,
-	onConfirm,
-	onCancel,
-}) => {
+export const InputModal: React.FC<IInputModalProps> = ({ options, onConfirm, onCancel }) => {
 	const { theme } = useTheme();
 	const styles = createInputModalStyles(theme);
-	const { value, error, handleChangeText, handleConfirm } = useInputModal(
-		options,
-		onConfirm,
-	);
+	const { value, error, handleChangeText, handleConfirm } = useInputModal(options, onConfirm);
 
 	return (
 		<View>

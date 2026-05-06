@@ -67,7 +67,9 @@ export const ReferralSection: React.FC = () => {
 						testID="input-apply-referral"
 						style={styles.input}
 						value={codeInput}
-						onChangeText={(v) => { setCodeInput(normalizeReferralCode(v)); }}
+						onChangeText={(v) => {
+							setCodeInput(normalizeReferralCode(v));
+						}}
 						placeholder={t("referral.applyPlaceholder")}
 						placeholderTextColor={theme.colors.textMuted}
 						autoCapitalize="characters"
@@ -92,9 +94,7 @@ export const ReferralSection: React.FC = () => {
 			{/* Contador de indicados */}
 			<View style={styles.countRow} testID="referral-count">
 				<UsersIcon size={13} color={theme.colors.textSecondary} weight="regular" />
-				<Text style={styles.countText}>
-					{t("referral.count", { count: stats.referralsCount })}
-				</Text>
+				<Text style={styles.countText}>{t("referral.count", { count: stats.referralsCount })}</Text>
 			</View>
 		</View>
 	);

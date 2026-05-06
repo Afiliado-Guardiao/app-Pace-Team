@@ -9,8 +9,7 @@ export const createConfirmModalStyles = (
 	theme: ITheme,
 	variant: IModalVariant,
 ): IConfirmModalStyles => {
-	const confirmColor =
-		variant === "danger" ? theme.colors.danger : theme.colors.primary;
+	const confirmColor = variant === "danger" ? theme.colors.danger : theme.colors.primary;
 
 	const title: TextStyle = {
 		fontFamily: theme.typography.fontFamilies.bold,

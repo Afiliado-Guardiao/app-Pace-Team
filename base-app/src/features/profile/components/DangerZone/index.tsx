@@ -9,10 +9,7 @@ import { useTheme } from "@/theme";
 import { createDangerZoneStyles } from "./styles";
 import { IDangerZoneProps } from "./types";
 
-export const DangerZone: React.FC<IDangerZoneProps> = ({
-	onLogout,
-	onDeleteAccount,
-}) => {
+export const DangerZone: React.FC<IDangerZoneProps> = ({ onLogout, onDeleteAccount }) => {
 	const { theme } = useTheme();
 	const { t } = useTranslation("profile");
 

@@ -6,8 +6,7 @@ import { ILocale } from "../types";
 export const saveLanguage = async (language: ILocale): Promise<void> => {
 	try {
 		await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-	} catch {
-	}
+	} catch {}
 };
 
 export const loadLanguage = async (): Promise<ILocale | null> => {

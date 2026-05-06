@@ -26,7 +26,9 @@ interface IUseOnboardingSyncProps {
 	>;
 }
 
-export const useOnboardingSync = ({ navigation }: IUseOnboardingSyncProps): IUseOnboardingSyncReturn => {
+export const useOnboardingSync = ({
+	navigation,
+}: IUseOnboardingSyncProps): IUseOnboardingSyncReturn => {
 	const router = useRouter();
 
 	const [isSyncing, setIsSyncing] = useState(false);

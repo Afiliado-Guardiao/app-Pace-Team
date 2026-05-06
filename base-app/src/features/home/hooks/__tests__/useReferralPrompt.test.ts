@@ -59,9 +59,7 @@ function setupStore(
 		setHasSeenReferralPrompt: mockSetHasSeenReferralPrompt,
 	};
 
-	mockUseStore.mockImplementation((selector: (s: IMockStoreState) => unknown) =>
-		selector(state),
-	);
+	mockUseStore.mockImplementation((selector: (s: IMockStoreState) => unknown) => selector(state));
 }
 
 async function flushPromises(): Promise<void> {
@@ -160,12 +158,10 @@ describe("useReferralPrompt", () => {
 
 		let capturedValidation: ((value: string) => string | null) | undefined;
 
-		mockInput.mockImplementation(
-			(opts: { validation?: (v: string) => string | null }) => {
-				capturedValidation = opts.validation;
-				return Promise.resolve(null);
-			},
-		);
+		mockInput.mockImplementation((opts: { validation?: (v: string) => string | null }) => {
+			capturedValidation = opts.validation;
+			return Promise.resolve(null);
+		});
 
 		renderHook(() => useReferralPrompt());
 

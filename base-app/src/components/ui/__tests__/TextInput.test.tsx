@@ -35,12 +35,7 @@ describe("TextInput", () => {
 	it("calls onChangeText when text changes", () => {
 		const onChangeText = jest.fn();
 		render(
-			<TextInput
-				value=""
-				onChangeText={onChangeText}
-				placeholder="Name"
-				testID="name-input"
-			/>,
+			<TextInput value="" onChangeText={onChangeText} placeholder="Name" testID="name-input" />,
 		);
 		fireEvent.changeText(screen.getByTestId("name-input"), "John");
 		expect(onChangeText).toHaveBeenCalledWith("John");
@@ -99,12 +94,7 @@ describe("TextInput", () => {
 
 	it("uses placeholder as accessibilityLabel when no label provided", () => {
 		render(
-			<TextInput
-				value=""
-				onChangeText={jest.fn()}
-				placeholder="Enter name"
-				testID="name-input"
-			/>,
+			<TextInput value="" onChangeText={jest.fn()} placeholder="Enter name" testID="name-input" />,
 		);
 		expect(screen.getByTestId("name-input").props.accessibilityLabel).toBe("Enter name");
 	});

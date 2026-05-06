@@ -33,7 +33,9 @@ import { useReferralSection } from "../../../hooks/useReferralSection";
 
 const mockUseReferralSection = useReferralSection as jest.MockedFunction<typeof useReferralSection>;
 
-function buildStats(overrides: Partial<{ myCode: string; usedCode: string | null; referralsCount: number }> = {}) {
+function buildStats(
+	overrides: Partial<{ myCode: string; usedCode: string | null; referralsCount: number }> = {},
+) {
 	return {
 		myCode: "MY123",
 		usedCode: null,

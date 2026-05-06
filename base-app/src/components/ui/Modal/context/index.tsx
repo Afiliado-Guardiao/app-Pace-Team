@@ -9,9 +9,6 @@ interface IModalContextProviderProps {
 	value: IModalContextValue;
 }
 
-export const ModalContextProvider: React.FC<IModalContextProviderProps> = ({
-	children,
-	value,
-}) => {
+export const ModalContextProvider: React.FC<IModalContextProviderProps> = ({ children, value }) => {
 	return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;
 };

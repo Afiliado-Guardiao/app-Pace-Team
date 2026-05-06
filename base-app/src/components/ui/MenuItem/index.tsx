@@ -34,7 +34,11 @@ const MenuItemComponent: React.FC<IMenuItemProps> = ({
 						<Icon size={20} color={theme.colors.background} weight="regular" />
 					</View>
 					<Text style={styles.label}>{label}</Text>
-					{value !== undefined && <Text style={styles.value} numberOfLines={1}>{value}</Text>}
+					{value !== undefined && (
+						<Text style={styles.value} numberOfLines={1}>
+							{value}
+						</Text>
+					)}
 					{showChevron && (
 						<CaretRightIcon size={20} color={theme.colors.textSecondary} weight="regular" />
 					)}

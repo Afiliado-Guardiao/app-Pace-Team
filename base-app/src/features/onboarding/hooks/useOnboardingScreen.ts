@@ -6,7 +6,7 @@ import { validateStep } from "../validation";
 
 import { useOnboardingNavigation } from "./useOnboardingNavigation";
 import { useOnboardingSync } from "./useOnboardingSync";
-import { IStepConfig,useStepConfig } from "./useStepConfig";
+import { IStepConfig, useStepConfig } from "./useStepConfig";
 
 interface IUseOnboardingScreenReturn {
 	stepConfig: IStepConfig;
@@ -54,8 +54,7 @@ export const useOnboardingScreen = (): IUseOnboardingScreenReturn => {
 			return t("navigation.continue");
 		}
 
-		const isOptional =
-			!("validation" in currentStep) || currentStep.validation?.required !== true;
+		const isOptional = !("validation" in currentStep) || currentStep.validation?.required !== true;
 		const hasAnswer =
 			currentAnswer &&
 			(Array.isArray(currentAnswer) ? currentAnswer.length > 0 : currentAnswer !== "");
@@ -76,8 +75,7 @@ export const useOnboardingScreen = (): IUseOnboardingScreenReturn => {
 			return false;
 		}
 
-		const isOptional =
-			!("validation" in currentStep) || currentStep.validation?.required !== true;
+		const isOptional = !("validation" in currentStep) || currentStep.validation?.required !== true;
 		const hasAnswer =
 			currentAnswer &&
 			(Array.isArray(currentAnswer) ? currentAnswer.length > 0 : currentAnswer !== "");
@@ -103,7 +101,12 @@ export const useOnboardingScreen = (): IUseOnboardingScreenReturn => {
 		return undefined;
 	}, [currentStep, currentAnswer, t]);
 
-	const { stepConfig } = useStepConfig({ currentStep, currentAnswer, validationError, handleAnswerChange });
+	const { stepConfig } = useStepConfig({
+		currentStep,
+		currentAnswer,
+		validationError,
+		handleAnswerChange,
+	});
 
 	const needsScroll = useMemo(() => {
 		if (stepConfig.type === "input") {

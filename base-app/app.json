@@ -31,10 +31,6 @@
 		"web": {
 			"favicon": "./assets/icon.png"
 		},
-		"plugins": [
-			"expo-font",
-			"expo-router",
-			"expo-localization"
-		]
+		"plugins": ["expo-font", "expo-router", "expo-localization"]
 	}
 }

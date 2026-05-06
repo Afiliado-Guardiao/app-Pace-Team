@@ -38,11 +38,7 @@ export default function TabsLayout() {
 						<HouseIcon size={tabBar.iconSize} color={color} weight={focused ? "fill" : "regular"} />
 					),
 					tabBarButton: (props) => (
-						<CustomTabBarButton
-							{...props}
-							testID="tab-home"
-							accessibilityLabel={t("tabs.home")}
-						/>
+						<CustomTabBarButton {...props} testID="tab-home" accessibilityLabel={t("tabs.home")} />
 					),
 				}}
 			/>

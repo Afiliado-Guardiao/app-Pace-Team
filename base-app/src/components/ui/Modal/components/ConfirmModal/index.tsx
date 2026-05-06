@@ -6,11 +6,7 @@ import { useTheme } from "@/theme";
 import { createConfirmModalStyles } from "./styles";
 import { IConfirmModalProps } from "./types";
 
-export const ConfirmModal: React.FC<IConfirmModalProps> = ({
-	options,
-	onConfirm,
-	onCancel,
-}) => {
+export const ConfirmModal: React.FC<IConfirmModalProps> = ({ options, onConfirm, onCancel }) => {
 	const { theme } = useTheme();
 	const variant = options.variant ?? "default";
 	const styles = createConfirmModalStyles(theme, variant);

@@ -31,9 +31,7 @@ describe("zodErrorToI18nKey", () => {
 		});
 
 		it("maps 'required' + newPassword field to newPasswordRequired", () => {
-			expect(zodErrorToI18nKey("required", "newPassword")).toBe(
-				"validation:newPasswordRequired",
-			);
+			expect(zodErrorToI18nKey("required", "newPassword")).toBe("validation:newPasswordRequired");
 		});
 
 		it("is case-insensitive for field names (UPPERCASE)", () => {

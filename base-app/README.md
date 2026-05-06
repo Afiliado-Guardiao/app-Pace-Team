@@ -38,9 +38,9 @@
 
 ## `>` Sobre
 
-**Base App** é um template de partida para aplicativos mobile em React Native com Expo. Ele entrega uma estrutura pronta com autenticação (Apple, Google, e-mail), onboarding multi-step, navegação por grupos de rota, tema centralizado, i18n e testes configurados — para você clonar e construir em cima sem montar boilerplate do zero.
+**Base App** é um template de partida para aplicativos mobile em React Native com Expo. Ele entrega uma estrutura pronta com autenticação (Apple, Google, e-mail), onboarding multi-step, navegação por grupos de rota, tema centralizado, i18n, **Paywallo SDK** integrado (paywalls, subscriptions, A/B testing) e testes configurados — para você clonar e construir em cima sem montar boilerplate do zero.
 
-A arquitetura é orientada a features isoladas: cada domínio da UI vive em `src/features/[nome]/` com seus próprios screens, hooks, validações e estilos. Estado global via Zustand, estado de servidor via React Query, design tokens no `theme/`.
+A arquitetura é orientada a features isoladas: cada domínio da UI vive em `src/features/[nome]/` com seus próprios screens, hooks, validações e estilos. Estado global via Zustand, estado de servidor via React Query, design tokens no `theme/`, monetização via `src/lib/paywallo/`.
 
 <br/>
 
@@ -51,15 +51,20 @@ A arquitetura é orientada a features isoladas: cada domínio da UI vive em `src
 git clone <repo-url> && cd base-app
 npm install
 
-# 2. Configure o ambiente
-cp .env.example .env
-# Edite .env com sua API_URL
+# 2. iOS — instale os pods nativos (Paywallo SDK + outros)
+cd ios && pod install && cd ..
 
-# 3. Rode
+# 3. Configure o ambiente
+cp .env.example .env
+# Edite .env: EXPO_PUBLIC_API_URL e EXPO_PUBLIC_PAYWALLO_APP_KEY
+
+# 4. Rode
 npx expo start
 ```
 
 Para rodar no device: `npm run ios` ou `npm run android`.
+
+> **Paywallo:** o `appKey` é obtido em [paywallo.com.br/dashboard](https://paywallo.com.br/dashboard). Sem ele, o SDK loga erro mas não derruba o app — você pode rodar o template sem Paywallo até estar pronto para configurar.
 
 <br/>
 
@@ -90,7 +95,10 @@ base-app/
     │   ├── shared/             #   Cross-feature (botões, inputs)
     │   └── ui/                 #   Primitivos atômicos
     │
-    ├── lib/                    # React Query, API clients, configs
+    ├── lib/
+    │   ├── api/                #   HTTP client + endpoints
+    │   ├── react-query/        #   Provider e config
+    │   └── paywallo/           #   Bridge SDK Paywallo (auth sync, hooks)
     ├── store/                  # Zustand slices (auth, theme, language)
     ├── theme/                  # Design tokens, cores, tipografia
     ├── i18n/                   # Traduções (pt-BR, en, es)
@@ -130,18 +138,19 @@ O fluxo é sempre: **Screen → Hook → Validação → Store / React Query**
 
 ## `>` Navegação rápida
 
-| Quero...                        | Vou em...                                         |
-| :------------------------------ | :------------------------------------------------ |
-| Nova tela em uma feature        | `src/features/[feature]/screens/` + rota em `app/` |
-| Componente global               | `src/components/{core,shared,ui}/`                |
-| Lógica de negócio               | `src/features/[feature]/hooks/`                   |
-| Estado global (cliente)         | `src/store/` (Zustand)                            |
-| Estado do servidor              | `src/lib/` (React Query)                          |
-| Validação de formulário         | `src/features/[feature]/validation/`              |
-| Nova feature                    | `src/features/[nome]/` com estrutura padrão acima |
-| Tradução                        | `src/i18n/`                                       |
-| Tema / cores / espaçamento      | `src/theme/`                                      |
-| Env var nova                    | `.env` + importar via `@env`                      |
+| Quero...                   | Vou em...                                          |
+| :------------------------- | :------------------------------------------------- |
+| Nova tela em uma feature   | `src/features/[feature]/screens/` + rota em `app/` |
+| Componente global          | `src/components/{core,shared,ui}/`                 |
+| Lógica de negócio          | `src/features/[feature]/hooks/`                    |
+| Estado global (cliente)    | `src/store/` (Zustand)                             |
+| Estado do servidor         | `src/lib/` (React Query)                           |
+| Validação de formulário    | `src/features/[feature]/validation/`               |
+| Nova feature               | `src/features/[nome]/` com estrutura padrão acima  |
+| Tradução                   | `src/i18n/`                                        |
+| Tema / cores / espaçamento | `src/theme/`                                       |
+| Env var nova               | `.env` + importar via `@env`                       |
+| Paywall / subscription     | `PaywalloClient.*` + hooks em `src/lib/paywallo/`  |
 
 <br/>
 

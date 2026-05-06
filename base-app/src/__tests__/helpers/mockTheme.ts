@@ -1,10 +1,6 @@
 import { Platform } from "react-native";
 
-const iosShadow = (
-	height: number,
-	opacity: number,
-	radius: number,
-): Record<string, unknown> => ({
+const iosShadow = (height: number, opacity: number, radius: number): Record<string, unknown> => ({
 	shadowColor: "#000000",
 	shadowOffset: { width: 0, height },
 	shadowOpacity: opacity,

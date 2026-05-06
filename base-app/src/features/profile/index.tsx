@@ -1,12 +1,7 @@
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 
-import {
-	CakeIcon,
-	EnvelopeSimpleIcon,
-	LockIcon,
-	UserIcon,
-} from "phosphor-react-native";
+import { CakeIcon, EnvelopeSimpleIcon, LockIcon, UserIcon } from "phosphor-react-native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -22,8 +17,15 @@ export const ProfileScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const { t } = useTranslation("profile");
 	const insets = useSafeAreaInsets();
-	const { user, editName, editEmail, editBirthday, editPassword, handleLogout, handleDeleteAccount } =
-		useProfileScreen();
+	const {
+		user,
+		editName,
+		editEmail,
+		editBirthday,
+		editPassword,
+		handleLogout,
+		handleDeleteAccount,
+	} = useProfileScreen();
 
 	const styles = createProfileScreenStyles(theme);
 
@@ -32,7 +34,7 @@ export const ProfileScreen: React.FC = () => {
 				.split(" ")
 				.slice(0, 2)
 				.filter(Boolean)
-			.map((w) => w[0].toUpperCase())
+				.map((w) => w[0].toUpperCase())
 				.join("")
 		: "U";
 
@@ -41,7 +43,7 @@ export const ProfileScreen: React.FC = () => {
 				day: "2-digit",
 				month: "2-digit",
 				year: "numeric",
-		  })
+			})
 		: undefined;
 
 	return (

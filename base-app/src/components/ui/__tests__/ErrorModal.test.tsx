@@ -19,13 +19,7 @@ jest.mock("react-i18next", () => ({
 
 describe("ErrorModal", () => {
 	it("renders message when visible", () => {
-		render(
-			<ErrorModal
-				visible={true}
-				message="Something went wrong"
-				onClose={jest.fn()}
-			/>,
-		);
+		render(<ErrorModal visible={true} message="Something went wrong" onClose={jest.fn()} />);
 		expect(screen.getByText("Something went wrong")).toBeTruthy();
 	});
 
@@ -42,13 +36,7 @@ describe("ErrorModal", () => {
 	});
 
 	it("does not render title when not provided", () => {
-		render(
-			<ErrorModal
-				visible={true}
-				message="Something went wrong"
-				onClose={jest.fn()}
-			/>,
-		);
+		render(<ErrorModal visible={true} message="Something went wrong" onClose={jest.fn()} />);
 		expect(screen.queryByText("Error")).toBeNull();
 	});
 
@@ -65,13 +53,7 @@ describe("ErrorModal", () => {
 	});
 
 	it("falls back to translated 'ok' when confirmText is not provided", () => {
-		render(
-			<ErrorModal
-				visible={true}
-				message="An error occurred"
-				onClose={jest.fn()}
-			/>,
-		);
+		render(<ErrorModal visible={true} message="An error occurred" onClose={jest.fn()} />);
 		expect(screen.getByText("ok")).toBeTruthy();
 	});
 
@@ -90,13 +72,7 @@ describe("ErrorModal", () => {
 	});
 
 	it("does not show content when not visible", () => {
-		render(
-			<ErrorModal
-				visible={false}
-				message="An error occurred"
-				onClose={jest.fn()}
-			/>,
-		);
+		render(<ErrorModal visible={false} message="An error occurred" onClose={jest.fn()} />);
 		expect(screen.queryByText("An error occurred")).toBeNull();
 	});
 });

@@ -19,14 +19,14 @@ React Native/Expo app com arquitetura component-based e feature-isolated (DDD-in
 
 ## Limites de Tamanho
 
-| Tipo | Max linhas |
-|---|---|
-| Componente (`index.tsx`) | **200** |
-| Hook customizado | **150** |
-| Screen (feature `index.tsx`) | **200** |
-| Arquivo de styles | **100** |
-| Arquivo de types | **150** |
-| Função individual | **50** |
+| Tipo                         | Max linhas |
+| ---------------------------- | ---------- |
+| Componente (`index.tsx`)     | **200**    |
+| Hook customizado             | **150**    |
+| Screen (feature `index.tsx`) | **200**    |
+| Arquivo de styles            | **100**    |
+| Arquivo de types             | **150**    |
+| Função individual            | **50**     |
 
 - **Max 7 props** por componente — acima disso, compor em sub-componentes ou agrupar em object props
 - **Max 3 níveis** de aninhamento (depth) em qualquer função
@@ -39,12 +39,14 @@ React Native/Expo app com arquitetura component-based e feature-isolated (DDD-in
 Componentes são **puros** — só renderizam JSX.
 
 **Componentes NÃO PODEM ter:**
+
 - `useState`, `useEffect`, `useCallback`, `useMemo`
 - Lógica de negócio
 - Chamadas de API
 - Computação pesada
 
 **Componentes SÓ PODEM ter:**
+
 - `useTheme()`, `useTranslation()`, hooks customizados da feature
 - JSX e renderização condicional simples (1 nível de ternário)
 - Chamada de `createXStyles(theme, ...props)`
@@ -71,42 +73,44 @@ import { createButtonStyles } from "./styles";
 import { IButtonProps } from "./types";
 
 export const Button: React.FC<IButtonProps> = ({
-  children,
-  onPress,
-  variant = "default",
-  size = "md",
-  disabled = false,
-  loading = false,
-  style,
+	children,
+	onPress,
+	variant = "default",
+	size = "md",
+	disabled = false,
+	loading = false,
+	style,
 }) => {
-  const { theme } = useTheme();
-  const styles = createButtonStyles(theme, variant, size, disabled || loading);
+	const { theme } = useTheme();
+	const styles = createButtonStyles(theme, variant, size, disabled || loading);
 
-  return (
-    <Pressable
-      testID="button"
-      accessibilityLabel={typeof children === "string" ? children : undefined}
-      onPress={onPress}
-      disabled={disabled || loading}
-      style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }, style]}
-    >
-      {loading ? (
-        <ActivityIndicator color={styles.text.color} />
-      ) : (
-        <Text style={styles.text}>{children}</Text>
-      )}
-    </Pressable>
-  );
+	return (
+		<Pressable
+			testID="button"
+			accessibilityLabel={typeof children === "string" ? children : undefined}
+			onPress={onPress}
+			disabled={disabled || loading}
+			style={({ pressed }) => [styles.container, pressed && { opacity: 0.8 }, style]}
+		>
+			{loading ? (
+				<ActivityIndicator color={styles.text.color} />
+			) : (
+				<Text style={styles.text}>{children}</Text>
+			)}
+		</Pressable>
+	);
 };
 ```
 
 ```tsx
 // Button/index.tsx — ERRADO (lógica no componente)
 export const Button: React.FC<IButtonProps> = (props) => {
-  const [isPressed, setIsPressed] = useState(false);      // ❌ useState no componente
-  useEffect(() => { trackClick(); }, [isPressed]);         // ❌ useEffect no componente
-  const formatted = props.label.toUpperCase().trim();      // ❌ lógica inline
-  // ...
+	const [isPressed, setIsPressed] = useState(false); // ❌ useState no componente
+	useEffect(() => {
+		trackClick();
+	}, [isPressed]); // ❌ useEffect no componente
+	const formatted = props.label.toUpperCase().trim(); // ❌ lógica inline
+	// ...
 };
 ```
 
@@ -124,26 +128,27 @@ import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
 interface IUseAuthGuardReturn {
-  shouldRender: boolean;
+	shouldRender: boolean;
 }
 
 export const useAuthGuard = (): IUseAuthGuardReturn => {
-  const router = useRouter();
-  const isAuthenticated = useStore((state) => state.isAuthenticated);
-  const hasHydrated = useStore((state) => state._hasHydrated);
+	const router = useRouter();
+	const isAuthenticated = useStore((state) => state.isAuthenticated);
+	const hasHydrated = useStore((state) => state._hasHydrated);
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-    if (!isAuthenticated) {
-      router.replace(ROUTES.AUTH);
-    }
-  }, [isAuthenticated, hasHydrated, router]);
+	useEffect(() => {
+		if (!hasHydrated) return;
+		if (!isAuthenticated) {
+			router.replace(ROUTES.AUTH);
+		}
+	}, [isAuthenticated, hasHydrated, router]);
 
-  return { shouldRender: hasHydrated && isAuthenticated };
+	return { shouldRender: hasHydrated && isAuthenticated };
 };
 ```
 
 **Regras de hooks:**
+
 - Sempre tipar o retorno com interface `IUseXReturn`
 - Exportar named export (não default)
 - 1 hook por arquivo
@@ -159,27 +164,28 @@ import { ITheme } from "@/theme";
 import { IButtonSize, IButtonStyles, IButtonVariant } from "../types";
 
 export const createButtonStyles = (
-  theme: ITheme,
-  variant: IButtonVariant,
-  size: IButtonSize,
-  disabled: boolean,
+	theme: ITheme,
+	variant: IButtonVariant,
+	size: IButtonSize,
+	disabled: boolean,
 ): IButtonStyles => {
-  const baseContainer = {
-    borderRadius: theme.borderRadius.sm,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-  };
+	const baseContainer = {
+		borderRadius: theme.borderRadius.sm,
+		alignItems: "center" as const,
+		justifyContent: "center" as const,
+	};
 
-  // variant e size styles...
+	// variant e size styles...
 
-  return {
-    container: { ...baseContainer, ...sizeStyles[size], ...variantStyles[variant] },
-    text: { ...baseText },
-  };
+	return {
+		container: { ...baseContainer, ...sizeStyles[size], ...variantStyles[variant] },
+		text: { ...baseText },
+	};
 };
 ```
 
 **Regras de styles:**
+
 - Nome: `create` + `ComponentName` + `Styles`
 - Primeiro parâmetro: sempre `theme: ITheme`
 - Retorno tipado com interface `IComponentStyles`
@@ -208,6 +214,7 @@ features/auth/
 ```
 
 **Regras de isolamento:**
+
 - Features **NUNCA** importam de outras features
 - Features importam de `@/components/`, `@/lib/`, `@/store/`, `@/theme/`, `@/i18n/`
 - Comunicação entre features: via Zustand store global ou navegação (router)
@@ -219,38 +226,39 @@ features/auth/
 ```tsx
 // features/auth/index.tsx — screen usa hooks, não tem lógica
 export const AuthScreen: React.FC = () => {
-  const { theme } = useTheme();
-  const { t } = useTranslation("auth");
-  const {
-    isLoading,
-    handleAppleSignIn,
-    handleGoogleSignIn,
-    isEmailModalVisible,
-    openEmailModal,
-    closeEmailModal,
-    errorModal,
-    hideError,
-  } = useAuthScreen();
+	const { theme } = useTheme();
+	const { t } = useTranslation("auth");
+	const {
+		isLoading,
+		handleAppleSignIn,
+		handleGoogleSignIn,
+		isEmailModalVisible,
+		openEmailModal,
+		closeEmailModal,
+		errorModal,
+		hideError,
+	} = useAuthScreen();
 
-  const styles = createAuthScreenStyles(theme);
+	const styles = createAuthScreenStyles(theme);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* JSX composto de componentes — sem lógica */}
-    </SafeAreaView>
-  );
+	return (
+		<SafeAreaView style={styles.container}>
+			{/* JSX composto de componentes — sem lógica */}
+		</SafeAreaView>
+	);
 };
 ```
 
 ## State Management
 
-| Tipo de estado | Onde vive | Exemplo |
-|---|---|---|
-| Client state (global) | Zustand — `src/store/slices/` | auth, theme, language |
-| Server state | React Query — `src/lib/react-query/` | dados da API |
-| Local state | `useState` em hooks customizados | form values, modal visibility |
+| Tipo de estado        | Onde vive                            | Exemplo                       |
+| --------------------- | ------------------------------------ | ----------------------------- |
+| Client state (global) | Zustand — `src/store/slices/`        | auth, theme, language         |
+| Server state          | React Query — `src/lib/react-query/` | dados da API                  |
+| Local state           | `useState` em hooks customizados     | form values, modal visibility |
 
 **Regras:**
+
 - Zustand slices são fábricas: `createAuthSlice: StateCreator<IStore, [], [], IAuthSlice>`
 - Selectors sempre específicos: `useStore((state) => state.user)` — nunca `useStore()` inteiro
 - React Query pra qualquer dado que vem de API — nunca guardar response em Zustand
@@ -263,19 +271,19 @@ import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 // Props sempre com prefixo I
 export interface IButtonProps {
-  children: React.ReactNode;
-  onPress: () => void;
-  variant?: IButtonVariant;
-  size?: IButtonSize;
-  disabled?: boolean;
-  loading?: boolean;
-  style?: StyleProp<ViewStyle>;
+	children: React.ReactNode;
+	onPress: () => void;
+	variant?: IButtonVariant;
+	size?: IButtonSize;
+	disabled?: boolean;
+	loading?: boolean;
+	style?: StyleProp<ViewStyle>;
 }
 
 // Styles sempre com prefixo I
 export interface IButtonStyles {
-  container: ViewStyle;
-  text: TextStyle;
+	container: ViewStyle;
+	text: TextStyle;
 }
 
 // Variants/enums como union types
@@ -284,6 +292,7 @@ export type IButtonSize = "sm" | "md" | "lg";
 ```
 
 **Regras de types:**
+
 - Prefixo `I` para interfaces e type aliases: `IButtonProps`, `IUserData`
 - Props: `ComponentName` + `Props`
 - Styles: `ComponentName` + `Styles`
@@ -293,19 +302,19 @@ export type IButtonSize = "sm" | "md" | "lg";
 
 ## Naming Conventions
 
-| Tipo | Convenção | Exemplo |
-|---|---|---|
-| Componente (pasta) | `PascalCase/` | `Button/`, `EmailAuthModal/` |
-| Componente (export) | `PascalCase` | `export const Button` |
-| Hook (arquivo) | `camelCase.ts` | `useAuthGuard.ts` |
-| Hook (export) | `camelCase` | `export const useAuthGuard` |
-| Style function | `create` + Name + `Styles` | `createButtonStyles` |
-| Type/Interface | `I` + `PascalCase` | `IButtonProps` |
-| Constante | `UPPER_SNAKE_CASE` | `MAX_RETRY_COUNT` |
-| Event handler | `handle` + Action | `handlePress`, `handleSubmit` |
-| Boolean prop | `is`/`has`/`should` prefix | `isLoading`, `hasError` |
-| Util (arquivo) | `camelCase.ts` | `formatDate.ts` |
-| Screen (Expo Router) | `kebab-case.tsx` | `user-profile.tsx` |
+| Tipo                 | Convenção                  | Exemplo                       |
+| -------------------- | -------------------------- | ----------------------------- |
+| Componente (pasta)   | `PascalCase/`              | `Button/`, `EmailAuthModal/`  |
+| Componente (export)  | `PascalCase`               | `export const Button`         |
+| Hook (arquivo)       | `camelCase.ts`             | `useAuthGuard.ts`             |
+| Hook (export)        | `camelCase`                | `export const useAuthGuard`   |
+| Style function       | `create` + Name + `Styles` | `createButtonStyles`          |
+| Type/Interface       | `I` + `PascalCase`         | `IButtonProps`                |
+| Constante            | `UPPER_SNAKE_CASE`         | `MAX_RETRY_COUNT`             |
+| Event handler        | `handle` + Action          | `handlePress`, `handleSubmit` |
+| Boolean prop         | `is`/`has`/`should` prefix | `isLoading`, `hasError`       |
+| Util (arquivo)       | `camelCase.ts`             | `formatDate.ts`               |
+| Screen (Expo Router) | `kebab-case.tsx`           | `user-profile.tsx`            |
 
 ## Imports
 
@@ -363,11 +372,34 @@ npx expo start     # Dev server
 - `@quidone/react-native-wheel-picker`: componente reutilizável em `src/components/shared/WheelPicker/index.tsx` — picker de scroll tipo roda (iOS-style)
 - `react-native-keyboard-controller`: usado em `app/_layout.tsx` (KeyboardProvider), `features/auth/components/EmailAuthModal/index.tsx` e `features/onboarding/index.tsx` — evita que teclado sobreponha inputs
 
-## Observability
+## Observability & Monetização
 
-Observability (Sentry, PostHog, etc.) não é incluída no skeleton — a escolha fica para o fork. Se precisar:
+### Paywallo SDK (incluído)
+
+O `@virex-tech/paywallo-sdk` vem **plugado no template** — paywalls, subscriptions, A/B testing e analytics. Veja `src/lib/paywallo/`:
+
+- `PaywalloAuthBridge` montado no `AppProviders` envolve o app inteiro
+- `usePaywalloAuthSync` chama `identify()` após login e `reset()` no logout (reativo via store Zustand)
+- `useSessionFlag(key)` síncrono para A/B test anti-flicker
+- `useSubscriptionGate(placement)` para gate de feature premium
+
+**Hard rules para o SDK:**
+
+- **PROIBIDO** rastrear eventos `$paywall_*` ou `$onboarding_*` manualmente — o SDK emite automaticamente. Tracking manual gera duplicação no funil
+- **PROIBIDO** instalar RevenueCat / `react-native-iap` em paralelo — o SDK Paywallo tem IAP nativo (StoreKit 2 / Google Play Billing)
+- **PROIBIDO** envolver o `PaywalloClient` em wrapper Singleton — ele já é singleton
+- Onboarding tracking: usar `useOnboarding()` do SDK em vez de `track("$onboarding_step")` custom
+- A/B test crítico (primeira renderização): adicionar a flag em `sessionFlags` no Provider, ler com `useSessionFlag`
+
+Skills detalhadas em `../skills/paywallo-*.md`.
+
+### Sentry / PostHog (opcional)
+
+Não vêm incluídos no skeleton — cada fork decide. Para integrar:
+
 1. Instale a lib (`npm install @sentry/react-native` ou similar)
 2. Adicione o mock correspondente em `jest.setup.js`
+3. Pluge o destino no `onError` do `PaywalloProvider` em `AppProviders/index.tsx`
 
 ## Checklist: Nova Feature
 

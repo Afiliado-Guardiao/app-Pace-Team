@@ -76,5 +76,15 @@ export const createInputModalStyles = (theme: ITheme): IInputModalStyles => {
 		marginTop: theme.spacing.lg,
 	};
 
-	return { title, input, inputError, errorText, buttonRow, confirmButton, cancelButton, confirmText, cancelText };
+	return {
+		title,
+		input,
+		inputError,
+		errorText,
+		buttonRow,
+		confirmButton,
+		cancelButton,
+		confirmText,
+		cancelText,
+	};
 };

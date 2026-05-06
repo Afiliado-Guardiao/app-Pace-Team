@@ -1,16 +1,27 @@
 import { useMemo } from "react";
 
-import {
-	IInputStep,
-	IOnboardingStep,
-	ITransitionStep,
-	IWheelPickerStep,
-} from "../types";
+import { IInputStep, IOnboardingStep, ITransitionStep, IWheelPickerStep } from "../types";
 
 export type IStepConfig =
 	| { type: "transition"; props: { step: ITransitionStep } }
-	| { type: "input"; props: { step: IInputStep; value: string; onChange: (value: string | string[]) => void; error: string | undefined } }
-	| { type: "wheel-picker"; props: { step: IWheelPickerStep; value: string; onChange: (value: string | string[]) => void; error: string | undefined } }
+	| {
+			type: "input";
+			props: {
+				step: IInputStep;
+				value: string;
+				onChange: (value: string | string[]) => void;
+				error: string | undefined;
+			};
+	  }
+	| {
+			type: "wheel-picker";
+			props: {
+				step: IWheelPickerStep;
+				value: string;
+				onChange: (value: string | string[]) => void;
+				error: string | undefined;
+			};
+	  }
 	| { type: "unknown"; props: Record<string, never> };
 
 interface IUseStepConfigParams {
@@ -38,13 +49,23 @@ export const useStepConfig = ({
 			case "input":
 				return {
 					type: "input" as const,
-					props: { step: currentStep, value: (currentAnswer as string) || "", onChange: handleAnswerChange, error: validationError },
+					props: {
+						step: currentStep,
+						value: (currentAnswer as string) || "",
+						onChange: handleAnswerChange,
+						error: validationError,
+					},
 				};
 
 			case "wheel-picker":
 				return {
 					type: "wheel-picker" as const,
-					props: { step: currentStep, value: (currentAnswer as string) || "", onChange: handleAnswerChange, error: validationError },
+					props: {
+						step: currentStep,
+						value: (currentAnswer as string) || "",
+						onChange: handleAnswerChange,
+						error: validationError,
+					},
 				};
 
 			default:

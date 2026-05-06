@@ -61,7 +61,6 @@ export const useBackButton = ({ onPress, disabled }: IBackButtonProps) => {
 	};
 };
 
-
 export const useInputStep = ({ step, onChange }: IUseInputStepProps) => {
 	const handleChange = useCallback(
 		(text: string) => {
