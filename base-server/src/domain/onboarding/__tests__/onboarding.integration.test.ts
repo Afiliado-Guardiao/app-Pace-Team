@@ -148,7 +148,10 @@ describe("Onboarding Integration Tests", () => {
 	describe("GET /onboarding/:id", () => {
 		it("should return existing onboarding", async () => {
 			const app = getTestServer();
-			const onboarding = await createOnboarding({ name: "Fetched User", email: "fetch@example.com" });
+			const onboarding = await createOnboarding({
+				name: "Fetched User",
+				email: "fetch@example.com",
+			});
 
 			const response = await app.inject({
 				method: "GET",

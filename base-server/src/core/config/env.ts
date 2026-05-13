@@ -13,6 +13,8 @@ const envSchema = z.object({
 	RATE_LIMIT_TIMEWINDOW: z.string().transform(Number).default("60000"),
 	AUTH_RATE_LIMIT: z.coerce.number().int().positive().default(5),
 	LOG_LEVEL: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]).default("info"),
+	PAYWALLO_WEBHOOK_PATH_SECRET: z.string().min(1).default("disabled"),
+	PAYWALLO_WEBHOOK_HMAC_SECRET: z.string().optional().default(""),
 });
 
 const _env = envSchema.safeParse(process.env);

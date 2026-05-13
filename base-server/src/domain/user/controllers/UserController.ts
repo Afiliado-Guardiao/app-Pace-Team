@@ -3,12 +3,16 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { UnauthorizedError } from "@/shared/errors";
 import { AuthenticatedUser } from "@/shared/types";
 
-import { IUserService, UpdateMeRequest, updateMeSchema, UpdatePasswordRequest, updatePasswordSchema } from "../types";
+import {
+	IUserService,
+	UpdateMeRequest,
+	updateMeSchema,
+	UpdatePasswordRequest,
+	updatePasswordSchema,
+} from "../types";
 
 export class UserController {
-	constructor(
-		private userService: IUserService,
-	) {}
+	constructor(private userService: IUserService) {}
 
 	async getMe(request: FastifyRequest, reply: FastifyReply): Promise<void> {
 		const user = this.getAuthenticatedUser(request);

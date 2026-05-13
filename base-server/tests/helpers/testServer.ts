@@ -4,6 +4,7 @@ import { Logger } from "@/core/config/logger";
 import { createAuthModule } from "@/domain/auth";
 import { createOnboardingModule } from "@/domain/onboarding";
 import { createReferralModule } from "@/domain/referral";
+import { createSubscriptionModule } from "@/domain/subscription";
 import { createUserModule } from "@/domain/user";
 import { Database } from "@/infrastructure/database/Database";
 import { App } from "@/infrastructure/http/app";
@@ -32,18 +33,16 @@ export async function createTestServer(): Promise<FastifyInstance> {
 	const onboardingModule = createOnboardingModule(logger, database, authModule.middleware);
 	const userModule = createUserModule(logger, database, authModule.middleware);
 	const referralModule = createReferralModule(logger, database, authModule.middleware);
+	const subscriptionModule = createSubscriptionModule(logger, database);
 
 	// Create app instance
-	const application = new App(
-		logger,
-		database,
-		[
-			authModule.routes,
-			userModule.routes,
-			onboardingModule.routes,
-			referralModule.routes,
-		],
-	);
+	const application = new App(logger, database, [
+		authModule.routes,
+		userModule.routes,
+		onboardingModule.routes,
+		referralModule.routes,
+		subscriptionModule.routes,
+	]);
 
 	app = await application.setup();
 	await app.ready();

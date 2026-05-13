@@ -26,7 +26,9 @@ interface UserProfileResponse {
 }
 
 async function registerAndGetToken(
-	app: Awaited<ReturnType<typeof import("../../../../tests/helpers/testServer")["getTestServer"]>>,
+	app: Awaited<
+		ReturnType<(typeof import("../../../../tests/helpers/testServer"))["getTestServer"]>
+	>,
 	email: string,
 	password = "Test@123",
 	name = "Test User",
@@ -74,7 +76,12 @@ describe("User Integration Tests", () => {
 		it("should update name", async () => {
 			const app = getTestServer();
 			const db = getDatabase();
-			const { token, user } = await registerAndGetToken(app, "updatename@example.com", "Test@123", "Old Name");
+			const { token, user } = await registerAndGetToken(
+				app,
+				"updatename@example.com",
+				"Test@123",
+				"Old Name",
+			);
 
 			const response = await app.inject({
 				method: "PATCH",
@@ -142,7 +149,11 @@ describe("User Integration Tests", () => {
 		it("should update password with correct current password and return 204", async () => {
 			const app = getTestServer();
 			const db = getDatabase();
-			const { token, user } = await registerAndGetToken(app, "changepass@example.com", "OldPass@123");
+			const { token, user } = await registerAndGetToken(
+				app,
+				"changepass@example.com",
+				"OldPass@123",
+			);
 
 			const response = await app.inject({
 				method: "PATCH",

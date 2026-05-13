@@ -31,11 +31,14 @@ function startTestDatabase(): void {
 	}
 
 	try {
-		execSync(`docker rm -f ${CONTAINER_NAME} 2>/dev/null; docker network rm ${NETWORK_NAME} 2>/dev/null`, {
-			cwd: process.cwd(),
-			stdio: "pipe",
-			shell: "/bin/sh",
-		});
+		execSync(
+			`docker rm -f ${CONTAINER_NAME} 2>/dev/null; docker network rm ${NETWORK_NAME} 2>/dev/null`,
+			{
+				cwd: process.cwd(),
+				stdio: "pipe",
+				shell: "/bin/sh",
+			},
+		);
 	} catch {
 		// Não é fatal
 	}
@@ -110,6 +113,8 @@ export async function clearDatabase(): Promise<void> {
 		throw new Error("Banco não inicializado. Chame setupDatabase() primeiro.");
 	}
 
+	await prisma.webhookEvent.deleteMany();
+	await prisma.subscription.deleteMany();
 	await prisma.onboarding.deleteMany();
 	await prisma.user.deleteMany();
 }

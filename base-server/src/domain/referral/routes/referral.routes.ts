@@ -17,7 +17,12 @@ export class ReferralRoutes implements IRoute {
 		reply: FastifyReply,
 		done: (err?: Error) => void,
 	): void {
-		void this.authMiddleware.authenticate(request, reply).then(() => { done(); }).catch(done);
+		void this.authMiddleware
+			.authenticate(request, reply)
+			.then(() => {
+				done();
+			})
+			.catch(done);
 	}
 
 	register(app: FastifyInstance): void {

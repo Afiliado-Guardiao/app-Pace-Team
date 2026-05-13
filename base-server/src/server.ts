@@ -6,6 +6,7 @@ import { initializeI18n } from "@/core/i18n";
 import { createAuthModule } from "@/domain/auth";
 import { createOnboardingModule } from "@/domain/onboarding";
 import { createReferralModule } from "@/domain/referral";
+import { createSubscriptionModule } from "@/domain/subscription";
 import { createUserModule } from "@/domain/user";
 import { Database } from "@/infrastructure/database/Database";
 import { App } from "@/infrastructure/http/app";
@@ -28,27 +29,17 @@ class Server {
 			this.database,
 			authModule.middleware,
 		);
-		const userModule = createUserModule(
-			this.logger,
-			this.database,
-			authModule.middleware,
-		);
-		const referralModule = createReferralModule(
-			this.logger,
-			this.database,
-			authModule.middleware,
-		);
+		const userModule = createUserModule(this.logger, this.database, authModule.middleware);
+		const referralModule = createReferralModule(this.logger, this.database, authModule.middleware);
+		const subscriptionModule = createSubscriptionModule(this.logger, this.database);
 
-		this.application = new App(
-			this.logger,
-			this.database,
-			[
-				authModule.routes,
-				userModule.routes,
-				onboardingModule.routes,
-				referralModule.routes,
-			],
-		);
+		this.application = new App(this.logger, this.database, [
+			authModule.routes,
+			userModule.routes,
+			onboardingModule.routes,
+			referralModule.routes,
+			subscriptionModule.routes,
+		]);
 		this.startTime = Date.now();
 		this.setupProcessHandlers();
 	}

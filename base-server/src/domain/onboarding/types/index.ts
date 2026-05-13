@@ -60,8 +60,15 @@ export interface IOnboardingRepository {
 	create(anonymousUserId: string): Promise<OnboardingData>;
 	findById(id: string): Promise<OnboardingData | null>;
 	findByAnonymousUserId(anonymousUserId: string): Promise<OnboardingData | null>;
-	update(id: string, data: Partial<UpdateOnboardingRequest> & { completedAt?: Date | null; userId?: string }): Promise<OnboardingData>;
-	linkToUser(onboardingId: string, userId: string, userPatch: Partial<Pick<IUserData, "name" | "email" | "birthday">>): Promise<{ onboarding: OnboardingData; user: IUserData }>;
+	update(
+		id: string,
+		data: Partial<UpdateOnboardingRequest> & { completedAt?: Date | null; userId?: string },
+	): Promise<OnboardingData>;
+	linkToUser(
+		onboardingId: string,
+		userId: string,
+		userPatch: Partial<Pick<IUserData, "name" | "email" | "birthday">>,
+	): Promise<{ onboarding: OnboardingData; user: IUserData }>;
 }
 
 export interface IOnboardingService {

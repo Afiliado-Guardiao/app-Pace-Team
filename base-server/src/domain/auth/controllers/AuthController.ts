@@ -13,9 +13,7 @@ import {
 } from "../types";
 
 export class AuthController {
-	constructor(
-		private authService: IAuthService,
-	) {}
+	constructor(private authService: IAuthService) {}
 
 	async register(
 		request: FastifyRequest<{ Body: RegisterRequest }>,

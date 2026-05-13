@@ -1,11 +1,7 @@
 import { Logger } from "@/core/config/logger";
 import { normalizeReferralCode } from "@/utils/referralCode";
 
-import {
-	ReferralAlreadyUsedError,
-	ReferralCodeNotFoundError,
-	SelfReferralError,
-} from "../errors";
+import { ReferralAlreadyUsedError, ReferralCodeNotFoundError, SelfReferralError } from "../errors";
 import {
 	ApplyReferralCodeResponse,
 	IReferralRepository,
@@ -68,5 +64,9 @@ export class ReferralService implements IReferralService {
 		};
 	}
 
-	// TODO(fase futura): integrar webhook de comissão — método `recordCommission(purchaseEvent)` aqui
+	// Comissão de indicação a partir de assinatura paga: o webhook do Paywallo já é recebido em
+	// `src/domain/subscription` (POST /webhooks/paywallo/:pathSecret). Para acoplar comissão aqui,
+	// injete `IReferralService` no `WebhookProcessor` via `createSubscriptionModule(...)` e dispare
+	// `referralService.recordCommission(userId, productId, amount)` quando `event.type === "INITIAL_PURCHASE"`
+	// com `subscription.userId !== null`. Os campos de comissão (percentual, cap) ficam neste domínio.
 }

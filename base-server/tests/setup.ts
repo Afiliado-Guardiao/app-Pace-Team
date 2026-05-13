@@ -50,4 +50,3 @@ afterAll(async () => {
 beforeEach(async () => {
 	await clearDatabase();
 });
-

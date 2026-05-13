@@ -6,11 +6,7 @@ import { Logger } from "@/core/config/logger";
 import { generateReferralCode } from "@/utils/referralCode";
 
 import { AUTH_CONSTANTS } from "../constants";
-import {
-	InvalidCredentialsError,
-	InvalidTokenError,
-	ReferralCodeGenerationError,
-} from "../errors";
+import { InvalidCredentialsError, InvalidTokenError, ReferralCodeGenerationError } from "../errors";
 import {
 	AuthResponse,
 	IAuthRepository,
@@ -76,7 +72,10 @@ export class AuthService implements IAuthService {
 			user = await this.createSocialUser(data, hashedSocialId);
 			loginVersion = user.loginVersion;
 		} else {
-			this.logger.info("Existing social user logging in", { userId: user.id, provider: data.provider });
+			this.logger.info("Existing social user logging in", {
+				userId: user.id,
+				provider: data.provider,
+			});
 			loginVersion = await this.authRepository.incrementLoginVersion(user.id);
 		}
 		this.logger.info("Social Sign In successful", { userId: user.id, provider: data.provider });
@@ -89,7 +88,11 @@ export class AuthService implements IAuthService {
 		this.logger.info("Logout successful, all sessions invalidated", { userId });
 	}
 
-	generateTokenForUser(payload: { userId: string; email: string | null; loginVersion: number }): string {
+	generateTokenForUser(payload: {
+		userId: string;
+		email: string | null;
+		loginVersion: number;
+	}): string {
 		const tokenPayload = {
 			userId: payload.userId,
 			email: payload.email,
@@ -110,7 +113,10 @@ export class AuthService implements IAuthService {
 		}
 	}
 
-	private async createSocialUser(data: SocialSignInRequest, hashedSocialId: string): Promise<UserData> {
+	private async createSocialUser(
+		data: SocialSignInRequest,
+		hashedSocialId: string,
+	): Promise<UserData> {
 		this.logger.info("Creating new social user", { provider: data.provider, email: data.email });
 		const referralCode = await this.generateUniqueReferralCode();
 		const user = await this.authRepository.createSocialUser({

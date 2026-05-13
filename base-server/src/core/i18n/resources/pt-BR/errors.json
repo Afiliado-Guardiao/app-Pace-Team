@@ -16,5 +16,9 @@
 	"INVALID_WEBHOOK": "Payload de webhook inválido",
 	"DUPLICATE_EVENT": "Este evento já foi processado",
 	"NETWORK_ERROR": "Erro de conexão",
-	"TIMEOUT_ERROR": "Tempo limite excedido"
+	"TIMEOUT_ERROR": "Tempo limite excedido",
+	"SUBSCRIPTION_NOT_FOUND": "Assinatura não encontrada",
+	"WEBHOOK_SIGNATURE_INVALID": "Assinatura do webhook é inválida",
+	"WEBHOOK_PATH_SECRET_INVALID": "Secret do webhook na URL é inválido",
+	"WEBHOOK_EVENT_TYPE_UNSUPPORTED": "Tipo de evento do webhook não é suportado"
 }

@@ -39,11 +39,7 @@ export const useOnboardingSync = ({
 	const answers = useStore((state) => state.answers);
 	const setCompleted = useStore((state) => state.setCompleted);
 
-	const { trackOnboardingCompleted } = useOnboardingTracking({
-		currentStepIndex: navigation.currentStepIndex,
-		currentStep: navigation.currentStep,
-		totalSteps: 0,
-	});
+	const { trackOnboardingCompleted } = useOnboardingTracking();
 
 	const buildSyncPayload = useCallback((): ISyncOnboardingPayload => {
 		const metadata = navigation.deviceMetadataRef.current;
@@ -76,7 +72,7 @@ export const useOnboardingSync = ({
 			const syncPayload = buildSyncPayload();
 			await onboardingApi.syncOnboarding(onboardingId, syncPayload);
 
-			trackOnboardingCompleted();
+			void trackOnboardingCompleted();
 			setCompleted(true);
 			router.replace(ROUTES.AUTH);
 

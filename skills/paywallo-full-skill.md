@@ -1,7 +1,8 @@
 # Skill: Paywallo SDK — Master Guide (Full Integration)
 
-> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.1.x
+> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.2.x
 > **App alvo:** `base-app` (React Native + Expo SDK 54, TypeScript strict, Expo Router, Zustand, React Query, i18next)
+> **Doc oficial:** [`https://paywallo.com.br/docs`](https://paywallo.com.br/docs) — a maioria das páginas técnicas ainda está em construção; esta skill é a fonte canônica até a doc oficial publicar.
 
 Guia consolidado para integrar o Paywallo no `base-app` ponta-a-ponta. Cobre setup, identidade, paywalls, funil, A/B testing e push notifications. Cada seção aponta para a skill detalhada correspondente.
 
@@ -64,7 +65,7 @@ Guia consolidado para integrar o Paywallo no `base-app` ponta-a-ponta. Cobre set
 
 ```bash
 cd base-app
-npm install @virex-tech/paywallo-sdk
+npm install @virex-tech/paywallo-sdk@^2.2.1
 cd ios && pod install && cd ..
 ```
 
@@ -192,13 +193,14 @@ await PaywalloClient.presentPaywall("onboarding_end", {
 **State reativo de subscription**:
 
 ```tsx
-const { isActive, subscription, entitlements, refresh } = useSubscription();
+const { isActive, subscription, entitlements, isLoading, error, refresh, restore } =
+  useSubscription();
 ```
 
 **Compra direta** (sem paywall — botão de upgrade fixo):
 
 ```tsx
-const { purchase, isPurchasing } = usePurchase();
+const { purchase, restore, state, error, isPurchasing, isRestoring } = usePurchase();
 const outcome = await purchase("com.app.annual");
 if (outcome.status === "success") {
   /* libera feature */
@@ -369,29 +371,51 @@ src/
 
 ---
 
-## 7. Decisão: precisa de servidor (`base-server`)?
+## 7. Servidor (`base-server`) — domínio `subscription` incluído
 
-**Não, na maioria dos casos.** O SDK fala direto com a Paywallo, valida compras lá, expõe estado via `hasActiveSubscription()` / `useSubscription()`.
+O `base-server` **já vem com domínio `subscription` implementado** (`src/domain/subscription/`) que recebe webhooks do Paywallo e mantém `User.isPremium` + tabela `Subscription` sincronizados. Use-o quando precisar de:
 
-**Sim, se você precisa:**
+- Bloquear endpoints da sua própria API por status de assinatura (`SubscriptionService.hasActiveSubscription(userId)`)
+- Filtrar usuários premium em queries SQL via flag `User.isPremium`
+- Mostrar status de subscription em painel/dashboard interno
 
-- Bloquear endpoints da sua própria API por status de assinatura
-- Mostrar status de subscription em web admin / dashboard interno
-- Sincronizar `isPremium` no User do seu banco para queries SQL
-
-Nesse caso, configure no `base-server` um domínio `subscription` que recebe webhooks do Paywallo:
+### Endpoint
 
 ```
-POST /webhooks/paywallo/{secret-uuid}
-Body: { event: "subscription_renewed" | "subscription_cancelled" | ..., data: {...} }
+POST /webhooks/paywallo/:pathSecret
+Headers:
+  X-Paywallo-Signature: sha256=<hex-digest>   (HMAC SHA-256 sobre o body)
+Body: { api_version, event: { id, type, app_user_id, product_id, ... } }
 ```
 
-E atualize o `User.isPremium` correspondente. **Esta é uma extensão fora do escopo do template** — o `base-server` hoje não tem esse domínio. Se for implementar:
+### Eventos suportados
 
-1. Crie domínio `src/domain/subscription/` (factory + service + repository + routes + types)
-2. Adicione model no `prisma/schema.prisma`
-3. Crie migration
-4. Configure URL do webhook no dashboard Paywallo
+`INITIAL_PURCHASE`, `RENEWAL`, `CANCELLATION`, `EXPIRATION`, `UNCANCELLATION`.
+
+### Setup (5 passos)
+
+1. **Env vars** em `base-server/.env`:
+   ```env
+   PAYWALLO_WEBHOOK_PATH_SECRET=<uuid-v4-gerado-por-você>
+   PAYWALLO_WEBHOOK_HMAC_SECRET=<secret-também-no-dashboard-Paywallo>
+   ```
+2. **Migration**: `npm run db:migrate:dev -- --name add_subscription_and_webhook`
+3. **Dashboard Paywallo**: cadastrar URL pública `https://seu-servidor/webhooks/paywallo/<PAYWALLO_WEBHOOK_PATH_SECRET>` e configurar o mesmo `secret` (para HMAC)
+4. **Testar localmente**: `PAYWALLO_WEBHOOK_PATH_SECRET=... npx tsx scripts/test-webhook.ts`
+5. **Verificar**: chamar `SubscriptionService.hasActiveSubscription(userId)` em rotas que precisem gating
+
+### Vínculo a usuário
+
+`event.app_user_id` é o `distinctId` do SDK Paywallo. O processor casa:
+
+1. Se for UUID válido → direto `User.id`
+2. Senão → busca em `Onboarding.anonymousUserId → userId`
+
+Se nenhum match, a subscription é gravada com `userId: null` e `anonymousUserId: <distinctId>` — quando o user fizer login e o `Onboarding` for vinculado, eventos subsequentes do mesmo `original_transaction_id` reconciliam o `userId`.
+
+### Comissão de referral (extensão)
+
+`ReferralService.ts` documenta no código onde injetar `recordCommission` no `WebhookProcessor` para correlacionar `INITIAL_PURCHASE` com `User.referredById`.
 
 ---
 
@@ -487,9 +511,21 @@ E atualize o `User.isPremium` correspondente. **Esta é uma extensão fora do es
 
 ---
 
-## 12. Referências
+## 12. Integrações externas (dashboard-only)
+
+Estas integrações **não exigem código no app** — toda configuração acontece no dashboard do Paywallo:
+
+| Integração      | O que faz                                                       | Skill                                            |
+| :-------------- | :-------------------------------------------------------------- | :----------------------------------------------- |
+| **Meta Ads**    | Envia `paywallo_install` + `Purchase` server-side via CAPI      | [`paywallo-integrations.md`](./paywallo-integrations.md) |
+| **TikTok Ads**  | Envia `paywallo_install` + `Purchase` via Events API            | [`paywallo-integrations.md`](./paywallo-integrations.md) |
+| **Superwall**   | Importa eventos `initial_purchase`, `renewal`, etc. via webhook | [`paywallo-integrations.md`](./paywallo-integrations.md) |
+
+---
+
+## 13. Referências
 
 - **README oficial do SDK:** `C:\Projects\paywallo\panel-sdk\README.md`
 - **Types completos:** `C:\Projects\paywallo\panel-sdk\dist\index.d.ts`
 - **Dashboard:** `https://paywallo.com.br/dashboard`
-- **Documentação web:** `https://paywallo.com.br/docs?page=intro` (alta nível — para detalhes técnicos prefira os types do SDK)
+- **Documentação web oficial:** `https://paywallo.com.br/docs` (em construção — só páginas Intro, Meta Ads, TikTok Ads e Superwall estão publicadas; demais marcam "Esta página está sendo escrita")

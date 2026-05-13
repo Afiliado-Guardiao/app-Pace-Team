@@ -20,16 +20,16 @@ Backend Fastify/Prisma com arquitetura DDD (Domain-Driven Design) e injeção de
 
 ## Limites de Tamanho
 
-| Tipo | Max linhas |
-|---|---|
-| Controller | **200** |
-| Service | **250** |
-| Repository | **200** |
-| Routes | **80** |
-| Middleware | **150** |
-| Factory (`index.ts`) | **50** |
-| Types/Schemas (Zod) | **150** |
-| Função individual | **50** |
+| Tipo                 | Max linhas |
+| -------------------- | ---------- |
+| Controller           | **200**    |
+| Service              | **250**    |
+| Repository           | **200**    |
+| Routes               | **80**     |
+| Middleware           | **150**    |
+| Factory (`index.ts`) | **50**     |
+| Types/Schemas (Zod)  | **150**    |
+| Função individual    | **50**     |
 
 - **Max 4 parâmetros** por função/constructor — acima disso, usar objeto de opções
 - **Max 3 níveis** de aninhamento (depth) em qualquer função
@@ -48,12 +48,12 @@ Middleware   → Auth, validação, interceptação
 
 **Fluxo obrigatório:** Route → Controller → Service → Repository
 
-| Camada | Faz | Não faz |
-|---|---|---|
-| **Controller** | Valida com Zod, chama service, formata response, trata erros | Lógica de negócio, queries DB |
-| **Service** | Orquestra regras de negócio, chama repositories, lança DomainErrors | Acessa request/reply, queries SQL diretas |
-| **Repository** | CRUD via Prisma, mapeia erros do Prisma pra DomainErrors | Lógica de negócio, formatação de response |
-| **Middleware** | Valida token, injeta user context no request | Lógica de negócio |
+| Camada         | Faz                                                                 | Não faz                                   |
+| -------------- | ------------------------------------------------------------------- | ----------------------------------------- |
+| **Controller** | Valida com Zod, chama service, formata response, trata erros        | Lógica de negócio, queries DB             |
+| **Service**    | Orquestra regras de negócio, chama repositories, lança DomainErrors | Acessa request/reply, queries SQL diretas |
+| **Repository** | CRUD via Prisma, mapeia erros do Prisma pra DomainErrors            | Lógica de negócio, formatação de response |
+| **Middleware** | Valida token, injeta user context no request                        | Lógica de negócio                         |
 
 ## Estrutura de Domínio
 
@@ -75,6 +75,7 @@ domain/auth/
 ```
 
 **Regras de isolamento:**
+
 - Domínios comunicam via **interfaces** (`IAuthService`, `IOnboardingService`), nunca imports diretos de implementação
 - Código compartilhado vai pra `src/shared/` (errors, constants, types)
 - Infraestrutura vai pra `src/infrastructure/` (Database, App)
@@ -98,18 +99,18 @@ import { AuthRoutes } from "./routes/auth.routes";
 import { AuthService } from "./services/AuthService";
 
 export function createAuthModule(
-  logger: Logger,
-  database: Database,
-  onboardingService: IOnboardingService,
-  subscriptionService: ISubscriptionService,
+	logger: Logger,
+	database: Database,
+	onboardingService: IOnboardingService,
+	subscriptionService: ISubscriptionService,
 ): { routes: AuthRoutes; middleware: AuthMiddleware } {
-  const repository = new AuthRepository(database, logger);
-  const service = new AuthService(logger, repository, onboardingService, subscriptionService);
-  const controller = new AuthController(logger, service);
-  const middleware = new AuthMiddleware(logger, service, repository);
-  const routes = new AuthRoutes(controller, middleware);
+	const repository = new AuthRepository(database, logger);
+	const service = new AuthService(logger, repository, onboardingService, subscriptionService);
+	const controller = new AuthController(logger, service);
+	const middleware = new AuthMiddleware(logger, service, repository);
+	const routes = new AuthRoutes(controller, middleware);
 
-  return { routes, middleware };
+	return { routes, middleware };
 }
 ```
 
@@ -117,10 +118,16 @@ export function createAuthModule(
 // server.ts — Assembly
 const subscriptionModule = createSubscriptionModule(logger, database);
 const onboardingService = createOnboardingService(logger, database);
-const authModule = createAuthModule(logger, database, onboardingService, subscriptionModule.service);
+const authModule = createAuthModule(
+	logger,
+	database,
+	onboardingService,
+	subscriptionModule.service,
+);
 ```
 
 **Regras de DI:**
+
 - Factory sempre recebe `Logger` e `Database` como primeiros parâmetros
 - Dependências entre domínios sempre via interface, nunca classe concreta
 - Factory retorna apenas o necessário (`{ routes, middleware }` ou `{ routes, service }`)
@@ -132,52 +139,52 @@ Controllers lidam **exclusivamente** com HTTP. Toda lógica de negócio vive em 
 ```typescript
 // domain/auth/controllers/AuthController.ts — CORRETO
 export class AuthController {
-  constructor(
-    private logger: Logger,
-    private authService: IAuthService,
-  ) {}
+	constructor(
+		private logger: Logger,
+		private authService: IAuthService,
+	) {}
 
-  async register(
-    request: FastifyRequest<{ Body: RegisterRequest }>,
-    reply: FastifyReply,
-  ): Promise<void> {
-    try {
-      const validatedData = registerSchema.parse(request.body);
-      const response = await this.authService.register(validatedData);
-      void reply.status(201).send(response);
-    } catch (error) {
-      this.handleError(error, reply, request);
-    }
-  }
+	async register(
+		request: FastifyRequest<{ Body: RegisterRequest }>,
+		reply: FastifyReply,
+	): Promise<void> {
+		try {
+			const validatedData = registerSchema.parse(request.body);
+			const response = await this.authService.register(validatedData);
+			void reply.status(201).send(response);
+		} catch (error) {
+			this.handleError(error, reply, request);
+		}
+	}
 
-  private handleError(error: unknown, reply: FastifyReply, request: FastifyRequest): void {
-    const language = detectLanguageFromHeader(request.headers["accept-language"]);
+	private handleError(error: unknown, reply: FastifyReply, request: FastifyRequest): void {
+		const language = detectLanguageFromHeader(request.headers["accept-language"]);
 
-    if (error instanceof ZodError) {
-      const firstError = error.errors[0];
-      void reply.status(400).send({
-        error: "VALIDATION_ERROR",
-        message: `Validation failed for field: ${firstError?.path.join(".")}`,
-        details: error.errors,
-      });
-      return;
-    }
+		if (error instanceof ZodError) {
+			const firstError = error.errors[0];
+			void reply.status(400).send({
+				error: "VALIDATION_ERROR",
+				message: `Validation failed for field: ${firstError?.path.join(".")}`,
+				details: error.errors,
+			});
+			return;
+		}
 
-    if (error instanceof DomainError) {
-      void reply.status(error.statusCode).send({
-        error: error.code,
-        message: error.getLocalizedMessage(language),
-      });
-      return;
-    }
+		if (error instanceof DomainError) {
+			void reply.status(error.statusCode).send({
+				error: error.code,
+				message: error.getLocalizedMessage(language),
+			});
+			return;
+		}
 
-    const err = error instanceof Error ? error : new Error(String(error));
-    this.logger.error("Unknown error", err);
-    void reply.status(500).send({
-      error: "Internal Server Error",
-      message: "An unexpected error occurred",
-    });
-  }
+		const err = error instanceof Error ? error : new Error(String(error));
+		this.logger.error("Unknown error", err);
+		void reply.status(500).send({
+			error: "Internal Server Error",
+			message: "An unexpected error occurred",
+		});
+	}
 }
 ```
 
@@ -190,36 +197,37 @@ Todos os erros de domínio estendem `DomainError` com suporte a i18n:
 ```typescript
 // shared/errors/index.ts
 export class DomainError extends Error {
-  public readonly code: ErrorCode;
-  public readonly statusCode: number;
+	public readonly code: ErrorCode;
+	public readonly statusCode: number;
 
-  constructor(message: string, options: IDomainErrorOptions) {
-    super(message);
-    this.name = "DomainError";
-    this.code = options.code;
-    this.statusCode = options.statusCode ?? 400;
-  }
+	constructor(message: string, options: IDomainErrorOptions) {
+		super(message);
+		this.name = "DomainError";
+		this.code = options.code;
+		this.statusCode = options.statusCode ?? 400;
+	}
 
-  getLocalizedMessage(language: string): string {
-    // i18n lookup com fallback para this.message
-  }
+	getLocalizedMessage(language: string): string {
+		// i18n lookup com fallback para this.message
+	}
 }
 ```
 
 ```typescript
 // Erro específico do domínio — CORRETO
 export class EmailAlreadyExistsError extends DomainError {
-  constructor() {
-    super("Email already exists", {
-      code: ERROR_CODES.EMAIL_ALREADY_EXISTS,
-      statusCode: 409,
-    });
-    this.name = "EmailAlreadyExistsError";
-  }
+	constructor() {
+		super("Email already exists", {
+			code: ERROR_CODES.EMAIL_ALREADY_EXISTS,
+			statusCode: 409,
+		});
+		this.name = "EmailAlreadyExistsError";
+	}
 }
 ```
 
 **Regras de errors:**
+
 - Código de erro em `shared/constants/errorCodes.ts` — centralizado
 - Nome do erro: `DescriçãoError` (ex: `InvalidCredentialsError`)
 - `statusCode` encapsulado no erro — controller não decide HTTP status
@@ -232,29 +240,33 @@ Routes implementam a interface `IRoute` e registram endpoints no Fastify:
 ```typescript
 // domain/auth/routes/auth.routes.ts — CORRETO
 export class AuthRoutes implements IRoute {
-  constructor(
-    private authController: AuthController,
-    private authMiddleware: AuthMiddleware,
-  ) {}
+	constructor(
+		private authController: AuthController,
+		private authMiddleware: AuthMiddleware,
+	) {}
 
-  register(app: FastifyInstance): void {
-    // Público
-    app.post<{ Body: RegisterRequest }>("/auth/register", {
-      handler: (request, reply) => this.authController.register(request, reply),
-    });
+	register(app: FastifyInstance): void {
+		// Público
+		app.post<{ Body: RegisterRequest }>("/auth/register", {
+			handler: (request, reply) => this.authController.register(request, reply),
+		});
 
-    // Protegido
-    app.get("/auth/me", {
-      preHandler: (request, reply, done) => {
-        void this.authMiddleware.authenticate(request, reply).then(() => done()).catch(done);
-      },
-      handler: (request, reply) => this.authController.me(request, reply),
-    });
-  }
+		// Protegido
+		app.get("/auth/me", {
+			preHandler: (request, reply, done) => {
+				void this.authMiddleware
+					.authenticate(request, reply)
+					.then(() => done())
+					.catch(done);
+			},
+			handler: (request, reply) => this.authController.me(request, reply),
+		});
+	}
 }
 ```
 
 **Regras de routes:**
+
 - Endpoints públicos: sem `preHandler`
 - Endpoints protegidos: `preHandler` com `authMiddleware.authenticate`
 - Sem lógica nos handlers da rota — delegar pra controller
@@ -267,10 +279,10 @@ import { z } from "zod";
 
 // Schemas Zod para validação de input
 export const registerSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(VALIDATION_CONSTANTS.MIN_PASSWORD_LENGTH),
-  name: z.string().min(VALIDATION_CONSTANTS.MIN_NAME_LENGTH),
-  onboardingId: z.string().uuid("Invalid onboarding ID format"),
+	email: z.string().email("Invalid email format"),
+	password: z.string().min(VALIDATION_CONSTANTS.MIN_PASSWORD_LENGTH),
+	name: z.string().min(VALIDATION_CONSTANTS.MIN_NAME_LENGTH),
+	onboardingId: z.string().uuid("Invalid onboarding ID format"),
 });
 
 // Types inferidos do schema
@@ -278,18 +290,19 @@ export type RegisterRequest = z.infer<typeof registerSchema>;
 
 // Interfaces de contrato (DI)
 export interface IAuthService {
-  register(data: RegisterRequest): Promise<AuthResponse>;
-  login(data: LoginRequest): Promise<AuthResponse>;
-  verifyToken(token: string): JWTPayload;
+	register(data: RegisterRequest): Promise<AuthResponse>;
+	login(data: LoginRequest): Promise<AuthResponse>;
+	verifyToken(token: string): JWTPayload;
 }
 
 export interface IAuthRepository {
-  createUser(data: CreateUserData): Promise<UserData>;
-  findUserByEmail(email: string): Promise<UserData | null>;
+	createUser(data: CreateUserData): Promise<UserData>;
+	findUserByEmail(email: string): Promise<UserData | null>;
 }
 ```
 
 **Regras de types:**
+
 - Schemas Zod + types inferidos no mesmo arquivo
 - Interfaces de serviço e repositório (`IAuthService`, `IAuthRepository`) no types do domínio
 - Constantes de validação em `shared/constants/validation.ts`
@@ -317,30 +330,31 @@ Testes de integração com DB real (Docker), sem mocks do Prisma.
 ```typescript
 // domain/auth/__tests__/auth.integration.test.ts — CORRETO
 describe("POST /auth/register", () => {
-  it("should register a new user", async () => {
-    const app = getTestServer();
-    const onboarding = await createOnboardingWithSubscription();
+	it("should register a new user", async () => {
+		const app = getTestServer();
+		const onboarding = await createOnboardingWithSubscription();
 
-    const response = await app.inject({
-      method: "POST",
-      url: "/auth/register",
-      payload: {
-        email: "newuser@example.com",
-        password: "SecurePass123!",
-        name: "New User",
-        onboardingId: onboarding.id,
-      },
-    });
+		const response = await app.inject({
+			method: "POST",
+			url: "/auth/register",
+			payload: {
+				email: "newuser@example.com",
+				password: "SecurePass123!",
+				name: "New User",
+				onboardingId: onboarding.id,
+			},
+		});
 
-    expect(response.statusCode).toBe(201);
-    const body = JSON.parse(response.body) as AuthResponse;
-    expect(body.token).toBeDefined();
-    expect(body.user.email).toBe("newuser@example.com");
-  });
+		expect(response.statusCode).toBe(201);
+		const body = JSON.parse(response.body) as AuthResponse;
+		expect(body.token).toBeDefined();
+		expect(body.user.email).toBe("newuser@example.com");
+	});
 });
 ```
 
 **Regras de testing:**
+
 - Testes de integração usam `app.inject()` do Fastify (sem HTTP real)
 - Fixtures via factory functions em `tests/fixtures/` (ex: `createUser()`, `createOnboardingWithSubscription()`)
 - `beforeEach` limpa o banco (`clearDatabase()`)
@@ -349,21 +363,21 @@ describe("POST /auth/register", () => {
 
 ## Naming Conventions
 
-| Tipo | Convenção | Exemplo |
-|---|---|---|
-| Controller | `PascalCase` + `Controller` | `AuthController` |
-| Service | `PascalCase` + `Service` | `AuthService` |
-| Repository | `PascalCase` + `Repository` | `AuthRepository` |
-| Middleware | `PascalCase` + `Middleware` | `AuthMiddleware` |
-| Routes | `PascalCase` + `Routes` | `AuthRoutes` |
-| Error | `PascalCase` + `Error` | `EmailAlreadyExistsError` |
-| Factory | `create` + `ModuleName` | `createAuthModule` |
-| Interface | `I` + `PascalCase` | `IAuthService` |
-| Zod schema | `camelCase` + `Schema` | `registerSchema` |
-| Type (inferido) | `PascalCase` + `Request`/`Response` | `RegisterRequest` |
-| Constante | `UPPER_SNAKE_CASE` | `ERROR_CODES` |
-| Arquivo controller | `PascalCase.ts` | `AuthController.ts` |
-| Arquivo rota | `kebab-case.routes.ts` | `auth.routes.ts` |
+| Tipo               | Convenção                           | Exemplo                   |
+| ------------------ | ----------------------------------- | ------------------------- |
+| Controller         | `PascalCase` + `Controller`         | `AuthController`          |
+| Service            | `PascalCase` + `Service`            | `AuthService`             |
+| Repository         | `PascalCase` + `Repository`         | `AuthRepository`          |
+| Middleware         | `PascalCase` + `Middleware`         | `AuthMiddleware`          |
+| Routes             | `PascalCase` + `Routes`             | `AuthRoutes`              |
+| Error              | `PascalCase` + `Error`              | `EmailAlreadyExistsError` |
+| Factory            | `create` + `ModuleName`             | `createAuthModule`        |
+| Interface          | `I` + `PascalCase`                  | `IAuthService`            |
+| Zod schema         | `camelCase` + `Schema`              | `registerSchema`          |
+| Type (inferido)    | `PascalCase` + `Request`/`Response` | `RegisterRequest`         |
+| Constante          | `UPPER_SNAKE_CASE`                  | `ERROR_CODES`             |
+| Arquivo controller | `PascalCase.ts`                     | `AuthController.ts`       |
+| Arquivo rota       | `kebab-case.routes.ts`              | `auth.routes.ts`          |
 
 ## Imports
 
@@ -417,11 +431,11 @@ O projeto usa **`prisma migrate`** versionado — nunca `db push` em staging/pro
 
 ### Comandos
 
-| Comando | Quando usar |
-|---|---|
-| `npm run db:migrate:dev -- --name descricao_da_mudanca` | Criar migration local em dev (interativo, atualiza o client) |
-| `npm run db:migrate:deploy` | Aplicar migrations pendentes em staging/prod/CI (não interativo) |
-| `npm run db:migrate:reset` | Reset local: drop + recreate + migrate + seed (só dev) |
+| Comando                                                 | Quando usar                                                      |
+| ------------------------------------------------------- | ---------------------------------------------------------------- |
+| `npm run db:migrate:dev -- --name descricao_da_mudanca` | Criar migration local em dev (interativo, atualiza o client)     |
+| `npm run db:migrate:deploy`                             | Aplicar migrations pendentes em staging/prod/CI (não interativo) |
+| `npm run db:migrate:reset`                              | Reset local: drop + recreate + migrate + seed (só dev)           |
 
 ### Fluxo de desenvolvimento
 
@@ -447,6 +461,21 @@ Auth é **stateless via JWT + `loginVersion`**. Sem tabela `sessions`.
 - Logout e password-change incrementam `loginVersion`, invalidando todos os tokens anteriores imediatamente
 - **Refresh tokens: fora de escopo deste skeleton** — implementar em projeto derivado se necessário
 - O model `Session` foi removido na migration `20260419202204_remove_session_model` — não recriar sem plano explícito de refresh tokens
+
+## Subscription & Webhook Paywallo
+
+O domínio `src/domain/subscription/` recebe webhooks do Paywallo no formato RevenueCat-compatible e mantém o estado de `Subscription` + flag `User.isPremium` sincronizado.
+
+- **Endpoint:** `POST /webhooks/paywallo/:pathSecret` — secret-UUID configurado no dashboard Paywallo e em `PAYWALLO_WEBHOOK_PATH_SECRET`
+- **Verificação dupla:** path secret (constant-time compare) + HMAC-SHA256 do body via header `X-Paywallo-Signature` (chave `PAYWALLO_WEBHOOK_HMAC_SECRET`)
+- **Idempotência:** `WebhookEvent.eventId` único por evento (prefixo `pw_` no payload original). Replays retornam `deduplicated: true`
+- **Eventos suportados:** `INITIAL_PURCHASE`, `RENEWAL`, `CANCELLATION`, `EXPIRATION`, `UNCANCELLATION`
+- **Vínculo a User:** `event.app_user_id` é tratado como `distinctId`. Se for um UUID, casa direto com `User.id`; senão, busca em `Onboarding.anonymousUserId → userId`
+- **Flag `User.isPremium`:** atualizada para `true` em statuses ativos (`active`, `in_grace_period`, `in_billing_retry`) e `false` no resto. Use a flag para queries SQL rápidas — para regras dinâmicas, prefira `SubscriptionService.hasActiveSubscription(userId)`
+- **Raw body:** o parser de JSON para a rota do webhook é encapsulado em plugin escopado (`SubscriptionRoutes.register`) que preserva `request.rawBody` para o HMAC funcionar bytes-perfect
+- **Teste manual:** `npx tsx scripts/test-webhook.ts` (precisa `PAYWALLO_WEBHOOK_PATH_SECRET` e opcionalmente `PAYWALLO_WEBHOOK_HMAC_SECRET` no env)
+
+Comissão de referral a partir de assinatura: `ReferralService` documenta no código onde injetar a integração (ver comentário em `ReferralService.ts`).
 
 ## Checklist: Novo Domínio
 

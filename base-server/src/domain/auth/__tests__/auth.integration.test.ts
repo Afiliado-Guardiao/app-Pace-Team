@@ -145,7 +145,11 @@ describe("Auth Integration Tests", () => {
 			const app = getTestServer();
 			const { getDatabase } = await import("../../../../tests/helpers/database");
 			const db = getDatabase();
-			const user = await createUser({ email: "loginver@example.com", password: "Test@123", loginVersion: 1 });
+			const user = await createUser({
+				email: "loginver@example.com",
+				password: "Test@123",
+				loginVersion: 1,
+			});
 
 			await app.inject({
 				method: "POST",

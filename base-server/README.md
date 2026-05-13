@@ -117,15 +117,15 @@ O fluxo é sempre: **Route → Controller → Service → Repository → DB**
 
 ## `>` Navegação rápida
 
-| Quero...                          | Vou em...                                         |
-| :-------------------------------- | :------------------------------------------------ |
-| Criar um endpoint novo            | `src/domain/[dominio]/routes/` → `controllers/`   |
-| Escrever lógica de negócio        | `src/domain/[dominio]/services/`                  |
-| Fazer query no banco              | `src/domain/[dominio]/repositories/`              |
-| Criar uma migration               | `npm run db:migrate:dev -- --name descricao`      |
-| Plugar rotas no servidor          | `src/infrastructure/http/`                        |
-| Adicionar env var nova            | `.env` + `src/core/config/`                       |
-| Adicionar novo domínio            | `src/domain/[nome]/` + factory `createXModule()`  |
+| Quero...                   | Vou em...                                        |
+| :------------------------- | :----------------------------------------------- |
+| Criar um endpoint novo     | `src/domain/[dominio]/routes/` → `controllers/`  |
+| Escrever lógica de negócio | `src/domain/[dominio]/services/`                 |
+| Fazer query no banco       | `src/domain/[dominio]/repositories/`             |
+| Criar uma migration        | `npm run db:migrate:dev -- --name descricao`     |
+| Plugar rotas no servidor   | `src/infrastructure/http/`                       |
+| Adicionar env var nova     | `.env` + `src/core/config/`                      |
+| Adicionar novo domínio     | `src/domain/[nome]/` + factory `createXModule()` |
 
 <br/>
 

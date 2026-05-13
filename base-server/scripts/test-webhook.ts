@@ -1,74 +1,82 @@
 #!/usr/bin/env tsx
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { createHmac } from "crypto";
 
-const WEBHOOK_UUID = "a3f4b8c2-9d1e-4f5a-b3c7-8e9f0a1b2c3d";
+const PATH_SECRET = process.env.PAYWALLO_WEBHOOK_PATH_SECRET ?? "";
+const HMAC_SECRET = process.env.PAYWALLO_WEBHOOK_HMAC_SECRET ?? "";
 const BASE_URL = process.env.TEST_URL ?? "http://localhost:11000";
+
+if (!PATH_SECRET) {
+	console.error("❌ Set PAYWALLO_WEBHOOK_PATH_SECRET env var before running this script.");
+	process.exit(1);
+}
 
 const now = Date.now();
 const testPayload = {
 	api_version: "1.0",
 	event: {
-		type: "INITIAL_PURCHASE",
-		id: `test-event-${String(now)}`,
-		app_user_id: "test-anonymous-user-123",
+		id: `pw_test-${String(now)}`,
+		type: "INITIAL_PURCHASE" as const,
 		event_timestamp_ms: now,
+		app_user_id: "test-anonymous-user-123",
+		original_app_user_id: "test-anonymous-user-123",
 		product_id: "premium_monthly",
 		price: 9.99,
 		currency: "USD",
-		expiration_at_ms: now + 30 * 24 * 60 * 60 * 1000, // 30 dias
-		purchased_at_ms: now,
-		store: "app_store",
+		store: "APP_STORE",
 		environment: "SANDBOX",
 		period_type: "NORMAL",
-		transaction_id: `test-transaction-${String(now)}`,
-		original_transaction_id: `test-original-${String(now)}`,
-		price_in_purchased_currency: 9.99,
-		is_trial_conversion: false,
+		transaction_id: `txn-${String(now)}`,
+		original_transaction_id: `txn-original-${String(now)}`,
+		expiration_at_ms: now + 30 * 24 * 60 * 60 * 1000,
+		country_code: "BR",
+		entitlement_ids: ["premium"],
 	},
 };
 
 async function testWebhook(): Promise<void> {
-	const url = `${BASE_URL}/webhooks/rc-${WEBHOOK_UUID}`;
+	const url = `${BASE_URL}/webhooks/paywallo/${PATH_SECRET}`;
+	const body = JSON.stringify(testPayload);
 
-	// eslint-disable-next-line no-console
-	console.log("🚀 Testing webhook...");
-	// eslint-disable-next-line no-console
+	const headers: Record<string, string> = {
+		"Content-Type": "application/json",
+		"User-Agent": "Paywallo-Webhook-Test",
+	};
+
+	if (HMAC_SECRET) {
+		const signature = `sha256=${createHmac("sha256", HMAC_SECRET).update(body).digest("hex")}`;
+		headers["X-Paywallo-Signature"] = signature;
+	}
+
+	console.log("🚀 Testing Paywallo webhook...");
 	console.log(`📍 URL: ${url}`);
-	// eslint-disable-next-line no-console
+	console.log(
+		`🔐 HMAC: ${HMAC_SECRET ? "enabled" : "disabled (set PAYWALLO_WEBHOOK_HMAC_SECRET to enable)"}`,
+	);
 	console.log("📦 Payload:");
-	// eslint-disable-next-line no-console
-	console.log(JSON.stringify(testPayload, null, 2));
-	// eslint-disable-next-line no-console
+	console.log(body);
 	console.log("\n⏳ Sending request...\n");
 
 	try {
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"User-Agent": "RevenueCat-Webhook-Test",
-			},
-			body: JSON.stringify(testPayload),
-		});
+		const response = await fetch(url, { method: "POST", headers, body });
+		const text = await response.text();
+		const parsed: unknown = text ? (JSON.parse(text) as unknown) : {};
 
-		const data = (await response.json()) as Record<string, unknown>;
-
-		// eslint-disable-next-line no-console
 		console.log("✅ Response received:");
-		// eslint-disable-next-line no-console
-		console.log(`Status: ${response.status.toString()} ${response.statusText}`);
-		// eslint-disable-next-line no-console
-		console.log("Body:", data);
+		console.log(`Status: ${String(response.status)} ${response.statusText}`);
+		console.log("Body:", parsed);
 
 		if (response.ok) {
-			// eslint-disable-next-line no-console
 			console.log("\n✅ Webhook test successful!");
+			process.exit(0);
 		} else {
-			// eslint-disable-next-line no-console
 			console.log("\n❌ Webhook test failed!");
+			process.exit(1);
 		}
 	} catch (error) {
 		console.error("\n❌ Request failed:", error);

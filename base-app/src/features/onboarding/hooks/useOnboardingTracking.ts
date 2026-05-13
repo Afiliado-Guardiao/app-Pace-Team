@@ -1,32 +1,37 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 
-import type { IOnboardingStep } from "../types";
+import { useOnboarding } from "@virex-tech/paywallo-sdk";
 
-interface IUseOnboardingTrackingParams {
-	currentStepIndex: number;
-	currentStep: IOnboardingStep;
-	totalSteps: number;
+export interface IUseOnboardingTrackingReturn {
+	trackStepViewed: (stepName: string) => Promise<void>;
+	trackStepDropped: (stepName: string) => Promise<void>;
+	trackOnboardingCompleted: () => Promise<void>;
 }
 
-// TODO(fase-2): integrar serviço de analytics quando disponível
-export const useOnboardingTracking = ({
-	currentStepIndex: _currentStepIndex,
-	currentStep: _currentStep,
-	totalSteps: _totalSteps,
-}: IUseOnboardingTrackingParams) => {
-	const sessionStartTimeRef = useRef<number>(Date.now());
+export const useOnboardingTracking = (): IUseOnboardingTrackingReturn => {
+	const { step, complete, drop } = useOnboarding();
 
-	const trackOnboardingStarted = useCallback(() => {
-		void sessionStartTimeRef.current;
-	}, []);
+	const trackStepViewed = useCallback(
+		async (stepName: string): Promise<void> => {
+			await step(stepName);
+		},
+		[step],
+	);
 
-	const trackStepCompleted = useCallback(() => {}, []);
+	const trackStepDropped = useCallback(
+		async (stepName: string): Promise<void> => {
+			await drop(stepName);
+		},
+		[drop],
+	);
 
-	const trackOnboardingCompleted = useCallback(() => {}, []);
+	const trackOnboardingCompleted = useCallback(async (): Promise<void> => {
+		await complete();
+	}, [complete]);
 
 	return {
-		trackOnboardingStarted,
-		trackStepCompleted,
+		trackStepViewed,
+		trackStepDropped,
 		trackOnboardingCompleted,
 	};
 };

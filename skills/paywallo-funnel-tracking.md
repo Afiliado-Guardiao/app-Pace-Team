@@ -1,6 +1,8 @@
 # Skill: Paywallo SDK — Tracking de Funil & Eventos
 
+> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.2.x
 > **Pré-requisito:** [`paywallo-sdk-setup.md`](./paywallo-sdk-setup.md) já aplicado.
+> **Doc oficial:** [`https://paywallo.com.br/docs/identificacao-usuario`](https://paywallo.com.br/docs/identificacao-usuario) (em construção)
 
 Esta skill cobre como instrumentar o funil do `base-app` (welcome → onboarding → auth → home → paywall) para que o dashboard do Paywallo calcule taxa de conversão e identifique drop-off automaticamente.
 

@@ -50,17 +50,11 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 
 	const currentStep = useMemo(() => ONBOARDING_STEPS[currentStepIndex], [currentStepIndex]);
 
-	const { trackOnboardingStarted, trackStepCompleted } = useOnboardingTracking({
-		currentStepIndex,
-		currentStep,
-		totalSteps: ONBOARDING_STEPS.length,
-	});
+	const { trackStepViewed } = useOnboardingTracking();
 
 	useEffect(() => {
-		if (currentStepIndex === 0) {
-			trackOnboardingStarted();
-		}
-	}, [currentStepIndex, trackOnboardingStarted]);
+		void trackStepViewed(currentStep.id);
+	}, [currentStep.id, trackStepViewed]);
 
 	const currentAnswer = useMemo(() => answers[currentStep.id], [answers, currentStep]);
 
@@ -97,7 +91,6 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 		if (resolvedId) {
 			fireStepUpdate(resolvedId, deviceMetadataRef.current);
 		}
-		trackStepCompleted();
 		setCurrentStepIndex(currentStepIndex + 1);
 	}, [
 		currentStep,
@@ -107,7 +100,6 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 		getOrCreateOnboardingId,
 		fireStepUpdate,
 		deviceMetadataRef,
-		trackStepCompleted,
 		setCurrentStepIndex,
 	]);
 

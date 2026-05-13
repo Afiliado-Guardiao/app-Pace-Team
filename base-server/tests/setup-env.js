@@ -6,3 +6,5 @@ process.env.JWT_EXPIRATION = "7d";
 process.env.RATE_LIMIT = "1000";
 process.env.RATE_LIMIT_TIMEWINDOW = "60000";
 process.env.AUTH_RATE_LIMIT = "1000";
+process.env.PAYWALLO_WEBHOOK_PATH_SECRET = "test-path-secret-uuid-1111-2222-3333-444444444444";
+process.env.PAYWALLO_WEBHOOK_HMAC_SECRET = "test-hmac-secret-min-16-chars-ok";

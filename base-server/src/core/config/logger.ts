@@ -55,4 +55,3 @@ export class Logger {
 		this.logger.debug(this.formatMessage(message, data));
 	}
 }
-

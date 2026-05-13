@@ -36,6 +36,7 @@ export function createMockUser(
 		referredByCode: null,
 		referredById: null,
 		loginVersion: 1,
+		isPremium: false,
 		...overrides,
 	};
 }

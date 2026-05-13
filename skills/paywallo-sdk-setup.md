@@ -1,8 +1,9 @@
 # Skill: Paywallo SDK — Setup & Core Integration
 
-> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.1.x
+> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.2.x
 > **App alvo:** `base-app` (React Native + Expo SDK 54)
 > **Stack pressuposta:** Expo Router, Zustand, React Query, i18next, theme tokens
+> **Doc oficial:** [`https://paywallo.com.br/docs/instalacao-configuracao`](https://paywallo.com.br/docs/instalacao-configuracao) (em construção — esta skill é a fonte canônica)
 
 Setup mínimo **funcional** do SDK Paywallo no `base-app`. Esta skill cobre instalação, configuração, montagem do Provider, identificação de usuário em login/logout e wiring de erros para observability.
 
@@ -26,7 +27,7 @@ Setup mínimo **funcional** do SDK Paywallo no `base-app`. Esta skill cobre inst
 
 ```bash
 cd base-app
-npm install @virex-tech/paywallo-sdk
+npm install @virex-tech/paywallo-sdk@^2.2.1
 ```
 
 > Equivalentes: `yarn add @virex-tech/paywallo-sdk` ou `pnpm add @virex-tech/paywallo-sdk`.

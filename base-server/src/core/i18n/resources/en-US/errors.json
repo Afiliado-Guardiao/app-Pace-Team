@@ -16,5 +16,9 @@
 	"INVALID_WEBHOOK": "Invalid webhook payload",
 	"DUPLICATE_EVENT": "This event has already been processed",
 	"NETWORK_ERROR": "Connection error",
-	"TIMEOUT_ERROR": "Request timed out"
+	"TIMEOUT_ERROR": "Request timed out",
+	"SUBSCRIPTION_NOT_FOUND": "Subscription not found",
+	"WEBHOOK_SIGNATURE_INVALID": "Webhook signature is invalid",
+	"WEBHOOK_PATH_SECRET_INVALID": "Webhook path secret is invalid",
+	"WEBHOOK_EVENT_TYPE_UNSUPPORTED": "Webhook event type is not supported"
 }

@@ -1,6 +1,8 @@
 # Skill: Paywallo SDK — Apresentação de Paywalls & Gate de Conteúdo
 
+> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.2.x
 > **Pré-requisito:** [`paywallo-sdk-setup.md`](./paywallo-sdk-setup.md) já aplicado — `<PaywalloProvider>` montado, `identify` plugado.
+> **Doc oficial:** [`https://paywallo.com.br/docs/paywalls-assinaturas`](https://paywallo.com.br/docs/paywalls-assinaturas) e [`https://paywallo.com.br/docs/paywall-offerings`](https://paywallo.com.br/docs/paywall-offerings) (em construção)
 
 Esta skill cobre os três padrões para mostrar um paywall e bloquear conteúdo premium no `base-app`. **Em todos eles, o SDK renderiza a UI do paywall sozinho** (modal/web view montado pelo `PaywalloProvider`) — o app só dispara a chamada.
 
@@ -138,19 +140,16 @@ const result = await PaywalloClient.presentCampaign("plans", {
 });
 ```
 
-### Callbacks inline (alternativa ao `await`)
+### Callbacks (via `await`)
 
-`presentPaywall` e `presentCampaign` aceitam callbacks no segundo parâmetro — útil quando você quer reagir em pontos específicos sem montar lógica em cima do retorno:
+As assinaturas públicas em v2.2.x são:
 
-```tsx
-await PaywalloClient.presentPaywall("onboarding_end", {
-  onDismiss: () => console.log("user fechou"),
-  onPurchase: (productId) => analytics.track("purchase", { productId }),
-  onError: (err) => reportError(err),
-});
+```ts
+PaywalloClient.presentPaywall(placement: string): Promise<PaywallResult>;
+PaywalloClient.presentCampaign(placement: string, context?: Record<string, unknown>): Promise<CampaignResult>;
 ```
 
-> Os callbacks **não substituem** o retorno da Promise — você ainda recebe o `PaywallResult`. Use os callbacks para hooks de instrumentação; use o `await` para lógica de fluxo.
+Os tipos `PaywallPresentOptions` / `CampaignPresentOptions` (com `onDismiss`, `onPurchase`, `onError`) existem no SDK mas são consumidos internamente pelo modal — **não os passe como segundo argumento**. Use o `await` direto e reaja ao retorno (`result.purchased`, `result.cancelled`, etc.). Para instrumentação adicional, registre `onError` no `PaywalloProvider` (callback global).
 
 ---
 
@@ -193,15 +192,24 @@ Use o hook nativo `useSubscription()` em vez de chamar `hasActiveSubscription()`
 import { useSubscription } from "@virex-tech/paywallo-sdk";
 
 export const useHomeSubscriptionGate = () => {
-  const { subscription, isActive, isLoading, entitlements, refresh } =
-    useSubscription();
+  const {
+    subscription, // SubscriptionInfo | null
+    isActive, // boolean
+    isLoading, // boolean
+    error, // Error | null (v2.2.x)
+    entitlements, // string[]
+    refresh, // () => Promise<void>
+    restore, // () => Promise<void> (v2.2.x)
+  } = useSubscription();
 
   return {
     isPremium: isActive,
     plan: subscription?.productId ?? null,
     entitlements,
     isLoading,
+    error,
     refresh,
+    restore,
   };
 };
 ```
@@ -237,7 +245,14 @@ interface IUseUpgradeButtonReturn {
 }
 
 export const useUpgradeButton = (): IUseUpgradeButtonReturn => {
-  const { purchase, isPurchasing } = usePurchase();
+  const {
+    state, // PurchaseState — máquina de estados da compra
+    purchase, // (productId) => Promise<PurchaseOutcome>
+    restore, // () => Promise<IAPPurchase[]>
+    error, // PurchaseError | null
+    isPurchasing, // boolean
+    isRestoring, // boolean (v2.2.x)
+  } = usePurchase();
 
   const handleBuy = useCallback(
     async (productId: string): Promise<void> => {

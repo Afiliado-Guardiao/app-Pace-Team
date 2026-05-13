@@ -3,11 +3,7 @@ import { FastifyInstance } from "fastify";
 import { IMiddleware, IRoute } from "@/shared/types";
 
 import { OnboardingController } from "../controllers/OnboardingController";
-import {
-	CreateOnboardingRequest,
-	OnboardingIdParam,
-	UpdateOnboardingRequest,
-} from "../types";
+import { CreateOnboardingRequest, OnboardingIdParam, UpdateOnboardingRequest } from "../types";
 
 export class OnboardingRoutes implements IRoute {
 	constructor(

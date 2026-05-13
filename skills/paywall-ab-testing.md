@@ -1,6 +1,8 @@
 # Skill: Paywallo SDK — A/B Testing & Feature Flags
 
+> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.2.x
 > **Pré-requisito:** [`paywallo-sdk-setup.md`](./paywallo-sdk-setup.md) já aplicado.
+> **Doc oficial:** [`https://paywallo.com.br/docs/testes-ab-feature-flags`](https://paywallo.com.br/docs/testes-ab-feature-flags) (em construção)
 
 Esta skill cobre como usar feature flags e A/B testing do Paywallo no `base-app` **sem flicker**, sem requests redundantes e sem gerenciar state em paralelo. O SDK 2.x oferece três APIs distintas — escolha a certa para cada caso.
 

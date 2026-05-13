@@ -19,19 +19,17 @@ export class Database {
 
 	private setupLogging(): void {
 		// Tipagem do Prisma.$on é incompleta para eventos "error"/"warn" mesmo quando configurados via log option — cast necessário aqui.
-		(this.prisma as unknown as { $on(event: string, cb: (e: { message: string }) => void): void }).$on(
-			"error",
-			(e) => {
-				this.logger.error("Erro no banco de dados: " + e.message);
-			},
-		);
+		(
+			this.prisma as unknown as { $on(event: string, cb: (e: { message: string }) => void): void }
+		).$on("error", (e) => {
+			this.logger.error("Erro no banco de dados: " + e.message);
+		});
 
-		(this.prisma as unknown as { $on(event: string, cb: (e: { message: string }) => void): void }).$on(
-			"warn",
-			(e) => {
-				this.logger.warn("Aviso do banco de dados: " + e.message);
-			},
-		);
+		(
+			this.prisma as unknown as { $on(event: string, cb: (e: { message: string }) => void): void }
+		).$on("warn", (e) => {
+			this.logger.warn("Aviso do banco de dados: " + e.message);
+		});
 	}
 
 	async connect(): Promise<void> {
