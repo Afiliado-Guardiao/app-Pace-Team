@@ -1,0 +1,167 @@
+import { User } from "@supabase/supabase-js";
+
+import { useStore } from "@/store";
+
+import { supabase } from "./client";
+import { IUser, ProfileRow } from "./types";
+
+function mapUser(authUser: User, profile: ProfileRow): IUser {
+	return {
+		id: authUser.id,
+		email: authUser.email ?? null,
+		name: profile.name,
+		birthday: profile.birthday,
+		referralCode: profile.referral_code,
+		isPremium: profile.is_premium,
+		createdAt: profile.created_at,
+	};
+}
+
+// Retorna o usuário logado (não-anônimo) com os dados do profile, ou null.
+export async function getCurrentUser(): Promise<IUser | null> {
+	const {
+		data: { session },
+	} = await supabase.auth.getSession();
+
+	if (!session || session.user.is_anonymous === true) {
+		return null;
+	}
+
+	const { data: profile, error } = await supabase
+		.from("profiles")
+		.select("*")
+		.eq("id", session.user.id)
+		.maybeSingle();
+
+	if (error || !profile) {
+		return null;
+	}
+
+	return mapUser(session.user, profile);
+}
+
+// Sincroniza o store Zustand com o estado de autenticação atual do Supabase.
+export async function syncAuthState(): Promise<void> {
+	const user = await getCurrentUser();
+	useStore.getState().setUser(user);
+}
+
+// Garante que existe uma sessão (anônima, se necessário) para o onboarding.
+export async function ensureSession(): Promise<void> {
+	const {
+		data: { session },
+	} = await supabase.auth.getSession();
+
+	if (!session) {
+		const { error } = await supabase.auth.signInAnonymously();
+		if (error) throw error;
+	}
+}
+
+// Assina mudanças de autenticação. Retorna a subscription para cleanup.
+export function onAuthChange(callback: () => void): { unsubscribe: () => void } {
+	const { data } = supabase.auth.onAuthStateChange(() => {
+		callback();
+	});
+	return data.subscription;
+}
+
+export async function signInWithEmail(params: { email: string; password: string }): Promise<void> {
+	const { error } = await supabase.auth.signInWithPassword(params);
+	if (error) throw error;
+	await syncAuthState();
+}
+
+async function applyProfileName(name: string): Promise<void> {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (!user) return;
+	await supabase.from("profiles").update({ name }).eq("id", user.id);
+}
+
+// Cadastro: converte o usuário anônimo do onboarding em permanente. Se não
+// houver sessão anônima, cria uma conta nova diretamente.
+export async function signUpWithEmail(params: {
+	email: string;
+	password: string;
+	name: string;
+}): Promise<void> {
+	const { email, password, name } = params;
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (user?.is_anonymous === true) {
+		const { error } = await supabase.auth.updateUser({ email, password, data: { name } });
+		if (error) throw error;
+	} else {
+		const { error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
+		if (error) throw error;
+	}
+
+	await applyProfileName(name);
+	await syncAuthState();
+}
+
+// Login social — prontos para uso quando o app integrar os módulos nativos.
+export async function signInWithApple(params: { idToken: string; nonce?: string }): Promise<void> {
+	const { error } = await supabase.auth.signInWithIdToken({
+		provider: "apple",
+		token: params.idToken,
+		nonce: params.nonce,
+	});
+	if (error) throw error;
+	await syncAuthState();
+}
+
+export async function signInWithGoogle(params: { idToken: string }): Promise<void> {
+	const { error } = await supabase.auth.signInWithIdToken({
+		provider: "google",
+		token: params.idToken,
+	});
+	if (error) throw error;
+	await syncAuthState();
+}
+
+// Logout: encerra a sessão e recria uma anônima (para um novo onboarding).
+export async function signOut(): Promise<void> {
+	await supabase.auth.signOut();
+	await supabase.auth.signInAnonymously();
+	await syncAuthState();
+}
+
+export async function updateUserEmail(email: string): Promise<void> {
+	const { error } = await supabase.auth.updateUser({ email });
+	if (error) throw error;
+	await syncAuthState();
+}
+
+// Troca de senha: valida a senha atual reautenticando antes de gravar a nova.
+export async function updateUserPassword(params: {
+	currentPassword: string;
+	newPassword: string;
+}): Promise<void> {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (!user?.email) throw new Error("missing_email");
+
+	const { error: verifyError } = await supabase.auth.signInWithPassword({
+		email: user.email,
+		password: params.currentPassword,
+	});
+	if (verifyError) throw verifyError;
+
+	const { error } = await supabase.auth.updateUser({ password: params.newPassword });
+	if (error) throw error;
+}
+
+// Exclusão de conta: RPC apaga auth.users; depois recria sessão anônima.
+export async function deleteAccount(): Promise<void> {
+	const { error } = await supabase.rpc("delete_account");
+	if (error) throw error;
+	await supabase.auth.signOut();
+	await supabase.auth.signInAnonymously();
+	await syncAuthState();
+}

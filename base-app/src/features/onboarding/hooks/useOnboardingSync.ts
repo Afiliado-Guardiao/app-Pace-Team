@@ -2,12 +2,11 @@ import { useCallback, useState } from "react";
 
 import { useRouter } from "expo-router";
 
-import { ISyncOnboardingPayload, onboardingApi } from "@/lib/api/onboarding";
+import { syncOnboarding } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
 import { useSyncErrorModal } from "../components/SyncErrorModal";
-import { parseAnswerForBackend } from "../utils/formatters";
 
 import type { IUseOnboardingNavigationReturn } from "./useOnboardingNavigation";
 import { useOnboardingTracking } from "./useOnboardingTracking";
@@ -20,10 +19,7 @@ export interface IUseOnboardingSyncReturn {
 }
 
 interface IUseOnboardingSyncProps {
-	navigation: Pick<
-		IUseOnboardingNavigationReturn,
-		"currentStep" | "currentStepIndex" | "deviceMetadataRef" | "performSyncRef"
-	>;
+	navigation: Pick<IUseOnboardingNavigationReturn, "performSyncRef">;
 }
 
 export const useOnboardingSync = ({
@@ -35,42 +31,23 @@ export const useOnboardingSync = ({
 
 	const { isVisible: isSyncErrorVisible, showSyncError, hideSyncError } = useSyncErrorModal();
 
-	const onboardingId = useStore((state) => state.onboardingId);
 	const answers = useStore((state) => state.answers);
 	const setCompleted = useStore((state) => state.setCompleted);
 
 	const { trackOnboardingCompleted } = useOnboardingTracking();
 
-	const buildSyncPayload = useCallback((): ISyncOnboardingPayload => {
-		const metadata = navigation.deviceMetadataRef.current;
-
-		const payload: ISyncOnboardingPayload = {
-			...(metadata?.deviceLanguage && { deviceLanguage: metadata.deviceLanguage }),
-			...(metadata?.deviceRegion && { deviceRegion: metadata.deviceRegion }),
-			...(metadata?.deviceTimezone && { deviceTimezone: metadata.deviceTimezone }),
-		};
-
-		Object.keys(answers).forEach((stepId) => {
-			const formattedValue = parseAnswerForBackend(stepId, answers[stepId]);
-			if (formattedValue !== undefined) {
-				(payload as Record<string, unknown>)[stepId] = formattedValue;
-			}
-		});
-
-		return payload;
-	}, [answers, navigation.deviceMetadataRef]);
-
 	const performSync = useCallback(async (): Promise<boolean> => {
-		if (!onboardingId) {
-			return false;
-		}
-
 		setIsSyncing(true);
 		hideSyncError();
 
 		try {
-			const syncPayload = buildSyncPayload();
-			await onboardingApi.syncOnboarding(onboardingId, syncPayload);
+			// Grava no Supabase apenas os campos persistidos do onboarding.
+			await syncOnboarding({
+				name: answers.name ?? null,
+				email: answers.email ?? null,
+				birthday: answers.birthday ?? null,
+				completed: true,
+			});
 
 			void trackOnboardingCompleted();
 			setCompleted(true);
@@ -83,17 +60,9 @@ export const useOnboardingSync = ({
 		} finally {
 			setIsSyncing(false);
 		}
-	}, [
-		onboardingId,
-		buildSyncPayload,
-		trackOnboardingCompleted,
-		setCompleted,
-		router,
-		showSyncError,
-		hideSyncError,
-	]);
+	}, [answers, trackOnboardingCompleted, setCompleted, router, showSyncError, hideSyncError]);
 
-	// Conecta performSync na ref de navegação pra que handleNext consiga chamar
+	// Conecta performSync na ref de navegação pra que handleNext consiga chamar.
 	navigation.performSyncRef.current = performSync;
 
 	return {

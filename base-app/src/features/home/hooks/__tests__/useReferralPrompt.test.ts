@@ -24,7 +24,7 @@ jest.mock("@/components/ui/Modal", () => ({
 
 const mockApplyReferralCode = jest.fn();
 
-jest.mock("@/lib/api/referral", () => ({
+jest.mock("@/lib/supabase", () => ({
 	applyReferralCode: (...args: unknown[]) => mockApplyReferralCode(...args),
 }));
 

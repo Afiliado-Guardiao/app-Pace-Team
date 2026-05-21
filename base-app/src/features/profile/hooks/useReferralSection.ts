@@ -6,8 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { useModal } from "@/components/ui/Modal";
-import { applyReferralCode, getReferralStats } from "@/lib/api/referral";
-import { IReferralStats } from "@/lib/api/types";
+import { applyReferralCode, getReferralStats, IReferralStats } from "@/lib/supabase";
 
 const REFERRAL_STATS_KEY = ["referral-stats"] as const;
 

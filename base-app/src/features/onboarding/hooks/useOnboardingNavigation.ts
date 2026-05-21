@@ -4,12 +4,10 @@ import { useRouter } from "expo-router";
 
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
-import { IDeviceMetadata } from "@/utils/device";
 
 import { ONBOARDING_STEPS } from "../constants";
 import { validateStep } from "../validation";
 
-import { useOnboardingStepUpdater } from "./useOnboardingStepUpdater";
 import { useOnboardingTracking } from "./useOnboardingTracking";
 
 export interface IUseOnboardingNavigationReturn {
@@ -22,7 +20,6 @@ export interface IUseOnboardingNavigationReturn {
 	handleNext: () => Promise<void>;
 	handleBack: () => void;
 	handleAnswerChange: (value: string | string[]) => void;
-	deviceMetadataRef: React.RefObject<IDeviceMetadata | null>;
 	performSyncRef: React.RefObject<(() => Promise<boolean>) | null>;
 }
 
@@ -65,13 +62,7 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 
 	const isLastStep = currentStepIndex === ONBOARDING_STEPS.length - 1;
 
-	const { getOrCreateOnboardingId, fireStepUpdate, deviceMetadataRef } = useOnboardingStepUpdater({
-		currentStepIndex,
-		currentStep,
-		currentAnswer,
-	});
-
-	const handleNext = useCallback(async () => {
+	const handleNext = useCallback(async (): Promise<void> => {
 		const validation = validateStep(currentStep, currentAnswer);
 		const isRequired = "validation" in currentStep && currentStep.validation?.required === true;
 
@@ -79,29 +70,14 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 			return;
 		}
 
-		const resolvedId = await getOrCreateOnboardingId();
-
+		// No último step, grava o onboarding no Supabase e navega para o cadastro.
 		if (isLastStep) {
 			await performSyncRef.current?.();
 			return;
 		}
 
-		// Offline-first: avança o step local mesmo se create-onboarding falhou.
-		// O sync final tentará criar + consolidar respostas novamente.
-		if (resolvedId) {
-			fireStepUpdate(resolvedId, deviceMetadataRef.current);
-		}
 		setCurrentStepIndex(currentStepIndex + 1);
-	}, [
-		currentStep,
-		currentAnswer,
-		isLastStep,
-		currentStepIndex,
-		getOrCreateOnboardingId,
-		fireStepUpdate,
-		deviceMetadataRef,
-		setCurrentStepIndex,
-	]);
+	}, [currentStep, currentAnswer, isLastStep, currentStepIndex, setCurrentStepIndex]);
 
 	const handleBack = useCallback(() => {
 		if (currentStepIndex === 0) {
@@ -129,7 +105,6 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 		handleNext,
 		handleBack,
 		handleAnswerChange,
-		deviceMetadataRef,
 		performSyncRef,
 	};
 };

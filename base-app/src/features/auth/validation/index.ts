@@ -1,4 +1,3 @@
-import axios from "axios";
 import i18next from "i18next";
 import { ZodError } from "zod";
 
@@ -51,28 +50,16 @@ export const validateEmailRegisterForm = (
 	}
 };
 
-export interface IEnhancedErrorResponse {
-	error: string;
-	message: string;
-	field?: string;
-	fieldMessage?: string;
-	details?: Array<{
-		path: (string | number)[];
-		message: string;
-		code: string;
-	}>;
-}
-
+// Extrai uma mensagem legível de um erro desconhecido (Supabase, Zod, etc.).
 export const getErrorMessage = (error: unknown, defaultKey: string): string => {
 	if (error instanceof Error) {
 		return error.message;
 	}
 
-	if (axios.isAxiosError<IEnhancedErrorResponse>(error)) {
-		const errorData = error.response?.data;
-
-		if (errorData?.message) {
-			return errorData.message;
+	if (typeof error === "object" && error !== null && "message" in error) {
+		const message = (error as { message: unknown }).message;
+		if (typeof message === "string") {
+			return message;
 		}
 	}
 

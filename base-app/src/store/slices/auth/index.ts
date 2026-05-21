@@ -2,29 +2,19 @@ import { StateCreator } from "zustand";
 
 import { IAuthSlice, IStore } from "../../types";
 
+// O estado de autenticação é derivado da sessão do Supabase. O listener em
+// `useAppInitialization` chama `setUser` sempre que a sessão muda — o app
+// nunca guarda token: a sessão vive no AsyncStorage gerenciado pelo Supabase.
 export const createAuthSlice: StateCreator<IStore, [], [], IAuthSlice> = (set): IAuthSlice => ({
 	user: null,
-	token: null,
 	isAuthenticated: false,
-	hasHydrated: false,
 	hasSeenReferralPrompt: false,
-	login: (user, token): void => {
-		set({
-			user,
-			token,
-			isAuthenticated: true,
-		});
-	},
-	logout: (): void => {
-		set({
-			user: null,
-			token: null,
-			isAuthenticated: false,
-			hasSeenReferralPrompt: false,
-		});
-	},
 	setUser: (user): void => {
-		set({ user });
+		if (user) {
+			set({ user, isAuthenticated: true });
+		} else {
+			set({ user: null, isAuthenticated: false, hasSeenReferralPrompt: false });
+		}
 	},
 	setHasSeenReferralPrompt: (value): void => {
 		set({ hasSeenReferralPrompt: value });

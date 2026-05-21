@@ -1,0 +1,23 @@
+{
+	"name": "base-supabase",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Backend Supabase (Postgres + Auth + Edge Functions) — substitui o antigo base-server",
+	"scripts": {
+		"start": "supabase start",
+		"stop": "supabase stop",
+		"status": "supabase status",
+		"db:reset": "supabase db reset",
+		"db:diff": "supabase db diff",
+		"db:push": "supabase db push",
+		"db:pull": "supabase db pull",
+		"link": "supabase link",
+		"functions:serve": "supabase functions serve paywallo-webhook --no-verify-jwt --env-file ./.env",
+		"functions:deploy": "supabase functions deploy paywallo-webhook --no-verify-jwt",
+		"secrets:set": "supabase secrets set --env-file ./.env",
+		"gen:types": "supabase gen types typescript --linked"
+	},
+	"devDependencies": {
+		"supabase": "^2.0.0"
+	}
+}

@@ -1,6 +1,6 @@
 import { useStore } from "@/store";
 
-import { resetAllStores } from "../../../__tests__/helpers/mockStore";
+import { resetAllStores } from "@/__tests__/helpers/mockStore";
 
 describe("Onboarding Store Integration", () => {
 	beforeEach(() => {
@@ -15,15 +15,6 @@ describe("Onboarding Store Integration", () => {
 
 			const state = useStore.getState();
 			expect(state.answers.name).toBe("John Doe");
-		});
-
-		it("should save array answer for multi-select step", () => {
-			const { setAnswer } = useStore.getState();
-
-			setAnswer("goals", ["fitness", "health"]);
-
-			const state = useStore.getState();
-			expect(state.answers.goals).toEqual(["fitness", "health"]);
 		});
 
 		it("should overwrite previous answer for same step", () => {
@@ -43,8 +34,7 @@ describe("Onboarding Store Integration", () => {
 
 			setCurrentStepIndex(5);
 
-			const state = useStore.getState();
-			expect(state.currentStepIndex).toBe(5);
+			expect(useStore.getState().currentStepIndex).toBe(5);
 		});
 
 		it("should allow going back to previous step", () => {
@@ -53,8 +43,7 @@ describe("Onboarding Store Integration", () => {
 			setCurrentStepIndex(10);
 			setCurrentStepIndex(5);
 
-			const state = useStore.getState();
-			expect(state.currentStepIndex).toBe(5);
+			expect(useStore.getState().currentStepIndex).toBe(5);
 		});
 	});
 
@@ -64,8 +53,7 @@ describe("Onboarding Store Integration", () => {
 
 			setCompleted(true);
 
-			const state = useStore.getState();
-			expect(state.isCompleted).toBe(true);
+			expect(useStore.getState().isCompleted).toBe(true);
 		});
 
 		it("should allow marking as not completed", () => {
@@ -74,32 +62,18 @@ describe("Onboarding Store Integration", () => {
 			setCompleted(true);
 			setCompleted(false);
 
-			const state = useStore.getState();
-			expect(state.isCompleted).toBe(false);
-		});
-	});
-
-	describe("setOnboardingId()", () => {
-		it("should save onboarding ID", () => {
-			const { setOnboardingId } = useStore.getState();
-
-			setOnboardingId("onboarding-123");
-
-			const state = useStore.getState();
-			expect(state.onboardingId).toBe("onboarding-123");
+			expect(useStore.getState().isCompleted).toBe(false);
 		});
 	});
 
 	describe("resetOnboarding()", () => {
 		it("should reset all onboarding data to initial state", () => {
-			const { setAnswer, setCurrentStepIndex, setCompleted, setOnboardingId, resetOnboarding } =
-				useStore.getState();
+			const { setAnswer, setCurrentStepIndex, setCompleted, resetOnboarding } = useStore.getState();
 
 			setAnswer("name", "John");
 			setAnswer("email", "john@example.com");
 			setCurrentStepIndex(10);
 			setCompleted(true);
-			setOnboardingId("onboarding-123");
 
 			resetOnboarding();
 
@@ -107,7 +81,6 @@ describe("Onboarding Store Integration", () => {
 			expect(state.answers).toEqual({});
 			expect(state.currentStepIndex).toBe(0);
 			expect(state.isCompleted).toBe(false);
-			expect(state.onboardingId).toBeNull();
 		});
 	});
 

@@ -4,21 +4,33 @@ jest.mock("@react-native-async-storage/async-storage", () =>
 	require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
 );
 
-jest.mock("@/lib/api/auth", () => ({
-	authApi: {
-		loginWithSocial: jest.fn(),
-		register: jest.fn(),
-		loginWithEmail: jest.fn(),
-	},
-}));
-
-jest.mock("@/lib/api/onboarding", () => ({
-	onboardingApi: {
-		createOnboarding: jest.fn(),
-		updateOnboarding: jest.fn(),
-		getOnboarding: jest.fn(),
-		linkToUser: jest.fn(),
-	},
+jest.mock("@/lib/supabase", () => ({
+	supabase: {},
+	getCurrentUser: jest.fn().mockResolvedValue(null),
+	syncAuthState: jest.fn().mockResolvedValue(undefined),
+	ensureSession: jest.fn().mockResolvedValue(undefined),
+	onAuthChange: jest.fn(() => ({ unsubscribe: jest.fn() })),
+	signInWithEmail: jest.fn().mockResolvedValue(undefined),
+	signUpWithEmail: jest.fn().mockResolvedValue(undefined),
+	signInWithApple: jest.fn().mockResolvedValue(undefined),
+	signInWithGoogle: jest.fn().mockResolvedValue(undefined),
+	signOut: jest.fn().mockResolvedValue(undefined),
+	updateUserEmail: jest.fn().mockResolvedValue(undefined),
+	updateUserPassword: jest.fn().mockResolvedValue(undefined),
+	deleteAccount: jest.fn().mockResolvedValue(undefined),
+	updateProfile: jest.fn().mockResolvedValue(undefined),
+	getMyOnboarding: jest.fn().mockResolvedValue(null),
+	syncOnboarding: jest.fn().mockResolvedValue({
+		id: "onboarding-test",
+		userId: "user-test",
+		name: null,
+		email: null,
+		birthday: null,
+		completed: true,
+		completedAt: new Date().toISOString(),
+	}),
+	applyReferralCode: jest.fn().mockResolvedValue({ usedCode: "", referrer: { name: "" } }),
+	getReferralStats: jest.fn().mockResolvedValue({ myCode: "", usedCode: null, referralsCount: 0 }),
 }));
 
 jest.mock("expo-router", () => ({

@@ -1,0 +1,16 @@
+-- =============================================================================
+-- base-supabase · Seed (opcional)
+-- -----------------------------------------------------------------------------
+-- Rodado automaticamente por `supabase db reset` depois das migrations.
+--
+-- Usuarios NAO sao criados aqui: contas vivem em `auth.users` e devem ser
+-- criadas pelo proprio fluxo de cadastro do app (ou pelo Supabase Studio em
+-- Authentication -> Add user). O profile correspondente e gerado pelo trigger
+-- `on_auth_user_created` automaticamente.
+--
+-- O botao de debug do app (`useDebugLogin`) ja cria/loga um usuario de teste
+-- sozinho — nao e preciso semear nada para desenvolver.
+--
+-- Use este arquivo apenas para dados de referencia que NAO dependam de um
+-- usuario (ex.: tabelas de catalogo/produtos que voce venha a adicionar).
+-- =============================================================================

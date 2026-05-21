@@ -55,7 +55,7 @@ Guia consolidado para integrar o Paywallo no `base-app` ponta-a-ponta. Cobre set
                   └────────────────────────────┘
 ```
 
-> **`base-server` (seu backend) é opcional no fluxo.** O SDK fala diretamente com a Paywallo. Seu server só entra se você quiser receber webhooks de subscription para sincronizar status no seu banco — veja a seção 9.
+> **`base-supabase` (seu backend) é opcional no fluxo.** O SDK fala diretamente com a Paywallo. Seu backend só entra se você quiser receber webhooks de subscription para sincronizar status no seu banco — veja a seção 7.
 
 ---
 
@@ -371,18 +371,18 @@ src/
 
 ---
 
-## 7. Servidor (`base-server`) — domínio `subscription` incluído
+## 7. Backend (`base-supabase`) — Edge Function de subscription incluída
 
-O `base-server` **já vem com domínio `subscription` implementado** (`src/domain/subscription/`) que recebe webhooks do Paywallo e mantém `User.isPremium` + tabela `Subscription` sincronizados. Use-o quando precisar de:
+O `base-supabase` **já vem com a Edge Function `paywallo-webhook`** (`supabase/functions/paywallo-webhook/`) que recebe webhooks do Paywallo e mantém `profiles.is_premium` + a tabela `subscriptions` sincronizados. Use-a quando precisar de:
 
-- Bloquear endpoints da sua própria API por status de assinatura (`SubscriptionService.hasActiveSubscription(userId)`)
-- Filtrar usuários premium em queries SQL via flag `User.isPremium`
+- Filtrar usuários premium por SQL via flag `profiles.is_premium` (RLS, queries)
+- Reagir a eventos de assinatura no seu próprio banco
 - Mostrar status de subscription em painel/dashboard interno
 
 ### Endpoint
 
 ```
-POST /webhooks/paywallo/:pathSecret
+POST https://<projeto>.supabase.co/functions/v1/paywallo-webhook?secret=<PATH_SECRET>
 Headers:
   X-Paywallo-Signature: sha256=<hex-digest>   (HMAC SHA-256 sobre o body)
 Body: { api_version, event: { id, type, app_user_id, product_id, ... } }
@@ -392,30 +392,27 @@ Body: { api_version, event: { id, type, app_user_id, product_id, ... } }
 
 `INITIAL_PURCHASE`, `RENEWAL`, `CANCELLATION`, `EXPIRATION`, `UNCANCELLATION`.
 
-### Setup (5 passos)
+### Setup (4 passos)
 
-1. **Env vars** em `base-server/.env`:
+1. **Secrets** em `base-supabase/.env`:
    ```env
    PAYWALLO_WEBHOOK_PATH_SECRET=<uuid-v4-gerado-por-você>
    PAYWALLO_WEBHOOK_HMAC_SECRET=<secret-também-no-dashboard-Paywallo>
    ```
-2. **Migration**: `npm run db:migrate:dev -- --name add_subscription_and_webhook`
-3. **Dashboard Paywallo**: cadastrar URL pública `https://seu-servidor/webhooks/paywallo/<PAYWALLO_WEBHOOK_PATH_SECRET>` e configurar o mesmo `secret` (para HMAC)
-4. **Testar localmente**: `PAYWALLO_WEBHOOK_PATH_SECRET=... npx tsx scripts/test-webhook.ts`
-5. **Verificar**: chamar `SubscriptionService.hasActiveSubscription(userId)` em rotas que precisem gating
+2. **Publicar** (no diretório `base-supabase/`): `npm run secrets:set && npm run functions:deploy`
+3. **Dashboard Paywallo**: cadastrar a URL pública `.../functions/v1/paywallo-webhook?secret=<PATH_SECRET>` e configurar o mesmo `secret` HMAC
+4. **Verificar**: consultar `profiles.is_premium` ou a tabela `subscriptions` no Supabase Studio
 
 ### Vínculo a usuário
 
-`event.app_user_id` é o `distinctId` do SDK Paywallo. O processor casa:
+`event.app_user_id` é o `distinctId` do SDK Paywallo. A Edge Function casa:
 
-1. Se for UUID válido → direto `User.id`
-2. Senão → busca em `Onboarding.anonymousUserId → userId`
-
-Se nenhum match, a subscription é gravada com `userId: null` e `anonymousUserId: <distinctId>` — quando o user fizer login e o `Onboarding` for vinculado, eventos subsequentes do mesmo `original_transaction_id` reconciliam o `userId`.
+1. Se for um UUID de profile conhecido → `profiles.id`
+2. Senão → a subscription é gravada com `user_id: null` e `anonymous_user_id: <distinctId>`
 
 ### Comissão de referral (extensão)
 
-`ReferralService.ts` documenta no código onde injetar `recordCommission` no `WebhookProcessor` para correlacionar `INITIAL_PURCHASE` com `User.referredById`.
+Para correlacionar `INITIAL_PURCHASE` com `profiles.referred_by_id`, estenda a Edge Function `paywallo-webhook` ou adicione um trigger SQL na tabela `subscriptions`.
 
 ---
 

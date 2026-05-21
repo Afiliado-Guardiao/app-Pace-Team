@@ -5,10 +5,14 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 import { useModal } from "@/components/ui/Modal";
-import { authApi } from "@/lib/api/auth";
-import { IUser } from "@/lib/api/types";
-import * as userApi from "@/lib/api/user";
-import { useStore } from "@/store";
+import {
+	deleteAccount,
+	signOut,
+	updateProfile,
+	updateUserEmail,
+	updateUserPassword,
+} from "@/lib/supabase";
+import { IUser, useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
 export interface IUseProfileActionsReturn {
@@ -20,9 +24,9 @@ export interface IUseProfileActionsReturn {
 	handleDeleteAccount: () => void;
 }
 
-type IEditableField = "name" | "email" | "birthday";
+type IProfileField = "name" | "birthday";
 
-const getInitialValue = (user: IUser | null, field: IEditableField): string => {
+const getInitialValue = (user: IUser | null, field: "name" | "email" | "birthday"): string => {
 	if (!user) return "";
 	return user[field] ?? "";
 };
@@ -32,11 +36,9 @@ export const useProfileActions = (): IUseProfileActionsReturn => {
 	const { t } = useTranslation("profile");
 	const modal = useModal();
 	const user = useStore((state) => state.user);
-	const setUser = useStore((state) => state.setUser);
-	const logout = useStore((state) => state.logout);
 
-	const makeEditField = useCallback(
-		(field: IEditableField) => () => {
+	const makeEditProfileField = useCallback(
+		(field: IProfileField) => () => {
 			void (async () => {
 				const value = await modal.input({
 					title: t(`alerts.edit.title.${field}`),
@@ -45,19 +47,33 @@ export const useProfileActions = (): IUseProfileActionsReturn => {
 				});
 				if (value === null) return;
 				try {
-					const updated = await userApi.updateMe({ [field]: value });
-					setUser(updated);
+					await updateProfile(field === "name" ? { name: value } : { birthday: value });
 				} catch {
 					await modal.alert({ title: t("alerts.edit.error") });
 				}
 			})();
 		},
-		[modal, t, user, setUser],
+		[modal, t, user],
 	);
 
-	const editName = makeEditField("name");
-	const editEmail = makeEditField("email");
-	const editBirthday = makeEditField("birthday");
+	const editName = makeEditProfileField("name");
+	const editBirthday = makeEditProfileField("birthday");
+
+	const editEmail = useCallback(() => {
+		void (async () => {
+			const value = await modal.input({
+				title: t("alerts.edit.title.email"),
+				placeholder: t("alerts.edit.placeholder.email"),
+				initialValue: getInitialValue(user, "email"),
+			});
+			if (value === null) return;
+			try {
+				await updateUserEmail(value);
+			} catch {
+				await modal.alert({ title: t("alerts.edit.error") });
+			}
+		})();
+	}, [modal, t, user]);
 
 	const editPassword = useCallback(() => {
 		void (async () => {
@@ -74,7 +90,7 @@ export const useProfileActions = (): IUseProfileActionsReturn => {
 			if (newPassword === null) return;
 
 			try {
-				await userApi.updatePassword({ currentPassword, newPassword });
+				await updateUserPassword({ currentPassword, newPassword });
 				await modal.alert({ title: t("alerts.password.success") });
 			} catch {
 				await modal.alert({ title: t("alerts.password.error") });
@@ -93,14 +109,13 @@ export const useProfileActions = (): IUseProfileActionsReturn => {
 			});
 			if (!ok) return;
 			try {
-				await authApi.logout();
+				await signOut();
 			} catch {
 				// ignora silenciosamente
 			}
-			logout();
 			router.replace(ROUTES.WELCOME);
 		})();
-	}, [modal, t, logout, router]);
+	}, [modal, t, router]);
 
 	const handleDeleteAccount = useCallback(() => {
 		void (async () => {
@@ -123,14 +138,13 @@ export const useProfileActions = (): IUseProfileActionsReturn => {
 			if (!second) return;
 
 			try {
-				await userApi.deleteMe();
+				await deleteAccount();
 			} catch {
 				// ignora silenciosamente
 			}
-			logout();
 			router.replace(ROUTES.WELCOME);
 		})();
-	}, [modal, t, logout, router]);
+	}, [modal, t, router]);
 
 	return {
 		editName,

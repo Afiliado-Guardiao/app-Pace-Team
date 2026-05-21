@@ -1,142 +1,64 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { useStore } from "@/store";
+import { IUser } from "@/lib/supabase/types";
 
 import { resetAllStores } from "../../../__tests__/helpers/mockStore";
+
+const buildUser = (): IUser => ({
+	id: "user-123",
+	email: "test@example.com",
+	name: "Test User",
+	birthday: null,
+	referralCode: "TEST123",
+	isPremium: false,
+	createdAt: new Date().toISOString(),
+});
 
 describe("Auth Store Integration", () => {
 	beforeEach(() => {
 		resetAllStores();
-		AsyncStorage.clear();
 	});
 
-	describe("login()", () => {
-		it("should set user and token in store", () => {
-			const { login } = useStore.getState();
+	describe("setUser()", () => {
+		it("sets the user and marks as authenticated", () => {
+			const { setUser } = useStore.getState();
+			const user = buildUser();
 
-			const user = {
-				id: "user-123",
-				email: "test@example.com",
-				name: "Test User",
-			};
-
-			const token = "mock-jwt-token";
-
-			login(user, token);
+			setUser(user);
 
 			const state = useStore.getState();
 			expect(state.user).toEqual(user);
-			expect(state.token).toBe(token);
 			expect(state.isAuthenticated).toBe(true);
 		});
 
-		it("should persist token in AsyncStorage", async () => {
-			const { login } = useStore.getState();
+		it("clears the user and resets auth flags when called with null", () => {
+			const { setUser, setHasSeenReferralPrompt } = useStore.getState();
 
-			const user = {
-				id: "user-123",
-				email: "test@example.com",
-				name: "Test User",
-			};
+			setUser(buildUser());
+			setHasSeenReferralPrompt(true);
 
-			login(user, "test-token");
-
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
-			const storedData = await AsyncStorage.getItem("auth-storage");
-			expect(storedData).toBeDefined();
-
-			if (storedData) {
-				const parsed = JSON.parse(storedData);
-				expect(parsed.state.token).toBe("test-token");
-				expect(parsed.state.user.id).toBe("user-123");
-			}
-		});
-	});
-
-	describe("logout()", () => {
-		it("should clear user and token from store", () => {
-			const { login, logout } = useStore.getState();
-
-			login(
-				{
-					id: "user-123",
-					email: "test@example.com",
-					name: "Test User",
-				},
-				"token",
-			);
-
-			logout();
+			setUser(null);
 
 			const state = useStore.getState();
 			expect(state.user).toBeNull();
-			expect(state.token).toBeNull();
 			expect(state.isAuthenticated).toBe(false);
-		});
-
-		it("should clear AsyncStorage on logout", async () => {
-			const { login, logout } = useStore.getState();
-
-			login(
-				{
-					id: "user-123",
-					email: "test@example.com",
-					name: "Test User",
-				},
-				"token",
-			);
-
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
-			logout();
-
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
-			const storedData = await AsyncStorage.getItem("auth-storage");
-
-			if (storedData) {
-				const parsed = JSON.parse(storedData);
-				expect(parsed.state.token).toBeNull();
-				expect(parsed.state.user).toBeNull();
-			}
+			expect(state.hasSeenReferralPrompt).toBe(false);
 		});
 	});
 
 	describe("isAuthenticated", () => {
-		it("should be false by default", () => {
-			const state = useStore.getState();
-			expect(state.isAuthenticated).toBe(false);
+		it("is false by default", () => {
+			expect(useStore.getState().isAuthenticated).toBe(false);
 		});
 
-		it("should be true after login", () => {
-			const { login } = useStore.getState();
-
-			login(
-				{
-					id: "user-123",
-					email: "test@example.com",
-					name: "Test User",
-				},
-				"token",
-			);
-
+		it("is true after setUser with a user", () => {
+			useStore.getState().setUser(buildUser());
 			expect(useStore.getState().isAuthenticated).toBe(true);
 		});
 
-		it("should be false after logout", () => {
-			const { login, logout } = useStore.getState();
-
-			login(
-				{
-					id: "user-123",
-					email: "test@example.com",
-					name: "Test User",
-				},
-				"token",
-			);
-			logout();
-
+		it("is false after setUser(null)", () => {
+			const { setUser } = useStore.getState();
+			setUser(buildUser());
+			setUser(null);
 			expect(useStore.getState().isAuthenticated).toBe(false);
 		});
 	});

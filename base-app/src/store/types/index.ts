@@ -1,4 +1,4 @@
-import { IUser } from "@/lib/api/types";
+import { IUser } from "@/lib/supabase/types";
 
 import { IOnboardingSlice } from "../slices/onboarding";
 
@@ -16,13 +16,9 @@ export interface INavigationSlice {
 
 export interface IAuthSlice {
 	user: IUser | null;
-	token: string | null;
 	isAuthenticated: boolean;
-	hasHydrated: boolean;
 	hasSeenReferralPrompt: boolean;
-	login: (user: IUser, token: string) => void;
-	logout: () => void;
-	setUser: (user: IUser) => void;
+	setUser: (user: IUser | null) => void;
 	setHasSeenReferralPrompt: (value: boolean) => void;
 }
 

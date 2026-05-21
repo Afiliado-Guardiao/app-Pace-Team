@@ -1,6 +1,6 @@
 import { TextStyle, ViewStyle } from "react-native";
 
-import { IUser } from "@/lib/api/types";
+import { IUser } from "@/store";
 
 export type { IUser };
 

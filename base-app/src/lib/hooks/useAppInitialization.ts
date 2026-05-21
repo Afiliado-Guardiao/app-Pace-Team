@@ -9,10 +9,9 @@ import {
 	Inter_700Bold,
 } from "@expo-google-fonts/inter";
 
+import { ensureSession, onAuthChange, syncAuthState } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { initializeI18n } from "@/i18n";
-
-import { setupInterceptors } from "../api";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -22,9 +21,9 @@ export const useAppInitialization = (): {
 	onLayoutRootView: () => void;
 } => {
 	const [isReady, setIsReady] = useState(false);
+	const [isInitialized, setIsInitialized] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 
-	const getOrGenerateAnonymousUserId = useStore((state) => state.getOrGenerateAnonymousUserId);
 	const hasHydrated = useStore((state) => state._hasHydrated);
 
 	const [fontsLoaded, fontError] = useFonts({
@@ -35,24 +34,36 @@ export const useAppInitialization = (): {
 	});
 
 	useEffect(() => {
+		// Mantém o store sincronizado com a sessão do Supabase (login/logout).
+		const subscription = onAuthChange(() => {
+			void syncAuthState();
+		});
+
 		const initialize = async (): Promise<void> => {
 			try {
-				getOrGenerateAnonymousUserId();
 				await initializeI18n();
-				setupInterceptors();
+				// Garante uma sessão anônima para o onboarding pré-cadastro.
+				await ensureSession();
+				await syncAuthState();
 			} catch (err) {
 				setError(err as Error);
+			} finally {
+				setIsInitialized(true);
 			}
 		};
 
 		void initialize();
-	}, [getOrGenerateAnonymousUserId]);
+
+		return () => {
+			subscription.unsubscribe();
+		};
+	}, []);
 
 	useEffect(() => {
-		if ((fontsLoaded || fontError) && hasHydrated && !error) {
+		if ((fontsLoaded || fontError) && hasHydrated && isInitialized && !error) {
 			setIsReady(true);
 		}
-	}, [fontsLoaded, fontError, hasHydrated, error]);
+	}, [fontsLoaded, fontError, hasHydrated, isInitialized, error]);
 
 	const onLayoutRootView = useCallback(() => {
 		if (isReady) {

@@ -254,14 +254,27 @@ export const AuthScreen: React.FC = () => {
 | Tipo de estado        | Onde vive                            | Exemplo                       |
 | --------------------- | ------------------------------------ | ----------------------------- |
 | Client state (global) | Zustand — `src/store/slices/`        | auth, theme, language         |
-| Server state          | React Query — `src/lib/react-query/` | dados da API                  |
+| Server state          | React Query — `src/lib/react-query/` | dados do Supabase             |
 | Local state           | `useState` em hooks customizados     | form values, modal visibility |
 
 **Regras:**
 
 - Zustand slices são fábricas: `createAuthSlice: StateCreator<IStore, [], [], IAuthSlice>`
 - Selectors sempre específicos: `useStore((state) => state.user)` — nunca `useStore()` inteiro
-- React Query pra qualquer dado que vem de API — nunca guardar response em Zustand
+- React Query pra qualquer dado que vem do backend — nunca guardar response em Zustand
+
+## Backend (Supabase)
+
+O backend é um projeto **Supabase** (`../base-supabase/`). O app fala direto com ele — não há servidor HTTP intermediário.
+
+- **Toda chamada ao backend passa por `src/lib/supabase/`** — proibido usar `fetch` para o Supabase ou instanciar `createClient` fora de `src/lib/supabase/client.ts`
+- `auth.ts` — login / cadastro / logout / sessão / social login. O store é sincronizado por `syncAuthState` (listener em `useAppInitialization`)
+- `profile.ts` · `onboarding.ts` · `referral.ts` — dados por domínio
+- **Sem token manual** — a sessão é gerenciada pelo `supabase-js` (AsyncStorage). O store guarda só `user` / `isAuthenticated`, derivados da sessão; nunca persistir token
+- Onboarding pré-cadastro usa **login anônimo**; o cadastro converte o usuário anônimo em permanente (mesmo `id`)
+- Regras de negócio que cruzam usuários (ex.: indicação) vivem em funções SQL no `base-supabase`, chamadas via `supabase.rpc(...)` — não reimplementar no app
+- React Query continua sendo a camada de cache: o `queryFn` chama os helpers de `src/lib/supabase/`
+- Login Apple/Google: os helpers `signInWithApple` / `signInWithGoogle` já existem; ativar exige módulos nativos + configuração de provider no Supabase
 
 ## Types
 

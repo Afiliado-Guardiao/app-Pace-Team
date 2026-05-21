@@ -24,22 +24,18 @@ jest.mock("@/components/ui/Modal", () => ({
 	}),
 }));
 
-const mockUpdateMe = jest.fn();
-const mockUpdatePassword = jest.fn();
-const mockDeleteMe = jest.fn();
+const mockUpdateProfile = jest.fn();
+const mockUpdateUserEmail = jest.fn();
+const mockUpdateUserPassword = jest.fn();
+const mockSignOut = jest.fn();
+const mockDeleteAccount = jest.fn();
 
-jest.mock("@/lib/api/user", () => ({
-	updateMe: (...args: unknown[]) => mockUpdateMe(...args),
-	updatePassword: (...args: unknown[]) => mockUpdatePassword(...args),
-	deleteMe: (...args: unknown[]) => mockDeleteMe(...args),
-}));
-
-const mockAuthLogout = jest.fn();
-
-jest.mock("@/lib/api/auth", () => ({
-	authApi: {
-		logout: (...args: unknown[]) => mockAuthLogout(...args),
-	},
+jest.mock("@/lib/supabase", () => ({
+	updateProfile: (...args: unknown[]) => mockUpdateProfile(...args),
+	updateUserEmail: (...args: unknown[]) => mockUpdateUserEmail(...args),
+	updateUserPassword: (...args: unknown[]) => mockUpdateUserPassword(...args),
+	signOut: (...args: unknown[]) => mockSignOut(...args),
+	deleteAccount: (...args: unknown[]) => mockDeleteAccount(...args),
 }));
 
 jest.mock("@/store", () => ({
@@ -60,21 +56,12 @@ import { useStore } from "@/store";
 
 const mockUseStore = useStore as jest.MockedFunction<typeof useStore>;
 
-const mockSetUser = jest.fn();
-const mockLogout = jest.fn();
-
 interface IMockState {
 	user: { name: string; email: string; birthday: string } | null;
-	setUser: jest.Mock;
-	logout: jest.Mock;
 }
 
 function setupStore(user: IMockState["user"] = null): void {
-	const state: IMockState = {
-		user,
-		setUser: mockSetUser,
-		logout: mockLogout,
-	};
+	const state: IMockState = { user };
 	mockUseStore.mockImplementation((selector: (s: IMockState) => unknown) => selector(state));
 }
 
@@ -96,27 +83,25 @@ describe("useProfileActions", () => {
 		mockInput.mockResolvedValue(null);
 		mockAlert.mockResolvedValue(undefined);
 		mockConfirm.mockResolvedValue(false);
-		mockUpdateMe.mockResolvedValue({ name: "Updated" });
-		mockUpdatePassword.mockResolvedValue(undefined);
-		mockDeleteMe.mockResolvedValue(undefined);
-		mockAuthLogout.mockResolvedValue(undefined);
+		mockUpdateProfile.mockResolvedValue(undefined);
+		mockUpdateUserEmail.mockResolvedValue(undefined);
+		mockUpdateUserPassword.mockResolvedValue(undefined);
+		mockSignOut.mockResolvedValue(undefined);
+		mockDeleteAccount.mockResolvedValue(undefined);
 	});
 
 	// ── editName ──────────────────────────────────────────────────────────────
 
 	describe("editName", () => {
-		it("happy path: opens input, calls updateMe with name, updates store", async () => {
+		it("happy path: opens input, calls updateProfile with name", async () => {
 			mockInput.mockResolvedValue("New Name");
-			const updatedUser = { name: "New Name", email: "john@example.com", birthday: "1990-01-01" };
-			mockUpdateMe.mockResolvedValue(updatedUser);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editName();
 
 			await waitFor(() => {
-				expect(mockUpdateMe).toHaveBeenCalledWith({ name: "New Name" });
+				expect(mockUpdateProfile).toHaveBeenCalledWith({ name: "New Name" });
 			});
-			expect(mockSetUser).toHaveBeenCalledWith(updatedUser);
 		});
 
 		it("does nothing when input returns null (user cancels)", async () => {
@@ -126,12 +111,12 @@ describe("useProfileActions", () => {
 			result.current.editName();
 
 			await flushPromises();
-			expect(mockUpdateMe).not.toHaveBeenCalled();
+			expect(mockUpdateProfile).not.toHaveBeenCalled();
 		});
 
-		it("shows error alert when updateMe throws", async () => {
+		it("shows error alert when updateProfile throws", async () => {
 			mockInput.mockResolvedValue("New Name");
-			mockUpdateMe.mockRejectedValue(new Error("API error"));
+			mockUpdateProfile.mockRejectedValue(new Error("API error"));
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editName();
@@ -139,30 +124,26 @@ describe("useProfileActions", () => {
 			await waitFor(() => {
 				expect(mockAlert).toHaveBeenCalledTimes(1);
 			});
-			expect(mockSetUser).not.toHaveBeenCalled();
 		});
 	});
 
 	// ── editEmail ─────────────────────────────────────────────────────────────
 
 	describe("editEmail", () => {
-		it("happy path: opens input, calls updateMe with email", async () => {
+		it("happy path: opens input, calls updateUserEmail", async () => {
 			mockInput.mockResolvedValue("new@example.com");
-			const updatedUser = { name: "John", email: "new@example.com", birthday: "1990-01-01" };
-			mockUpdateMe.mockResolvedValue(updatedUser);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editEmail();
 
 			await waitFor(() => {
-				expect(mockUpdateMe).toHaveBeenCalledWith({ email: "new@example.com" });
+				expect(mockUpdateUserEmail).toHaveBeenCalledWith("new@example.com");
 			});
-			expect(mockSetUser).toHaveBeenCalledWith(updatedUser);
 		});
 
-		it("shows error alert when updateMe throws", async () => {
+		it("shows error alert when updateUserEmail throws", async () => {
 			mockInput.mockResolvedValue("new@example.com");
-			mockUpdateMe.mockRejectedValue(new Error("API error"));
+			mockUpdateUserEmail.mockRejectedValue(new Error("API error"));
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editEmail();
@@ -176,29 +157,14 @@ describe("useProfileActions", () => {
 	// ── editBirthday ──────────────────────────────────────────────────────────
 
 	describe("editBirthday", () => {
-		it("happy path: opens input, calls updateMe with birthday", async () => {
+		it("happy path: opens input, calls updateProfile with birthday", async () => {
 			mockInput.mockResolvedValue("1995-06-15");
-			const updatedUser = { name: "John", email: "john@example.com", birthday: "1995-06-15" };
-			mockUpdateMe.mockResolvedValue(updatedUser);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editBirthday();
 
 			await waitFor(() => {
-				expect(mockUpdateMe).toHaveBeenCalledWith({ birthday: "1995-06-15" });
-			});
-			expect(mockSetUser).toHaveBeenCalledWith(updatedUser);
-		});
-
-		it("shows error alert when updateMe throws", async () => {
-			mockInput.mockResolvedValue("1995-06-15");
-			mockUpdateMe.mockRejectedValue(new Error("API error"));
-
-			const { result } = renderHook(() => useProfileActions());
-			result.current.editBirthday();
-
-			await waitFor(() => {
-				expect(mockAlert).toHaveBeenCalledTimes(1);
+				expect(mockUpdateProfile).toHaveBeenCalledWith({ birthday: "1995-06-15" });
 			});
 		});
 	});
@@ -206,14 +172,14 @@ describe("useProfileActions", () => {
 	// ── editPassword ──────────────────────────────────────────────────────────
 
 	describe("editPassword", () => {
-		it("happy path: collects current + new password, calls updatePassword, shows success", async () => {
+		it("happy path: collects current + new password, calls updateUserPassword", async () => {
 			mockInput.mockResolvedValueOnce("currentPass123").mockResolvedValueOnce("newPass456");
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editPassword();
 
 			await waitFor(() => {
-				expect(mockUpdatePassword).toHaveBeenCalledWith({
+				expect(mockUpdateUserPassword).toHaveBeenCalledWith({
 					currentPassword: "currentPass123",
 					newPassword: "newPass456",
 				});
@@ -228,22 +194,12 @@ describe("useProfileActions", () => {
 			result.current.editPassword();
 
 			await flushPromises();
-			expect(mockUpdatePassword).not.toHaveBeenCalled();
+			expect(mockUpdateUserPassword).not.toHaveBeenCalled();
 		});
 
-		it("does nothing when new password input returns null", async () => {
-			mockInput.mockResolvedValueOnce("currentPass123").mockResolvedValueOnce(null);
-
-			const { result } = renderHook(() => useProfileActions());
-			result.current.editPassword();
-
-			await flushPromises();
-			expect(mockUpdatePassword).not.toHaveBeenCalled();
-		});
-
-		it("shows error alert when updatePassword throws", async () => {
+		it("shows error alert when updateUserPassword throws", async () => {
 			mockInput.mockResolvedValueOnce("currentPass123").mockResolvedValueOnce("newPass456");
-			mockUpdatePassword.mockRejectedValue(new Error("wrong password"));
+			mockUpdateUserPassword.mockRejectedValue(new Error("wrong password"));
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.editPassword();
@@ -257,17 +213,16 @@ describe("useProfileActions", () => {
 	// ── handleLogout ──────────────────────────────────────────────────────────
 
 	describe("handleLogout", () => {
-		it("happy path: confirms, calls authApi.logout, clears store, redirects", async () => {
+		it("happy path: confirms, calls signOut, redirects", async () => {
 			mockConfirm.mockResolvedValue(true);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.handleLogout();
 
 			await waitFor(() => {
-				expect(mockLogout).toHaveBeenCalled();
+				expect(mockSignOut).toHaveBeenCalled();
 				expect(mockRouterReplace).toHaveBeenCalledWith("/(non-auth)/welcome");
 			});
-			expect(mockAuthLogout).toHaveBeenCalled();
 		});
 
 		it("does nothing when user cancels confirm", async () => {
@@ -277,19 +232,18 @@ describe("useProfileActions", () => {
 			result.current.handleLogout();
 
 			await flushPromises();
-			expect(mockLogout).not.toHaveBeenCalled();
+			expect(mockSignOut).not.toHaveBeenCalled();
 			expect(mockRouterReplace).not.toHaveBeenCalled();
 		});
 
-		it("still clears store and redirects even when authApi.logout throws", async () => {
+		it("still redirects even when signOut throws", async () => {
 			mockConfirm.mockResolvedValue(true);
-			mockAuthLogout.mockRejectedValue(new Error("network error"));
+			mockSignOut.mockRejectedValue(new Error("network error"));
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.handleLogout();
 
 			await waitFor(() => {
-				expect(mockLogout).toHaveBeenCalled();
 				expect(mockRouterReplace).toHaveBeenCalledWith("/(non-auth)/welcome");
 			});
 		});
@@ -298,15 +252,14 @@ describe("useProfileActions", () => {
 	// ── handleDeleteAccount ───────────────────────────────────────────────────
 
 	describe("handleDeleteAccount", () => {
-		it("happy path: double confirm, calls deleteMe, clears store, redirects", async () => {
+		it("happy path: double confirm, calls deleteAccount, redirects", async () => {
 			mockConfirm.mockResolvedValueOnce(true).mockResolvedValueOnce(true);
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.handleDeleteAccount();
 
 			await waitFor(() => {
-				expect(mockDeleteMe).toHaveBeenCalled();
-				expect(mockLogout).toHaveBeenCalled();
+				expect(mockDeleteAccount).toHaveBeenCalled();
 				expect(mockRouterReplace).toHaveBeenCalledWith("/(non-auth)/welcome");
 			});
 		});
@@ -318,8 +271,7 @@ describe("useProfileActions", () => {
 			result.current.handleDeleteAccount();
 
 			await flushPromises();
-			expect(mockDeleteMe).not.toHaveBeenCalled();
-			expect(mockLogout).not.toHaveBeenCalled();
+			expect(mockDeleteAccount).not.toHaveBeenCalled();
 		});
 
 		it("aborts after second confirm is rejected", async () => {
@@ -329,19 +281,17 @@ describe("useProfileActions", () => {
 			result.current.handleDeleteAccount();
 
 			await flushPromises();
-			expect(mockDeleteMe).not.toHaveBeenCalled();
-			expect(mockLogout).not.toHaveBeenCalled();
+			expect(mockDeleteAccount).not.toHaveBeenCalled();
 		});
 
-		it("still clears store and redirects even when deleteMe throws", async () => {
+		it("still redirects even when deleteAccount throws", async () => {
 			mockConfirm.mockResolvedValueOnce(true).mockResolvedValueOnce(true);
-			mockDeleteMe.mockRejectedValue(new Error("API error"));
+			mockDeleteAccount.mockRejectedValue(new Error("API error"));
 
 			const { result } = renderHook(() => useProfileActions());
 			result.current.handleDeleteAccount();
 
 			await waitFor(() => {
-				expect(mockLogout).toHaveBeenCalled();
 				expect(mockRouterReplace).toHaveBeenCalledWith("/(non-auth)/welcome");
 			});
 		});

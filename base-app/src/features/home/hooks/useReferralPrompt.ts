@@ -3,8 +3,8 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useModal } from "@/components/ui/Modal";
-import { applyReferralCode } from "@/lib/api/referral";
 import { normalizeReferralCode } from "@/lib/referral";
+import { applyReferralCode } from "@/lib/supabase";
 import { useStore } from "@/store";
 
 export const useReferralPrompt = (): void => {

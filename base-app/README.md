@@ -42,6 +42,8 @@
 
 A arquitetura é orientada a features isoladas: cada domínio da UI vive em `src/features/[nome]/` com seus próprios screens, hooks, validações e estilos. Estado global via Zustand, estado de servidor via React Query, design tokens no `theme/`, monetização via `src/lib/paywallo/`.
 
+O backend é o **Supabase** — autenticação, banco PostgreSQL e regras de acesso — consumido diretamente pelo app via `src/lib/supabase/`. Não há servidor para hospedar. A definição do backend fica em [`../base-supabase/`](../base-supabase/README.md).
+
 <br/>
 
 ## `>` Quick Start
@@ -56,13 +58,18 @@ cd ios && pod install && cd ..
 
 # 3. Configure o ambiente
 cp .env.example .env
-# Edite .env: EXPO_PUBLIC_API_URL e EXPO_PUBLIC_PAYWALLO_APP_KEY
+# Edite .env: EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY
+#             e EXPO_PUBLIC_PAYWALLO_APP_KEY
 
 # 4. Rode
 npx expo start
 ```
 
 Para rodar no device: `npm run ios` ou `npm run android`.
+
+> **Backend:** o app precisa de um projeto Supabase. Siga o setup em
+> [`../base-supabase/README.md`](../base-supabase/README.md) e cole a URL e a
+> anon key no `.env`. Sem isso, o app sobe mas as telas de auth/dados falham.
 
 > **Paywallo:** o `appKey` é obtido em [paywallo.com.br/dashboard](https://paywallo.com.br/dashboard). Sem ele, o SDK loga erro mas não derruba o app — você pode rodar o template sem Paywallo até estar pronto para configurar.
 
@@ -96,7 +103,7 @@ base-app/
     │   └── ui/                 #   Primitivos atômicos
     │
     ├── lib/
-    │   ├── api/                #   HTTP client + endpoints
+    │   ├── supabase/           #   Cliente Supabase — auth, profile, onboarding, referral
     │   ├── react-query/        #   Provider e config
     │   └── paywallo/           #   Bridge SDK Paywallo (auth sync, hooks)
     ├── store/                  # Zustand slices (auth, theme, language)
@@ -145,6 +152,7 @@ O fluxo é sempre: **Screen → Hook → Validação → Store / React Query**
 | Lógica de negócio          | `src/features/[feature]/hooks/`                    |
 | Estado global (cliente)    | `src/store/` (Zustand)                             |
 | Estado do servidor         | `src/lib/` (React Query)                           |
+| Chamada ao backend         | `src/lib/supabase/` (auth, profile, onboarding…)   |
 | Validação de formulário    | `src/features/[feature]/validation/`               |
 | Nova feature               | `src/features/[nome]/` com estrutura padrão acima  |
 | Tradução                   | `src/i18n/`                                        |
