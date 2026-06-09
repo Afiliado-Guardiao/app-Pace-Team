@@ -136,3 +136,38 @@ jest.mock("@virex-tech/paywallo-sdk", () => {
 		}),
 	};
 });
+
+jest.mock("expo-superwall", () => {
+	const React = require("react");
+
+	const asyncNoop = jest.fn().mockResolvedValue(undefined);
+
+	return {
+		SuperwallProvider: ({ children }) => React.createElement(React.Fragment, null, children),
+		SuperwallLoading: () => null,
+		SuperwallLoaded: ({ children }) => React.createElement(React.Fragment, null, children),
+		CustomPurchaseControllerProvider: ({ children }) =>
+			React.createElement(React.Fragment, null, children),
+		useSuperwall: () => ({
+			subscriptionStatus: { status: "UNKNOWN" },
+			setSubscriptionStatus: asyncNoop,
+			dismiss: asyncNoop,
+		}),
+		useUser: () => ({
+			user: null,
+			subscriptionStatus: { status: "UNKNOWN" },
+			identify: asyncNoop,
+			update: asyncNoop,
+			signOut: asyncNoop,
+			setIntegrationAttributes: asyncNoop,
+		}),
+		usePlacement: () => ({
+			registerPlacement: jest.fn().mockResolvedValue(undefined),
+			state: { status: "idle" },
+		}),
+		useSuperwallEvents: jest.fn(),
+	};
+	// virtual: o pacote só expõe a condição "import" (ESM) no campo `exports`,
+	// então o resolver CommonJS do Jest não consegue localizá-lo. Como o módulo
+	// é totalmente mockado aqui, marcamos como virtual para dispensar a resolução.
+}, { virtual: true });

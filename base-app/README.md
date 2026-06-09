@@ -38,9 +38,9 @@
 
 ## `>` Sobre
 
-**Base App** é um template de partida para aplicativos mobile em React Native com Expo. Ele entrega uma estrutura pronta com autenticação (Apple, Google, e-mail), onboarding multi-step, navegação por grupos de rota, tema centralizado, i18n, **Paywallo SDK** integrado (paywalls, subscriptions, A/B testing) e testes configurados — para você clonar e construir em cima sem montar boilerplate do zero.
+**Base App** é um template de partida para aplicativos mobile em React Native com Expo. Ele entrega uma estrutura pronta com autenticação (Apple, Google, e-mail), onboarding multi-step, navegação por grupos de rota, tema centralizado, i18n, monetização híbrida **Superwall + Paywallo** (paywalls, subscriptions, A/B testing) e testes configurados — para você clonar e construir em cima sem montar boilerplate do zero.
 
-A arquitetura é orientada a features isoladas: cada domínio da UI vive em `src/features/[nome]/` com seus próprios screens, hooks, validações e estilos. Estado global via Zustand, estado de servidor via React Query, design tokens no `theme/`, monetização via `src/lib/paywallo/`.
+A arquitetura é orientada a features isoladas: cada domínio da UI vive em `src/features/[nome]/` com seus próprios screens, hooks, validações e estilos. Estado global via Zustand, estado de servidor via React Query, design tokens no `theme/`, monetização via `src/lib/superwall/` (apresentação do paywall) + `src/lib/paywallo/` (identidade, funil e assinatura).
 
 O backend é o **Supabase** — autenticação, banco PostgreSQL e regras de acesso — consumido diretamente pelo app via `src/lib/supabase/`. Não há servidor para hospedar. A definição do backend fica em [`../base-supabase/`](../base-supabase/README.md).
 
@@ -53,12 +53,13 @@ O backend é o **Supabase** — autenticação, banco PostgreSQL e regras de ace
 git clone <repo-url> && cd base-app
 npm install
 
-# 2. iOS — instale os pods nativos (Paywallo SDK + outros)
+# 2. iOS — instale os pods nativos (Superwall + Paywallo + outros)
 cd ios && pod install && cd ..
 
 # 3. Configure o ambiente
 cp .env.example .env
-# Edite .env: EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY
+# Edite .env: EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY,
+#             EXPO_PUBLIC_SUPERWALL_IOS_API_KEY / EXPO_PUBLIC_SUPERWALL_ANDROID_API_KEY
 #             e EXPO_PUBLIC_PAYWALLO_APP_KEY
 
 # 4. Rode
@@ -71,7 +72,7 @@ Para rodar no device: `npm run ios` ou `npm run android`.
 > [`../base-supabase/README.md`](../base-supabase/README.md) e cole a URL e a
 > anon key no `.env`. Sem isso, o app sobe mas as telas de auth/dados falham.
 
-> **Paywallo:** o `appKey` é obtido em [paywallo.com.br/dashboard](https://paywallo.com.br/dashboard). Sem ele, o SDK loga erro mas não derruba o app — você pode rodar o template sem Paywallo até estar pronto para configurar.
+> **Superwall + Paywallo:** as API keys do Superwall (uma por plataforma, `pk_...`) saem de [superwall.com](https://superwall.com) → Settings → Keys; o `appKey` do Paywallo sai de [paywallo.com.br/dashboard](https://paywallo.com.br/dashboard). Sem elas o app roda, mas sem paywall/tracking até configurar. Ambos exigem **development build** (não funciona no Expo Go).
 
 <br/>
 
@@ -105,7 +106,8 @@ base-app/
     ├── lib/
     │   ├── supabase/           #   Cliente Supabase — auth, profile, onboarding, referral
     │   ├── react-query/        #   Provider e config
-    │   └── paywallo/           #   Bridge SDK Paywallo (auth sync, hooks)
+    │   ├── superwall/          #   Bridge Superwall (auth sync, subscription gate)
+    │   └── paywallo/           #   Bridge Paywallo (auth sync, session flags, funil)
     ├── store/                  # Zustand slices (auth, theme, language)
     ├── theme/                  # Design tokens, cores, tipografia
     ├── i18n/                   # Traduções (pt-BR, en, es)
@@ -158,7 +160,8 @@ O fluxo é sempre: **Screen → Hook → Validação → Store / React Query**
 | Tradução                   | `src/i18n/`                                        |
 | Tema / cores / espaçamento | `src/theme/`                                       |
 | Env var nova               | `.env` + importar via `@env`                       |
-| Paywall / subscription     | `PaywalloClient.*` + hooks em `src/lib/paywallo/`  |
+| Paywall (UI) / gate        | `useSubscriptionGate` em `src/lib/superwall/`      |
+| Tracking / funil / assinatura | `PaywalloClient.*` + `src/lib/paywallo/`        |
 
 <br/>
 

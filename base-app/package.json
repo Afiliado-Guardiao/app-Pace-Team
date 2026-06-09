@@ -36,6 +36,7 @@
 		"expo-router": "~6.0.13",
 		"expo-splash-screen": "~31.0.10",
 		"expo-status-bar": "~3.0.8",
+		"expo-superwall": "^1.0.5",
 		"i18next": "^24.2.3",
 		"phosphor-react-native": "^3.0.1",
 		"react": "19.1.0",

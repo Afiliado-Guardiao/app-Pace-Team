@@ -1,2 +1,2 @@
-export { usePaywalloAuthSync, useSessionFlag, useSubscriptionGate } from "./hooks";
+export { usePaywalloAuthSync, useSessionFlag } from "./hooks";
 export { PaywalloAuthBridge } from "./PaywalloAuthBridge";

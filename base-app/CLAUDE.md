@@ -387,24 +387,35 @@ npx expo start     # Dev server
 
 ## Observability & Monetização
 
-### Paywallo SDK (incluído)
+Monetização é **híbrida** (mesmo modelo do exemplo `ozempro-app`): **Superwall apresenta o paywall**, **Paywallo cuida de identidade/tracking, funil de onboarding e da fonte de verdade de assinatura** (via `paywallo-webhook` no backend). Os dois Providers coexistem no `AppProviders` (Paywallo externo, Superwall interno).
 
-O `@virex-tech/paywallo-sdk` vem **plugado no template** — paywalls, subscriptions, A/B testing e analytics. Veja `src/lib/paywallo/`:
+### Superwall — apresentação do paywall (`src/lib/superwall/`)
 
-- `PaywalloAuthBridge` montado no `AppProviders` envolve o app inteiro
-- `usePaywalloAuthSync` chama `identify()` após login e `reset()` no logout (reativo via store Zustand)
-- `useSessionFlag(key)` síncrono para A/B test anti-flicker
-- `useSubscriptionGate(placement)` para gate de feature premium
+`expo-superwall` — paywalls remotos e A/B (campanhas/holdouts no dashboard).
 
-**Hard rules para o SDK:**
+- `SuperwallProvider` recebe as `apiKeys` (iOS/Android)
+- `SuperwallAuthBridge` + `useSuperwallAuthSync` → `identify(userId)` + `update(attributes)` no login e `signOut()` no logout (segmentação de campanha)
+- `useSubscriptionGate(placement)` → gate de feature premium; registra o placement e resolve `true` quando o usuário tem acesso
 
-- **PROIBIDO** rastrear eventos `$paywall_*` ou `$onboarding_*` manualmente — o SDK emite automaticamente. Tracking manual gera duplicação no funil
-- **PROIBIDO** instalar RevenueCat / `react-native-iap` em paralelo — o SDK Paywallo tem IAP nativo (StoreKit 2 / Google Play Billing)
+### Paywallo — tracking & assinatura (`src/lib/paywallo/`)
+
+`@virex-tech/paywallo-sdk` — identidade/analytics, funil de onboarding e assinatura.
+
+- `PaywalloAuthBridge` + `usePaywalloAuthSync` → `identify()` no login e `reset()` no logout
+- `useSessionFlag(key)` → A/B síncrono anti-flicker (UI fora do paywall)
+- `useOnboarding()` (via `useOnboardingTracking`) → funil de onboarding automático
+- A assinatura é confirmada **server-side** pelo `paywallo-webhook` (ver `../base-supabase/`), que mantém `subscriptions` + `profiles.is_premium`. As compras feitas no paywall do Superwall chegam ao Paywallo via App Store/Play Notifications
+
+**Hard rules:**
+
+- **PROIBIDO** instalar RevenueCat / `react-native-iap` — Superwall + Paywallo já cobrem IAP nativo (StoreKit 2 / Google Play Billing). **Não usar RevenueCat.**
+- **PROIBIDO** chamar `Superwall.shared` direto fora de `src/lib/superwall/` — use os hooks (`useUser`, `usePlacement`)
 - **PROIBIDO** envolver o `PaywalloClient` em wrapper Singleton — ele já é singleton
-- Onboarding tracking: usar `useOnboarding()` do SDK em vez de `track("$onboarding_step")` custom
-- A/B test crítico (primeira renderização): adicionar a flag em `sessionFlags` no Provider, ler com `useSessionFlag`
+- **PROIBIDO** rastrear eventos `$paywall_*` / `$onboarding_*` manualmente — o Paywallo emite automaticamente
+- Gate/apresentação de paywall = **Superwall**. Identidade/funil/assinatura = **Paywallo**. Não duplicar entre os dois
+- Requer **development build** (ambos têm módulos nativos; não roda no Expo Go)
 
-Skills detalhadas em `../skills/paywallo-*.md`.
+Skills detalhadas em `../skills/superwall-*.md` e `../skills/paywallo-*.md`.
 
 ### Sentry / PostHog (opcional)
 
