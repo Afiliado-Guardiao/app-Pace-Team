@@ -69,25 +69,8 @@ jest.mock("@virex-tech/paywallo-sdk", () => {
 			hasActiveSubscription: jest.fn().mockResolvedValue(false),
 			getSubscription: jest.fn().mockResolvedValue(null),
 			restorePurchases: jest.fn().mockResolvedValue({ success: true, restoredProducts: [] }),
-			requireSubscription: jest.fn().mockResolvedValue(false),
-			requireSubscriptionWithCampaign: jest.fn().mockResolvedValue(false),
-			gateContent: jest.fn().mockResolvedValue(null),
-			gateContentWithCampaign: jest.fn().mockResolvedValue(null),
-			presentPaywall: jest.fn().mockResolvedValue({
-				presented: false,
-				purchased: false,
-				cancelled: true,
-				restored: false,
-			}),
-			presentCampaign: jest.fn().mockResolvedValue({
-				presented: false,
-				purchased: false,
-				cancelled: true,
-				restored: false,
-			}),
-			preloadCampaign: jest.fn().mockResolvedValue({ success: true }),
-			requestPushPermission: jest.fn().mockResolvedValue("notDetermined"),
-			onboardingStep: asyncNoop,
+			fullReset: asyncNoop,
+			deleteUserData: asyncNoop,
 		},
 		usePaywallo: () => ({
 			isInitialized: true,
@@ -96,8 +79,6 @@ jest.mock("@virex-tech/paywallo-sdk", () => {
 			subscription: null,
 			products: new Map(),
 			isLoadingProducts: false,
-			presentPaywall: jest.fn().mockResolvedValue({ presented: false, purchased: false }),
-			presentCampaign: jest.fn().mockResolvedValue({ presented: false, purchased: false }),
 			hasActiveSubscription: jest.fn().mockResolvedValue(false),
 			getSubscription: jest.fn().mockResolvedValue(null),
 			restorePurchases: jest.fn().mockResolvedValue({ success: true }),
@@ -132,8 +113,8 @@ jest.mock("@virex-tech/paywallo-sdk", () => {
 		useOnboarding: () => ({
 			step: asyncNoop,
 			complete: asyncNoop,
-			drop: asyncNoop,
 		}),
+		syncSuperwallAttributes: jest.fn().mockResolvedValue("skipped"),
 	};
 });
 

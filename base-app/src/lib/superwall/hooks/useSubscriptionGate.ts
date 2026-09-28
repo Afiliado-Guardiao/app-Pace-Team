@@ -2,6 +2,8 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 import { usePlacement } from "expo-superwall";
 
+import { syncSuperwallAttributes } from "@virex-tech/paywallo-sdk";
+
 interface IUseSubscriptionGateReturn {
 	unlock: () => Promise<boolean>;
 	isUnlocking: boolean;
@@ -52,13 +54,18 @@ export const useSubscriptionGate = (placement: string): IUseSubscriptionGateRetu
 
 		return new Promise<boolean>((resolve) => {
 			resolveRef.current = resolve;
-			void registerPlacementRef
-				.current({
-					placement,
-					feature: () => {
-						settle(true);
-					},
-				})
+			// Empurra os atributos `pw_*` (origem do anúncio) do Paywallo para o
+			// Superwall antes do register, senão a audience avalia sem eles e a
+			// variante gruda errada no usuário. Nunca rejeita; no pior caso, timeout.
+			void syncSuperwallAttributes({ timeoutMs: 1500 })
+				.then(() =>
+					registerPlacementRef.current({
+						placement,
+						feature: () => {
+							settle(true);
+						},
+					}),
+				)
 				.catch(() => {
 					settle(false);
 				});

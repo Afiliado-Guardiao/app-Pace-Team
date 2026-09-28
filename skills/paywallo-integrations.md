@@ -1,6 +1,6 @@
 # Skill: Paywallo — Assinatura Server-Side (webhook & backend)
 
-> **SDK alvo:** `@virex-tech/paywallo-sdk` v2.x · **Backend:** `base-supabase`
+> **SDK alvo:** `@virex-tech/paywallo-sdk` ^2.10.0 · **Backend:** `base-supabase`
 > Pré-requisito: [`paywallo-sdk-setup.md`](./paywallo-sdk-setup.md).
 
 No modelo híbrido, **a fonte de verdade da assinatura é o Paywallo, confirmada server-side** pela Edge Function `paywallo-webhook`. O Superwall apresenta o paywall e dispara a compra (StoreKit/Play Billing); o Paywallo recebe os eventos e o webhook mantém o banco. **Não usamos RevenueCat.**
@@ -28,11 +28,23 @@ O `subscriptionStatus` do Superwall (SDK) é **client-side** — bom para UX, fr
 
 ## 3. Como as compras do Superwall chegam ao Paywallo
 
-A compra disparada no paywall do Superwall é uma transação **normal de StoreKit / Play Billing**. O Paywallo é configurado para receber as **App Store Server Notifications V2** e o **Google Play RTDN** — então ele aprende a transação independentemente de quem apresentou o paywall, valida o receipt e emite o webhook para o Supabase.
+A compra disparada no paywall do Superwall é uma transação **normal de StoreKit / Play Billing**. O bridge do SDK (`SuperwallAutoBridge`) já registra `paywall_viewed/closed` e o evento `transaction` (crítico) sozinho a partir dos callbacks do Superwall — **não rastreie compra manualmente**.
 
-Para a correlação usuário↔transação funcionar, o `identify` do Paywallo (ver [`paywallo-sdk-setup.md`](./paywallo-sdk-setup.md)) deve usar um `app_user_id` que case com `profiles.id`.
+Para a **assinatura em si** virar registro no Paywallo (e então disparar o `paywallo-webhook` acima), é **obrigatório** configurar o webhook Superwall → Paywallo no dashboard:
 
-> Setup no dashboard do Paywallo: **Integrations → Store Notifications** (Apple/Google) + **Webhooks** apontando para a URL da função.
+1. Dashboard do **Paywallo** → `Configurações` → `Integrações` → `Superwall`: copie a URL do webhook e o secret gerado.
+2. Dashboard do **Superwall** → `Settings` → `Webhooks`: adicione a URL `https://paywallo.com.br/api/webhook/superwall/{sua-chave-app}` com o custom header `x-paywallo-secret: <secret>`.
+3. Marque os 7 eventos obrigatórios: `initial_purchase`, `renewal`, `cancellation`, `uncancellation`, `expiration`, `billing_issue`, `non_renewing_purchase`. Faltar um não trava os outros, mas degrada aquele sinal (ex.: sem `cancellation`, um reembolso continua contando como venda ativa).
+
+Para a correlação usuário↔transação funcionar, o `identify` do Paywallo (ver [`paywallo-sdk-setup.md`](./paywallo-sdk-setup.md)) deve usar `userId == profiles.id` — vira `external_user_id` no Paywallo e chega no payload do webhook como `app_user_id`.
+
+---
+
+## 3.1 Atributos `pw_*` no Superwall (segmentação por origem)
+
+O Paywallo envia a atribuição on-device pro Superwall como user attributes `pw_*` (`pw_ad_network`, `pw_is_paid`, `pw_match_type`, UTMs, click IDs…) **automaticamente**, via bridge nativo. Use pra criar audiences no Superwall e mostrar paywall/preço diferente por origem (ex.: `pw_ad_network is meta`).
+
+Como o Superwall avalia audiences no `register()` e a variante escolhida gruda no usuário até o assignment ser resetado, chame `syncSuperwallAttributes({ timeoutMs: 1500 })` (export do `@virex-tech/paywallo-sdk`) **imediatamente antes** de cada `registerPlacement` — no template isso já é feito dentro de `useSubscriptionGate` (`src/lib/superwall/hooks/useSubscriptionGate.ts`). Sem esse sync, quem veio de anúncio pode ser avaliado como orgânico e ficar assim permanentemente.
 
 ---
 
@@ -67,9 +79,9 @@ Referência completa do fluxo store ↔ Superwall: `ozempro-app/src/app/hooks/us
 
 ---
 
-## 6. Atribuição (opcional)
+## 6. Atribuição
 
-Se o fork usar AppsFlyer/Meta, envie os IDs como `properties` no `identify` do Paywallo e via `setIntegrationAttributes` no Superwall. Só pluge se o caso de atribuição existir.
+O Paywallo já captura UTMs/click IDs on-device e os envia pro Superwall automaticamente como atributos `pw_*` (ver seção 3.1) — não é preciso configurar nada à parte pra isso. Se o fork também usa AppsFlyer/Meta SDK diretamente (fora do Paywallo), plugue os IDs deles como `properties` no `identify` só se o caso de atribuição exigir os dois sistemas rodando em paralelo.
 
 ---
 
@@ -77,8 +89,10 @@ Se o fork usar AppsFlyer/Meta, envie os IDs como `properties` no `identify` do P
 
 - [ ] `paywallo-webhook` deployada com path secret + HMAC configurados
 - [ ] URL colada no dashboard do Paywallo (Webhooks)
-- [ ] Store Notifications (Apple/Google) apontadas para o Paywallo
-- [ ] `identify` usa `app_user_id == profiles.id`
+- [ ] Webhook Superwall → Paywallo configurado (Paywallo: Integrações → Superwall; Superwall: Settings → Webhooks) com os 7 eventos marcados
+- [ ] `identify` usa `userId == profiles.id` (vira `external_user_id`/`app_user_id` no backend)
 - [ ] Gating sensível no backend lê `profiles.is_premium` / `subscriptions` (não o status client-side)
 - [ ] `setSubscriptionStatus` espelha o premium de volta ao Superwall
+- [ ] `syncSuperwallAttributes` chamado antes de cada `registerPlacement` (audiences por origem funcionando)
+- [ ] Push (se usado): só `@react-native-firebase/app` no Android (sem `messaging`/notifee); iOS via APNS; vínculo por usuário exige `userId` no `identify`
 - [ ] **RevenueCat não é usado**

@@ -50,8 +50,8 @@ export const useOnboardingNavigation = (): IUseOnboardingNavigationReturn => {
 	const { trackStepViewed } = useOnboardingTracking();
 
 	useEffect(() => {
-		void trackStepViewed(currentStep.id);
-	}, [currentStep.id, trackStepViewed]);
+		void trackStepViewed(currentStep.id, currentStepIndex + 1);
+	}, [currentStep.id, currentStepIndex, trackStepViewed]);
 
 	const currentAnswer = useMemo(() => answers[currentStep.id], [answers, currentStep]);
 

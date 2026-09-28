@@ -395,16 +395,18 @@ Monetização é **híbrida** (mesmo modelo do exemplo `ozempro-app`): **Superwa
 
 - `SuperwallProvider` recebe as `apiKeys` (iOS/Android)
 - `SuperwallAuthBridge` + `useSuperwallAuthSync` → `identify(userId)` + `update(attributes)` no login e `signOut()` no logout (segmentação de campanha)
-- `useSubscriptionGate(placement)` → gate de feature premium; registra o placement e resolve `true` quando o usuário tem acesso
+- `useSubscriptionGate(placement)` → gate de feature premium; chama `syncSuperwallAttributes({ timeoutMs: 1500 })` do Paywallo, registra o placement e resolve `true` quando o usuário tem acesso. Todo `registerPlacement` novo deve ser precedido do `syncSuperwallAttributes` (atributos `pw_*` de origem do anúncio para as audiences)
 
 ### Paywallo — tracking & assinatura (`src/lib/paywallo/`)
 
-`@virex-tech/paywallo-sdk` — identidade/analytics, funil de onboarding e assinatura.
+`@virex-tech/paywallo-sdk` (^2.10) — identidade/analytics, funil de onboarding, atribuição e assinatura.
 
-- `PaywalloAuthBridge` + `usePaywalloAuthSync` → `identify()` no login e `reset()` no logout
+- `PaywalloAuthBridge` + `usePaywalloAuthSync` → `identify({ userId, email, properties })` no login e `reset()` no logout. O `userId` (id do profile) é obrigatório: vira o `app_user_id` que o `paywallo-webhook` usa para vincular a assinatura ao profile
 - `useSessionFlag(key)` → A/B síncrono anti-flicker (UI fora do paywall)
-- `useOnboarding()` (via `useOnboardingTracking`) → funil de onboarding automático
-- A assinatura é confirmada **server-side** pelo `paywallo-webhook` (ver `../base-supabase/`), que mantém `subscriptions` + `profiles.is_premium`. As compras feitas no paywall do Superwall chegam ao Paywallo via App Store/Play Notifications
+- `useOnboarding()` (via `useOnboardingTracking`) → `step(name, order)` com `order` obrigatório (1-based) e `complete()`. Não existe `drop()`: o abandono é inferido no backend
+- Eventos de paywall/transação do Superwall são repassados ao Paywallo automaticamente pelo SDK — não rastrear compra manualmente
+- A assinatura é confirmada **server-side** pelo `paywallo-webhook` (ver `../base-supabase/`), que mantém `subscriptions` + `profiles.is_premium`. As compras feitas no paywall do Superwall chegam ao Paywallo pelo webhook Superwall → Paywallo (configurado nos dois dashboards; ver `../skills/paywallo-integrations.md`)
+- APIs de paywall próprio do Paywallo (`presentPaywall`, `presentCampaign`, `requireSubscriptionWithCampaign`, `preload*`…) são stubs inertes desde a 2.10: não usar
 
 **Hard rules:**
 

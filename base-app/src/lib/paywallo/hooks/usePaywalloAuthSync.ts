@@ -14,9 +14,13 @@ export const usePaywalloAuthSync = (): void => {
 
 		if (previousUserId === currentUserId) return;
 
-		if (currentUserId && user?.email) {
+		if (currentUserId && user) {
+			// `userId` (id do profile) vira `external_user_id`: é por ele que o
+			// `paywallo-webhook` vincula a assinatura ao profile e o push acha o usuário.
+			// E-mail é opcional (Apple Sign In pode ocultá-lo).
 			void PaywalloClient.identify({
-				email: user.email,
+				userId: currentUserId,
+				email: user.email ?? undefined,
 				properties: {
 					name: user.name,
 					signup_at: user.createdAt,

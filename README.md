@@ -181,7 +181,7 @@ Detalhes em [`base-supabase/README.md`](./base-supabase/README.md) · regras em 
 
 ## `>` Skills (Paywallo)
 
-O `@virex-tech/paywallo-sdk` v2.2.x **já vem plugado** no `base-app`. As skills em [`skills/`](./skills/) são guias de uso aprofundado:
+O `@virex-tech/paywallo-sdk` v2.10.x **já vem plugado** no `base-app`. As skills em [`skills/`](./skills/) são guias de uso aprofundado:
 
 | Skill                                                                 | Descrição                                                                               |
 | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
