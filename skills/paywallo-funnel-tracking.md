@@ -27,7 +27,7 @@ Consumidores no template:
 
 **Regras:**
 
-- **PROIBIDO** rastrear eventos `$onboarding_*` manualmente — o SDK emite. Tracking manual duplica o funil.
+- **PROIBIDO** rastrear onboarding manualmente (`track("onboarding", …)` ou nomes inventados como `$onboarding_step`) — use só `useOnboarding`. Tracking manual duplica ou polui o funil.
 - Use o `id` do passo (estável), não o label traduzido.
 - Não chame `step` em re-render desnecessário — o template já chama dentro de `useEffect` por `currentStep.id`.
 
@@ -63,8 +63,9 @@ await PaywalloClient.track("meal_logged", { properties: { meal_type: "lunch" } }
 await PaywalloClient.track("refund_requested", { properties: { order_id }, priority: "critical" });
 ```
 
+- O nome precisa ser snake_case (ou `$snake_case`); fora disso `track()` lança `ClientError`.
 - `priority: "critical"` para eventos financeiros (flush imediato + retry durável); o padrão `"normal"` vai em lote (com retry durável a partir da 2.10.1).
-- **NUNCA** rastreie manualmente `$paywall_*`, `$onboarding_*`, `paywall` ou `transaction` — o SDK já emite isso sozinho via bridge automático com o Superwall (`onPaywallPresent`/`onPaywallDismiss`/`transactionComplete` viram eventos Paywallo). Rastrear de novo duplica o evento no dashboard.
+- **NUNCA** rastreie manualmente eventos de paywall, compra ou onboarding (`track("paywall" | "transaction" | "onboarding", …)` ou nomes inventados como `$paywall_viewed`) — o SDK já emite isso sozinho via bridge automático com o Superwall (`onPaywallPresent`/`onPaywallDismiss`/`transactionComplete` viram eventos Paywallo). Rastrear de novo duplica o evento no dashboard.
 
 ---
 

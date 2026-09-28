@@ -413,7 +413,7 @@ Monetização é **híbrida** (mesmo modelo do exemplo `ozempro-app`): **Superwa
 - **PROIBIDO** instalar RevenueCat / `react-native-iap` — Superwall + Paywallo já cobrem IAP nativo (StoreKit 2 / Google Play Billing). **Não usar RevenueCat.**
 - **PROIBIDO** chamar `Superwall.shared` direto fora de `src/lib/superwall/` — use os hooks (`useUser`, `usePlacement`)
 - **PROIBIDO** envolver o `PaywalloClient` em wrapper Singleton — ele já é singleton
-- **PROIBIDO** rastrear eventos `$paywall_*` / `$onboarding_*` manualmente — o Paywallo emite automaticamente
+- **PROIBIDO** rastrear manualmente eventos de paywall, compra ou onboarding (`track("paywall" | "transaction" | "onboarding", …)` ou nomes inventados como `$paywall_viewed`) — o SDK emite esses eventos (paywall/compra via bridge do Superwall, onboarding via `useOnboarding`). `track()` custom só aceita snake_case (ou `$snake_case`) e lança erro fora disso
 - Gate/apresentação de paywall = **Superwall**. Identidade/funil/assinatura = **Paywallo**. Não duplicar entre os dois
 - Requer **development build** (ambos têm módulos nativos; não roda no Expo Go)
 
