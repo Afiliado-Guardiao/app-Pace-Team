@@ -79,7 +79,7 @@ base-development/
 ```bash
 # 0. Pré-requisitos
 #    Node.js 22+, npm, conta no Supabase (supabase.com), Expo Go (no celular)
-#    iOS: Xcode (Mac)  ·  Android: Android Studio
+#    iOS: Xcode (Mac) ou EAS Build na nuvem (sem Mac)  ·  Android: Android Studio
 
 git clone <repo-url> && cd base-development
 ```
@@ -114,6 +114,8 @@ npx expo start                        # ou npm run ios / npm run android
 > A `URL` e a `anon key` ficam em **Project Settings → API** no Dashboard do Supabase.
 >
 > **Paywallo:** o `appKey` é obtido em [paywallo.com.br/dashboard](https://paywallo.com.br/dashboard). Sem ele, o SDK loga erro mas não derruba o app.
+>
+> **Sem Mac?** Gere o build iOS na nuvem com o EAS (`npm run eas:dev:ios`, `npm run eas:testflight`) — passo a passo em [`base-app/README.md`](./base-app/README.md#-sem-mac-build-ios-na-nuvem-eas).
 
 <br/>
 
@@ -127,7 +129,7 @@ npx expo start                        # ou npm run ios / npm run android
 
 Mobile template em **React Native + Expo**.
 
-- **Stack:** Expo SDK 54 · React 19 · TypeScript · Zustand · React Query · i18next · Zod · Supabase JS · Paywallo SDK 2.2
+- **Stack:** Expo SDK 54 · React 19 · TypeScript · Zustand · React Query · i18next · Zod · Supabase JS · Paywallo SDK 2.10
 - **Arquitetura:** features isoladas (DDD-inspired) em `src/features/`, camada Supabase em `src/lib/supabase/`
 - **Pronto:** auth por e-mail (helpers Apple/Google prontos), onboarding multi-step, tema centralizado, i18n (pt-BR/en/es), Paywallo, testes Jest
 
@@ -162,20 +164,20 @@ Detalhes em [`base-supabase/README.md`](./base-supabase/README.md) · regras em 
 
 ## `>` Stack resumida
 
-| Camada              | App (`base-app`)                       | Backend (`base-supabase`)            |
-| :------------------ | :------------------------------------- | :----------------------------------- |
-| **Linguagem**       | TypeScript 5.9 (strict)                | SQL + TypeScript (Deno)              |
-| **Runtime**         | React Native 0.81 / Expo SDK 54        | Supabase (Postgres gerenciado)       |
-| **Framework**       | Expo Router 6 (file-based)             | Supabase CLI                         |
-| **Estado cliente**  | Zustand 5                              | —                                    |
-| **Estado servidor** | React Query 5                          | —                                    |
-| **Banco**           | —                                      | PostgreSQL + Row Level Security      |
-| **Lógica server**   | —                                      | Funções SQL (RPC) + Edge Function    |
-| **Auth**            | Supabase Auth (`@supabase/supabase-js`) | Supabase Auth (sessões + OAuth)      |
-| **i18n**            | i18next (pt-BR, en, es)                | —                                    |
-| **Testes**          | Jest + Testing Library                 | —                                    |
-| **Lint/Format**     | ESLint 9 + Prettier 3                  | —                                    |
-| **Monetização**     | Paywallo SDK 2.2 (paywalls, subs, A/B) | Edge Function do webhook Paywallo    |
+| Camada              | App (`base-app`)                        | Backend (`base-supabase`)         |
+| :------------------ | :-------------------------------------- | :-------------------------------- |
+| **Linguagem**       | TypeScript 5.9 (strict)                 | SQL + TypeScript (Deno)           |
+| **Runtime**         | React Native 0.81 / Expo SDK 54         | Supabase (Postgres gerenciado)    |
+| **Framework**       | Expo Router 6 (file-based)              | Supabase CLI                      |
+| **Estado cliente**  | Zustand 5                               | —                                 |
+| **Estado servidor** | React Query 5                           | —                                 |
+| **Banco**           | —                                       | PostgreSQL + Row Level Security   |
+| **Lógica server**   | —                                       | Funções SQL (RPC) + Edge Function |
+| **Auth**            | Supabase Auth (`@supabase/supabase-js`) | Supabase Auth (sessões + OAuth)   |
+| **i18n**            | i18next (pt-BR, en, es)                 | —                                 |
+| **Testes**          | Jest + Testing Library                  | —                                 |
+| **Lint/Format**     | ESLint 9 + Prettier 3                   | —                                 |
+| **Monetização**     | Paywallo SDK 2.2 (paywalls, subs, A/B)  | Edge Function do webhook Paywallo |
 
 <br/>
 
@@ -183,13 +185,13 @@ Detalhes em [`base-supabase/README.md`](./base-supabase/README.md) · regras em 
 
 O `@virex-tech/paywallo-sdk` v2.10.x **já vem plugado** no `base-app`. As skills em [`skills/`](./skills/) são guias de uso aprofundado:
 
-| Skill                                                                 | Descrição                                                                               |
-| :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| Skill                                                                 | Descrição                                                                                 |
+| :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
 | [`paywallo-full-skill.md`](./skills/paywallo-full-skill.md)           | **Master guide** — visão arquitetural + checklist + integração com base-app/base-supabase |
-| [`paywallo-sdk-setup.md`](./skills/paywallo-sdk-setup.md)             | Install, `PaywalloProvider`, `identify` no login, `reset` no logout                     |
-| [`paywallo-paywall-skill.md`](./skills/paywallo-paywall-skill.md)     | `requireSubscriptionWithCampaign`, `presentCampaign`, `gateContent`, `useSubscription`  |
-| [`paywallo-funnel-tracking.md`](./skills/paywallo-funnel-tracking.md) | `useOnboarding` (step/complete/drop), eventos custom com `track()`                      |
-| [`paywall-ab-testing.md`](./skills/paywall-ab-testing.md)             | `sessionFlags` síncronos (anti-flicker), `getVariantCached`, conditional flags          |
+| [`paywallo-sdk-setup.md`](./skills/paywallo-sdk-setup.md)             | Install, `PaywalloProvider`, `identify` no login, `reset` no logout                       |
+| [`paywallo-paywall-skill.md`](./skills/paywallo-paywall-skill.md)     | `requireSubscriptionWithCampaign`, `presentCampaign`, `gateContent`, `useSubscription`    |
+| [`paywallo-funnel-tracking.md`](./skills/paywallo-funnel-tracking.md) | `useOnboarding` (step/complete/drop), eventos custom com `track()`                        |
+| [`paywall-ab-testing.md`](./skills/paywall-ab-testing.md)             | `sessionFlags` síncronos (anti-flicker), `getVariantCached`, conditional flags            |
 
 > **Comece pelo `paywallo-full-skill.md`** — é o índice e tem o checklist ponta-a-ponta. A seção 7 cobre a Edge Function do webhook no `base-supabase`.
 
@@ -351,16 +353,16 @@ EXPO_PUBLIC_SENTRY_DSN=
 
 ## `>` Troubleshooting rápido
 
-| Sintoma                                                  | Provável causa / fix                                                                              |
-| :------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| Sintoma                                                  | Provável causa / fix                                                                                  |
+| :------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
 | App não conecta no Supabase                              | `EXPO_PUBLIC_SUPABASE_URL` / `ANON_KEY` vazios ou errados no `.env` — copie de Project Settings → API |
-| Cadastro pede confirmação de e-mail                      | Desligue _"Confirm email"_ no Dashboard (Authentication → Email)                                  |
-| Onboarding não funciona / erro de sessão                 | Ligue _"Anonymous sign-ins"_ no Dashboard do Supabase                                             |
-| Webhook do Paywallo responde `401`                       | `?secret=` ou `HMAC_SECRET` divergem — rode `npm run secrets:set` no `base-supabase`              |
-| `supabase db push` falha                                 | Rode `npx supabase migration list` e confira a ordem das migrations                               |
-| Expo Go reclama de versão de SDK                         | Atualize o app Expo Go no celular (precisa suportar SDK 54)                                       |
-| iOS build falha após instalar deps                       | Rode `cd base-app/ios && pod install` (Paywallo SDK tem módulos nativos)                          |
-| Console mostra `[Paywallo] init failed: MISSING_APP_KEY` | `EXPO_PUBLIC_PAYWALLO_APP_KEY` vazio no `.env` — pegue no dashboard Paywallo                      |
+| Cadastro pede confirmação de e-mail                      | Desligue _"Confirm email"_ no Dashboard (Authentication → Email)                                      |
+| Onboarding não funciona / erro de sessão                 | Ligue _"Anonymous sign-ins"_ no Dashboard do Supabase                                                 |
+| Webhook do Paywallo responde `401`                       | `?secret=` ou `HMAC_SECRET` divergem — rode `npm run secrets:set` no `base-supabase`                  |
+| `supabase db push` falha                                 | Rode `npx supabase migration list` e confira a ordem das migrations                                   |
+| Expo Go reclama de versão de SDK                         | Atualize o app Expo Go no celular (precisa suportar SDK 54)                                           |
+| iOS build falha após instalar deps                       | Rode `cd base-app/ios && pod install` (Paywallo SDK tem módulos nativos)                              |
+| Console mostra `[Paywallo] init failed: MISSING_APP_KEY` | `EXPO_PUBLIC_PAYWALLO_APP_KEY` vazio no `.env` — pegue no dashboard Paywallo                          |
 
 <br/>
 

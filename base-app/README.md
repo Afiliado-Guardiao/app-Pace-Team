@@ -76,6 +76,42 @@ Para rodar no device: `npm run ios` ou `npm run android`.
 
 <br/>
 
+## `>` Sem Mac? Build iOS na nuvem (EAS)
+
+O [EAS Build](https://docs.expo.dev/build/introduction/) compila o app nos servidores da Expo — dá para gerar o build iOS, instalar no iPhone e mandar para o TestFlight direto do Windows/Linux. Precisa de conta Expo (grátis) e de **Apple Developer Program** pago para o iOS.
+
+```bash
+# 1. Uma vez por máquina
+npm install -g eas-cli
+eas login
+
+# 2. Uma vez por app — cria o projeto na Expo e grava o projectId no app.json
+eas init
+
+# 3. Suba as variáveis do .env para a Expo (o .env NÃO vai no upload, está no .gitignore)
+eas env:push --environment development --path .env
+eas env:push --environment preview --path .env
+eas env:push --environment production --path .env
+```
+
+| Comando                     | O que faz                                                                          |
+| :-------------------------- | :--------------------------------------------------------------------------------- |
+| `npm run eas:dev:ios`       | Development build para o seu iPhone (substitui o Expo Go, roda Paywallo/Superwall) |
+| `npm run eas:dev:android`   | Development build para Android                                                     |
+| `npm run eas:preview`       | Build interno (ad hoc no iOS, APK no Android) para testers                         |
+| `npm run eas:testflight`    | Build de produção iOS + envio automático para o TestFlight                         |
+| `npm run eas:build:ios`     | Só o build de produção iOS (`.ipa`)                                                |
+| `npm run eas:build:android` | Build de produção Android (`.aab` para a Play Store)                               |
+| `npm run eas:submit:ios`    | Envia o último build iOS para o App Store Connect                                  |
+
+**Fluxo de dev sem Mac:** rode `eas device:create` e abra o link no iPhone para registrar o aparelho, depois `npm run eas:dev:ios`. Instale pelo QR code do build e use `npx expo start` normalmente — o app abre no seu iPhone com hot reload. Só precisa gerar um novo dev build quando adicionar/atualizar dependência nativa.
+
+- Na primeira vez, o EAS pede login na Apple e cria certificados e provisioning profiles sozinho.
+- `buildNumber` / `versionCode` são incrementados pela Expo (`appVersionSource: remote` no [`eas.json`](./eas.json)).
+- As pastas `ios/` e `android/` estão versionadas, então o EAS usa elas como estão: bundle ID e nome do app precisam ser trocados também no projeto nativo (`PRODUCT_BUNDLE_IDENTIFIER` em `ios/appbase.xcodeproj/project.pbxproj` e `applicationId` em `android/app/build.gradle`), não só no `app.json`.
+
+<br/>
+
 ## `>` Estrutura do projeto
 
 ```
@@ -147,21 +183,21 @@ O fluxo é sempre: **Screen → Hook → Validação → Store / React Query**
 
 ## `>` Navegação rápida
 
-| Quero...                   | Vou em...                                          |
-| :------------------------- | :------------------------------------------------- |
-| Nova tela em uma feature   | `src/features/[feature]/screens/` + rota em `app/` |
-| Componente global          | `src/components/{core,shared,ui}/`                 |
-| Lógica de negócio          | `src/features/[feature]/hooks/`                    |
-| Estado global (cliente)    | `src/store/` (Zustand)                             |
-| Estado do servidor         | `src/lib/` (React Query)                           |
-| Chamada ao backend         | `src/lib/supabase/` (auth, profile, onboarding…)   |
-| Validação de formulário    | `src/features/[feature]/validation/`               |
-| Nova feature               | `src/features/[nome]/` com estrutura padrão acima  |
-| Tradução                   | `src/i18n/`                                        |
-| Tema / cores / espaçamento | `src/theme/`                                       |
-| Env var nova               | `.env` + importar via `@env`                       |
-| Paywall (UI) / gate        | `useSubscriptionGate` em `src/lib/superwall/`      |
-| Tracking / funil / assinatura | `PaywalloClient.*` + `src/lib/paywallo/`        |
+| Quero...                      | Vou em...                                          |
+| :---------------------------- | :------------------------------------------------- |
+| Nova tela em uma feature      | `src/features/[feature]/screens/` + rota em `app/` |
+| Componente global             | `src/components/{core,shared,ui}/`                 |
+| Lógica de negócio             | `src/features/[feature]/hooks/`                    |
+| Estado global (cliente)       | `src/store/` (Zustand)                             |
+| Estado do servidor            | `src/lib/` (React Query)                           |
+| Chamada ao backend            | `src/lib/supabase/` (auth, profile, onboarding…)   |
+| Validação de formulário       | `src/features/[feature]/validation/`               |
+| Nova feature                  | `src/features/[nome]/` com estrutura padrão acima  |
+| Tradução                      | `src/i18n/`                                        |
+| Tema / cores / espaçamento    | `src/theme/`                                       |
+| Env var nova                  | `.env` + importar via `@env`                       |
+| Paywall (UI) / gate           | `useSubscriptionGate` em `src/lib/superwall/`      |
+| Tracking / funil / assinatura | `PaywalloClient.*` + `src/lib/paywallo/`           |
 
 <br/>
 
