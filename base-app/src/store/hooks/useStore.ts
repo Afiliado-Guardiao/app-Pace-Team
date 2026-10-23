@@ -7,6 +7,7 @@ import { createHydrationSlice } from "../slices/hydration";
 import { createLanguageSlice } from "../slices/language";
 import { createNavigationSlice } from "../slices/navigation";
 import { createOnboardingSlice } from "../slices/onboarding";
+import { createPaceSlice } from "../slices/pace";
 import { IStore } from "../types";
 
 export const useStore = create<IStore>()(
@@ -17,6 +18,7 @@ export const useStore = create<IStore>()(
 			...createAuthSlice(...a),
 			...createHydrationSlice(...a),
 			...createOnboardingSlice(...a),
+			...createPaceSlice(...a),
 		}),
 		persistConfig,
 	),

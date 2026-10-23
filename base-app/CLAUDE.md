@@ -384,6 +384,19 @@ npx expo start     # Dev server
 
 - `@quidone/react-native-wheel-picker`: componente reutilizável em `src/components/shared/WheelPicker/index.tsx` — picker de scroll tipo roda (iOS-style)
 - `react-native-keyboard-controller`: usado em `app/_layout.tsx` (KeyboardProvider), `features/auth/components/EmailAuthModal/index.tsx` e `features/onboarding/index.tsx` — evita que teclado sobreponha inputs
+- `expo-blur`: desfoque do vidro (backdrop-filter) em `src/components/pace/primitives/GlassSurface`
+
+## Design System PACE TEAM
+
+Portado 1:1 do Cloud Design (pacote "Pace Team Design System"). É a referência visual aprovada: **não redesenhar**.
+
+- **Tokens:** `theme.pace.*` em `src/theme/pace/` — `colors`, `gradients` (camadas SVG), `typography`, `spacing`, `radii`, `shadows` (box-shadow CSS, suportado pelo RN 0.81), `motion`, `blur`. Telas PACE usam só esses tokens; os tokens antigos (`theme.colors` etc.) ficam para as telas do template até serem substituídas
+- **Componentes:** `import { Button, GlassCard, RankRow } from "@/components/pace"` — core (Button, IconButton, Chip, Badge, Avatar, AvatarStack, Logo, Icon, CountUp), forms (Input, Select, Checkbox, Radio, Switch, SegmentedControl), surfaces (GlassCard, Sheet, Toast, Tooltip), data (StatTile, ActivityGauge, ProgressBar, RankRow, Podium), navigation (TabBar + `PACE_TABS`, TopBar)
+- **Vidro:** toda superfície de vidro passa por `GlassSurface` (blur + `--glass-fill` + borda + brilho interno + rim branco). Não recriar vidro à mão
+- **Fontes:** Montserrat (UI) e Exo 2 (marca) carregadas em `useAppInitialization` a partir de `src/theme/pace/fonts`
+- **Ícones:** Lucide por nome kebab-case (`<Icon name="footprints" />`), como no design system
+- **Animações de entrada:** `riseIn` / `popIn` / `growIn` em `src/components/pace/animations` (respeitam "reduzir movimento")
+- Diferenças de API em relação ao web: `onClick` → `onPress`; `IconButton.label` é obrigatório; `TopBar` recebe `right={{ icon, label, onPress, badge }}`; `Toast` recebe `action={{ label, onPress }}`; `Select` abre as opções numa `Sheet`
 
 ## Observability & Monetização
 

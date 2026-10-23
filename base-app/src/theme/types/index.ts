@@ -3,6 +3,7 @@ import { IBorderRadius } from "../borderRadius";
 import { IBorderWidth } from "../borderWidth";
 import { IColors } from "../colors";
 import { IComponentSizes } from "../componentSizes";
+import { IPaceTheme } from "../pace";
 import { IShadows } from "../shadows";
 import { ISpacing } from "../spacing";
 import { ITypography } from "../typography";
@@ -12,6 +13,7 @@ export type { IBorderRadius } from "../borderRadius";
 export type { IBorderWidth } from "../borderWidth";
 export type { IColors } from "../colors";
 export type { IComponentSizes } from "../componentSizes";
+export type { IPaceTheme } from "../pace";
 export type { IShadows } from "../shadows";
 export type { ISpacing } from "../spacing";
 export type { ITypography } from "../typography";
@@ -25,6 +27,7 @@ export interface ITheme {
 	borderWidth: IBorderWidth;
 	componentSizes: IComponentSizes;
 	animations: IAnimations;
+	pace: IPaceTheme;
 }
 
 export interface IThemeContext {

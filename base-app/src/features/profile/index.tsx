@@ -1,124 +1,141 @@
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
-import { CakeIcon, EnvelopeSimpleIcon, LockIcon, UserIcon } from "phosphor-react-native";
-import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+	Button,
+	FloatingToast,
+	IconButton,
+	InfoNote,
+	ScreenBackground,
+	ScreenScroll,
+	SectionHeader,
+	Sheet,
+} from "@/components/pace";
+import { RunRow } from "@/components/shared/RunRow";
+import { ITheme, useTheme } from "@/theme";
+import { PHOTOS } from "@/lib/pace";
 
-import { LanguageSwitcher } from "@/components/shared";
-import { MenuItem, Section } from "@/components/ui";
-import { useTheme } from "@/theme";
+import { MedalsRow } from "./components/MedalsRow";
+import { PrivacyList } from "./components/PrivacyList";
+import { ProfileHeader } from "./components/ProfileHeader";
+import { ProfileTotals } from "./components/ProfileTotals";
+import { StatsCard } from "./components/StatsCard";
+import { NO_RUNS, PROFILE_COPY } from "./constants";
+import { useProfile } from "./hooks/useProfile";
 
-import { DangerZone, ReferralSection } from "./components";
-import { useProfileScreen } from "./hooks";
-import { createProfileScreenStyles } from "./styles";
+const createProfileStyles = (theme: ITheme) => ({
+	root: { flex: 1 },
+	actions: { flexDirection: "row" as const, justifyContent: "flex-end" as const, gap: 8 },
+	runs: { gap: theme.pace.spacing[2] },
+	settingsText: {
+		fontFamily: theme.pace.typography.fonts.medium,
+		fontSize: theme.pace.typography.sizes.ui,
+		lineHeight: theme.pace.typography.sizes.ui * 1.45,
+		color: theme.pace.colors.textSecondary,
+	},
+});
 
+// 13 Perfil: atleta, totais, estatísticas, medalhas e atividades recentes.
 export const ProfileScreen: React.FC = () => {
 	const { theme } = useTheme();
-	const { t } = useTranslation("profile");
-	const insets = useSafeAreaInsets();
-	const {
-		user,
-		editName,
-		editEmail,
-		editBirthday,
-		editPassword,
-		handleLogout,
-		handleDeleteAccount,
-	} = useProfileScreen();
-
-	const styles = createProfileScreenStyles(theme);
-
-	const initials = user?.name
-		? user.name
-				.split(" ")
-				.slice(0, 2)
-				.filter(Boolean)
-				.map((w) => w[0].toUpperCase())
-				.join("")
-		: "U";
-
-	const formattedBirthday = user?.birthday
-		? new Date(user.birthday).toLocaleDateString(undefined, {
-				day: "2-digit",
-				month: "2-digit",
-				year: "numeric",
-			})
-		: undefined;
+	const profile = useProfile();
+	const styles = createProfileStyles(theme);
 
 	return (
-		<View
-			style={[
-				styles.container,
-				{
-					paddingTop: insets.top,
-					paddingLeft: insets.left,
-					paddingRight: insets.right,
-				},
-			]}
-		>
-			<ScrollView
-				contentContainerStyle={styles.scrollContent}
-				contentInsetAdjustmentBehavior="automatic"
-				showsVerticalScrollIndicator={false}
-			>
-				{/* Hero: avatar + info à esquerda, LanguageSwitcher à direita */}
-				<View style={styles.topRow}>
-					<View style={styles.heroLeft}>
-						<View style={styles.avatar}>
-							<Text style={styles.avatarText}>{initials}</Text>
-						</View>
-						<View style={styles.heroInfo}>
-							{user?.name ? (
-								<Text style={styles.heroName} testID="profile-name" numberOfLines={1}>
-									{user.name}
-								</Text>
-							) : null}
-							{user?.email ? (
-								<Text style={styles.heroEmail} testID="profile-email" numberOfLines={1}>
-									{user.email}
-								</Text>
-							) : null}
-						</View>
-					</View>
-					<LanguageSwitcher />
+		<View style={styles.root}>
+			<ScreenBackground photo={PHOTOS.runnerCitySunset} />
+			<ScreenScroll hasRail testID="profile-scroll">
+				<View style={styles.actions}>
+					<IconButton
+						icon="sparkles"
+						label={PROFILE_COPY.buddy}
+						onPress={profile.openBuddy}
+						testID="profile-buddy"
+					/>
+					<IconButton
+						icon="shield"
+						label={PROFILE_COPY.privacy}
+						onPress={profile.openPrivacy}
+						testID="profile-privacy"
+					/>
+					<IconButton
+						icon="settings"
+						label={PROFILE_COPY.settings}
+						onPress={profile.openSettings}
+						testID="profile-settings"
+					/>
 				</View>
-
-				<Section title={t("sections.personal.title")} style={styles.section}>
-					<MenuItem
-						testID="menu-name"
-						icon={UserIcon}
-						label={t("sections.personal.name")}
-						value={user?.name ?? undefined}
-						onPress={editName}
-					/>
-					<MenuItem
-						testID="menu-email"
-						icon={EnvelopeSimpleIcon}
-						label={t("sections.personal.email")}
-						value={user?.email ?? undefined}
-						onPress={editEmail}
-					/>
-					<MenuItem
-						testID="menu-birthday"
-						icon={CakeIcon}
-						label={t("sections.personal.birthday")}
-						value={formattedBirthday}
-						onPress={editBirthday}
-					/>
-					<MenuItem
-						testID="menu-password"
-						icon={LockIcon}
-						label={t("sections.personal.password")}
-						onPress={editPassword}
-						style={styles.lastMenuItem}
-					/>
-				</Section>
-
-				<ReferralSection />
-
-				<DangerZone onLogout={handleLogout} onDeleteAccount={handleDeleteAccount} />
-			</ScrollView>
+				<ProfileHeader
+					name={profile.name}
+					handle={profile.handle}
+					city={profile.city}
+					team={profile.team}
+					role={profile.role}
+					onEdit={profile.editProfile}
+				/>
+				<ProfileTotals totals={profile.totals} />
+				<StatsCard period={profile.period} values={profile.bars} onChange={profile.setPeriod} />
+				<SectionHeader
+					title={PROFILE_COPY.medals}
+					action={PROFILE_COPY.seeAll}
+					onAction={profile.openChallenges}
+				/>
+				<MedalsRow />
+				<SectionHeader
+					title={PROFILE_COPY.activities}
+					action={PROFILE_COPY.history}
+					onAction={profile.openHistory}
+				/>
+				<View style={styles.runs}>
+					{profile.recentRuns.length ? null : <InfoNote icon="footprints">{NO_RUNS}</InfoNote>}
+					{profile.recentRuns.map((run, i) => (
+						<RunRow
+							key={run.id}
+							run={run}
+							seed={i}
+							onPress={() => {
+								profile.openRun(run.id);
+							}}
+						/>
+					))}
+				</View>
+			</ScreenScroll>
+			<Sheet
+				open={profile.isPrivacyOpen}
+				title={PROFILE_COPY.privacy}
+				onClose={profile.closePrivacy}
+				actions={
+					<Button fullWidth onPress={profile.closePrivacy}>
+						{PROFILE_COPY.save}
+					</Button>
+				}
+			>
+				<PrivacyList />
+			</Sheet>
+			<Sheet
+				open={profile.isSettingsOpen}
+				title={PROFILE_COPY.settings}
+				onClose={profile.closeSettings}
+				actions={
+					<>
+						<Button
+							fullWidth
+							variant="glass"
+							icon="log-out"
+							onPress={profile.handleSignOut}
+							testID="profile-sign-out"
+						>
+							{PROFILE_COPY.signOut}
+						</Button>
+						<Button fullWidth variant="ghost" onPress={profile.closeSettings}>
+							{PROFILE_COPY.close}
+						</Button>
+					</>
+				}
+			>
+				<Text style={styles.settingsText}>{PROFILE_COPY.settingsBody}</Text>
+			</Sheet>
+			<FloatingToast toast={profile.toast} />
 		</View>
 	);
 };

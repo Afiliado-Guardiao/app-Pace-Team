@@ -1,67 +1,26 @@
 import { Tabs } from "expo-router";
 
-import { HouseIcon, UserCircleIcon } from "phosphor-react-native";
-import { useTranslation } from "react-i18next";
+import { PaceTabRail } from "@/components/core/PaceTabRail";
 
-import { CustomTabBarButton } from "@/components/shared";
-import { useTheme } from "@/theme";
-
+// As 5 abas do PACE TEAM. A barra é o trilho de vidro vertical à direita.
 export default function TabsLayout() {
-	const { theme } = useTheme();
-	const { t } = useTranslation("common");
-
-	const { tabBar } = theme.componentSizes;
-
 	return (
 		<Tabs
-			screenOptions={{
-				headerShown: false,
-				tabBarActiveTintColor: theme.colors.text,
-				tabBarInactiveTintColor: theme.colors.textMuted,
-				tabBarShowLabel: true,
-				tabBarStyle: {
-					backgroundColor: theme.colors.background,
-					borderTopColor: theme.colors.border,
-					borderTopWidth: theme.borderWidth.hairline,
-					height: tabBar.height,
-				},
-				tabBarIconStyle: {
-					marginVertical: 0,
-				},
-			}}
+			screenOptions={{ headerShown: false, animation: "fade" }}
+			tabBar={({ state, navigation }) => (
+				<PaceTabRail
+					active={state.routes[state.index]?.name ?? "home"}
+					onChange={(tabId) => {
+						navigation.navigate(tabId);
+					}}
+				/>
+			)}
 		>
-			<Tabs.Screen
-				name="home"
-				options={{
-					title: t("tabs.home"),
-					tabBarIcon: ({ color, focused }) => (
-						<HouseIcon size={tabBar.iconSize} color={color} weight={focused ? "fill" : "regular"} />
-					),
-					tabBarButton: (props) => (
-						<CustomTabBarButton {...props} testID="tab-home" accessibilityLabel={t("tabs.home")} />
-					),
-				}}
-			/>
-			<Tabs.Screen
-				name="profile"
-				options={{
-					title: t("tabs.profile"),
-					tabBarIcon: ({ color, focused }) => (
-						<UserCircleIcon
-							size={tabBar.iconSize}
-							color={color}
-							weight={focused ? "fill" : "regular"}
-						/>
-					),
-					tabBarButton: (props) => (
-						<CustomTabBarButton
-							{...props}
-							testID="tab-profile"
-							accessibilityLabel={t("tabs.profile")}
-						/>
-					),
-				}}
-			/>
+			<Tabs.Screen name="home" />
+			<Tabs.Screen name="run" />
+			<Tabs.Screen name="ranking" />
+			<Tabs.Screen name="team" />
+			<Tabs.Screen name="profile" />
 		</Tabs>
 	);
 }

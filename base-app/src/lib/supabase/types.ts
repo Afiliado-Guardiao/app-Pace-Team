@@ -13,6 +13,10 @@ export interface IUser {
 	referralCode: string;
 	isPremium: boolean;
 	createdAt: string;
+	// Perfil público do PACE TEAM
+	handle?: string | null;
+	city?: string | null;
+	state?: string | null;
 }
 
 // Onboarding consumido pelo app (camelCase).

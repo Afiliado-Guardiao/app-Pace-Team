@@ -3,6 +3,7 @@ import { borderRadius } from "../borderRadius";
 import { borderWidth } from "../borderWidth";
 import { colors } from "../colors";
 import { componentSizes } from "../componentSizes";
+import { pace } from "../pace";
 import { shadows } from "../shadows";
 import { spacing } from "../spacing";
 import { ITheme } from "../types";
@@ -17,4 +18,5 @@ export const getTheme = (): ITheme => ({
 	borderWidth,
 	componentSizes,
 	animations,
+	pace,
 });

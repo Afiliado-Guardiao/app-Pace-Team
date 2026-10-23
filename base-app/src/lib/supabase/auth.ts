@@ -14,6 +14,9 @@ function mapUser(authUser: User, profile: ProfileRow): IUser {
 		referralCode: profile.referral_code,
 		isPremium: profile.is_premium,
 		createdAt: profile.created_at,
+		handle: profile.handle,
+		city: profile.city,
+		state: profile.state,
 	};
 }
 
@@ -72,12 +75,15 @@ export async function signInWithEmail(params: { email: string; password: string 
 	await syncAuthState();
 }
 
-async function applyProfileName(name: string): Promise<void> {
+async function applyProfileDetails(details: { name: string; birthday?: string }): Promise<void> {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 	if (!user) return;
-	await supabase.from("profiles").update({ name }).eq("id", user.id);
+	await supabase
+		.from("profiles")
+		.update({ name: details.name, birthday: details.birthday ?? null })
+		.eq("id", user.id);
 }
 
 // Cadastro: converte o usuário anônimo do onboarding em permanente. Se não
@@ -86,22 +92,33 @@ export async function signUpWithEmail(params: {
 	email: string;
 	password: string;
 	name: string;
+	// Dados do cadastro PACE TEAM (cidade e estado ficam nos metadados do usuário)
+	birthday?: string;
+	city?: string;
+	state?: string;
 }): Promise<void> {
-	const { email, password, name } = params;
+	const { email, password, name, birthday, city, state } = params;
+	const data = { name, birthday, city, state };
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 
 	if (user?.is_anonymous === true) {
-		const { error } = await supabase.auth.updateUser({ email, password, data: { name } });
+		const { error } = await supabase.auth.updateUser({ email, password, data });
 		if (error) throw error;
 	} else {
-		const { error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
+		const { error } = await supabase.auth.signUp({ email, password, options: { data } });
 		if (error) throw error;
 	}
 
-	await applyProfileName(name);
+	await applyProfileDetails({ name, birthday });
 	await syncAuthState();
+}
+
+// "Esqueci minha senha": envia o e-mail de redefinição do Supabase.
+export async function sendPasswordReset(email: string): Promise<void> {
+	const { error } = await supabase.auth.resetPasswordForEmail(email);
+	if (error) throw error;
 }
 
 // Login social — prontos para uso quando o app integrar os módulos nativos.

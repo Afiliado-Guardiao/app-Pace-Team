@@ -1,0 +1,6 @@
+{
+  "name": "pace-buddy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ponte do Pace Buddy com o despertador do iPhone (AlarmKit)"
+}

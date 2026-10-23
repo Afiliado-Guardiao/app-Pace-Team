@@ -1,1 +1,0 @@
-export { createAuthScreenStyles } from "./AuthScreen";

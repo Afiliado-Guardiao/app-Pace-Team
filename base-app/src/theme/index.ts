@@ -5,6 +5,8 @@ export * from "./colors";
 export * from "./componentSizes";
 export { useTheme } from "./hooks/useTheme";
 export { useThemeController } from "./hooks/useThemeController";
+export type { IBezier, IGradientLayer, IGradientStop, IPaceGradientName } from "./pace";
+export { pace } from "./pace";
 export { ThemeProvider } from "./provider";
 export * from "./shadows";
 export * from "./spacing";

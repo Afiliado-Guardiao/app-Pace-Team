@@ -108,7 +108,7 @@ eas env:push --environment production --path .env
 
 - Na primeira vez, o EAS pede login na Apple e cria certificados e provisioning profiles sozinho.
 - `buildNumber` / `versionCode` são incrementados pela Expo (`appVersionSource: remote` no [`eas.json`](./eas.json)).
-- As pastas `ios/` e `android/` estão versionadas, então o EAS usa elas como estão: bundle ID e nome do app precisam ser trocados também no projeto nativo (`PRODUCT_BUNDLE_IDENTIFIER` em `ios/appbase.xcodeproj/project.pbxproj` e `applicationId` em `android/app/build.gradle`), não só no `app.json`.
+- As pastas `ios/` e `android/` **não** são versionadas (estão no `.gitignore`): o EAS gera os projetos nativos a partir do `app.json` a cada build (`expo prebuild`). Nome, bundle ID, ícone e tela de abertura se mudam só no `app.json`.
 
 <br/>
 

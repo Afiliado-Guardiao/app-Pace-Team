@@ -1,5 +1,7 @@
 import { Platform } from "react-native";
 
+import { pace } from "@/theme/pace";
+
 const iosShadow = (height: number, opacity: number, radius: number): Record<string, unknown> => ({
 	shadowColor: "#000000",
 	shadowOffset: { width: 0, height },
@@ -170,4 +172,5 @@ export const mockTheme = {
 			inOut: undefined,
 		},
 	},
+	pace,
 };

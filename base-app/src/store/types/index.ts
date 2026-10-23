@@ -22,6 +22,34 @@ export interface IAuthSlice {
 	setHasSeenReferralPrompt: (value: boolean) => void;
 }
 
+export type IViradaState = "equal" | "overtaking" | "done";
+
+// Post publicado pelo próprio atleta (local até o feed vir do Supabase).
+// A foto é uma das de exemplo (`sample`) ou um arquivo da câmera (`uri`).
+export interface IMyPost {
+	id: string;
+	sample?: number;
+	uri?: string;
+	seconds: number;
+	km: number;
+	layers: { route: boolean; stats: boolean; badge: boolean };
+	caption: string;
+	createdAt: number;
+}
+
+export interface IPaceSlice {
+	hasTeam: boolean;
+	viradaState: IViradaState;
+	hasSeenVirada: boolean;
+	myPosts: IMyPost[];
+	hasJustPosted: boolean;
+	setHasTeam: (value: boolean) => void;
+	setViradaState: (value: IViradaState) => void;
+	setHasSeenVirada: (value: boolean) => void;
+	addMyPost: (post: IMyPost) => void;
+	setHasJustPosted: (value: boolean) => void;
+}
+
 export interface IHydrationSlice {
 	_hasHydrated: boolean;
 	setHasHydrated: (state: boolean) => void;
@@ -32,4 +60,5 @@ export interface IStore
 		INavigationSlice,
 		IAuthSlice,
 		IHydrationSlice,
-		IOnboardingSlice {}
+		IOnboardingSlice,
+		IPaceSlice {}

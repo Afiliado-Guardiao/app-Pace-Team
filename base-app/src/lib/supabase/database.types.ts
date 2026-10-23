@@ -2,6 +2,16 @@
 // Para um projeto real, regenere com: `supabase gen types typescript`.
 // Mantido enxuto: apenas o que o app consome (profiles, onboardings, RPCs).
 
+import {
+	IAthleteResult,
+	IFeedRow,
+	IMyInvite,
+	IMyStats,
+	IRunStatusDb,
+	ITeamDetails,
+	ITeamRankingEntry,
+} from "./pace.types";
+
 export interface Database {
 	public: {
 		Tables: {
@@ -14,6 +24,9 @@ export interface Database {
 					referred_by_code: string | null;
 					referred_by_id: string | null;
 					is_premium: boolean;
+					handle: string | null;
+					city: string | null;
+					state: string | null;
 					created_at: string;
 					updated_at: string;
 				};
@@ -60,6 +73,92 @@ export interface Database {
 				};
 				Relationships: [];
 			};
+			runs: {
+				Row: {
+					id: string;
+					user_id: string;
+					team_id: string | null;
+					mode: string;
+					started_at: string;
+					finished_at: string;
+					duration_s: number;
+					distance_m: number;
+					route: unknown;
+					status: IRunStatusDb;
+					points: number;
+					created_at: string;
+				};
+				Insert: {
+					mode?: string;
+					started_at: string;
+					finished_at: string;
+					duration_s: number;
+					distance_m: number;
+					route?: unknown;
+				};
+				Update: Record<string, never>;
+				Relationships: [];
+			};
+			posts: {
+				Row: {
+					id: string;
+					user_id: string;
+					team_id: string | null;
+					run_id: string | null;
+					image_path: string | null;
+					sample: number | null;
+					seconds: number;
+					km: number;
+					layers: unknown;
+					caption: string;
+					created_at: string;
+				};
+				Insert: {
+					run_id?: string | null;
+					image_path?: string | null;
+					sample?: number | null;
+					seconds?: number;
+					km?: number;
+					layers?: unknown;
+					caption?: string;
+				};
+				Update: Record<string, never>;
+				Relationships: [];
+			};
+			post_likes: {
+				Row: { post_id: string; user_id: string; created_at: string };
+				Insert: { post_id: string; user_id: string };
+				Update: Record<string, never>;
+				Relationships: [];
+			};
+			buddy_profiles: {
+				Row: {
+					user_id: string;
+					goals: number;
+					color: string;
+					last_free: string;
+					equipped: string[];
+					alarm_time: string | null;
+					alarm_days: number[];
+					updated_at: string;
+				};
+				Insert: {
+					user_id?: string;
+					color?: string;
+					last_free?: string;
+					equipped?: string[];
+					alarm_time?: string | null;
+					alarm_days?: number[];
+				};
+				Update: {
+					color?: string;
+					last_free?: string;
+					equipped?: string[];
+					alarm_time?: string | null;
+					alarm_days?: number[];
+				};
+				Relationships: [];
+			};
 		};
 		Views: Record<string, never>;
 		Functions: {
@@ -75,6 +174,30 @@ export interface Database {
 				Args: Record<string, never>;
 				Returns: undefined;
 			};
+			create_team: {
+				Args: { p_name: string; p_city: string; p_region: string; p_size: number };
+				Returns: string;
+			};
+			join_team: { Args: { p_team_id: string }; Returns: undefined };
+			join_team_by_code: { Args: { p_code: string }; Returns: string };
+			leave_team: { Args: Record<string, never>; Returns: undefined };
+			invite_to_team: { Args: { p_user_id: string }; Returns: undefined };
+			respond_invite: { Args: { p_invite_id: string; p_accept: boolean }; Returns: undefined };
+			get_my_invites: { Args: Record<string, never>; Returns: IMyInvite[] };
+			search_athletes: { Args: { p_query: string }; Returns: IAthleteResult[] };
+			get_team_ranking: {
+				Args: { p_size: number; p_scope?: string };
+				Returns: ITeamRankingEntry[];
+			};
+			get_team: { Args: { p_team_id: string }; Returns: ITeamDetails | null };
+			get_my_team: { Args: Record<string, never>; Returns: ITeamDetails | null };
+			get_my_stats: { Args: Record<string, never>; Returns: IMyStats };
+			buddy_complete_goal: {
+				Args: Record<string, never>;
+				Returns: { goals: number; unlocked: string | null };
+			};
+			buddy_register_device: { Args: { p_token: string; p_platform?: string }; Returns: undefined };
+			get_feed: { Args: { p_limit?: number }; Returns: IFeedRow[] };
 		};
 		Enums: Record<string, never>;
 		CompositeTypes: Record<string, never>;

@@ -1,103 +1,85 @@
 import React from "react";
-import { View } from "react-native";
+import { Pressable, useWindowDimensions, View } from "react-native";
 
-import { KeyboardAwareScrollView, KeyboardStickyView } from "react-native-keyboard-controller";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { BackButton } from "@/components/shared/BackButton";
+import { Button, GlassSurface, GradientLayers, Logo, useLayoutSize } from "@/components/pace";
 import { useTheme } from "@/theme";
 
-import {
-	ActionButton,
-	AnimatedStepContainer,
-	InputStep,
-	ProgressBar,
-	TransitionStep,
-	WheelPickerStep,
-} from "./components";
-import { SyncErrorModal } from "./components/SyncErrorModal";
+import { OrbitIntro } from "./components/OrbitIntro";
+import { SlideCaption } from "./components/SlideCaption";
+import { SlidePhoto } from "./components/SlidePhoto";
+import { ONBOARDING_COPY, SLIDES, STEP_COUNT } from "./constants";
 import { useOnboardingScreen } from "./hooks/useOnboardingScreen";
-import { createOnboardingScreenStyles } from "./styles";
+import { COMPACT_HEIGHT, createOnboardingStyles } from "./styles";
 
+const SYMBOL_HEIGHT = 26;
+
+// 02 Apresentação: "Monte sua equipe", "Cada km conta" e a órbita.
 export const OnboardingScreen: React.FC = () => {
 	const { theme } = useTheme();
+	const insets = useSafeAreaInsets();
+	const { size, onLayout } = useLayoutSize();
+	const { step, isOrbit, goToStep, handleNext, handleFinish } = useOnboardingScreen();
+	const { height } = useWindowDimensions();
+	const styles = createOnboardingStyles(theme, insets, height < COMPACT_HEIGHT);
+	const slide = SLIDES[Math.min(step, SLIDES.length - 1)];
+	const skip = (
+		<Button variant="glass" size="sm" onPress={handleFinish} testID="onboarding-skip">
+			{ONBOARDING_COPY.skip}
+		</Button>
+	);
 
-	const {
-		stepConfig,
-		progress,
-		buttonText,
-		isButtonDisabled,
-		handleNext,
-		handleBack,
-		footerHeight,
-		setFooterHeight,
-		needsScroll,
-		animationDirection,
-		currentStepIndex,
-		isSyncing,
-		isSyncErrorVisible,
-		handleRetrySync,
-	} = useOnboardingScreen();
-
-	const styles = createOnboardingScreenStyles(theme);
-
-	const renderStep = () => {
-		switch (stepConfig.type) {
-			case "transition":
-				return <TransitionStep {...stepConfig.props} />;
-			case "input":
-				return <InputStep {...stepConfig.props} />;
-			case "wheel-picker":
-				return <WheelPickerStep {...stepConfig.props} />;
-			default:
-				return null;
-		}
-	};
+	if (isOrbit) {
+		return (
+			<View style={styles.root}>
+				<OrbitIntro onDone={handleFinish} />
+				<View style={[styles.topBar, styles.topBarEnd]}>{skip}</View>
+			</View>
+		);
+	}
 
 	return (
-		<SafeAreaView style={styles.container}>
-			<View style={styles.header}>
-				<BackButton onPress={handleBack} disabled={false} />
-				<ProgressBar progress={progress} />
+		<View style={styles.root} onLayout={onLayout}>
+			{SLIDES.map((item, index) => (
+				<SlidePhoto key={index} image={item.image} isVisible={index === step} />
+			))}
+			{size ? (
+				<GradientLayers
+					layers={theme.pace.gradients.onboardingScrim}
+					width={size.width}
+					height={size.height}
+				/>
+			) : null}
+			<View style={styles.topBar}>
+				<Logo variant="symbol" height={SYMBOL_HEIGHT} />
+				{skip}
 			</View>
-
-			<AnimatedStepContainer direction={animationDirection} stepIndex={currentStepIndex}>
-				<KeyboardAwareScrollView
-					contentContainerStyle={styles.scrollContent}
-					keyboardShouldPersistTaps="handled"
-					style={styles.keyboardScroll}
-					scrollEnabled={needsScroll}
+			<View style={styles.bottom}>
+				<SlideCaption key={step} slide={slide} styles={styles} />
+				<GlassSurface
+					appearance={styles.barAppearance}
+					radius={theme.pace.radii.pill}
+					style={styles.bar}
 				>
-					{renderStep()}
-				</KeyboardAwareScrollView>
-			</AnimatedStepContainer>
-
-			<KeyboardStickyView offset={{ closed: 0, opened: 0 }}>
-				<View
-					onLayout={(event) => {
-						const { height } = event.nativeEvent.layout;
-						if (height !== footerHeight) {
-							setFooterHeight(height);
-						}
-					}}
-				>
-					<ActionButton
-						text={buttonText}
-						onPress={() => {
-							void handleNext();
-						}}
-						disabled={isButtonDisabled}
-					/>
-				</View>
-			</KeyboardStickyView>
-
-			<SyncErrorModal
-				visible={isSyncErrorVisible}
-				onRetry={() => {
-					void handleRetrySync();
-				}}
-				isRetrying={isSyncing}
-			/>
-		</SafeAreaView>
+					<View style={styles.dots}>
+						{Array.from({ length: STEP_COUNT }).map((_, index) => (
+							<Pressable
+								key={index}
+								onPress={() => {
+									goToStep(index);
+								}}
+								accessibilityLabel={`Passo ${String(index + 1)}`}
+								hitSlop={6}
+								style={index === step ? styles.dotActive : styles.dot}
+							/>
+						))}
+					</View>
+					<Button iconRight="arrow-right" onPress={handleNext} testID="onboarding-next">
+						{ONBOARDING_COPY.next}
+					</Button>
+				</GlassSurface>
+			</View>
+		</View>
 	);
 };

@@ -1,7 +1,8 @@
 module.exports = function (api) {
 	api.cache(true);
 	return {
-		presets: ["babel-preset-expo"],
+		// import.meta (devtools do zustand) quebra o bundle web sem esta transformação
+		presets: [["babel-preset-expo", { unstable_transformImportMeta: true }]],
 		plugins: [
 			[
 				"module-resolver",

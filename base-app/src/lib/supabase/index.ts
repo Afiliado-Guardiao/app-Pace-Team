@@ -1,6 +1,11 @@
 export * from "./auth";
+export * from "./buddy";
 export { supabase } from "./client";
 export * from "./onboarding";
+export * from "./pace.types";
+export * from "./posts";
 export * from "./profile";
 export * from "./referral";
+export * from "./runs";
+export * from "./teams";
 export * from "./types";

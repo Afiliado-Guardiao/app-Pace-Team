@@ -1,0 +1,86 @@
+import React from "react";
+import { Text, View } from "react-native";
+
+import { Avatar, AvatarStack, CountUp, GlassCard, InfoNote } from "@/components/pace";
+import { SpringBar } from "@/components/shared/SpringBar";
+import { useTheme } from "@/theme";
+import { formatKm, GROUP_RUN } from "@/lib/pace";
+
+import { RUN_SUMMARY_COPY } from "../../constants";
+
+import { createGroupRunStyles } from "./styles";
+
+const TOTAL_KM = GROUP_RUN.reduce((sum, m) => sum + m.km, 0);
+const TOTAL_POINTS = GROUP_RUN.reduce((sum, m) => sum + m.pts, 0);
+const MAX_KM = Math.max(...GROUP_RUN.map((m) => m.km));
+const STAGGER = 80;
+const BASE_DELAY = 300;
+
+// Detalhe da corrida da equipe: total, pontos e a contribuição de cada um.
+export const GroupRunDetail: React.FC = () => {
+	const { theme } = useTheme();
+	const styles = createGroupRunStyles(theme);
+
+	return (
+		<View style={styles.stack}>
+			<View>
+				<Text style={styles.meta}>{RUN_SUMMARY_COPY.groupMeta}</Text>
+				<Text style={styles.title}>{RUN_SUMMARY_COPY.groupTitle}</Text>
+			</View>
+			<GlassCard variant="accent">
+				<View style={styles.between}>
+					<AvatarStack people={GROUP_RUN} max={5} size={34} />
+					<Text style={styles.ran}>{RUN_SUMMARY_COPY.groupRan}</Text>
+				</View>
+				<View style={styles.totals}>
+					<View>
+						<Text style={styles.small}>{RUN_SUMMARY_COPY.groupDistance}</Text>
+						<Text style={styles.total}>
+							<CountUp value={formatKm(TOTAL_KM)} delay={150} />
+							<Text style={styles.totalUnit}> km</Text>
+						</Text>
+					</View>
+					<View style={styles.right}>
+						<Text style={styles.small}>{RUN_SUMMARY_COPY.points}</Text>
+						<Text style={styles.points}>
+							<CountUp value={`+${String(TOTAL_POINTS)}`} delay={250} />
+						</Text>
+					</View>
+				</View>
+			</GlassCard>
+			<GlassCard>
+				<View style={styles.membersHeader}>
+					<Text style={styles.membersTitle}>{RUN_SUMMARY_COPY.members}</Text>
+					<Text style={styles.hint}>{RUN_SUMMARY_COPY.membersHint}</Text>
+				</View>
+				{GROUP_RUN.map((m, i) => (
+					<View key={m.name} style={[styles.member, i > 0 ? styles.memberDivider : null]}>
+						<Avatar name={m.name} size={38} ring={"you" in m} />
+						<View style={styles.memberBody}>
+							<View style={styles.between}>
+								<Text style={styles.name}>{"you" in m ? RUN_SUMMARY_COPY.you : m.name}</Text>
+								<Text style={styles.km}>
+									<CountUp value={formatKm(m.km)} delay={BASE_DELAY + i * STAGGER} />
+									<Text style={styles.unit}> km</Text>
+								</Text>
+							</View>
+							<View style={styles.barRow}>
+								<View style={styles.bar}>
+									<SpringBar
+										progress={m.km / MAX_KM}
+										height={6}
+										delay={BASE_DELAY + i * STAGGER}
+										tone={"you" in m ? "progress" : "soft"}
+										trackColor={theme.pace.colors.barSoft}
+									/>
+								</View>
+								<Text style={styles.pace}>{m.pace}</Text>
+							</View>
+						</View>
+					</View>
+				))}
+			</GlassCard>
+			<InfoNote>{RUN_SUMMARY_COPY.groupNote}</InfoNote>
+		</View>
+	);
+};

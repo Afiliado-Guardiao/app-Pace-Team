@@ -9,9 +9,11 @@ import {
 	Inter_700Bold,
 } from "@expo-google-fonts/inter";
 
+import { paceFontAssets } from "@/theme/pace/fonts";
 import { ensureSession, onAuthChange, syncAuthState } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { initializeI18n } from "@/i18n";
+import { IS_PREVIEW } from "@/constants/preview";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -31,6 +33,8 @@ export const useAppInitialization = (): {
 		Inter_500Medium,
 		Inter_600SemiBold,
 		Inter_700Bold,
+		// Montserrat + Exo 2 do design system PACE TEAM
+		...paceFontAssets,
 	});
 
 	useEffect(() => {
@@ -42,6 +46,8 @@ export const useAppInitialization = (): {
 		const initialize = async (): Promise<void> => {
 			try {
 				await initializeI18n();
+				// Prévia por link: sem servidor (o link bloqueia chamadas externas)
+				if (IS_PREVIEW) return;
 				// Garante uma sessão anônima para o onboarding pré-cadastro.
 				await ensureSession();
 				await syncAuthState();
@@ -71,5 +77,6 @@ export const useAppInitialization = (): {
 		}
 	}, [isReady]);
 
-	return { isReady, error: error || fontError, onLayoutRootView };
+	// Na prévia, fonte que não carregar cai na do sistema em vez de travar o app
+	return { isReady, error: error || (IS_PREVIEW ? null : fontError), onLayoutRootView };
 };

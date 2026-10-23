@@ -1,3 +1,6 @@
+// Registra a tarefa de GPS da corrida (precisa existir antes de qualquer tela)
+import "@/lib/run/locationTask";
+
 import { View } from "react-native";
 
 import { Slot } from "expo-router";

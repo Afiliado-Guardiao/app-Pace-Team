@@ -50,3 +50,7 @@ reference/
 ios/.xcode.env.local
 ios/**/xcuserdata/
 android/local.properties
+
+# Projetos nativos gerados pelo EAS a partir do app.json (expo prebuild)
+/ios
+/android

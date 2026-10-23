@@ -4,7 +4,7 @@ import { createJSONStorage, PersistOptions } from "zustand/middleware";
 import { IStore } from "../types";
 
 export const persistConfig: PersistOptions<IStore, Partial<IStore>> = {
-	name: "@app-base:store",
+	name: "@pace-team:store",
 	storage: createJSONStorage(() => AsyncStorage),
 	version: 2,
 	migrate: (_persistedState: unknown, _version: number): Partial<IStore> => {
@@ -20,6 +20,10 @@ export const persistConfig: PersistOptions<IStore, Partial<IStore>> = {
 		currentStepIndex: state.currentStepIndex,
 		answers: state.answers,
 		isCompleted: state.isCompleted,
+		hasTeam: state.hasTeam,
+		viradaState: state.viradaState,
+		hasSeenVirada: state.hasSeenVirada,
+		myPosts: state.myPosts,
 	}),
 	onRehydrateStorage:
 		() =>

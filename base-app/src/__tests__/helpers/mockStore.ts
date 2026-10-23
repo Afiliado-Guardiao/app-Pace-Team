@@ -11,6 +11,11 @@ export function resetAllStores(): void {
 		language: null,
 		lastRoute: null,
 		_hasHydrated: false,
+		hasTeam: true,
+		viradaState: "equal",
+		hasSeenVirada: false,
+		myPosts: [],
+		hasJustPosted: false,
 	});
 }
 
