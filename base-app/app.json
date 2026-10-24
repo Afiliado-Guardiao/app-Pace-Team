@@ -12,6 +12,7 @@
 		"ios": {
 			"supportsTablet": false,
 			"bundleIdentifier": "com.paceteam.app",
+			"appleTeamId": "DD89586P8R",
 			"usesAppleSignIn": true,
 			"config": {
 				"usesNonExemptEncryption": false
