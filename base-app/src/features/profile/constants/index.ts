@@ -20,6 +20,23 @@ export const PROFILE_COPY = {
 	privacyPolicy: "Política de Privacidade",
 } as const;
 
+export const SUBSCRIPTION_COPY = {
+	title: "Assinatura PACE TEAM",
+	inactive: "Sem assinatura ativa",
+	renews: "Ativa · renova em ",
+	cancelled: "Cancelada · vale até ",
+	manage: "Gerenciar assinatura",
+	restore: "Restaurar compras",
+	restored: { tone: "success", icon: "check-circle-2", title: "Assinatura restaurada" },
+	nothing: {
+		tone: "info",
+		icon: "info",
+		title: "Nenhuma assinatura encontrada",
+		message: "Confira se está usando a mesma conta Apple da compra.",
+	},
+	error: { tone: "danger", icon: "alert-circle", title: "Não deu certo agora. Tente de novo." },
+} as const;
+
 export const EDIT_COPY = {
 	title: "Editar perfil",
 	changePhoto: "Trocar foto",

@@ -43,119 +43,29 @@ jest.mock("expo-router", () => ({
 	usePathname: () => "/",
 }));
 
-jest.mock("@virex-tech/paywallo-sdk", () => {
-	const React = require("react");
-
-	const noop = jest.fn();
+// RevenueCat: módulo nativo (StoreKit). Nos testes não há compras nem assinatura.
+jest.mock("react-native-purchases", () => {
 	const asyncNoop = jest.fn().mockResolvedValue(undefined);
-
+	const emptyInfo = { entitlements: { active: {}, all: {} } };
 	return {
-		PaywalloProvider: ({ children }) => React.createElement(React.Fragment, null, children),
-		PaywalloClient: {
-			init: asyncNoop,
-			isReady: () => true,
-			waitUntilReady: asyncNoop,
-			identify: asyncNoop,
-			track: asyncNoop,
-			reset: asyncNoop,
-			getDistinctId: () => "test-distinct-id",
-			getDeviceId: () => "test-device-id",
-			getEmail: () => null,
-			getSessionFlag: () => null,
-			getVariant: jest.fn().mockResolvedValue({ variant: null }),
-			getVariantCached: jest.fn().mockResolvedValue({ variant: null }),
-			evaluateFlags: jest.fn().mockResolvedValue({}),
-			getConditionalFlag: jest.fn().mockResolvedValue(false),
-			hasActiveSubscription: jest.fn().mockResolvedValue(false),
-			getSubscription: jest.fn().mockResolvedValue(null),
-			restorePurchases: jest.fn().mockResolvedValue({ success: true, restoredProducts: [] }),
-			fullReset: asyncNoop,
-			deleteUserData: asyncNoop,
+		__esModule: true,
+		default: {
+			configure: jest.fn(),
+			isConfigured: jest.fn().mockResolvedValue(true),
+			isAnonymous: jest.fn().mockResolvedValue(true),
+			logIn: jest.fn().mockResolvedValue({ customerInfo: emptyInfo, created: false }),
+			logOut: jest.fn().mockResolvedValue(emptyInfo),
+			getCustomerInfo: jest.fn().mockResolvedValue(emptyInfo),
+			getOfferings: jest.fn().mockResolvedValue({ current: null, all: {} }),
+			purchasePackage: asyncNoop,
+			restorePurchases: jest.fn().mockResolvedValue(emptyInfo),
+			showManageSubscriptions: asyncNoop,
+			addCustomerInfoUpdateListener: jest.fn(),
+			removeCustomerInfoUpdateListener: jest.fn(),
 		},
-		usePaywallo: () => ({
-			isInitialized: true,
-			isReady: true,
-			distinctId: "test-distinct-id",
-			subscription: null,
-			products: new Map(),
-			isLoadingProducts: false,
-			hasActiveSubscription: jest.fn().mockResolvedValue(false),
-			getSubscription: jest.fn().mockResolvedValue(null),
-			restorePurchases: jest.fn().mockResolvedValue({ success: true }),
-		}),
-		useSubscription: () => ({
-			subscription: null,
-			isActive: false,
-			isLoading: false,
-			error: null,
-			entitlements: [],
-			refresh: asyncNoop,
-			restore: asyncNoop,
-		}),
-		usePurchase: () => ({
-			state: "idle",
-			purchase: jest.fn().mockResolvedValue({ status: "cancelled" }),
-			restore: jest.fn().mockResolvedValue([]),
-			error: null,
-			isPurchasing: false,
-			isRestoring: false,
-		}),
-		useProducts: () => ({
-			products: [],
-			formattedProducts: [],
-			isLoading: false,
-			error: null,
-			loadProducts: asyncNoop,
-			getProduct: noop,
-			getFormattedProduct: noop,
-			getPriceInfo: noop,
-		}),
-		useOnboarding: () => ({
-			step: asyncNoop,
-			complete: asyncNoop,
-		}),
-		syncSuperwallAttributes: jest.fn().mockResolvedValue("skipped"),
+		PACKAGE_TYPE: { MONTHLY: "MONTHLY", ANNUAL: "ANNUAL" },
 	};
 });
-
-jest.mock(
-	"expo-superwall",
-	() => {
-		const React = require("react");
-
-		const asyncNoop = jest.fn().mockResolvedValue(undefined);
-
-		return {
-			SuperwallProvider: ({ children }) => React.createElement(React.Fragment, null, children),
-			SuperwallLoading: () => null,
-			SuperwallLoaded: ({ children }) => React.createElement(React.Fragment, null, children),
-			CustomPurchaseControllerProvider: ({ children }) =>
-				React.createElement(React.Fragment, null, children),
-			useSuperwall: () => ({
-				subscriptionStatus: { status: "UNKNOWN" },
-				setSubscriptionStatus: asyncNoop,
-				dismiss: asyncNoop,
-			}),
-			useUser: () => ({
-				user: null,
-				subscriptionStatus: { status: "UNKNOWN" },
-				identify: asyncNoop,
-				update: asyncNoop,
-				signOut: asyncNoop,
-				setIntegrationAttributes: asyncNoop,
-			}),
-			usePlacement: () => ({
-				registerPlacement: jest.fn().mockResolvedValue(undefined),
-				state: { status: "idle" },
-			}),
-			useSuperwallEvents: jest.fn(),
-		};
-		// virtual: o pacote só expõe a condição "import" (ESM) no campo `exports`,
-		// então o resolver CommonJS do Jest não consegue localizá-lo. Como o módulo
-		// é totalmente mockado aqui, marcamos como virtual para dispensar a resolução.
-	},
-	{ virtual: true },
-);
 
 // expo-video: módulo nativo; nos testes o vídeo de fundo vira uma View vazia
 jest.mock("expo-video", () => {

@@ -73,17 +73,19 @@ Correr envolve esforço físico: consulte um médico antes de começar ou intens
 - Os dois produtos liberam tudo (sem diferença de recursos).
 - Inscreva-se no **App Store Small Business Program** (taxa de 15% em vez de 30%).
 
-## Tela de assinatura (paywall) — PENDENTE
+## Tela de assinatura (paywall) — PRONTA no app
 
-(Quando o paywall entrar no app, ele precisa mostrar, antes do botão de compra:)
-- (nome e período de cada plano e o preço: R$ 12,90/mês e R$ 89,90/ano;)
-- (aviso de renovação automática e como cancelar;)
-- (links para os **Termos de Uso** e a **Política de Privacidade**;)
-- (botão **Restaurar compras**;)
-- (se houver teste grátis: duração e o preço cobrado depois dele.)
+`src/features/paywall` (visual PACE TEAM, compra pelo RevenueCat) já mostra,
+antes do botão de compra:
+- os dois planos com preço e período vindos da Apple (R$ 12,90/mês e
+  R$ 89,90/ano, com o "Economize 42%" calculado);
+- o aviso de renovação automática e como cancelar (e o do teste grátis, se
+  houver);
+- links para os **Termos de Uso** e a **Política de Privacidade**;
+- **Restaurar compras**, **Sair da conta** e **Excluir conta**.
 
-No app ainda faltam também: botão "Gerenciar assinatura" no Perfil e o
-"Restaurar compras" fora do paywall.
+No Perfil › Configurações: **Gerenciar assinatura** e **Restaurar compras**.
+Configuração das contas: `REVENUECAT-PASSO-A-PASSO.md`.
 
 ## Notas para a revisão da Apple (App Review Information)
 

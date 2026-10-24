@@ -86,8 +86,8 @@ npx eas submit -p ios
   - Suporte: https://afiliado-guardiao.github.io/app-Pace-Team/
 - **Privacidade do app** (questionário): localização precisa (corridas),
   fotos, nome, e-mail, ID do usuário, conteúdo do usuário (posts) e
-  identificadores de push. Se o Paywallo/Superwall forem ligados, declarar
-  também dados de uso e compras.
+  identificadores de push. Declarar também "Compras" (assinatura,
+  processada pela Apple e confirmada pelo RevenueCat).
 - **Capturas de tela** do iPhone 6,9" (obrigatórias), descrição, palavras-
   chave, URL de suporte, classificação etária.
 - **Conta de teste para a revisão** (e-mail e senha) já com equipe e corridas.
@@ -100,8 +100,9 @@ npx eas submit -p ios
 - **Termos e Política de Privacidade**: prontos em `legal/` e publicados no
   branch `gh-pages`. Ao mudar um texto, publique de novo esse branch.
   Recomendado: uma leitura de um advogado antes do lançamento.
-- **Assinatura (Paywallo/Superwall)**: as chaves estão vazias. Decidir se o
-  app terá assinatura no lançamento; se não, dá para tirar esses SDKs.
+- **Assinatura (RevenueCat)**: código pronto (paywall, restaurar, gerenciar e
+  webhook). Falta configurar o RevenueCat — passo a passo em
+  `REVENUECAT-PASSO-A-PASSO.md`.
 - **Ícone do Android**: ainda usa a arte antiga com cantos arredondados (só
   importa se for publicar no Android).
 - **Teste no iPhone de verdade** (build `preview` ou TestFlight): GPS na rua,

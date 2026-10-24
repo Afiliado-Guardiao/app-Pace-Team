@@ -11,9 +11,9 @@ interface IAppProvidersProps {
 	children: React.ReactNode;
 }
 
-// Versão web (só a prévia do app no navegador): Paywallo e Superwall têm
-// módulos nativos de iOS/Android e ficam de fora. O app no iPhone usa o
-// index.tsx com os dois provedores.
+// Versão web (só a prévia do app no navegador): o RevenueCat é nativo
+// (StoreKit) e fica de fora — na prévia tudo abre liberado. O app no iPhone
+// usa o index.tsx com o PurchasesBridge.
 export const AppProviders: React.FC<IAppProvidersProps> = ({ children }) => (
 	<ErrorBoundary>
 		<ThemeProvider>

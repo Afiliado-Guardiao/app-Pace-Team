@@ -384,6 +384,7 @@ npx expo start     # Dev server
 
 - `@quidone/react-native-wheel-picker`: componente reutilizável em `src/components/shared/WheelPicker/index.tsx` — picker de scroll tipo roda (iOS-style)
 - `react-native-keyboard-controller`: usado em `app/_layout.tsx` (KeyboardProvider), `features/auth/components/EmailAuthModal/index.tsx` e `features/onboarding/index.tsx` — evita que teclado sobreponha inputs
+- `react-native-purchases`: assinatura (RevenueCat) em `src/lib/purchases/`
 - `expo-blur`: desfoque do vidro (backdrop-filter) em `src/components/pace/primitives/GlassSurface`
 
 ## Design System PACE TEAM
@@ -400,37 +401,36 @@ Portado 1:1 do Cloud Design (pacote "Pace Team Design System"). É a referência
 
 ## Observability & Monetização
 
-Monetização é **híbrida** (mesmo modelo do exemplo `ozempro-app`): **Superwall apresenta o paywall**, **Paywallo cuida de identidade/tracking, funil de onboarding e da fonte de verdade de assinatura** (via `paywallo-webhook` no backend). Os dois Providers coexistem no `AppProviders` (Paywallo externo, Superwall interno).
+Monetização do PACE TEAM: **RevenueCat** (decisão do dono do app em 2026-10-24,
+substituiu o Superwall + Paywallo do template). Assinatura única com dois
+planos (mensal e anual) que liberam o app inteiro.
 
-### Superwall — apresentação do paywall (`src/lib/superwall/`)
+### RevenueCat — assinatura (`src/lib/purchases/`)
 
-`expo-superwall` — paywalls remotos e A/B (campanhas/holdouts no dashboard).
+`react-native-purchases` (StoreKit 2). Fonte da verdade da assinatura no app.
 
-- `SuperwallProvider` recebe as `apiKeys` (iOS/Android)
-- `SuperwallAuthBridge` + `useSuperwallAuthSync` → `identify(userId)` + `update(attributes)` no login e `signOut()` no logout (segmentação de campanha)
-- `useSubscriptionGate(placement)` → gate de feature premium; chama `syncSuperwallAttributes({ timeoutMs: 1500 })` do Paywallo, registra o placement e resolve `true` quando o usuário tem acesso. Todo `registerPlacement` novo deve ser precedido do `syncSuperwallAttributes` (atributos `pw_*` de origem do anúncio para as audiences)
-
-### Paywallo — tracking & assinatura (`src/lib/paywallo/`)
-
-`@virex-tech/paywallo-sdk` (^2.10) — identidade/analytics, funil de onboarding, atribuição e assinatura.
-
-- `PaywalloAuthBridge` + `usePaywalloAuthSync` → `identify({ userId, email, properties })` no login e `reset()` no logout. O `userId` (id do profile) é obrigatório: vira o `app_user_id` que o `paywallo-webhook` usa para vincular a assinatura ao profile
-- `useSessionFlag(key)` → A/B síncrono anti-flicker (UI fora do paywall)
-- `useOnboarding()` (via `useOnboardingTracking`) → `step(name, order)` com `order` obrigatório (1-based) e `complete()`. Não existe `drop()`: o abandono é inferido no backend
-- Eventos de paywall/transação do Superwall são repassados ao Paywallo automaticamente pelo SDK — não rastrear compra manualmente
-- A assinatura é confirmada **server-side** pelo `paywallo-webhook` (ver `../base-supabase/`), que mantém `subscriptions` + `profiles.is_premium`. As compras feitas no paywall do Superwall chegam ao Paywallo pelo webhook Superwall → Paywallo (configurado nos dois dashboards; ver `../skills/paywallo-integrations.md`)
-- APIs de paywall próprio do Paywallo (`presentPaywall`, `presentCampaign`, `requireSubscriptionWithCampaign`, `preload*`…) são stubs inertes desde a 2.10: não usar
+- `PurchasesBridge` (em `AppProviders`) liga o RevenueCat ao atleta: o **id do
+  profile do Supabase é o App User ID** (`Purchases.logIn`) — é por ele que o
+  `revenuecat-webhook` acha o perfil
+- `useSubscription()` → status (entitlement `premium`), atualizado pelo listener
+  do SDK; `usePlans()` → oferta atual (`$rc_monthly` / `$rc_annual`) com preço
+  da Apple
+- `usePaywallGate()` (em `app/(auth)/_layout.tsx`): sem assinatura ativa, a área
+  logada abre `/(auth)/paywall` (`src/features/paywall`, visual PACE TEAM)
+- Sem `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (dev) ou na prévia web
+  (`IS_PURCHASES_ENABLED = false`), tudo abre liberado; `client.web.ts` é o stub
+- Perfil › Configurações: "Gerenciar assinatura" (`showManageSubscriptions`) e
+  "Restaurar compras" (exigência da Apple, também no paywall)
+- Backend: `base-supabase/supabase/functions/revenuecat-webhook` grava
+  `subscriptions` + `profiles.is_premium` (header Authorization =
+  secret `REVENUECAT_WEBHOOK_AUTH`)
 
 **Hard rules:**
 
-- **PROIBIDO** instalar RevenueCat / `react-native-iap` — Superwall + Paywallo já cobrem IAP nativo (StoreKit 2 / Google Play Billing). **Não usar RevenueCat.**
-- **PROIBIDO** chamar `Superwall.shared` direto fora de `src/lib/superwall/` — use os hooks (`useUser`, `usePlacement`)
-- **PROIBIDO** envolver o `PaywalloClient` em wrapper Singleton — ele já é singleton
-- **PROIBIDO** rastrear manualmente eventos de paywall, compra ou onboarding (`track("paywall" | "transaction" | "onboarding", …)` ou nomes inventados como `$paywall_viewed`) — o SDK emite esses eventos (paywall/compra via bridge do Superwall, onboarding via `useOnboarding`). `track()` custom só aceita snake_case (ou `$snake_case`) e lança erro fora disso
-- Gate/apresentação de paywall = **Superwall**. Identidade/funil/assinatura = **Paywallo**. Não duplicar entre os dois
-- Requer **development build** (ambos têm módulos nativos; não roda no Expo Go)
-
-Skills detalhadas em `../skills/superwall-*.md` e `../skills/paywallo-*.md`.
+- **PROIBIDO** reinstalar Superwall / Paywallo ou `react-native-iap` — a compra é do RevenueCat
+- **PROIBIDO** liberar recurso pago por fora da compra da Apple (Pix, link, cartão) — regra 3.1.1 da App Store
+- O paywall precisa mostrar preço e período de cada plano, aviso de renovação automática, links de Termos e Privacidade e "Restaurar compras"
+- Requer **development build** (módulo nativo; não roda no Expo Go)
 
 ### Sentry / PostHog (opcional)
 
@@ -438,7 +438,7 @@ Não vêm incluídos no skeleton — cada fork decide. Para integrar:
 
 1. Instale a lib (`npm install @sentry/react-native` ou similar)
 2. Adicione o mock correspondente em `jest.setup.js`
-3. Pluge o destino no `onError` do `PaywalloProvider` em `AppProviders/index.tsx`
+3. Pluge o provider/inicialização em `AppProviders/index.tsx`
 
 ## Checklist: Nova Feature
 

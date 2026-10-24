@@ -28,6 +28,7 @@ export const ROUTES = {
 	HISTORY: "/(auth)/history",
 	CHALLENGES: "/(auth)/challenges",
 	BUDDY: "/(auth)/buddy",
+	PAYWALL: "/(auth)/paywall",
 } as const;
 
 export type IRoute = (typeof ROUTES)[keyof typeof ROUTES];

@@ -17,7 +17,9 @@ Function (Deno). Substituiu o antigo `base-server` (Fastify/Prisma/Docker).
 - **PROIBIDO** usar a `service_role key` no app — ela só existe no servidor
   (Edge Function / secrets). No app vai apenas a `anon key`.
 - **PROIBIDO** desabilitar `verify_jwt` em funções que não sejam webhooks
-  públicos. A `paywallo-webhook` é a única exceção (ela tem verificação própria).
+  públicos. Exceções (com verificação própria): `revenuecat-webhook` (header
+  Authorization = secret `REVENUECAT_WEBHOOK_AUTH`) e a antiga `paywallo-webhook`
+  (sem uso desde a troca para o RevenueCat).
 - **PROIBIDO** ler/escrever segredo fora de `Deno.env.get(...)` nas Edge
   Functions. Nunca commitar `.env`.
 - **SQL em minúsculas** — palavras-chave, tipos e nomes em `snake_case`.

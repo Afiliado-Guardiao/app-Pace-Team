@@ -23,11 +23,13 @@ import { PrivacyList } from "./components/PrivacyList";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { ProfileTotals } from "./components/ProfileTotals";
 import { StatsCard } from "./components/StatsCard";
+import { SubscriptionSection } from "./components/SubscriptionSection";
 import { NO_RUNS, PROFILE_COPY } from "./constants";
 import { useDeleteAccount } from "./hooks/useDeleteAccount";
 import { useEditProfile } from "./hooks/useEditProfile";
 import { usePrivacy } from "./hooks/usePrivacy";
 import { useProfile } from "./hooks/useProfile";
+import { useSubscriptionActions } from "./hooks/useSubscriptionActions";
 
 const createProfileStyles = (theme: ITheme) => ({
 	root: { flex: 1 },
@@ -48,6 +50,7 @@ export const ProfileScreen: React.FC = () => {
 	const edit = useEditProfile(profile.showToast);
 	const privacy = usePrivacy(profile.showToast);
 	const removal = useDeleteAccount(profile.showToast);
+	const subscription = useSubscriptionActions(profile.showToast);
 	const askDelete = (): void => {
 		removal.openConfirm(profile.closeSettings);
 	};
@@ -161,6 +164,7 @@ export const ProfileScreen: React.FC = () => {
 				}
 			>
 				<Text style={styles.settingsText}>{PROFILE_COPY.settingsBody}</Text>
+				<SubscriptionSection actions={subscription} />
 				<LegalLinks />
 			</Sheet>
 			<EditProfileSheet edit={edit} />
