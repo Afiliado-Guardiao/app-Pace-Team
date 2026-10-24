@@ -78,11 +78,12 @@ npx eas submit -p ios
    vazadas só existe no plano Pro — ligue depois de mudar de plano.
 
 ### App Store Connect (página do app)
-- **URLs** (já usadas pelo app, depois de publicar a pasta `legal/` no
-  repositório público `pace-team-site` com o GitHub Pages ligado):
-  - Política de Privacidade: https://afiliado-guardiao.github.io/pace-team-site/privacidade.html
-  - Termos de Uso (EULA): https://afiliado-guardiao.github.io/pace-team-site/termos.html
-  - Suporte: https://afiliado-guardiao.github.io/pace-team-site/
+- **URLs** (já usadas pelo app; publicadas pelo branch `gh-pages` do
+  repositório `app-Pace-Team`, que precisa continuar **público** para elas
+  ficarem no ar no plano grátis do GitHub):
+  - Política de Privacidade: https://afiliado-guardiao.github.io/app-Pace-Team/privacidade.html
+  - Termos de Uso (EULA): https://afiliado-guardiao.github.io/app-Pace-Team/termos.html
+  - Suporte: https://afiliado-guardiao.github.io/app-Pace-Team/
 - **Privacidade do app** (questionário): localização precisa (corridas),
   fotos, nome, e-mail, ID do usuário, conteúdo do usuário (posts) e
   identificadores de push. Se o Paywallo/Superwall forem ligados, declarar
@@ -96,10 +97,9 @@ npx eas submit -p ios
 
 ## 3. Pendências no app antes de enviar
 
-- **Termos e Política de Privacidade**: textos prontos em `legal/`. Falta o
-  nome completo do responsável (marcado `[NOME COMPLETO DO RESPONSÁVEL]`) e
-  publicar no repositório público `pace-team-site`. Recomendado: uma leitura
-  de um advogado antes do lançamento.
+- **Termos e Política de Privacidade**: prontos em `legal/` e publicados no
+  branch `gh-pages`. Ao mudar um texto, publique de novo esse branch.
+  Recomendado: uma leitura de um advogado antes do lançamento.
 - **Assinatura (Paywallo/Superwall)**: as chaves estão vazias. Decidir se o
   app terá assinatura no lançamento; se não, dá para tirar esses SDKs.
 - **Ícone do Android**: ainda usa a arte antiga com cantos arredondados (só

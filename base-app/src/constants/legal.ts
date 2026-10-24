@@ -1,8 +1,9 @@
 import { Linking } from "react-native";
 
-// Páginas públicas do PACE TEAM (GitHub Pages do repositório pace-team-site).
+// Páginas públicas do PACE TEAM (GitHub Pages do branch gh-pages do repositório
+// app-Pace-Team, que precisa continuar público para as páginas ficarem no ar).
 // As mesmas URLs vão no App Store Connect (Política de Privacidade e Suporte).
-export const LEGAL_BASE_URL = "https://afiliado-guardiao.github.io/pace-team-site";
+export const LEGAL_BASE_URL = "https://afiliado-guardiao.github.io/app-Pace-Team";
 
 export const LEGAL_URLS = {
 	privacy: `${LEGAL_BASE_URL}/privacidade.html`,
