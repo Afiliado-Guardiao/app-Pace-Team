@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { signInWithAppleNative } from "@/lib/auth/appleSignIn";
 import { authErrorMessage } from "@/lib/auth/authErrors";
+import { GOOGLE_SIGN_IN_ENABLED } from "@/lib/auth/providers";
 import { signInWithEmail } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
@@ -27,6 +28,7 @@ interface IUseLoginScreenReturn {
 	reset: ReturnType<typeof useResetPassword>;
 	handleApple: () => void;
 	handleGoogle: () => void;
+	showGoogle: boolean;
 	handleBack: () => void;
 	handleSignup: () => void;
 }
@@ -102,6 +104,7 @@ export const useLoginScreen = (): IUseLoginScreenReturn => {
 		reset,
 		handleApple,
 		handleGoogle,
+		showGoogle: GOOGLE_SIGN_IN_ENABLED,
 		handleBack,
 		handleSignup,
 	};

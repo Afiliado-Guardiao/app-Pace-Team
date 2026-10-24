@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import {
 	Button,
@@ -51,7 +51,11 @@ export const SignupScreen: React.FC = () => {
 					testID="signup-photo"
 				>
 					<View style={styles.photo}>
-						<Icon name="camera" size={CAMERA_ICON} color={styles.iconColor} />
+						{signup.photoUri ? (
+							<Image source={{ uri: signup.photoUri }} style={styles.photoImage} />
+						) : (
+							<Icon name="camera" size={CAMERA_ICON} color={styles.iconColor} />
+						)}
 						<View style={styles.photoBadge}>
 							<Icon name="plus" size={PLUS_ICON} strokeWidth={PLUS_STROKE} />
 						</View>

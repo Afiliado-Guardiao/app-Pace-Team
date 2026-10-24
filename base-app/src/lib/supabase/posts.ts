@@ -57,6 +57,27 @@ export async function getFeed(limit = 30): Promise<IFeedRow[]> {
 	return data;
 }
 
+export type IReportReason = "ofensivo" | "nudez" | "spam" | "fraude" | "outro";
+
+// Denúncia (o post some do meu feed; com 3 denúncias some para todos até a revisão)
+export async function reportPost(postId: string, reason: IReportReason): Promise<void> {
+	const { error } = await supabase.rpc("report_post", { p_post_id: postId, p_reason: reason });
+	if (error) throw error;
+}
+
+// Bloqueio: os posts de um não aparecem mais para o outro
+export async function blockUser(userId: string): Promise<void> {
+	const { error } = await supabase.rpc("block_user", { p_user_id: userId });
+	if (error) throw error;
+}
+
+// Apaga um post meu (a foto vai junto)
+export async function deletePost(postId: string, imagePath: string | null): Promise<void> {
+	const { error } = await supabase.from("posts").delete().eq("id", postId);
+	if (error) throw error;
+	if (imagePath) await supabase.storage.from(BUCKET).remove([imagePath]);
+}
+
 export async function setPostLike(postId: string, liked: boolean): Promise<void> {
 	const {
 		data: { user },

@@ -108,6 +108,9 @@ const postTime = (iso: string): string => {
 
 export const toFeedPost = (row: IFeedRow): IFeedPost => ({
 	id: row.id,
+	authorId: row.authorId,
+	isMine: row.isMine,
+	imagePath: row.imagePath,
 	image: postImage(row),
 	art: { seconds: row.seconds, km: row.km, layers: row.layers },
 	name: row.name || "Atleta",

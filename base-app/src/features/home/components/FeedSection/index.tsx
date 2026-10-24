@@ -44,10 +44,11 @@ const createFeedSectionStyles = (theme: ITheme) => {
 // Feed social do Início: fotos de corridas que as equipes compartilharam.
 interface IFeedSectionProps {
 	posts: readonly IFeedPost[];
+	onMore: (post: IFeedPost) => void;
 	onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-export const FeedSection: React.FC<IFeedSectionProps> = ({ posts, onLayout }) => {
+export const FeedSection: React.FC<IFeedSectionProps> = ({ posts, onMore, onLayout }) => {
 	const { theme } = useTheme();
 	const styles = createFeedSectionStyles(theme);
 	// "Exemplos fictícios" só na prévia por link, que usa os posts do design
@@ -64,7 +65,7 @@ export const FeedSection: React.FC<IFeedSectionProps> = ({ posts, onLayout }) =>
 			</View>
 			{isEmpty ? <Text style={styles.empty}>{HOME_COPY.feedEmpty}</Text> : null}
 			{posts.map((post, index) => (
-				<FeedPost key={post.id} post={post} index={index} />
+				<FeedPost key={post.id} post={post} index={index} onMore={onMore} />
 			))}
 		</View>
 	);

@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import {
 	Button,
@@ -34,6 +34,14 @@ const createCreateTeamStyles = (theme: ITheme) => {
 			alignItems: "center" as const,
 			justifyContent: "center" as const,
 			gap: 6,
+		},
+		logoImage: {
+			position: "absolute" as const,
+			top: 0,
+			left: 0,
+			width: LOGO,
+			height: LOGO,
+			borderRadius: 26,
 		},
 		logoAppearance: {
 			fill: { color: colors.glass1 },
@@ -97,9 +105,15 @@ export const CreateTeamScreen: React.FC = () => {
 						testID="create-team-logo"
 					>
 						<GlassSurface appearance={styles.logoAppearance} radius={26} style={styles.logo}>
-							<View style={styles.logoDash} pointerEvents="none" />
-							<Icon name="image-plus" size={24} color={theme.pace.colors.textSecondary} />
-							<Text style={styles.logoText}>{CREATE_TEAM_COPY.logo}</Text>
+							{form.logoUri ? (
+								<Image source={{ uri: form.logoUri }} style={styles.logoImage} />
+							) : (
+								<>
+									<View style={styles.logoDash} pointerEvents="none" />
+									<Icon name="image-plus" size={24} color={theme.pace.colors.textSecondary} />
+									<Text style={styles.logoText}>{CREATE_TEAM_COPY.logo}</Text>
+								</>
+							)}
 						</GlassSurface>
 					</Pressable>
 					<Text style={styles.logoHint}>{CREATE_TEAM_COPY.logoHint}</Text>

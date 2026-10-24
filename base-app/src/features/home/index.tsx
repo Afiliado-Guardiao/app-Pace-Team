@@ -1,16 +1,24 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { Avatar, IconButton, ScreenBackground, ScreenScroll } from "@/components/pace";
+import {
+	Avatar,
+	FloatingToast,
+	IconButton,
+	ScreenBackground,
+	ScreenScroll,
+} from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { FeedSection } from "./components/FeedSection";
 import { HomeStack } from "./components/HomeStack";
+import { PostMenuSheet } from "./components/PostMenuSheet";
 import { WeekCard } from "./components/WeekCard";
 import { HOME_COPY } from "./constants";
 import { useHomeFeed } from "./hooks/useHomeFeed";
 import { useHomeScreen } from "./hooks/useHomeScreen";
+import { usePostMenu } from "./hooks/usePostMenu";
 import { useWeekSummary } from "./hooks/useWeekSummary";
 
 const AVATAR = 48;
@@ -38,6 +46,7 @@ export const HomeScreen: React.FC = () => {
 	const home = useHomeScreen();
 	const feed = useHomeFeed();
 	const week = useWeekSummary();
+	const menu = usePostMenu();
 	const styles = createHomeStyles(theme);
 
 	return (
@@ -67,8 +76,10 @@ export const HomeScreen: React.FC = () => {
 				</View>
 				<WeekCard week={week} onOpenTeam={home.openTeam} />
 				<HomeStack onOpen={home.openStackCard} />
-				<FeedSection posts={feed.posts} onLayout={feed.onFeedLayout} />
+				<FeedSection posts={feed.posts} onMore={menu.open} onLayout={feed.onFeedLayout} />
 			</ScreenScroll>
+			<PostMenuSheet menu={menu} />
+			<FloatingToast toast={menu.toast} />
 		</View>
 	);
 };

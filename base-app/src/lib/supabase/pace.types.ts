@@ -86,6 +86,7 @@ export interface IMyStats {
 
 export interface IFeedRow {
 	id: string;
+	authorId: string;
 	name: string;
 	team: string;
 	teamId: string | null;

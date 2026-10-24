@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Image } from "react-native";
+import { Image, Share } from "react-native";
 
 import {
 	Easing,
@@ -10,9 +10,10 @@ import {
 } from "react-native-reanimated";
 
 import { usePostActions } from "@/lib/data";
-import { IFeedPost } from "@/lib/pace";
+import { formatKm, IFeedPost } from "@/lib/pace";
+import { LEGAL_URLS } from "@/constants/legal";
 
-import { DOUBLE_TAP_MS } from "../constants";
+import { DOUBLE_TAP_MS, POST_MENU_COPY } from "../constants";
 
 interface IUseFeedPostReturn {
 	liked: boolean;
@@ -21,6 +22,7 @@ interface IUseFeedPostReturn {
 	heartStyle: ReturnType<typeof useAnimatedStyle>;
 	toggleLike: () => void;
 	handleImageTap: () => void;
+	share: () => void;
 }
 
 const FALLBACK_RATIO = 4 / 5;
@@ -84,5 +86,12 @@ export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
 		heartStyle,
 		toggleLike,
 		handleImageTap,
+		// Compartilhar pelo menu do iPhone (WhatsApp, Instagram, mensagens...)
+		share: () => {
+			const km = post.art ? ` ${formatKm(post.art.km, 1)} km` : "";
+			void Share.share({
+				message: `${post.name}${km}${POST_MENU_COPY.shareText}${LEGAL_URLS.support}`,
+			}).catch(() => undefined);
+		},
 	};
 };

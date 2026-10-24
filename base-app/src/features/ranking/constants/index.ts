@@ -14,7 +14,8 @@ export const RANKING_COPY = {
 		"Crie a sua equipe ou convide amigos: as primeiras corridas da semana já colocam vocês no ranking.",
 } as const;
 
-export const RANKING_SCOPES = ["Cidade", "Região", "Estado", "País", "Mundo"] as const;
+// "Mundo" sai até existirem equipes em outros países (a Apple recusa itens "em breve")
+export const RANKING_SCOPES = ["Cidade", "Região", "Estado", "País"] as const;
 export const WORLD_SCOPE = "Mundo";
 
 // Categorias do campeonato (equipes de 3, 5 ou 10)

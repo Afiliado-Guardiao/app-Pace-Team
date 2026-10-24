@@ -23,6 +23,42 @@ export const HOME_COPY = {
 	like: "Curtir",
 } as const;
 
+// Menu "···" do post (denunciar e bloquear: exigência da App Store para feed)
+export const POST_MENU_COPY = {
+	title: "Opções do post",
+	report: "Denunciar post",
+	reportTitle: "Por que denunciar?",
+	reportBody: "O post some do seu feed agora. Revisamos as denúncias em até 24 horas.",
+	block: "Bloquear ",
+	remove: "Apagar post",
+	cancel: "Cancelar",
+	more: "Mais opções",
+	share: "Compartilhar",
+	shareText: " correu no PACE TEAM. Corra com a gente: ",
+	reported: {
+		tone: "success",
+		icon: "flag",
+		title: "Denúncia enviada",
+		message: "Obrigado. Vamos revisar.",
+	},
+	blocked: {
+		tone: "success",
+		icon: "ban",
+		title: "Atleta bloqueado",
+		message: "Os posts desse atleta não aparecem mais para você.",
+	},
+	removed: { tone: "success", icon: "trash-2", title: "Post apagado" },
+	error: { tone: "danger", icon: "alert-circle", title: "Não deu certo agora. Tente de novo." },
+} as const;
+
+export const REPORT_REASONS = [
+	{ value: "ofensivo", label: "Ofensivo ou discurso de ódio" },
+	{ value: "nudez", label: "Nudez ou conteúdo sexual" },
+	{ value: "spam", label: "Spam ou propaganda" },
+	{ value: "fraude", label: "Corrida falsa (fraude no ranking)" },
+	{ value: "outro", label: "Outro motivo" },
+] as const;
+
 // Semana do atleta (protótipo): 32,4 de 40 km
 export const WEEK_PROGRESS = { km: 32.4, goal: 40, display: "32,4", points: "512", rank: "4º" };
 

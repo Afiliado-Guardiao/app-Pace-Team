@@ -1,11 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { IPublishPostPayload, publishPost, setPostLike } from "@/lib/supabase";
+import {
+	blockUser,
+	deletePost,
+	IPublishPostPayload,
+	IReportReason,
+	publishPost,
+	reportPost,
+	setPostLike,
+} from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { DATA_KEYS } from "./keys";
 
-// Publicar no feed e curtir/descurtir (recarrega o feed).
+// Publicar, curtir, denunciar, bloquear e apagar (recarrega o feed).
 export const usePostActions = () => {
 	const client = useQueryClient();
 	const refresh = (): void => {
@@ -22,5 +30,20 @@ export const usePostActions = () => {
 			IS_PREVIEW ? Promise.resolve() : setPostLike(params.postId, params.liked),
 	});
 
-	return { publish, like };
+	const report = useMutation({
+		mutationFn: (params: { postId: string; reason: IReportReason }) =>
+			IS_PREVIEW ? Promise.resolve() : reportPost(params.postId, params.reason),
+		onSuccess: refresh,
+	});
+	const block = useMutation({
+		mutationFn: (userId: string) => (IS_PREVIEW ? Promise.resolve() : blockUser(userId)),
+		onSuccess: refresh,
+	});
+	const remove = useMutation({
+		mutationFn: (params: { postId: string; imagePath: string | null }) =>
+			IS_PREVIEW ? Promise.resolve() : deletePost(params.postId, params.imagePath),
+		onSuccess: refresh,
+	});
+
+	return { publish, like, report, block, remove };
 };

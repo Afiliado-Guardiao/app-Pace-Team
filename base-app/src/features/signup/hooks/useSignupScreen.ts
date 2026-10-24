@@ -4,7 +4,8 @@ import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { authErrorMessage } from "@/lib/auth/authErrors";
-import { signUpWithEmail } from "@/lib/supabase";
+import { pickFromGallery } from "@/lib/media";
+import { signUpWithEmail, uploadAvatar } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
@@ -21,6 +22,8 @@ interface IUseSignupScreenReturn {
 	setAccepted: (value: boolean) => void;
 	handleSubmit: () => void;
 	handlePhoto: () => void;
+	// Foto escolhida na galeria (vira a foto de perfil depois do cadastro)
+	photoUri: string | null;
 	handleBack: () => void;
 }
 
@@ -42,6 +45,7 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 	const [form, setForm] = useState<ISignupForm>(INITIAL);
 	const [errors, setErrors] = useState<ISignupErrors>({});
 	const [accepted, setAccepted] = useState(false);
+	const [photoUri, setPhotoUri] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const setField = useCallback((field: keyof ISignupForm, value: string) => {
@@ -64,6 +68,8 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 			city: form.city,
 			state: form.state,
 		})
+			// A foto só sobe depois que a conta existe; se falhar, dá para trocar no Perfil
+			.then(() => (photoUri ? uploadAvatar(photoUri).catch(() => undefined) : undefined))
 			.then(() => {
 				setHasTeam(false);
 				router.replace(ROUTES.TEAM);
@@ -74,10 +80,13 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 			.finally(() => {
 				setIsLoading(false);
 			});
-	}, [form, accepted, isLoading, router, setHasTeam, showToast]);
+	}, [form, accepted, isLoading, photoUri, router, setHasTeam, showToast]);
 
 	const handlePhoto = useCallback(() => {
-		showToast(SIGNUP_TOASTS.photo);
+		void pickFromGallery({ isSquare: true }).then((result) => {
+			if (result.status === "picked") setPhotoUri(result.uri);
+			if (result.status === "denied") showToast(SIGNUP_TOASTS.photoDenied);
+		});
 	}, [showToast]);
 
 	const handleBack = useCallback(() => {
@@ -95,6 +104,7 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 		setAccepted,
 		handleSubmit,
 		handlePhoto,
+		photoUri,
 		handleBack,
 	};
 };

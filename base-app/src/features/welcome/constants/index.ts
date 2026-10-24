@@ -33,11 +33,6 @@ export const WELCOME_TOASTS = {
 		title: "Login com Google em breve",
 		message: "Use e-mail e senha por enquanto.",
 	},
-	legal: {
-		tone: "info",
-		title: "Documento em preparação",
-		message: "Os termos e a política entram antes da publicação na App Store.",
-	},
 } as const;
 
 export const WELCOME_ROUTES = { CATALOG: "/catalog" } as const;

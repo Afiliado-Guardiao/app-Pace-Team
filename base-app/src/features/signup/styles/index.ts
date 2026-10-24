@@ -1,4 +1,4 @@
-import { TextStyle, ViewStyle } from "react-native";
+import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 import { ITheme } from "@/theme";
 
@@ -25,6 +25,12 @@ export const createSignupStyles = (theme: ITheme) => {
 			alignItems: "center",
 			justifyContent: "center",
 		} as ViewStyle,
+		photoImage: {
+			position: "absolute",
+			width: PHOTO,
+			height: PHOTO,
+			borderRadius: PHOTO / 2,
+		} as ImageStyle,
 		photoBadge: {
 			position: "absolute",
 			right: BADGE_OFFSET,

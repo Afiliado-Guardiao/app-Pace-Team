@@ -24,10 +24,11 @@ export const SIGNUP_COPY = {
 export { CITIES, STATES } from "@/lib/pace";
 
 export const SIGNUP_TOASTS = {
-	photo: {
-		tone: "info",
-		title: "Foto de perfil em breve",
-		message: "Você poderá adicionar sua foto pelo Perfil.",
+	photoDenied: {
+		tone: "warning",
+		title: "Sem acesso às fotos",
+		message:
+			"Libere o acesso em Ajustes › PACE TEAM › Fotos, ou adicione a foto depois pelo Perfil.",
 	},
 	error: { tone: "danger", title: "Não deu para criar a conta" },
 } as const;

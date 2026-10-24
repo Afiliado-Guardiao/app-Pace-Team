@@ -8,7 +8,7 @@ import { POST_ART_RATIO, PostArt } from "@/components/shared/PostArt";
 import { useTheme } from "@/theme";
 import { IFeedPost } from "@/lib/pace";
 
-import { HOME_COPY } from "../../constants";
+import { HOME_COPY, POST_MENU_COPY } from "../../constants";
 import { useFeedPost } from "../../hooks/useFeedPost";
 
 import { createFeedPostStyles } from "./styles";
@@ -16,6 +16,8 @@ import { createFeedPostStyles } from "./styles";
 interface IFeedPostProps {
 	post: IFeedPost;
 	index: number;
+	// Abre o menu "···" (denunciar, bloquear ou apagar)
+	onMore: (post: IFeedPost) => void;
 }
 
 const ENTRY_STAGGER = 80;
@@ -23,7 +25,7 @@ const ACTION_ICON = 21;
 const HEART_BIG = 84;
 
 // Post do feed: autor, posição do time, foto (dois toques curtem) e ações.
-export const FeedPost: React.FC<IFeedPostProps> = ({ post, index }) => {
+export const FeedPost: React.FC<IFeedPostProps> = ({ post, index, onMore }) => {
 	const { theme } = useTheme();
 	const { colors } = theme.pace;
 	const feed = useFeedPost(post);
@@ -56,6 +58,17 @@ export const FeedPost: React.FC<IFeedPostProps> = ({ post, index }) => {
 						/>
 					</GlassSurface>
 				) : null}
+				<Pressable
+					onPress={() => {
+						onMore(post);
+					}}
+					hitSlop={10}
+					accessibilityRole="button"
+					accessibilityLabel={POST_MENU_COPY.more}
+					testID={`feed-post-more-${post.id}`}
+				>
+					<Icon name="more-horizontal" size={ACTION_ICON} color={colors.textSecondary} />
+				</Pressable>
 			</View>
 			<Pressable onPress={feed.handleImageTap} accessibilityLabel={`Corrida de ${post.team}`}>
 				<GlassSurface
@@ -96,11 +109,15 @@ export const FeedPost: React.FC<IFeedPostProps> = ({ post, index }) => {
 					/>
 					<Text style={[styles.count, feed.liked ? styles.countLiked : null]}>{feed.likes}</Text>
 				</Pressable>
-				<View style={styles.action}>
-					<Icon name="message-circle" size={ACTION_ICON} />
-					<Text style={styles.count}>{post.comments}</Text>
-				</View>
-				<Icon name="send" size={20} />
+				<Pressable
+					onPress={feed.share}
+					hitSlop={8}
+					accessibilityRole="button"
+					accessibilityLabel={POST_MENU_COPY.share}
+					testID={`feed-post-share-${post.id}`}
+				>
+					<Icon name="send" size={20} />
+				</Pressable>
 			</View>
 			<Text style={styles.caption}>
 				<Text style={styles.captionName}>{firstName}</Text> {post.caption}

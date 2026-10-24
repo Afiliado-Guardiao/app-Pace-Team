@@ -54,6 +54,7 @@ export const TeamScreen: React.FC = () => {
 					<ScreenScroll hasRail testID="team-scroll">
 						<TeamHero
 							name={team.name}
+							logoUrl={team.logoUrl}
 							place={team.place}
 							category={team.category}
 							onOpenDetails={screen.openDetails}

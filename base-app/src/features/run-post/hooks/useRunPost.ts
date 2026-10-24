@@ -38,6 +38,7 @@ export const useRunPost = () => {
 	const [step, setStep] = useState<IStep>("camera");
 	const [photo, setPhoto] = useState<IPhoto>({ kind: "sample", index: 0 });
 	const [facing, setFacing] = useState<CameraType>("back");
+	const [isFlashOn, setIsFlashOn] = useState(false);
 	const [layers, setLayers] = useState<IPostArtLayers>({ route: true, stats: true, badge: true });
 	const [caption, setCaption] = useState("");
 	// Prévia por link: corrida de exemplo. App real: a última corrida, mesmo curta
@@ -106,6 +107,10 @@ export const useRunPost = () => {
 		team,
 		cameraRef,
 		facing,
+		isFlashOn,
+		toggleFlash: () => {
+			setIsFlashOn((on) => !on);
+		},
 		isLive: photo.kind === "live",
 		selectedSample: photo.kind === "sample" ? photo.index : -1,
 		image: imageOf(photo),

@@ -4,7 +4,9 @@ import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { teamErrorMessage, useTeamActions } from "@/lib/data";
+import { pickFromGallery } from "@/lib/media";
 import { ME } from "@/lib/pace";
+import { uploadTeamLogo } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
@@ -31,11 +33,13 @@ export const useCreateTeam = () => {
 	// Sem nome no cadastro o campo começa vazio (o nome do design só na prévia)
 	const [captain, setCaptain] = useState(user?.name || (IS_PREVIEW ? ME.name : ""));
 
-	const logoToast: IFloatingToastData = {
-		tone: "info",
-		icon: "image-plus",
+	const [logoUri, setLogoUri] = useState<string | null>(null);
+
+	const logoDenied: IFloatingToastData = {
+		tone: "warning",
+		icon: "image-off",
 		title: CREATE_TEAM_COPY.logo,
-		message: CREATE_TEAM_COPY.logoSoon,
+		message: CREATE_TEAM_COPY.logoDenied,
 	};
 
 	return {
@@ -53,8 +57,12 @@ export const useCreateTeam = () => {
 		setCaptain,
 		slots: Number(size),
 		isSubmitting: create.isPending,
+		logoUri,
 		pickLogo: () => {
-			showToast(logoToast);
+			void pickFromGallery({ isSquare: true }).then((result) => {
+				if (result.status === "picked") setLogoUri(result.uri);
+				if (result.status === "denied") showToast(logoDenied);
+			});
 		},
 		submit: () => {
 			if (name.trim().length < MIN_NAME) {
@@ -68,8 +76,18 @@ export const useCreateTeam = () => {
 			create.mutate(
 				{ name: name.trim(), city, region, size: Number(size) },
 				{
-					onSuccess: () => {
-						router.replace(ROUTES.INVITE);
+					onSuccess: (teamId) => {
+						// O escudo vai depois que a equipe existe; se falhar, a equipe
+						// fica com as iniciais e o capitão pode tentar de novo depois
+						const upload =
+							teamId && logoUri && !IS_PREVIEW
+								? uploadTeamLogo(teamId, logoUri)
+								: Promise.resolve();
+						void upload
+							.catch(() => undefined)
+							.finally(() => {
+								router.replace(ROUTES.INVITE);
+							});
 					},
 					onError: (error) => {
 						showToast({

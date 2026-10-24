@@ -82,7 +82,9 @@ export const TeamRunFace: React.FC<{ data: ITeamRunFaceData }> = ({ data }) => {
 						</Text>
 					</View>
 				</View>
-				<IconButton icon="arrow-up-right" label="Abrir corrida" variant="light" size={44} />
+				<View pointerEvents="none">
+					<IconButton icon="arrow-up-right" label="Abrir corrida" variant="light" size={44} />
+				</View>
 			</View>
 			<Text style={styles.km}>
 				<CountUp value={data.km} delay={COUNT_DELAY} />

@@ -84,9 +84,16 @@ export const LoginScreen: React.FC = () => {
 					<Button variant="glass" fullWidth style={styles.socialItem} onPress={login.handleApple}>
 						{LOGIN_COPY.apple}
 					</Button>
-					<Button variant="glass" fullWidth style={styles.socialItem} onPress={login.handleGoogle}>
-						{LOGIN_COPY.google}
-					</Button>
+					{login.showGoogle ? (
+						<Button
+							variant="glass"
+							fullWidth
+							style={styles.socialItem}
+							onPress={login.handleGoogle}
+						>
+							{LOGIN_COPY.google}
+						</Button>
+					) : null}
 				</View>
 				<Text style={styles.footer}>
 					{LOGIN_COPY.newHere}

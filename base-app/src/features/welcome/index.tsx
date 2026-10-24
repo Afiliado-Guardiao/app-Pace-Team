@@ -41,11 +41,21 @@ export const WelcomeScreen: React.FC = () => {
 				</Animated.View>
 				<Text style={styles.terms}>
 					{WELCOME_COPY.termsStart}
-					<Text style={styles.termsLink} onPress={welcome.handleLegal}>
+					<Text
+						style={styles.termsLink}
+						onPress={welcome.handleTerms}
+						accessibilityRole="link"
+						testID="welcome-terms"
+					>
 						{WELCOME_COPY.terms}
 					</Text>
 					{WELCOME_COPY.and}
-					<Text style={styles.termsLink} onPress={welcome.handleLegal}>
+					<Text
+						style={styles.termsLink}
+						onPress={welcome.handlePrivacy}
+						accessibilityRole="link"
+						testID="welcome-privacy"
+					>
 						{WELCOME_COPY.privacy}
 					</Text>
 					{WELCOME_COPY.termsEnd}
@@ -59,14 +69,16 @@ export const WelcomeScreen: React.FC = () => {
 						onPress={welcome.handleApple}
 						styles={styles}
 					/>
-					<ProviderButton
-						brand="google"
-						label={WELCOME_COPY.google}
-						isBusy={welcome.busy === "google"}
-						isDisabled={welcome.busy !== null && welcome.busy !== "google"}
-						onPress={welcome.handleGoogle}
-						styles={styles}
-					/>
+					{welcome.showGoogle ? (
+						<ProviderButton
+							brand="google"
+							label={WELCOME_COPY.google}
+							isBusy={welcome.busy === "google"}
+							isDisabled={welcome.busy !== null && welcome.busy !== "google"}
+							onPress={welcome.handleGoogle}
+							styles={styles}
+						/>
+					) : null}
 				</View>
 				<Pressable
 					testID="welcome-email"

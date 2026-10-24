@@ -65,6 +65,10 @@ export interface IFeedPostArt {
 
 export interface IFeedPost {
 	id: string;
+	// Autor e foto enviada (posts reais: denunciar, bloquear, apagar)
+	authorId?: string;
+	isMine?: boolean;
+	imagePath?: string | null;
 	image: ImageSourcePropType;
 	art?: IFeedPostArt;
 	name: string;

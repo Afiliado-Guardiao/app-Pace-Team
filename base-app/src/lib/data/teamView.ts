@@ -20,6 +20,8 @@ export interface ITeamView {
 	since: string;
 	description: string;
 	inviteCode: string;
+	// Escudo enviado pelo capitão (null = iniciais)
+	logoUrl: string | null;
 	isCaptain: boolean;
 	isMine: boolean;
 	// Ordenados por pontos da semana
@@ -42,6 +44,7 @@ export const toTeamView = (t: ITeamDetails): ITeamView => ({
 	since: sinceLabel(t.createdAt),
 	description: t.description ?? "",
 	inviteCode: t.inviteCode,
+	logoUrl: t.logoUrl,
 	isCaptain: t.isCaptain,
 	isMine: t.isMine,
 	members: t.members.map(toTeamMember).sort((a, b) => b.pts - a.pts),
@@ -65,6 +68,7 @@ export const DEMO_TEAM_VIEW: ITeamView = {
 	description:
 		"Corredores de Campinas que treinam juntos no Taquaral às terças e no Barão aos domingos.",
 	inviteCode: "PACESHRK",
+	logoUrl: null,
 	isCaptain: true,
 	isMine: true,
 	members: [...MEMBERS].sort((a, b) => b.pts - a.pts),

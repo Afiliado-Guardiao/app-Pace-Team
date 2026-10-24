@@ -2,7 +2,7 @@ export const CREATE_TEAM_COPY = {
 	title: "Criar equipe",
 	logo: "Logo",
 	logoHint: "Envie o escudo do time. PNG ou JPG quadrado, mínimo 512 px.",
-	logoSoon: "Envio do escudo chega junto com o cadastro das equipes no servidor.",
+	logoDenied: "Libere o acesso às fotos em Ajustes › PACE TEAM › Fotos.",
 	name: "Nome da equipe",
 	city: "Cidade",
 	region: "Região",

@@ -141,6 +141,13 @@ export interface Database {
 				Update: Record<string, never>;
 				Relationships: [];
 			};
+			teams: {
+				Row: { id: string; name: string; captain_id: string | null; logo_url: string | null };
+				// Equipes são criadas pela RPC create_team
+				Insert: Record<string, never>;
+				Update: { logo_url?: string | null };
+				Relationships: [];
+			};
 			buddy_profiles: {
 				Row: {
 					user_id: string;
@@ -212,6 +219,8 @@ export interface Database {
 			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };
 			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
 			get_notifications: { Args: Record<string, never>; Returns: INotificationRow[] };
+			report_post: { Args: { p_post_id: string; p_reason: string }; Returns: undefined };
+			block_user: { Args: { p_user_id: string }; Returns: undefined };
 			mark_notifications_read: { Args: { p_ids?: string[] | null }; Returns: undefined };
 			get_my_challenges: { Args: Record<string, never>; Returns: IMyChallenges };
 			get_team_achievements: { Args: { p_team_id: string }; Returns: ITeamAchievements };

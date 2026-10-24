@@ -31,7 +31,12 @@ export const CameraStep: React.FC<ICameraStepProps> = ({ post }) => {
 			<View style={styles.frame}>
 				{post.isLive ? (
 					<View style={styles.live}>
-						<CameraView ref={post.cameraRef} style={styles.fill} facing={post.facing} />
+						<CameraView
+							ref={post.cameraRef}
+							style={styles.fill}
+							facing={post.facing}
+							flash={post.isFlashOn ? "on" : "off"}
+						/>
 						<View style={styles.fill} pointerEvents="none">
 							<PostArt seconds={post.run.seconds} km={post.run.km} team={post.team} />
 						</View>
@@ -54,7 +59,12 @@ export const CameraStep: React.FC<ICameraStepProps> = ({ post }) => {
 					testID="post-close"
 				/>
 				<Text style={styles.title}>{POST_COPY.cameraTitle}</Text>
-				<GlassCircleButton icon="zap" label={POST_COPY.flash} testID="post-flash" />
+				<GlassCircleButton
+					icon={post.isFlashOn ? "zap" : "zap-off"}
+					label={POST_COPY.flash}
+					onPress={post.toggleFlash}
+					testID="post-flash"
+				/>
 			</View>
 			<View style={styles.bottom}>
 				<View style={styles.thumbs}>

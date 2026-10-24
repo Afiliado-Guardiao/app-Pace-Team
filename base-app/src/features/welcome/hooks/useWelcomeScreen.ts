@@ -4,6 +4,8 @@ import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { signInWithAppleNative } from "@/lib/auth/appleSignIn";
+import { GOOGLE_SIGN_IN_ENABLED } from "@/lib/auth/providers";
+import { openLegalPage } from "@/constants/legal";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
@@ -17,8 +19,11 @@ interface IUseWelcomeScreenReturn {
 	showCatalogShortcut: boolean;
 	handleApple: () => void;
 	handleGoogle: () => void;
+	// Login com Google ainda não configurado (Google Cloud + Supabase)
+	showGoogle: boolean;
 	handleEmail: () => void;
-	handleLegal: () => void;
+	handleTerms: () => void;
+	handlePrivacy: () => void;
 	handleOpenCatalog: () => void;
 }
 
@@ -57,9 +62,12 @@ export const useWelcomeScreen = (): IUseWelcomeScreenReturn => {
 		router.push(ROUTES.LOGIN);
 	}, [router]);
 
-	const handleLegal = useCallback(() => {
-		showToast(WELCOME_TOASTS.legal);
-	}, [showToast]);
+	const handleTerms = useCallback(() => {
+		openLegalPage("terms");
+	}, []);
+	const handlePrivacy = useCallback(() => {
+		openLegalPage("privacy");
+	}, []);
 
 	const handleOpenCatalog = useCallback(() => {
 		router.push(WELCOME_ROUTES.CATALOG);
@@ -71,8 +79,10 @@ export const useWelcomeScreen = (): IUseWelcomeScreenReturn => {
 		showCatalogShortcut: __DEV__,
 		handleApple,
 		handleGoogle,
+		showGoogle: GOOGLE_SIGN_IN_ENABLED,
 		handleEmail,
-		handleLegal,
+		handleTerms,
+		handlePrivacy,
 		handleOpenCatalog,
 	};
 };

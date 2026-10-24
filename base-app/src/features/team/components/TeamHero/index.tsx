@@ -9,6 +9,7 @@ import { TEAM_COPY } from "../../constants";
 
 interface ITeamHeroProps {
 	name: string;
+	logoUrl: string | null;
 	place: string;
 	category: string;
 	onOpenDetails: () => void;
@@ -42,7 +43,13 @@ const createTeamHeroStyles = (theme: ITheme) => {
 };
 
 // Capa da equipe: foto, categoria, escudo, nome e cidade.
-export const TeamHero: React.FC<ITeamHeroProps> = ({ name, place, category, onOpenDetails }) => {
+export const TeamHero: React.FC<ITeamHeroProps> = ({
+	name,
+	logoUrl,
+	place,
+	category,
+	onOpenDetails,
+}) => {
 	const { theme } = useTheme();
 	const styles = createTeamHeroStyles(theme);
 
@@ -59,7 +66,7 @@ export const TeamHero: React.FC<ITeamHeroProps> = ({ name, place, category, onOp
 				/>
 			</View>
 			<View style={styles.identity}>
-				<Avatar name={name} square size={58} style={styles.logo} />
+				<Avatar name={name} src={logoUrl ?? undefined} square size={58} style={styles.logo} />
 				<View>
 					<Text style={styles.name}>{name}</Text>
 					<Text style={styles.place}>{place}</Text>
