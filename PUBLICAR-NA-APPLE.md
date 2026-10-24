@@ -35,13 +35,10 @@ npx eas init
 O `eas init` grava o `projectId` no `app.json` — sem ele as notificações push
 não funcionam.
 
-Cadastre as chaves do Supabase para o build na nuvem (o `.env` do seu
-computador não vai para lá):
-```bash
-npx eas env:create --environment production --name EXPO_PUBLIC_SUPABASE_URL --value "https://vtupfqsguvrioxeyyyeg.supabase.co" --visibility plaintext
-npx eas env:create --environment production --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "<a mesma chave do .env>" --visibility plaintext
-```
-Repita com `--environment preview` para os builds de teste.
+As chaves do Supabase já estão no `eas.json` (perfis development, preview e
+production). É a chave **pública** (`sb_publishable_…`), a mesma que vai
+dentro do app instalado; quem protege os dados são as regras do banco (RLS).
+A chave secreta (`service_role`) **nunca** vai para o app nem para o repositório.
 
 Build e envio (o EAS cria certificados, App Group, Push e "Sign in with Apple"
 na sua conta Apple quando pedir login):
@@ -51,15 +48,19 @@ npx eas submit -p ios
 ```
 
 ### Supabase (supabase.com › projeto `base-app`)
-1. **Plano**: o projeto está no plano gratuito, que **pausa depois de 7 dias
-   sem uso**. Para usuários reais, mude para o Pro (Settings › Billing).
+1. **Plano**: dá para lançar no **gratuito**. Ele pausa o projeto só depois de
+   7 dias **sem nenhum acesso** (com atletas usando o app, não pausa; se pausar,
+   basta clicar em *Restore* no painel). Mude para o Pro (US$ 25/mês) quando as
+   assinaturas pagarem: ganha backup diário, mais espaço e não pausa nunca.
 2. **Login com Apple** (Authentication › Sign In / Providers › Apple): ligue e
    em *Client IDs* coloque `com.paceteam.app`. Para o login nativo do iPhone
    não precisa de chave secreta.
-3. **E-mail (SMTP)** (Authentication › Emails › SMTP Settings): o e-mail
-   padrão do Supabase manda poucos e-mails por hora e cai em spam. Configure
-   um serviço (Resend, Brevo, Amazon SES…) antes de lançar — é ele que envia o
-   "Esqueci minha senha".
+3. **E-mail (SMTP)** (Authentication › Emails › SMTP Settings): o envio
+   padrão do Supabase só entrega para os e-mails da sua própria equipe no
+   Supabase, então o "Esqueci minha senha" não chegaria aos atletas. Ligar um
+   SMTP próprio é **grátis no plano gratuito**: o Resend (3.000 e-mails/mês)
+   ou o Brevo (300/dia) têm plano sem custo. Crie a conta, copie host, porta,
+   usuário e senha SMTP e cole nessa tela.
 4. **Confirmação de e-mail**: hoje está **desligada**, e o cadastro conta com
    isso (o usuário anônimo do onboarding vira conta na hora). **Não ligue**
    antes de o app ganhar a tela "confirme seu e-mail".
@@ -67,8 +68,11 @@ npx eas submit -p ios
    vazadas só existe no plano Pro — ligue depois de mudar de plano.
 
 ### App Store Connect (página do app)
-- **Política de Privacidade (URL obrigatória)** e Termos de Uso. Hoje os
-  textos no cadastro não abrem nada.
+- **Política de Privacidade (URL obrigatória)** e Termos de Uso **do PACE
+  TEAM**. A política da própria Apple (apple.com/legal/privacy) não serve: ela
+  explica o que a Apple faz com os dados, não o que o PACE TEAM coleta
+  (localização das corridas, fotos, nome, e-mail, posts). A Apple e a LGPD
+  exigem a do app. Hoje os textos no cadastro não abrem nada.
 - **Privacidade do app** (questionário): localização precisa (corridas),
   fotos, nome, e-mail, ID do usuário, conteúdo do usuário (posts) e
   identificadores de push. Se o Paywallo/Superwall forem ligados, declarar
