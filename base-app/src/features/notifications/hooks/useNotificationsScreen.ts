@@ -31,12 +31,21 @@ interface IUseNotificationsScreenReturn {
 	goBack: () => void;
 }
 
-// Lista de avisos: marcar lidas, abrir o Modo Virada e responder convites.
+// Para onde cada aviso leva ao tocar
+const LINK_ROUTES: Record<NonNullable<INotification["link"]>, string> = {
+	disputa: ROUTES.VIRADA,
+	team: ROUTES.TEAM,
+	challenges: ROUTES.CHALLENGES,
+	ranking: ROUTES.RANKING,
+};
+
+// Lista de avisos: marcar lidas (no servidor), abrir o destino e responder convites.
 export const useNotificationsScreen = (): IUseNotificationsScreenReturn => {
 	const router = useRouter();
 	const { toast, showToast } = useFloatingToast();
-	const { items: feed } = useNotificationFeed();
+	const { items: feed, markRead: markOnServer } = useNotificationFeed();
 	const { respond } = useTeamActions();
+	// Leitura e respostas aparecem na hora, antes do servidor confirmar
 	const [readIds, setReadIds] = useState<ReadonlySet<string>>(new Set());
 	const [answered, setAnswered] = useState<ReadonlySet<string>>(new Set());
 	const [isPrefsOpen, setIsPrefsOpen] = useState(false);
@@ -51,27 +60,35 @@ export const useNotificationsScreen = (): IUseNotificationsScreenReturn => {
 		[feed, readIds, answered],
 	);
 
-	const markRead = useCallback((id: string) => {
-		setReadIds((ids) => new Set([...ids, id]));
-	}, []);
+	const markRead = useCallback(
+		(entry: INotificationEntry | undefined, id: string) => {
+			setReadIds((ids) => new Set([...ids, id]));
+			if (entry?.isStored && entry.unread) markOnServer([id]);
+		},
+		[markOnServer],
+	);
 
 	const openItem = useCallback(
 		(item: INotification) => {
-			markRead(item.id);
-			if (item.link === "disputa") router.push(ROUTES.VIRADA);
+			markRead(
+				feed.find((n) => n.id === item.id),
+				item.id,
+			);
+			if (item.link) router.push(LINK_ROUTES[item.link]);
 		},
-		[markRead, router],
+		[feed, markRead, router],
 	);
 
 	const markAllRead = useCallback(() => {
 		setReadIds(new Set(feed.map((n) => n.id)));
-	}, [feed]);
+		markOnServer(null);
+	}, [feed, markOnServer]);
 
 	const answerInvite = useCallback(
 		(item: INotification, accepted: boolean) => {
-			const entry: INotificationEntry | undefined = feed.find((n) => n.id === item.id);
+			const entry = feed.find((n) => n.id === item.id);
 			setAnswered((ids) => new Set([...ids, item.id]));
-			markRead(item.id);
+			markRead(entry, item.id);
 			const done = accepted
 				? {
 						...NOTIFICATION_TOASTS.accepted,

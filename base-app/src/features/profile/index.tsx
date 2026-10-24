@@ -92,7 +92,7 @@ export const ProfileScreen: React.FC = () => {
 					action={PROFILE_COPY.seeAll}
 					onAction={profile.openChallenges}
 				/>
-				<MedalsRow />
+				<MedalsRow medals={profile.medals} />
 				<SectionHeader
 					title={PROFILE_COPY.activities}
 					action={PROFILE_COPY.history}

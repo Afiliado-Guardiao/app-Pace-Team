@@ -12,6 +12,7 @@ import {
 	ITeamDetails,
 	ITeamRankingEntry,
 } from "./pace.types";
+import { IMyChallenges, INotificationRow, ITeamAchievements } from "./progress.types";
 import { ITeamLastRuns, ITeamOnlineMate, IVirada } from "./teamLive.types";
 
 export interface Database {
@@ -210,6 +211,10 @@ export interface Database {
 			get_virada: { Args: Record<string, never>; Returns: IVirada | null };
 			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };
 			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
+			get_notifications: { Args: Record<string, never>; Returns: INotificationRow[] };
+			mark_notifications_read: { Args: { p_ids?: string[] | null }; Returns: undefined };
+			get_my_challenges: { Args: Record<string, never>; Returns: IMyChallenges };
+			get_team_achievements: { Args: { p_team_id: string }; Returns: ITeamAchievements };
 		};
 		Enums: Record<string, never>;
 		CompositeTypes: Record<string, never>;

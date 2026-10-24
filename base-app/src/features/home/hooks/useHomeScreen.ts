@@ -30,7 +30,7 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 	const setHasSeenVirada = useStore((state) => state.setHasSeenVirada);
 	const { view: teamRuns } = useTeamRuns();
 	const { virada, hasTeam } = useVirada();
-	const { hasItems } = useNotificationFeed();
+	const { unreadCount } = useNotificationFeed();
 
 	const openProfile = useCallback(() => {
 		router.navigate(ROUTES.PROFILE);
@@ -65,7 +65,7 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 	return {
 		userName: user?.name || FALLBACK_NAME,
 		avatarUrl: user?.avatarUrl ?? undefined,
-		hasNotifications: hasItems,
+		hasNotifications: unreadCount > 0,
 		openProfile,
 		openNotifications,
 		openTeam,

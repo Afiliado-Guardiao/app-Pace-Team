@@ -6,5 +6,6 @@ export * from "./demo/team";
 export * from "./demo/virada";
 export * from "./format";
 export * from "./images";
+export * from "./medals";
 export * from "./places";
 export * from "./types";

@@ -4,7 +4,15 @@ import { View } from "react-native";
 import { GlassSurface, Icon } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 
-import { PROFILE_MEDALS } from "../../constants";
+interface IMedalSlot {
+	key: string;
+	icon: string;
+	color: "rankGold" | "orange400" | "orange300" | "rankSilver" | "textDisabled";
+}
+
+interface IMedalsRowProps {
+	medals: readonly IMedalSlot[];
+}
 
 const SIZE = 56;
 
@@ -29,16 +37,16 @@ const createMedalsRowStyles = (theme: ITheme) => {
 	};
 };
 
-// Medalhas conquistadas (a última, com cadeado, ainda está bloqueada).
-export const MedalsRow: React.FC = () => {
+// Medalhas conquistadas e, com cadeado, as que ainda faltam.
+export const MedalsRow: React.FC<IMedalsRowProps> = ({ medals }) => {
 	const { theme } = useTheme();
 	const styles = createMedalsRowStyles(theme);
 
 	return (
 		<View style={styles.row}>
-			{PROFILE_MEDALS.map((m) => (
+			{medals.map((m) => (
 				<GlassSurface
-					key={m.icon}
+					key={m.key}
 					appearance={styles.appearance}
 					radius={SIZE / 2}
 					style={styles.medal}

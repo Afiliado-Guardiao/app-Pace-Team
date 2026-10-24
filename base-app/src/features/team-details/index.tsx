@@ -18,7 +18,7 @@ import { formatKm, formatPoints, PHOTOS } from "@/lib/pace";
 
 import { AchievementTile } from "./components/AchievementTile";
 import { WeeklyCard } from "./components/WeeklyCard";
-import { ACHIEVEMENTS, TEAM_DETAILS_COPY, WEEKLY_KM_PER_MEMBER } from "./constants";
+import { TEAM_DETAILS_COPY, WEEKLY_KM_PER_MEMBER } from "./constants";
 import { useTeamDetails } from "./hooks/useTeamDetails";
 
 const createTeamDetailsStyles = (theme: ITheme) => {
@@ -51,7 +51,7 @@ const createTeamDetailsStyles = (theme: ITheme) => {
 // 12 Detalhes da equipe: identidade, números, semana, conquistas e funções.
 export const TeamDetailsScreen: React.FC = () => {
 	const { theme } = useTheme();
-	const { team, isLoading, goBack, openInvite } = useTeamDetails();
+	const { team, isLoading, achievements, goBack, openInvite } = useTeamDetails();
 	const styles = createTeamDetailsStyles(theme);
 	const goal = (team?.size ?? 0) * WEEKLY_KM_PER_MEMBER;
 
@@ -106,8 +106,8 @@ export const TeamDetailsScreen: React.FC = () => {
 				{team ? <WeeklyCard days={team.weekDays} /> : null}
 				<SectionHeader title={TEAM_DETAILS_COPY.achievements} />
 				<View style={styles.row}>
-					{ACHIEVEMENTS.map((a) => (
-						<AchievementTile key={a.label} icon={a.icon} label={a.label} />
+					{achievements.map((a) => (
+						<AchievementTile key={a.label} icon={a.icon} label={a.label} isLocked={!a.isUnlocked} />
 					))}
 				</View>
 				<SectionHeader

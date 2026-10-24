@@ -6,7 +6,8 @@ export const NOTIFICATIONS_COPY = {
 	decline: "Recusar",
 	prefsTitle: "Preferências",
 	save: "Salvar",
-	empty: "Nada novo por aqui. Convites de equipe e a disputa do Modo Virada aparecem nesta lista.",
+	empty:
+		"Nada novo por aqui. Corridas do time, ultrapassagens, convites e desafios concluídos aparecem nesta lista.",
 } as const;
 
 export const NOTIFICATION_GROUPS = ["Hoje", "Esta semana"] as const;

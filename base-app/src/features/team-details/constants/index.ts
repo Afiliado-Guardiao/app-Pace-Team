@@ -30,12 +30,5 @@ export const WEEK_DAYS = "STQQSSD";
 export const WEEK_AREA = 110;
 export const WEEK_HIGHLIGHT = 5;
 
-export const ACHIEVEMENTS = [
-	{ icon: "medal", label: "Top 5" },
-	{ icon: "flame", label: "8 sem." },
-	{ icon: "mountain", label: "1.000 km" },
-	{ icon: "zap", label: "Recorde" },
-] as const;
-
 // Meta coletiva da semana: 50 km por vaga (5 x 5 = 250 km)
 export const WEEKLY_KM_PER_MEMBER = 50;

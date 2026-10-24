@@ -5,6 +5,8 @@ export * from "./onboarding";
 export * from "./pace.types";
 export * from "./posts";
 export * from "./profile";
+export * from "./progress";
+export * from "./progress.types";
 export * from "./referral";
 export * from "./runs";
 export * from "./teamLive";

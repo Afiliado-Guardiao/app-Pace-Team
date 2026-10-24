@@ -91,6 +91,6 @@ export interface INotification {
 	sub: string;
 	time: string;
 	unread?: boolean;
-	link?: "disputa";
+	link?: "disputa" | "team" | "challenges" | "ranking";
 	invite?: boolean;
 }

@@ -7,6 +7,8 @@ import { ITheme, useTheme } from "@/theme";
 interface IAchievementTileProps {
 	icon: string;
 	label: string;
+	// Ainda não conquistada: ícone e rótulo apagados
+	isLocked?: boolean;
 }
 
 const DOT = 40;
@@ -40,20 +42,30 @@ const createAchievementTileStyles = (theme: ITheme) => {
 			fontSize: typography.sizes.xs,
 			color: colors.textSecondary,
 		},
+		labelLocked: { color: colors.textDisabled },
+		dotLocked: { backgroundColor: colors.glass2 },
 	};
 };
 
 // Conquista da equipe: ícone laranja em círculo e rótulo curto.
-export const AchievementTile: React.FC<IAchievementTileProps> = ({ icon, label }) => {
+export const AchievementTile: React.FC<IAchievementTileProps> = ({
+	icon,
+	label,
+	isLocked = false,
+}) => {
 	const { theme } = useTheme();
 	const styles = createAchievementTileStyles(theme);
 
 	return (
 		<GlassSurface appearance={styles.appearance} radius={20} style={styles.tile}>
-			<View style={styles.dot}>
-				<Icon name={icon} size={19} color={theme.pace.colors.orange[400]} />
+			<View style={[styles.dot, isLocked ? styles.dotLocked : null]}>
+				<Icon
+					name={icon}
+					size={19}
+					color={isLocked ? theme.pace.colors.textDisabled : theme.pace.colors.orange[400]}
+				/>
 			</View>
-			<Text style={styles.label}>{label}</Text>
+			<Text style={[styles.label, isLocked ? styles.labelLocked : null]}>{label}</Text>
 		</GlassSurface>
 	);
 };

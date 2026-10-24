@@ -50,7 +50,7 @@ export const useViradaScreen = (): IUseViradaScreenReturn => {
 	const router = useRouter();
 	const onRailChange = useTabRail();
 	const { virada, hasTeam, isLoading } = useVirada();
-	const { hasItems } = useNotificationFeed();
+	const { unreadCount } = useNotificationFeed();
 	const setViradaState = useStore((s) => s.setViradaState);
 	const { toast, showToast } = useFloatingToast();
 	const state: IViradaState = virada?.state ?? "equal";
@@ -70,7 +70,7 @@ export const useViradaScreen = (): IUseViradaScreenReturn => {
 		virada,
 		hasTeam,
 		isLoading,
-		hasNotifications: hasItems,
+		hasNotifications: unreadCount > 0,
 		isDone: state === "done",
 		isPreview: IS_PREVIEW,
 		title: virada?.title ?? HERO_TITLES[state],

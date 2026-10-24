@@ -43,6 +43,8 @@ export const useSaveRun = () => {
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myTeam });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.rankingAll });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.teamLiveAll });
+			void client.invalidateQueries({ queryKey: DATA_KEYS.notifications });
+			void client.invalidateQueries({ queryKey: DATA_KEYS.challenges });
 		},
 	});
 };

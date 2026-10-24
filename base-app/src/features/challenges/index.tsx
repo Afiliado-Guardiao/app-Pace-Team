@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import {
 	GlassCard,
 	Icon,
+	InfoNote,
 	ScreenBackground,
 	ScreenScroll,
 	SectionHeader,
@@ -14,7 +15,7 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { ChallengeCard } from "./components/ChallengeCard";
-import { CHALLENGE_TABS, CHALLENGES_COPY, UNLOCKED } from "./constants";
+import { CHALLENGE_TABS, CHALLENGES_COPY } from "./constants";
 import { useChallenges } from "./hooks/useChallenges";
 
 const BADGE = 46;
@@ -87,10 +88,14 @@ export const ChallengesScreen: React.FC = () => {
 					{challenges.list.map((c) => (
 						<ChallengeCard key={c.title} challenge={c} />
 					))}
+					{challenges.emptyNote ? <InfoNote icon="users">{challenges.emptyNote}</InfoNote> : null}
 				</View>
 				<SectionHeader title={CHALLENGES_COPY.unlocked} />
+				{challenges.unlocked.length ? null : (
+					<InfoNote icon="medal">{CHALLENGES_COPY.noMedals}</InfoNote>
+				)}
 				<View style={styles.unlocked}>
-					{UNLOCKED.map((u) => (
+					{challenges.unlocked.map((u) => (
 						<GlassCard key={u.label} padding={14} radius={22} style={styles.unlockedCard}>
 							<View style={styles.badge}>
 								<Icon name={u.icon} size={22} color={styles.colors[u.color]} />

@@ -71,14 +71,6 @@ export const PERIOD_LABELS = {
 export const NO_TEAM = "Sem equipe";
 export const NO_RUNS = "Sua primeira corrida aparece aqui. Toque em Correr no trilho ao lado.";
 
-export const PROFILE_MEDALS = [
-	{ icon: "medal", color: "rankGold" },
-	{ icon: "mountain", color: "orange400" },
-	{ icon: "sunrise", color: "orange300" },
-	{ icon: "flame", color: "rankSilver" },
-	{ icon: "lock", color: "textDisabled" },
-] as const;
-
 // Padrão do design para quem ainda não salvou a privacidade (igual ao banco)
 export const DEFAULT_PRIVACY = {
 	showCity: true,

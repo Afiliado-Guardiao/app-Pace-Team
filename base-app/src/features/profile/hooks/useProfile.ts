@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 
 import { useFloatingToast } from "@/components/pace";
-import { useMyRuns, useMyStats, useMyTeam } from "@/lib/data";
-import { formatKm, formatPace, ME } from "@/lib/pace";
+import { useMyChallenges, useMyRuns, useMyStats, useMyTeam } from "@/lib/data";
+import { formatKm, formatPace, ME, MEDALS } from "@/lib/pace";
 import { queryClient } from "@/lib/react-query";
 import { signOut } from "@/lib/supabase/auth";
 import { useStore } from "@/store";
@@ -14,6 +14,9 @@ import { ROUTES } from "@/constants/routes";
 import { NO_TEAM, PERIODS, PROFILE_COPY } from "../constants";
 
 const RECENT_RUNS = 2;
+// Cinco círculos: conquistadas primeiro, o resto com cadeado
+const MEDAL_SLOTS = 5;
+const LOCKED = { icon: "lock", color: "textDisabled" } as const;
 
 type IPeriod = (typeof PERIODS)[number];
 
@@ -27,6 +30,15 @@ export const useProfile = () => {
 	const { stats } = useMyStats();
 	const { team } = useMyTeam();
 	const { runs } = useMyRuns();
+	const { challenges } = useMyChallenges();
+	const earned = MEDALS.filter((m) => challenges.medals.includes(m.id)).slice(0, MEDAL_SLOTS);
+	const medals = [
+		...earned.map((m) => ({ key: m.id, icon: m.icon, color: m.color })),
+		...Array.from({ length: MEDAL_SLOTS - earned.length }, (_, i) => ({
+			key: `locked-${String(i)}`,
+			...LOCKED,
+		})),
+	];
 	const me = team?.members.find((m) => m.you);
 
 	return {
@@ -45,6 +57,7 @@ export const useProfile = () => {
 		],
 		bars: period === "Mês" ? stats.monthWeeks : stats.weekDays,
 		recentRuns: runs.slice(0, RECENT_RUNS),
+		medals,
 		period,
 		setPeriod: (value: string) => {
 			setPeriod(value === "Mês" ? "Mês" : "Semana");

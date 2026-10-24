@@ -5,7 +5,45 @@ export const CHALLENGES_COPY = {
 	unlocked: "Desbloqueadas",
 	health:
 		"Descanso também é treino. Sentiu dor ou cansaço fora do normal? Pause — nenhum desafio vale uma lesão.",
+	noMedals: "Conclua desafios para desbloquear suas primeiras medalhas.",
 } as const;
+
+// Desafios reais (o progresso vem das corridas salvas)
+export const CHALLENGE_COPY = {
+	km40: "Correr 40 km na semana",
+	km40Reward: "Medalha Constância",
+	runs5: "Completar 5 treinos",
+	runs5Reward: "Medalha Ritmo",
+	record: "Bater seu recorde de 5 km",
+	recordReward: "Medalha Explosão",
+	recordNow: "Atual ",
+	recordNew: "Novo recorde ",
+	recordFirst: "Corra 5 km para marcar seu tempo",
+	endsSunday: "Termina dom",
+	teamKmPrefix: "Time: ",
+	teamKmSuffix: " km coletivos",
+	teamKmReward: "Meta coletiva da semana",
+	streak: "Correr 8 semanas seguidas",
+	streakDue: "1 corrida do time por semana",
+	streakReward: "Conquista 8 sem.",
+	weeks: " semanas",
+	noTeam: "Entre numa equipe para ver os desafios do time.",
+} as const;
+
+export const MONTHS = [
+	"Janeiro",
+	"Fevereiro",
+	"Março",
+	"Abril",
+	"Maio",
+	"Junho",
+	"Julho",
+	"Agosto",
+	"Setembro",
+	"Outubro",
+	"Novembro",
+	"Dezembro",
+] as const;
 
 export const CHALLENGE_TABS = [
 	{ value: "ind", label: CHALLENGES_COPY.individual },
