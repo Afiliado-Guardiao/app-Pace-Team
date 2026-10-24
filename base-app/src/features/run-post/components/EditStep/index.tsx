@@ -76,6 +76,7 @@ export const EditStep: React.FC<IEditStepProps> = ({ post }) => {
 						image={post.image}
 						seconds={post.run.seconds}
 						km={post.run.km}
+						team={post.team}
 						layers={post.layers}
 					/>
 				</View>
@@ -127,7 +128,7 @@ export const EditStep: React.FC<IEditStepProps> = ({ post }) => {
 				<Button fullWidth size="lg" icon="send" onPress={post.publish} testID="post-publish">
 					{POST_COPY.publish}
 				</Button>
-				<Text style={styles.note}>{POST_COPY.demoNote}</Text>
+				{post.isPreview ? <Text style={styles.note}>{POST_COPY.demoNote}</Text> : null}
 			</ScreenScroll>
 		</View>
 	);

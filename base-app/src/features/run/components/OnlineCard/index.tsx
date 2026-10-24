@@ -3,15 +3,16 @@ import { Image, Text, View } from "react-native";
 
 import Animated from "react-native-reanimated";
 
-import { Badge, GlassSurface, useEntrance } from "@/components/pace";
+import { Avatar, Badge, GlassSurface, useEntrance } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
-import { ONLINE } from "@/lib/pace";
+import { ITeamOnlineView } from "@/lib/data";
 
 import { RUN_COPY } from "../../constants";
 
 const PHOTO = 34;
 const ONLINE_DOT = 9;
 const OVERLAP = -10;
+const MAX_PHOTOS = 4;
 
 const createOnlineCardStyles = (theme: ITheme) => {
 	const { blur, colors, spacing, typography } = theme.pace;
@@ -63,8 +64,15 @@ const createOnlineCardStyles = (theme: ITheme) => {
 	};
 };
 
-// "Correr junto": quem do time está online e compartilhando ao vivo.
-export const OnlineCard: React.FC = () => {
+interface IOnlineCardProps {
+	mates: ITeamOnlineView[];
+	title: string;
+	sub: string;
+	isReady: boolean;
+}
+
+// "Correr junto": quem do time está com o app aberto agora.
+export const OnlineCard: React.FC<IOnlineCardProps> = ({ mates, title, sub, isReady }) => {
 	const { theme } = useTheme();
 	const styles = createOnlineCardStyles(theme);
 	const entrance = useEntrance("rise", { duration: 500 });
@@ -77,20 +85,26 @@ export const OnlineCard: React.FC = () => {
 				style={styles.card}
 			>
 				<View style={styles.photos}>
-					{ONLINE.map((friend, index) => (
-						<View key={friend.name} style={[styles.photoWrap, index === 0 ? styles.first : null]}>
-							<Image source={friend.image} style={styles.photo} />
+					{mates.slice(0, MAX_PHOTOS).map((friend, index) => (
+						<View key={friend.id} style={[styles.photoWrap, index === 0 ? styles.first : null]}>
+							{friend.image ? (
+								<Image source={friend.image} style={styles.photo} />
+							) : (
+								<Avatar name={friend.name} size={PHOTO} />
+							)}
 							<View style={styles.dot} />
 						</View>
 					))}
 				</View>
 				<View style={styles.texts}>
-					<Text style={styles.title}>{RUN_COPY.onlineTitle}</Text>
-					<Text style={styles.sub}>{RUN_COPY.onlineSub}</Text>
+					<Text style={styles.title}>{title}</Text>
+					<Text style={styles.sub}>{sub}</Text>
 				</View>
-				<Badge tone="success" dot>
-					{RUN_COPY.ready}
-				</Badge>
+				{isReady ? (
+					<Badge tone="success" dot>
+						{RUN_COPY.ready}
+					</Badge>
+				) : null}
 			</GlassSurface>
 		</Animated.View>
 	);

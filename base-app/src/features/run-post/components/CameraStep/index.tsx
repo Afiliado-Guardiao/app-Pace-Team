@@ -6,6 +6,7 @@ import { CameraView } from "expo-camera";
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Icon } from "@/components/pace";
 import { PostArt } from "@/components/shared/PostArt";
 import { useTheme } from "@/theme";
 
@@ -32,11 +33,16 @@ export const CameraStep: React.FC<ICameraStepProps> = ({ post }) => {
 					<View style={styles.live}>
 						<CameraView ref={post.cameraRef} style={styles.fill} facing={post.facing} />
 						<View style={styles.fill} pointerEvents="none">
-							<PostArt seconds={post.run.seconds} km={post.run.km} />
+							<PostArt seconds={post.run.seconds} km={post.run.km} team={post.team} />
 						</View>
 					</View>
 				) : (
-					<PostArt image={post.image} seconds={post.run.seconds} km={post.run.km} />
+					<PostArt
+						image={post.image}
+						seconds={post.run.seconds}
+						km={post.run.km}
+						team={post.team}
+					/>
 				)}
 			</View>
 			<View style={styles.topBar}>
@@ -52,6 +58,15 @@ export const CameraStep: React.FC<ICameraStepProps> = ({ post }) => {
 			</View>
 			<View style={styles.bottom}>
 				<View style={styles.thumbs}>
+					<Pressable
+						onPress={post.pickGallery}
+						accessibilityRole="button"
+						accessibilityLabel={POST_COPY.gallery}
+						testID="post-gallery"
+						style={[styles.thumb, styles.thumbIcon]}
+					>
+						<Icon name="images" size={16} />
+					</Pressable>
 					{POST_PHOTOS.map((photo, i) => (
 						<Pressable
 							key={`photo-${String(i)}`}

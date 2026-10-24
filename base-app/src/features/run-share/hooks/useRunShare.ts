@@ -7,31 +7,24 @@ import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 
 import { useFloatingToast } from "@/components/pace";
-import { useRunStore } from "@/lib/run";
 import { ROUTES } from "@/constants/routes";
 
-import {
-	SHARE_BGS,
-	SHARE_COPY,
-	SHARE_FALLBACK,
-	SHARE_MIN_KM,
-	SHARE_TEMPLATES,
-	STORY,
-} from "../constants";
+import { SHARE_BGS, SHARE_COPY, SHARE_TEMPLATES, STORY } from "../constants";
+
+import { useStoryRun } from "./useStoryRun";
 
 type IPanel = "templates" | "background";
 
 // Compartilhar: escolhe modelo e fundo e gera o PNG 1080 × 1920 do story.
 export const useRunShare = () => {
 	const router = useRouter();
-	const lastResult = useRunStore((s) => s.lastResult);
+	const { run, isDemo } = useStoryRun();
 	const canvasRef = useRef<View>(null);
 	const { toast, showToast } = useFloatingToast();
 	const [templateIndex, setTemplateIndex] = useState(0);
 	const [backgroundIndex, setBackgroundIndex] = useState(0);
 	const [panel, setPanel] = useState<IPanel>("templates");
 	const [isSharing, setIsSharing] = useState(false);
-	const run = lastResult && lastResult.km > SHARE_MIN_KM ? lastResult : SHARE_FALLBACK;
 	const template = SHARE_TEMPLATES[templateIndex] ?? SHARE_TEMPLATES[0];
 	const background = SHARE_BGS[backgroundIndex] ?? SHARE_BGS[0];
 
@@ -63,6 +56,7 @@ export const useRunShare = () => {
 
 	return {
 		run,
+		isDemo,
 		canvasRef,
 		toast,
 		template,

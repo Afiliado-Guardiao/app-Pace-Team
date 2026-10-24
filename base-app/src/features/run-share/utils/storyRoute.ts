@@ -1,5 +1,3 @@
-import { ROUTE } from "@/lib/run";
-
 export interface IStoryBox {
 	x: number;
 	y: number;
@@ -15,24 +13,33 @@ export interface IStoryRoute {
 	at: (fraction: number) => readonly [number, number];
 }
 
-const LATS = ROUTE.map((p) => p[0]);
-const LNGS = ROUTE.map((p) => p[1]);
-const MIN_LAT = Math.min(...LATS);
-const MAX_LAT = Math.max(...LATS);
-const MIN_LNG = Math.min(...LNGS);
-const MAX_LNG = Math.max(...LNGS);
 const LAT_STRETCH = 1.1;
+// Evita dividir por zero num percurso parado ou em linha reta
+const MIN_SPAN = 1e-6;
 
-// Encaixa a volta de exemplo no retângulo, centralizada e sem distorcer.
-export const projectRoute = (box: IStoryBox): IStoryRoute => {
-	const scale = Math.min(box.w / (MAX_LNG - MIN_LNG), box.h / ((MAX_LAT - MIN_LAT) * LAT_STRETCH));
-	const ox = box.x + (box.w - (MAX_LNG - MIN_LNG) * scale) / 2;
-	const oy = box.y + (box.h - (MAX_LAT - MIN_LAT) * scale) / 2;
+// Encaixa o percurso da corrida no retângulo, centralizado e sem distorcer.
+export const projectRoute = (
+	box: IStoryBox,
+	route: readonly (readonly [number, number])[],
+): IStoryRoute => {
+	const center = [box.x + box.w / 2, box.y + box.h / 2] as const;
+	if (route.length < 2) return { d: "", start: center, at: () => center };
+	const lats = route.map((p) => p[0]);
+	const lngs = route.map((p) => p[1]);
+	const minLat = Math.min(...lats);
+	const maxLat = Math.max(...lats);
+	const minLng = Math.min(...lngs);
+	const maxLng = Math.max(...lngs);
+	const spanLng = Math.max(maxLng - minLng, MIN_SPAN);
+	const spanLat = Math.max(maxLat - minLat, MIN_SPAN);
+	const scale = Math.min(box.w / spanLng, box.h / (spanLat * LAT_STRETCH));
+	const ox = box.x + (box.w - spanLng * scale) / 2;
+	const oy = box.y + (box.h - spanLat * scale) / 2;
 	const toXY = ([lat, lng]: readonly [number, number]): readonly [number, number] => [
-		ox + (lng - MIN_LNG) * scale,
-		oy + (MAX_LAT - lat) * scale,
+		ox + (lng - minLng) * scale,
+		oy + (maxLat - lat) * scale,
 	];
-	const points = ROUTE.map(toXY);
+	const points = route.map(toXY);
 	const d = points.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
 	const first = points[0] ?? [0, 0];
 

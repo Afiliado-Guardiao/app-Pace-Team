@@ -9,4 +9,9 @@ export const DATA_KEYS = {
 	myRuns: ["pace", "my-runs"] as const,
 	myInvites: ["pace", "my-invites"] as const,
 	athletes: (query: string) => ["pace", "athletes", query] as const,
+	// Disputa, última corrida e presença da equipe (invalidados juntos)
+	teamLiveAll: ["pace", "team-live"] as const,
+	virada: ["pace", "team-live", "virada"] as const,
+	teamLastRuns: ["pace", "team-live", "last-runs"] as const,
+	teamOnline: ["pace", "team-live", "online"] as const,
 };

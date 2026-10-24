@@ -15,12 +15,17 @@ import { RunRow } from "@/components/shared/RunRow";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
+import { DeleteAccountSheet } from "./components/DeleteAccountSheet";
+import { EditProfileSheet } from "./components/EditProfileSheet";
 import { MedalsRow } from "./components/MedalsRow";
 import { PrivacyList } from "./components/PrivacyList";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { ProfileTotals } from "./components/ProfileTotals";
 import { StatsCard } from "./components/StatsCard";
 import { NO_RUNS, PROFILE_COPY } from "./constants";
+import { useDeleteAccount } from "./hooks/useDeleteAccount";
+import { useEditProfile } from "./hooks/useEditProfile";
+import { usePrivacy } from "./hooks/usePrivacy";
 import { useProfile } from "./hooks/useProfile";
 
 const createProfileStyles = (theme: ITheme) => ({
@@ -39,6 +44,12 @@ const createProfileStyles = (theme: ITheme) => ({
 export const ProfileScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const profile = useProfile();
+	const edit = useEditProfile(profile.showToast);
+	const privacy = usePrivacy(profile.showToast);
+	const removal = useDeleteAccount(profile.showToast);
+	const askDelete = (): void => {
+		removal.openConfirm(profile.closeSettings);
+	};
 	const styles = createProfileStyles(theme);
 
 	return (
@@ -55,7 +66,7 @@ export const ProfileScreen: React.FC = () => {
 					<IconButton
 						icon="shield"
 						label={PROFILE_COPY.privacy}
-						onPress={profile.openPrivacy}
+						onPress={privacy.open}
 						testID="profile-privacy"
 					/>
 					<IconButton
@@ -67,11 +78,12 @@ export const ProfileScreen: React.FC = () => {
 				</View>
 				<ProfileHeader
 					name={profile.name}
+					avatarUrl={profile.avatarUrl}
 					handle={profile.handle}
 					city={profile.city}
 					team={profile.team}
 					role={profile.role}
-					onEdit={profile.editProfile}
+					onEdit={edit.open}
 				/>
 				<ProfileTotals totals={profile.totals} />
 				<StatsCard period={profile.period} values={profile.bars} onChange={profile.setPeriod} />
@@ -101,16 +113,21 @@ export const ProfileScreen: React.FC = () => {
 				</View>
 			</ScreenScroll>
 			<Sheet
-				open={profile.isPrivacyOpen}
+				open={privacy.isOpen}
 				title={PROFILE_COPY.privacy}
-				onClose={profile.closePrivacy}
+				onClose={privacy.close}
 				actions={
-					<Button fullWidth onPress={profile.closePrivacy}>
+					<Button
+						fullWidth
+						disabled={privacy.isSaving}
+						onPress={privacy.save}
+						testID="profile-privacy-save"
+					>
 						{PROFILE_COPY.save}
 					</Button>
 				}
 			>
-				<PrivacyList />
+				<PrivacyList values={privacy.values} onToggle={privacy.toggle} />
 			</Sheet>
 			<Sheet
 				open={profile.isSettingsOpen}
@@ -127,6 +144,15 @@ export const ProfileScreen: React.FC = () => {
 						>
 							{PROFILE_COPY.signOut}
 						</Button>
+						<Button
+							fullWidth
+							variant="outline"
+							icon="trash-2"
+							onPress={askDelete}
+							testID="profile-delete-account"
+						>
+							{PROFILE_COPY.deleteAccount}
+						</Button>
 						<Button fullWidth variant="ghost" onPress={profile.closeSettings}>
 							{PROFILE_COPY.close}
 						</Button>
@@ -135,6 +161,13 @@ export const ProfileScreen: React.FC = () => {
 			>
 				<Text style={styles.settingsText}>{PROFILE_COPY.settingsBody}</Text>
 			</Sheet>
+			<EditProfileSheet edit={edit} />
+			<DeleteAccountSheet
+				open={removal.isConfirmOpen}
+				isDeleting={removal.isDeleting}
+				onConfirm={removal.confirm}
+				onClose={removal.closeConfirm}
+			/>
 			<FloatingToast toast={profile.toast} />
 		</View>
 	);

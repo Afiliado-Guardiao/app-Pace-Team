@@ -15,6 +15,7 @@ export const POST_COPY = {
 	flip: "Virar câmera",
 	shoot: "Tirar foto",
 	photo: "Foto ",
+	gallery: "Escolher da galeria",
 	editTitle: "Postar no feed",
 	stats: "Métricas",
 	route: "Percurso",

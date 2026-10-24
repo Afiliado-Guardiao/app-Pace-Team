@@ -14,7 +14,7 @@ import {
 import { ITheme, useTheme } from "@/theme";
 
 import { NotificationItem } from "./components/NotificationItem";
-import { NOTIFICATION_GROUPS, NOTIFICATION_PREFS, NOTIFICATIONS_COPY } from "./constants";
+import { NOTIFICATION_PREFS, NOTIFICATIONS_COPY } from "./constants";
 import { useNotificationsScreen } from "./hooks/useNotificationsScreen";
 
 const LABEL_TOP = 6;
@@ -75,7 +75,8 @@ export const NotificationsScreen: React.FC = () => {
 						<Text style={styles.link}>{NOTIFICATIONS_COPY.markAll}</Text>
 					</Pressable>
 				</View>
-				{NOTIFICATION_GROUPS.flatMap((group) => [
+				{screen.isEmpty ? <Text style={styles.count}>{NOTIFICATIONS_COPY.empty}</Text> : null}
+				{screen.groups.flatMap((group) => [
 					<Label key={group} style={styles.label}>
 						{group}
 					</Label>,

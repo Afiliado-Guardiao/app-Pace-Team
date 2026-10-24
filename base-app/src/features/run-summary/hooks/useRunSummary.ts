@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { runDate, runPayload, runTitle, useMyRuns, useSaveRun } from "@/lib/data";
 import { formatPace } from "@/lib/pace";
 import { distanceMeters, IRunPoint, ROUTE, useRunStore } from "@/lib/run";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 import { FALLBACK_RESULT, RUN_SUMMARY_COPY } from "../constants";
@@ -30,6 +31,7 @@ interface IRunSource {
 }
 
 const MIN_ROUTE_POINTS = 2;
+const EMPTY_RESULT = { seconds: 0, km: 0 } as const;
 const KM = 1000;
 const MIN_WIDTH = 40;
 
@@ -89,11 +91,14 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 				savedId: lastResult.saved?.id ?? null,
 			};
 		}
+		// Sem corrida (ex.: histórico ainda carregando): zeros no app real e a
+		// corrida de exemplo do design só na prévia por link
+		const fallback = IS_PREVIEW ? FALLBACK_RESULT : EMPTY_RESULT;
 		return {
-			...FALLBACK_RESULT,
+			...fallback,
 			startedAt: null,
 			status: "pending",
-			points: provisionalPoints(FALLBACK_RESULT.km),
+			points: provisionalPoints(fallback.km),
 			route: [],
 			timedPoints: [],
 			savedId: null,
@@ -101,6 +106,8 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 	}, [params.id, saved, lastResult]);
 
 	const splits = useMemo(() => splitsOf(source.timedPoints), [source.timedPoints]);
+	const emptyMeta = IS_PREVIEW ? RUN_SUMMARY_COPY.demoMeta : "";
+	const emptyTitle = IS_PREVIEW ? RUN_SUMMARY_COPY.morning : RUN_SUMMARY_COPY.titleDetail;
 
 	const goBack = useCallback(() => {
 		if (router.canGoBack()) router.back();
@@ -111,15 +118,15 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		isGroup,
 		isDetail,
 		title: isDetail || isGroup ? RUN_SUMMARY_COPY.titleDetail : RUN_SUMMARY_COPY.titleDone,
-		meta: source.startedAt ? runDate(source.startedAt) : RUN_SUMMARY_COPY.demoMeta,
-		runTitle: source.startedAt ? runTitle(source.startedAt) : RUN_SUMMARY_COPY.morning,
+		meta: source.startedAt ? runDate(source.startedAt) : emptyMeta,
+		runTitle: source.startedAt ? runTitle(source.startedAt) : emptyTitle,
 		seconds: source.seconds,
 		km: source.km,
 		points: source.points,
 		status: source.status,
 		splits,
 		isSaving: saveRun.isPending,
-		route: source.route.length >= MIN_ROUTE_POINTS ? source.route : ROUTE,
+		route: source.route.length >= MIN_ROUTE_POINTS || !IS_PREVIEW ? source.route : ROUTE,
 		goBack,
 		share: () => {
 			router.push(ROUTES.RUN_SHARE);

@@ -3,22 +3,20 @@ import { View } from "react-native";
 
 import { GradientLayers, Logo } from "@/components/pace";
 import { IPaceGradientName, ITheme, useTheme } from "@/theme";
-import { MY_TEAM } from "@/lib/pace";
 
 import { SHARE_COPY } from "../../constants";
 
 import { StoryText } from "./StoryText";
+import { IStoryTeam } from "./types";
 
 export interface IStoryTeamPillOptions {
-	rank?: number;
-	isUp?: boolean;
 	gradient?: IPaceGradientName;
-	initials?: string;
 	// Símbolo PACE TEAM no lugar da sigla
 	hasMark?: boolean;
 }
 
 interface IStoryTeamPillProps {
+	team: IStoryTeam;
 	cx: number;
 	y: number;
 	options?: IStoryTeamPillOptions;
@@ -87,21 +85,11 @@ const createStoryTeamPillStyles = (
 	};
 };
 
-const DEFAULT_INITIALS = MY_TEAM.name
-	.split(" ")
-	.map((w) => w.charAt(0))
-	.join("");
-
 // Pílula da equipe dos stories: sigla/símbolo, nome, posição e tendência.
-export const StoryTeamPill: React.FC<IStoryTeamPillProps> = ({ cx, y, options = {} }) => {
+export const StoryTeamPill: React.FC<IStoryTeamPillProps> = ({ team, cx, y, options = {} }) => {
 	const { theme } = useTheme();
-	const {
-		rank = MY_TEAM.rank,
-		isUp = true,
-		gradient = "teamMark",
-		initials = DEFAULT_INITIALS,
-		hasMark = false,
-	} = options;
+	const { gradient = "teamMark", hasMark = false } = options;
+	const { rank, isUp, initials } = team;
 	const x = cx - W / 2;
 	const styles = createStoryTeamPillStyles(theme, { x, y, isUp });
 
@@ -119,7 +107,7 @@ export const StoryTeamPill: React.FC<IStoryTeamPillProps> = ({ cx, y, options = 
 				</StoryText>
 			)}
 			<StoryText x={x + 116} y={y + 54} size={30}>
-				{MY_TEAM.name.toUpperCase()}
+				{team.name.toUpperCase()}
 			</StoryText>
 			<StoryText
 				x={x + 116}

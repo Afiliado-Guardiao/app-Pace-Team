@@ -15,7 +15,14 @@ export const VIRADA_COPY = {
 	difference: "Diferença",
 	position: "Posição",
 	closesIn: "Fecha em",
-	closesValue: "2d 14h",
+	emptyNoTeamTitle: "Entre numa equipe",
+	emptyNoTeamBody:
+		"O Modo Virada mostra a disputa da sua equipe com a que está logo à frente no ranking da cidade.",
+	emptyNoTeamAction: "Ir para Equipe",
+	emptyNoRivalTitle: "Ainda sem rival",
+	emptyNoRivalBody:
+		"Assim que outra equipe da sua categoria correr na sua cidade, a disputa aparece aqui.",
+	emptyNoRivalAction: "Ver ranking",
 	win: "V",
 	loss: "D",
 	vs: "VS",
@@ -28,4 +35,5 @@ export const HERO_TITLES: Record<IViradaState, { start: string; highlight: strin
 	done: { start: "Virada", highlight: "concluída!" },
 };
 
-export const MY_TEAM_POINTS_BASE = 2140;
+// Dias do gráfico "pts / dia" (segunda a domingo)
+export const WEEK_DAYS = ["S", "T", "Q", "Q", "S", "S", "D"] as const;

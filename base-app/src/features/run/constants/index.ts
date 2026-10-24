@@ -3,7 +3,8 @@ import { IRunMode } from "@/lib/run";
 export const RUN_COPY = {
 	titleStart: "Pronto para",
 	titleHighlight: "correr?",
-	subtitleSolo: "Cada km soma pontos para os Pace Sharks.",
+	subtitleSoloTeam: "Cada km soma pontos para ",
+	subtitleSoloNoTeam: "Cada km fica no seu histórico. Entre numa equipe para pontuar.",
 	subtitleTeam: "Corra junto com quem do time está online agora.",
 	gpsSearching: "Procurando GPS…",
 	gpsReady: "GPS pronto · ±",
@@ -14,8 +15,10 @@ export const RUN_COPY = {
 	time: "Tempo",
 	pace: "Ritmo",
 	goalHint: "Ajuste dois valores e o terceiro é calculado. Toque no número para digitar.",
-	onlineTitle: "3 do time online",
-	onlineSub: "Só quem ativou compartilhar ao vivo",
+	onlineTitleSuffix: " do time online",
+	onlineSub: "Abriram o app nos últimos 15 min",
+	onlineNone: "Ninguém do time online agora",
+	onlineNoneSub: "Quem abrir o app aparece aqui",
 	ready: "Prontos",
 } as const;
 

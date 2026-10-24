@@ -18,10 +18,11 @@ import {
 import { GpsDot } from "@/components/shared/GpsDot";
 import { RunMap } from "@/components/shared/RunMap";
 import { useTheme } from "@/theme";
-import { formatDuration, formatKm, formatPace, formatSpeed, MEMBERS, ONLINE } from "@/lib/pace";
+import { formatDuration, formatKm, formatPace, formatSpeed } from "@/lib/pace";
 
 import { MetricPill } from "./components/MetricPill";
 import { RUN_LIVE_COPY } from "./constants";
+import { useLiveCrew } from "./hooks/useLiveCrew";
 import { useRunLive } from "./hooks/useRunLive";
 import { createRunLiveStyles, SCRIM_BOTTOM, SCRIM_TOP } from "./styles";
 
@@ -31,6 +32,7 @@ export const RunLiveScreen: React.FC = () => {
 	const insets = useSafeAreaInsets();
 	const { size, onLayout } = useLayoutSize();
 	const live = useRunLive();
+	const crew = useLiveCrew(live.isTeam);
 	const styles = createRunLiveStyles(theme, insets);
 	const pace = formatPace(live.km > 0 ? live.seconds / live.km : 0);
 
@@ -78,24 +80,24 @@ export const RunLiveScreen: React.FC = () => {
 						RUN_LIVE_COPY.titleSolo
 					)}
 				</Text>
-				<View style={styles.crew}>
-					{live.isTeam ? (
-						<View style={styles.photos}>
-							{ONLINE.map((f, i) => (
-								<Image
-									key={f.name}
-									source={f.image}
-									style={[styles.photo, i > 0 ? styles.photoOverlap : null]}
-								/>
-							))}
-						</View>
-					) : (
-						<AvatarStack people={MEMBERS.slice(1, 4)} size={30} extra={2} />
-					)}
-					<Text style={styles.crewText}>
-						{live.isTeam ? RUN_LIVE_COPY.teamRunning : RUN_LIVE_COPY.crewRunning}
-					</Text>
-				</View>
+				{crew.isVisible ? (
+					<View style={styles.crew}>
+						{crew.photos.length > 0 ? (
+							<View style={styles.photos}>
+								{crew.photos.map((photo, i) => (
+									<Image
+										key={i}
+										source={photo}
+										style={[styles.photo, i > 0 ? styles.photoOverlap : null]}
+									/>
+								))}
+							</View>
+						) : (
+							<AvatarStack people={crew.people} size={30} extra={crew.extra} />
+						)}
+						<Text style={styles.crewText}>{crew.text}</Text>
+					</View>
+				) : null}
 			</View>
 			<View style={styles.bottom}>
 				<View style={styles.center}>

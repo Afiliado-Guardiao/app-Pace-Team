@@ -179,6 +179,11 @@ jest.mock("expo-camera", () => {
 	};
 });
 
+jest.mock("expo-image-picker", () => ({
+	requestMediaLibraryPermissionsAsync: jest.fn(() => Promise.resolve({ granted: false })),
+	launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true, assets: null })),
+}));
+
 jest.mock("react-native-view-shot", () => ({
 	captureRef: jest.fn(() => Promise.resolve("file:///story.png")),
 }));

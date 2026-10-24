@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GestureResponderHandlers, PanResponder } from "react-native";
 
 import { useStore } from "@/store";
+import { IS_PREVIEW } from "@/constants/preview";
 
 import { STACK } from "../constants";
 
@@ -20,7 +21,8 @@ interface IUseHomeStackReturn {
 	handlersFor: (id: IStackCardId) => GestureResponderHandlers;
 }
 
-// Uma vez por sessão o protótipo simula a notificação da virada concluída.
+// Uma vez por sessão a prévia simula a notificação da virada concluída (o app
+// real mostra o placar de verdade, sem simulação).
 let notifiedThisSession = false;
 
 // Dois cards sobrepostos: arrastar para o lado (ou tocar no de trás) troca a
@@ -49,7 +51,7 @@ export const useHomeStack = ({ onOpen }: IUseHomeStackOptions): IUseHomeStackRet
 	}, []);
 
 	useEffect(() => {
-		if (notifiedThisSession) return;
+		if (!IS_PREVIEW || notifiedThisSession) return;
 		const timer = setTimeout(() => {
 			notifiedThisSession = true;
 			setViradaState("done");

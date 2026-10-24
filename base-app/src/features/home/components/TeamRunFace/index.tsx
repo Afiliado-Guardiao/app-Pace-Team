@@ -3,9 +3,10 @@ import { Text, View } from "react-native";
 
 import { CountUp, GlassCard, GlassSurface, Icon, IconButton } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
-import { PHOTOS, RUNS } from "@/lib/pace";
+import { PHOTOS } from "@/lib/pace";
 
 import { HOME_COPY, STACK } from "../../constants";
+import { ITeamRunFaceData } from "../../hooks/useHomeFaces";
 
 const ICON_DOT = 40;
 const BIG = 38;
@@ -59,10 +60,9 @@ const createTeamRunFaceStyles = (theme: ITheme) => {
 };
 
 // Face "Última corrida da equipe": foto da pista, distância e atalho.
-export const TeamRunFace: React.FC = () => {
+export const TeamRunFace: React.FC<{ data: ITeamRunFaceData }> = ({ data }) => {
 	const { theme } = useTheme();
 	const styles = createTeamRunFaceStyles(theme);
-	const lastRun = RUNS[0];
 
 	return (
 		<GlassCard image={PHOTOS.teamTrack} radius={theme.pace.radii.hero} style={styles.card}>
@@ -77,13 +77,15 @@ export const TeamRunFace: React.FC = () => {
 					</GlassSurface>
 					<View>
 						<Text style={styles.title}>{HOME_COPY.lastRunTitle}</Text>
-						<Text style={styles.sub}>{HOME_COPY.lastRunSub}</Text>
+						<Text style={styles.sub} numberOfLines={1}>
+							{data.sub}
+						</Text>
 					</View>
 				</View>
 				<IconButton icon="arrow-up-right" label="Abrir corrida" variant="light" size={44} />
 			</View>
 			<Text style={styles.km}>
-				<CountUp value={lastRun.km} delay={COUNT_DELAY} />
+				<CountUp value={data.km} delay={COUNT_DELAY} />
 				<Text style={styles.unit}> km</Text>
 			</Text>
 		</GlassCard>

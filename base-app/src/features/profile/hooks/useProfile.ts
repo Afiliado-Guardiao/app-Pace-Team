@@ -23,7 +23,6 @@ export const useProfile = () => {
 	const user = useStore((s) => s.user);
 	const { toast, showToast } = useFloatingToast();
 	const [period, setPeriod] = useState<IPeriod>("Semana");
-	const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const { stats } = useMyStats();
 	const { team } = useMyTeam();
@@ -32,6 +31,8 @@ export const useProfile = () => {
 
 	return {
 		toast,
+		showToast,
+		avatarUrl: user?.avatarUrl ?? null,
 		name: user?.name || (IS_PREVIEW ? ME.name : "Atleta"),
 		handle: user?.handle ? `@${user.handle}` : IS_PREVIEW ? ME.handle : "",
 		city: [user?.city, user?.state].filter(Boolean).join(", ") || (IS_PREVIEW ? ME.city : ""),
@@ -48,27 +49,12 @@ export const useProfile = () => {
 		setPeriod: (value: string) => {
 			setPeriod(value === "Mês" ? "Mês" : "Semana");
 		},
-		isPrivacyOpen,
-		openPrivacy: () => {
-			setIsPrivacyOpen(true);
-		},
-		closePrivacy: () => {
-			setIsPrivacyOpen(false);
-		},
 		isSettingsOpen,
 		openSettings: () => {
 			setIsSettingsOpen(true);
 		},
 		closeSettings: () => {
 			setIsSettingsOpen(false);
-		},
-		editProfile: () => {
-			showToast({
-				tone: "info",
-				icon: "pencil",
-				title: PROFILE_COPY.editSoonTitle,
-				message: PROFILE_COPY.editSoonMessage,
-			});
 		},
 		handleSignOut: () => {
 			setIsSettingsOpen(false);

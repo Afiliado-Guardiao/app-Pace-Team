@@ -8,6 +8,8 @@ import { PROFILE_COPY } from "../../constants";
 
 interface IProfileHeaderProps {
 	name: string;
+	// Foto de perfil (null = iniciais)
+	avatarUrl: string | null;
 	handle: string;
 	city: string;
 	team: string;
@@ -39,6 +41,7 @@ const createProfileHeaderStyles = (theme: ITheme) => {
 // Foto, nome, @ e cidade, equipe/função e "Editar perfil".
 export const ProfileHeader: React.FC<IProfileHeaderProps> = ({
 	name,
+	avatarUrl,
 	handle,
 	city,
 	team,
@@ -50,7 +53,7 @@ export const ProfileHeader: React.FC<IProfileHeaderProps> = ({
 
 	return (
 		<View style={styles.root}>
-			<Avatar name={name} size={92} ring />
+			<Avatar name={name} src={avatarUrl ?? undefined} size={92} ring />
 			<View style={styles.texts}>
 				<Text style={styles.name}>{name}</Text>
 				<Text style={styles.sub}>{[handle, city].filter(Boolean).join(" · ")}</Text>

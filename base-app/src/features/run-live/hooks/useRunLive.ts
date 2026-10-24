@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { runPayload, useSaveRun } from "@/lib/data";
 import { formatKm, ONLINE } from "@/lib/pace";
 import { elapsedSeconds, stopTracking, useRunStore } from "@/lib/run";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 const TICK_MS = 1000;
@@ -37,9 +38,10 @@ export const useRunLive = () => {
 	const route = useMemo(() => points.map((p) => [p.lat, p.lng] as const), [points]);
 	const km = meters / 1000;
 
-	// Modo equipe: amigos posicionados ao longo do mesmo trajeto (simulação do protótipo)
+	// Modo equipe na prévia: amigos ao longo do mesmo trajeto (simulação do design).
+	// No app real ainda não há posição ao vivo dos colegas, então o mapa fica só com você.
 	const friends = useMemo(() => {
-		if (mode !== "team" || route.length < 2) return [];
+		if (!IS_PREVIEW || mode !== "team" || route.length < 2) return [];
 		return ONLINE.map((f) => {
 			const at = Math.min(1, Math.max(0, f.pace + f.lead));
 			const position = route[Math.round(at * (route.length - 1))] ?? route[0];

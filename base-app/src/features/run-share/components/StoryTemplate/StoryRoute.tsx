@@ -8,8 +8,11 @@ import { useTheme } from "@/theme";
 import { STORY } from "../../constants";
 import { IStoryBox, projectRoute } from "../../utils/storyRoute";
 
+import { IStoryPoint } from "./types";
+
 interface IStoryRouteProps {
 	box: IStoryBox;
+	points: readonly IStoryPoint[];
 	lineWidth?: number;
 	hasGlow?: boolean;
 	// Cor única (sem degradê, sem brilho e sem ponto de largada)
@@ -21,19 +24,22 @@ const GLOW_LAYERS = [
 	{ width: 2.2, opacity: 0.22 },
 ] as const;
 
-// Percurso da volta em laranja com brilho, como o drawRoute do design.
+// Percurso da corrida em laranja com brilho, como o drawRoute do design.
 export const StoryRoute: React.FC<IStoryRouteProps> = ({
 	box,
+	points,
 	lineWidth = 12,
 	hasGlow = true,
 	solid,
 }) => {
 	const { theme } = useTheme();
 	const gradientId = useSvgId("story-route");
-	const route = projectRoute(box);
+	const route = projectRoute(box, points);
 	const stops = theme.pace.gradients.storyRoute[0].stops;
 	const stroke = solid ?? `url(#${gradientId})`;
 	const showGlow = hasGlow && !solid;
+
+	if (!route.d) return null;
 
 	return (
 		<Svg

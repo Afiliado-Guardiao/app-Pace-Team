@@ -31,7 +31,7 @@ export const RunShareScreen: React.FC = () => {
 	const share = useRunShare();
 	const styles = createRunShareStyles(theme, insets);
 	const previewWidth = size ? Math.min(size.width, (size.height * STORY.width) / STORY.height) : 0;
-	const note = `${share.isTransparent ? SHARE_COPY.notePlain : SHARE_COPY.notePhoto}${SHARE_COPY.noteDemo}`;
+	const note = `${share.isTransparent ? SHARE_COPY.notePlain : SHARE_COPY.notePhoto}${share.isDemo ? SHARE_COPY.noteDemo : ""}`;
 
 	return (
 		<View style={styles.root}>

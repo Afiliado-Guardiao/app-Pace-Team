@@ -18,6 +18,7 @@ export const useTeamActions = () => {
 		void client.invalidateQueries({ queryKey: DATA_KEYS.myTeam });
 		void client.invalidateQueries({ queryKey: DATA_KEYS.myInvites });
 		void client.invalidateQueries({ queryKey: DATA_KEYS.rankingAll });
+		void client.invalidateQueries({ queryKey: DATA_KEYS.teamLiveAll });
 	};
 
 	const create = useMutation({ mutationFn: live(createTeam), onSuccess: refresh });

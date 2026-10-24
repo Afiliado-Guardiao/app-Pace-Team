@@ -50,7 +50,7 @@ export const HomeScreen: React.FC = () => {
 						accessibilityRole="button"
 						accessibilityLabel="Perfil"
 					>
-						<Avatar name={home.userName} size={AVATAR} />
+						<Avatar name={home.userName} src={home.avatarUrl} size={AVATAR} />
 					</Pressable>
 					<View style={styles.who}>
 						<Text style={styles.name}>{home.userName}</Text>
@@ -58,7 +58,7 @@ export const HomeScreen: React.FC = () => {
 					</View>
 					<IconButton
 						icon="bell"
-						badge
+						badge={home.hasNotifications}
 						label={HOME_COPY.notifications}
 						size={AVATAR}
 						onPress={home.openNotifications}

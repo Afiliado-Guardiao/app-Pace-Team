@@ -17,6 +17,10 @@ function mapUser(authUser: User, profile: ProfileRow): IUser {
 		handle: profile.handle,
 		city: profile.city,
 		state: profile.state,
+		avatarUrl: profile.avatar_path
+			? supabase.storage.from("avatars").getPublicUrl(profile.avatar_path).data.publicUrl
+			: null,
+		privacy: profile.privacy,
 	};
 }
 
@@ -174,8 +178,23 @@ export async function updateUserPassword(params: {
 	if (error) throw error;
 }
 
-// Exclusão de conta: RPC apaga auth.users; depois recria sessão anônima.
+// Apaga as fotos do atleta (perfil e posts) antes da conta: o Storage não
+// remove os arquivos sozinho quando o usuário some.
+async function removeMyFiles(userId: string): Promise<void> {
+	for (const bucket of ["avatars", "post-photos"]) {
+		const { data } = await supabase.storage.from(bucket).list(userId, { limit: 1000 });
+		const paths = (data ?? []).map((file) => `${userId}/${file.name}`);
+		if (paths.length) await supabase.storage.from(bucket).remove(paths);
+	}
+}
+
+// Exclusão de conta: apaga as fotos, a RPC sai da equipe e apaga auth.users
+// (o resto cai em cascata); depois recria a sessão anônima.
 export async function deleteAccount(): Promise<void> {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (user) await removeMyFiles(user.id).catch(() => undefined);
 	const { error } = await supabase.rpc("delete_account");
 	if (error) throw error;
 	await supabase.auth.signOut();

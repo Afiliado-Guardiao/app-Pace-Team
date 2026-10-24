@@ -6,7 +6,7 @@ import { FeatureTemplates } from "./FeatureTemplates";
 import { StatsTemplates } from "./StatsTemplates";
 import { IStoryRun } from "./types";
 
-export type { IStoryRun } from "./types";
+export type { IStoryMember, IStoryPoint, IStoryRun, IStoryTeam } from "./types";
 
 interface IStoryTemplateProps {
 	id: IShareTemplateId;

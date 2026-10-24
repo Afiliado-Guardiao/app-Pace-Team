@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useTheme } from "@/theme";
-import { formatKm, formatPace, ONLINE } from "@/lib/pace";
+import { formatKm, formatPace } from "@/lib/pace";
 
 import { IShareTemplateId, SHARE_COPY, STORY } from "../../constants";
 import { projectRoute, storyDuration } from "../../utils/storyRoute";
@@ -48,11 +48,12 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 				))}
 				<StoryRoute
 					box={{ x: CX - 190, y: 1120, w: 380, h: 340 }}
+					points={run.route}
 					lineWidth={7}
 					hasGlow={false}
 					solid={theme.pace.colors.storyRouteSolid}
 				/>
-				<StoryTeamPill cx={CX} y={1500} />
+				{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1500} /> : null}
 				<StoryLogo x={CX - 170} y={1690} width={340} />
 			</>
 		);
@@ -71,15 +72,16 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 						</StoryText>
 					</React.Fragment>
 				))}
-				<StoryRoute box={{ x: 160, y: 760, w: 760, h: 620 }} lineWidth={13} />
-				<StoryTeamPill cx={CX} y={1460} />
+				<StoryRoute box={{ x: 160, y: 760, w: 760, h: 620 }} points={run.route} lineWidth={13} />
+				{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1460} /> : null}
 				<StoryLogo x={CX - 200} y={1680} width={400} />
 			</>
 		);
 	}
 
-	const route = projectRoute(EQUIPE_BOX);
-	const crew = ONLINE.slice(0, CREW_AT.length);
+	const route = projectRoute(EQUIPE_BOX, run.route);
+	const crew = run.crew.slice(0, CREW_AT.length);
+	const runners = crew.length > 0 ? `${String(crew.length + 1)}${SHARE_COPY.runners}` : "";
 
 	return (
 		<>
@@ -104,16 +106,14 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 				{SHARE_COPY.teamRun}
 			</StoryText>
 			<StoryText x={STORY.width - 90} y={240} size={36} align="right">
-				{`${String(crew.length + 1)}${SHARE_COPY.runners}`}
+				{runners}
 			</StoryText>
-			<StoryRoute box={EQUIPE_BOX} lineWidth={12} />
-			{crew.map((friend, i) => {
+			<StoryRoute box={EQUIPE_BOX} points={run.route} lineWidth={12} />
+			{crew.map((photo, i) => {
 				const [x, y] = route.at(CREW_AT[i] ?? 0);
-				return (
-					<StoryPin key={friend.name} image={friend.image} x={x} y={y} radius={i === 0 ? 58 : 50} />
-				);
+				return <StoryPin key={i} image={photo} x={x} y={y} radius={i === 0 ? 58 : 50} />;
 			})}
-			<StoryTeamPill cx={CX} y={1460} />
+			{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1460} /> : null}
 			<StoryLogo x={CX - 200} y={1680} width={400} />
 		</>
 	);

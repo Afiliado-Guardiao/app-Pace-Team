@@ -5,9 +5,9 @@ import Animated from "react-native-reanimated";
 
 import { GlassCard, GradientLayers, useEntrance } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
-import { MY_TEAM, RIVAL, WEEK } from "@/lib/pace";
+import { IViradaView } from "@/lib/data";
 
-import { VIRADA_COPY } from "../../constants";
+import { VIRADA_COPY, WEEK_DAYS } from "../../constants";
 
 const AREA = 90;
 const BAR_W = 9;
@@ -90,36 +90,38 @@ const GrowBar: React.FC<{ height: number; delay: number; isUs: boolean; styles: 
 };
 
 // Pontos por dia: o seu time (laranja) contra o rival (branco).
-export const WeekDuel: React.FC = () => {
+export const WeekDuel: React.FC<{ virada: IViradaView }> = ({ virada }) => {
 	const { theme } = useTheme();
 	const styles = createWeekDuelStyles(theme);
-	const max = Math.max(...WEEK.us, ...WEEK.them);
+	const { week } = virada;
+	// Sem pontos na semana: barras zeradas (evita dividir por zero)
+	const max = Math.max(1, ...week.us, ...week.them);
 
 	return (
 		<GlassCard>
 			<View style={styles.legend}>
 				<View style={styles.legendItem}>
 					<View style={styles.dotUs} />
-					<Text style={styles.legendText}>{MY_TEAM.name}</Text>
+					<Text style={styles.legendText}>{virada.team.name}</Text>
 				</View>
 				<View style={styles.legendItem}>
 					<View style={styles.dotThem} />
-					<Text style={styles.legendText}>{RIVAL.name}</Text>
+					<Text style={styles.legendText}>{virada.rival.name}</Text>
 				</View>
 				<Text style={styles.legendUnit}>{VIRADA_COPY.perDay}</Text>
 			</View>
 			<View style={styles.chart}>
-				{WEEK.days.map((day, i) => (
+				{WEEK_DAYS.map((day, i) => (
 					<View key={i} style={styles.day}>
 						<View style={styles.pair}>
 							<GrowBar
-								height={((WEEK.us[i] ?? 0) / max) * AREA}
+								height={((week.us[i] ?? 0) / max) * AREA}
 								delay={i * STAGGER}
 								isUs
 								styles={styles}
 							/>
 							<GrowBar
-								height={((WEEK.them[i] ?? 0) / max) * AREA}
+								height={((week.them[i] ?? 0) / max) * AREA}
 								delay={i * STAGGER + RIVAL_OFFSET}
 								isUs={false}
 								styles={styles}

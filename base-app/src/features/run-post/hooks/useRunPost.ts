@@ -5,7 +5,8 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 
 import { IPostArtLayers } from "@/components/shared/PostArt";
-import { usePostActions } from "@/lib/data";
+import { useMyTeam, usePostActions } from "@/lib/data";
+import { pickFromGallery } from "@/lib/media";
 import { useRunStore } from "@/lib/run";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -20,6 +21,7 @@ type IStep = "camera" | "edit";
 type IPhoto = { kind: "sample"; index: number } | { kind: "live" } | { kind: "shot"; uri: string };
 
 const EDIT_DELAY_MS = 380;
+const EMPTY_RUN = { seconds: 0, km: 0 } as const;
 const IS_WEB = Platform.OS === "web";
 
 // Postar a foto da corrida: câmera → edição (camadas e legenda) → feed.
@@ -38,7 +40,11 @@ export const useRunPost = () => {
 	const [facing, setFacing] = useState<CameraType>("back");
 	const [layers, setLayers] = useState<IPostArtLayers>({ route: true, stats: true, badge: true });
 	const [caption, setCaption] = useState("");
-	const run = lastResult && lastResult.km > POST_MIN_KM ? lastResult : POST_FALLBACK;
+	// Prévia por link: corrida de exemplo. App real: a última corrida, mesmo curta
+	const demoRun = lastResult && lastResult.km > POST_MIN_KM ? lastResult : POST_FALLBACK;
+	const run = IS_PREVIEW ? demoRun : (lastResult ?? EMPTY_RUN);
+	const { team: myTeam } = useMyTeam();
+	const team = myTeam ? { name: myTeam.name, rank: myTeam.position, isUp: true } : null;
 
 	// No iPhone abre direto na câmera ao vivo quando há permissão
 	useEffect(() => {
@@ -97,6 +103,7 @@ export const useRunPost = () => {
 	return {
 		step,
 		run,
+		team,
 		cameraRef,
 		facing,
 		isLive: photo.kind === "live",
@@ -109,6 +116,15 @@ export const useRunPost = () => {
 		selectSample: (index: number) => {
 			setPhoto({ kind: "sample", index });
 		},
+		// Foto já tirada, da galeria do iPhone: vai direto para a edição
+		pickGallery: () => {
+			void pickFromGallery().then((result) => {
+				if (result.status !== "picked") return;
+				setPhoto({ kind: "shot", uri: result.uri });
+				setStep("edit");
+			});
+		},
+		isPreview: IS_PREVIEW,
 		flip: () => {
 			if (photo.kind !== "live" && permission?.granted) setPhoto({ kind: "live" });
 			else setFacing((f) => (f === "back" ? "front" : "back"));

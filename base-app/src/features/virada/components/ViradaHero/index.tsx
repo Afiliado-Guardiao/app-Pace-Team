@@ -3,29 +3,31 @@ import { Text, View } from "react-native";
 
 import { Badge, CountUp, GlassSurface, Highlight, Icon } from "@/components/pace";
 import { useTheme } from "@/theme";
-import { IViradaScenario, IViradaState, MY_TEAM, RIVAL } from "@/lib/pace";
+import { IViradaView } from "@/lib/data";
 
-import { HERO_TITLES, VIRADA_COPY } from "../../constants";
+import { VIRADA_COPY } from "../../constants";
 import { TeamSide } from "../TeamSide";
 import { TugBar } from "../TugBar";
 
 import { createViradaHeroStyles } from "./styles";
 
 interface IViradaHeroProps {
-	state: IViradaState;
-	scenario: IViradaScenario;
+	virada: IViradaView;
+	title: { start: string; highlight: string };
+	// "2d 14h" até o ranking fechar
+	closesIn: string;
 }
 
 const VS_ICON = 16;
 
 // Placar do confronto: estado, título, os dois times, barra de disputa e números.
-export const ViradaHero: React.FC<IViradaHeroProps> = ({ state, scenario }) => {
+export const ViradaHero: React.FC<IViradaHeroProps> = ({ virada, title, closesIn }) => {
 	const { theme } = useTheme();
-	const isDone = state === "done";
+	const { scenario, team, rival } = virada;
+	const isDone = virada.state === "done";
 	const styles = createViradaHeroStyles(theme, scenario.tone, isDone);
 	const diff = scenario.us - scenario.rival;
 	const diffText = `${diff > 0 ? "+" : ""}${String(diff)}`;
-	const title = HERO_TITLES[state];
 
 	return (
 		<GlassSurface appearance={styles.appearance} radius={theme.pace.radii.hero} style={styles.card}>
@@ -41,8 +43,8 @@ export const ViradaHero: React.FC<IViradaHeroProps> = ({ state, scenario }) => {
 			<View style={styles.matchup}>
 				<View style={styles.side}>
 					<TeamSide
-						name={MY_TEAM.name}
-						city="Campinas"
+						name={team.name}
+						city={team.city}
 						points={scenario.us}
 						position={scenario.pos}
 						isUs
@@ -56,8 +58,8 @@ export const ViradaHero: React.FC<IViradaHeroProps> = ({ state, scenario }) => {
 				</View>
 				<View style={styles.side}>
 					<TeamSide
-						name={RIVAL.name}
-						city={RIVAL.city}
+						name={rival.name}
+						city={rival.city}
 						points={scenario.rival}
 						position={scenario.rivalPos}
 						alignRight
@@ -79,7 +81,7 @@ export const ViradaHero: React.FC<IViradaHeroProps> = ({ state, scenario }) => {
 					<Text style={styles.statLabel}>{VIRADA_COPY.position}</Text>
 				</View>
 				<View style={[styles.stat, styles.statDivider]}>
-					<Text style={styles.statValue}>{VIRADA_COPY.closesValue}</Text>
+					<Text style={styles.statValue}>{closesIn}</Text>
 					<Text style={styles.statLabel}>{VIRADA_COPY.closesIn}</Text>
 				</View>
 			</View>

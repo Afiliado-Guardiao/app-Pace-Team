@@ -69,7 +69,7 @@ export const FeedPost: React.FC<IFeedPostProps> = ({ post, index }) => {
 								seconds={post.art.seconds}
 								km={post.art.km}
 								layers={post.art.layers}
-								team={{ name: post.team, rank: post.rank, isUp: post.up }}
+								team={post.team ? { name: post.team, rank: post.rank, isUp: post.up } : null}
 							/>
 						) : (
 							<Image source={post.image} style={styles.image} accessibilityIgnoresInvertColors />

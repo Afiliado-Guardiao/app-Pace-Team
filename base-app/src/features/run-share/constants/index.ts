@@ -7,7 +7,6 @@ import { PHOTOS } from "@/lib/pace";
 export const STORY = { width: 1080, height: 1920 } as const;
 
 export const SHARE_FALLBACK = { seconds: 1610, km: 5.24 } as const;
-export const SHARE_MIN_KM = 0.3;
 
 export type IShareTemplateId =
 	| "equipe"
@@ -64,4 +63,5 @@ export const SHARE_COPY = {
 	time: "Tempo",
 	points: "Pontos",
 	you: "Você",
+	noTeam: "SEM EQUIPE",
 } as const;

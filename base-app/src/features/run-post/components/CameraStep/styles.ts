@@ -63,6 +63,7 @@ export const createCameraStepStyles = (theme: ITheme, insets: { top: number; bot
 		} as ViewStyle,
 		thumbOn: { borderWidth: 2, borderColor: colors.ink.white } as ViewStyle,
 		thumbImage: { width: "100%", height: "100%" } as ImageStyle,
+		thumbIcon: { alignItems: "center", justifyContent: "center" } as ViewStyle,
 		shutter: {
 			width: SHUTTER,
 			height: SHUTTER,

@@ -91,6 +91,8 @@ export const PostTeamBadge: React.FC<IPostTeamBadgeProps> = ({ team, rank, isUp,
 	const { theme } = useTheme();
 	const styles = createPostTeamBadgeStyles(theme, cqw, isUp);
 	const mark = 6 * cqw;
+	// Posição 0 = desconhecida (post de outra equipe no feed): sem a coluna do ranking
+	const hasRank = rank > 0;
 
 	return (
 		<View style={styles.root} pointerEvents="none">
@@ -104,14 +106,18 @@ export const PostTeamBadge: React.FC<IPostTeamBadgeProps> = ({ team, rank, isUp,
 				<Text style={styles.team}>{team}</Text>
 				<Text style={styles.sub}>{COPY.yourTeam}</Text>
 			</View>
-			<View style={styles.divider} />
-			<View>
-				<View style={styles.rankRow}>
-					<Text style={styles.rank}>{`#${String(rank)}`}</Text>
-					<View style={styles.trend} />
-				</View>
-				<Text style={styles.rankSub}>{COPY.ranking}</Text>
-			</View>
+			{hasRank ? (
+				<>
+					<View style={styles.divider} />
+					<View>
+						<View style={styles.rankRow}>
+							<Text style={styles.rank}>{`#${String(rank)}`}</Text>
+							<View style={styles.trend} />
+						</View>
+						<Text style={styles.rankSub}>{COPY.ranking}</Text>
+					</View>
+				</>
+			) : null}
 		</View>
 	);
 };

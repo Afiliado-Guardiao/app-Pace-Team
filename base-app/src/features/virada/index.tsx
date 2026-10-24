@@ -19,6 +19,7 @@ import { formatPoints, PHOTOS, VIRADA_OPTIONS } from "@/lib/pace";
 
 import { Contribution } from "./components/Contribution";
 import { HeadToHead } from "./components/HeadToHead";
+import { ViradaEmpty } from "./components/ViradaEmpty";
 import { ViradaHero } from "./components/ViradaHero";
 import { WeekDuel } from "./components/WeekDuel";
 import { VIRADA_COPY } from "./constants";
@@ -55,6 +56,8 @@ export const ViradaScreen: React.FC = () => {
 	const virada = useViradaScreen();
 	const styles = createViradaStyles(theme);
 	const { colors } = theme.pace;
+	const duel = virada.virada;
+	const showEmpty = !duel && !virada.isLoading;
 
 	return (
 		<View style={styles.root}>
@@ -71,50 +74,63 @@ export const ViradaScreen: React.FC = () => {
 					right={{
 						icon: "bell",
 						label: "Notificações",
-						badge: true,
+						badge: virada.hasNotifications,
 						onPress: virada.goNotifications,
 					}}
 				/>
-				<View style={styles.simulate}>
-					<View style={styles.simulateLabel}>
-						<Icon name="flask-conical" size={12} color={colors.textTertiary} />
-						<Text style={styles.simulateText}>{VIRADA_COPY.simulate}</Text>
+				{virada.isPreview ? (
+					<View style={styles.simulate}>
+						<View style={styles.simulateLabel}>
+							<Icon name="flask-conical" size={12} color={colors.textTertiary} />
+							<Text style={styles.simulateText}>{VIRADA_COPY.simulate}</Text>
+						</View>
+						<SegmentedControl
+							size="sm"
+							options={VIRADA_OPTIONS}
+							value={duel?.state ?? "equal"}
+							onChange={virada.changeState}
+						/>
 					</View>
-					<SegmentedControl
-						size="sm"
-						options={VIRADA_OPTIONS}
-						value={virada.state}
-						onChange={virada.changeState}
+				) : null}
+				{duel ? (
+					<>
+						<ViradaHero virada={duel} title={virada.title} closesIn={virada.closesIn} />
+						<Button size="lg" fullWidth icon="footprints" onPress={virada.goRun}>
+							{virada.isDone ? VIRADA_COPY.keepLead : VIRADA_COPY.helpTeam}
+						</Button>
+						<SectionHeader
+							title={VIRADA_COPY.cityRanking}
+							action={VIRADA_COPY.seeAll}
+							onAction={virada.goRanking}
+						/>
+						{duel.rows.map((team) => (
+							<RankRow
+								key={`${team.name}-${duel.state}`}
+								position={team.position}
+								name={team.name}
+								city={team.city}
+								km={team.km}
+								points={formatPoints(team.points)}
+								delta={team.delta}
+								isYou={team.you}
+							/>
+						))}
+						<SectionHeader title={VIRADA_COPY.weekly} />
+						<WeekDuel virada={duel} />
+						<SectionHeader title={VIRADA_COPY.headToHead} />
+						<HeadToHead weeks={duel.headToHead} />
+						<SectionHeader title={VIRADA_COPY.contribution} />
+						<Contribution members={duel.members} total={duel.scenario.us} />
+					</>
+				) : null}
+				{showEmpty ? (
+					<ViradaEmpty
+						hasTeam={virada.hasTeam}
+						onTeam={virada.goTeam}
+						onRanking={virada.goRanking}
 					/>
-				</View>
-				<ViradaHero state={virada.state} scenario={virada.scenario} />
-				<Button size="lg" fullWidth icon="footprints" onPress={virada.goRun}>
-					{virada.isDone ? VIRADA_COPY.keepLead : VIRADA_COPY.helpTeam}
-				</Button>
-				<SectionHeader
-					title={VIRADA_COPY.cityRanking}
-					action={VIRADA_COPY.seeAll}
-					onAction={virada.goRanking}
-				/>
-				{virada.rows.map((team, index) => (
-					<RankRow
-						key={team.name + virada.state}
-						position={index + 2}
-						name={team.name}
-						city={team.city}
-						km={team.km}
-						points={formatPoints(team.points)}
-						delta={team.delta}
-						isYou={team.you}
-					/>
-				))}
-				<SectionHeader title={VIRADA_COPY.weekly} />
-				<WeekDuel />
-				<SectionHeader title={VIRADA_COPY.headToHead} />
-				<HeadToHead />
-				<SectionHeader title={VIRADA_COPY.contribution} />
-				<Contribution members={virada.members} total={virada.scenario.us} />
-				<DemoTag />
+				) : null}
+				{virada.isPreview ? <DemoTag /> : null}
 			</ScreenScroll>
 			<PaceTabRail active="home" onChange={virada.onRailChange} />
 			<FloatingToast toast={virada.toast} />

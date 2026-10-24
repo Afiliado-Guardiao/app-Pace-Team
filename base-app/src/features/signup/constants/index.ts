@@ -20,8 +20,8 @@ export const SIGNUP_COPY = {
 	locationNote: "Pediremos acesso à localização só quando você iniciar sua primeira corrida.",
 } as const;
 
-export const CITIES = ["Campinas", "São Paulo", "Valinhos", "Paulínia"];
-export const STATES = ["SP", "RJ", "MG", "PR"];
+// Listas compartilhadas com o "Editar perfil" (ficam em @/lib/pace)
+export { CITIES, STATES } from "@/lib/pace";
 
 export const SIGNUP_TOASTS = {
 	photo: {

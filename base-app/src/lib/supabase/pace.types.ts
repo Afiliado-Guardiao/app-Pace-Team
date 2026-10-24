@@ -102,3 +102,11 @@ export interface IFeedRow {
 }
 
 export type IRunStatusDb = "pending" | "valid" | "invalid";
+
+// Folha "Privacidade" do Perfil (profiles.privacy)
+export interface IPrivacySettings {
+	showCity: boolean;
+	publicProfile: boolean;
+	shareRoutes: boolean;
+	hideRouteEnds: boolean;
+}

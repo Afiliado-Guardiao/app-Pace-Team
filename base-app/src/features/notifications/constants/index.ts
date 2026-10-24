@@ -6,6 +6,7 @@ export const NOTIFICATIONS_COPY = {
 	decline: "Recusar",
 	prefsTitle: "Preferências",
 	save: "Salvar",
+	empty: "Nada novo por aqui. Convites de equipe e a disputa do Modo Virada aparecem nesta lista.",
 } as const;
 
 export const NOTIFICATION_GROUPS = ["Hoje", "Esta semana"] as const;
@@ -22,7 +23,8 @@ export const NOTIFICATION_TOASTS = {
 	accepted: {
 		tone: "success",
 		title: "Convite aceito",
-		message: "Você entrou na lista dos Night Runners.",
+		message: "",
 	},
+	acceptedPrefix: "Agora você corre com ",
 	declined: { tone: "info", title: "Convite recusado" },
 } as const;

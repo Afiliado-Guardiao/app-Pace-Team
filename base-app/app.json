@@ -1,85 +1,89 @@
 {
-  "expo": {
-    "name": "PACE TEAM",
-    "slug": "pace-team",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/brand/app-icon-tile.png",
-    "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
-    "scheme": "paceteam",
-    "backgroundColor": "#1B2733",
-    "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.paceteam.app",
-      "usesAppleSignIn": true,
-      "infoPlist": {
-        "LSApplicationQueriesSchemes": [
-          "whatsapp"
-        ],
-        "NSSupportsLiveActivities": true,
-        "NSSupportsLiveActivitiesFrequentUpdates": true,
-        "NSAlarmKitUsageDescription": "O Pace Buddy usa o despertador para te acordar na hora da corrida que você marcou."
-      },
-      "entitlements": {
-        "com.apple.security.application-groups": [
-          "group.com.paceteam.app"
-        ]
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/brand/app-icon-tile.png",
-        "backgroundColor": "#1B2733"
-      },
-      "package": "com.paceteam.app",
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/brand/app-icon.png"
-    },
-    "plugins": [
-      "expo-font",
-      "expo-router",
-      "expo-localization",
-      "expo-asset",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/brand/logo-horizontal.png",
-          "imageWidth": 220,
-          "resizeMode": "contain",
-          "backgroundColor": "#1B2733"
-        }
-      ],
-      "expo-video",
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "O PACE TEAM usa sua localização durante a corrida para medir distância, ritmo e rota e somar pontos para o seu time.",
-          "locationAlwaysAndWhenInUsePermission": "O PACE TEAM continua medindo sua corrida com a tela bloqueada. A localização só é usada enquanto uma corrida está em andamento.",
-          "isIosBackgroundLocationEnabled": true,
-          "isAndroidBackgroundLocationEnabled": true,
-          "isAndroidForegroundServiceEnabled": true
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "O PACE TEAM usa a câmera para você fotografar suas corridas e postar no feed da equipe.",
-          "microphonePermission": false,
-          "recordAudioAndroid": false
-        }
-      ],
-      [
-        "expo-notifications",
-        {
-          "color": "#FD5A0C"
-        }
-      ],
-      "@bacons/apple-targets",
-      "./plugins/withBuddyAppIntents"
-    ]
-  }
+	"expo": {
+		"name": "PACE TEAM",
+		"slug": "pace-team",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/brand/app-icon-tile.png",
+		"userInterfaceStyle": "dark",
+		"newArchEnabled": true,
+		"scheme": "paceteam",
+		"backgroundColor": "#1B2733",
+		"ios": {
+			"supportsTablet": false,
+			"bundleIdentifier": "com.paceteam.app",
+			"usesAppleSignIn": true,
+			"infoPlist": {
+				"LSApplicationQueriesSchemes": ["whatsapp"],
+				"NSSupportsLiveActivities": true,
+				"NSSupportsLiveActivitiesFrequentUpdates": true,
+				"NSAlarmKitUsageDescription": "O Pace Buddy usa o despertador para te acordar na hora da corrida que você marcou."
+			},
+			"entitlements": {
+				"com.apple.security.application-groups": ["group.com.paceteam.app"]
+			}
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/brand/app-icon-tile.png",
+				"backgroundColor": "#1B2733"
+			},
+			"package": "com.paceteam.app",
+			"edgeToEdgeEnabled": true,
+			"predictiveBackGestureEnabled": false
+		},
+		"web": {
+			"favicon": "./assets/brand/app-icon.png"
+		},
+		"plugins": [
+			"expo-font",
+			"expo-router",
+			"expo-localization",
+			"expo-asset",
+			[
+				"expo-splash-screen",
+				{
+					"image": "./assets/brand/logo-horizontal.png",
+					"imageWidth": 220,
+					"resizeMode": "contain",
+					"backgroundColor": "#1B2733"
+				}
+			],
+			"expo-video",
+			[
+				"expo-location",
+				{
+					"locationWhenInUsePermission": "O PACE TEAM usa sua localização durante a corrida para medir distância, ritmo e rota e somar pontos para o seu time.",
+					"locationAlwaysAndWhenInUsePermission": "O PACE TEAM continua medindo sua corrida com a tela bloqueada. A localização só é usada enquanto uma corrida está em andamento.",
+					"isIosBackgroundLocationEnabled": true,
+					"isAndroidBackgroundLocationEnabled": true,
+					"isAndroidForegroundServiceEnabled": true
+				}
+			],
+			[
+				"expo-camera",
+				{
+					"cameraPermission": "O PACE TEAM usa a câmera para você fotografar suas corridas e postar no feed da equipe.",
+					"microphonePermission": false,
+					"recordAudioAndroid": false
+				}
+			],
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "O PACE TEAM usa suas fotos para você escolher a foto de perfil e postar fotos das corridas no feed da equipe.",
+					"cameraPermission": false,
+					"microphonePermission": false
+				}
+			],
+			[
+				"expo-notifications",
+				{
+					"color": "#FD5A0C"
+				}
+			],
+			"@bacons/apple-targets",
+			"./plugins/withBuddyAppIntents"
+		]
+	}
 }

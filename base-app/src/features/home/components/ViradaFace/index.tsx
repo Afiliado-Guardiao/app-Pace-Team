@@ -3,10 +3,9 @@ import { Text, View } from "react-native";
 
 import { CountUp, GlassSurface, Icon } from "@/components/pace";
 import { useTheme } from "@/theme";
-import { RIVAL, VIRADA } from "@/lib/pace";
-import { useStore } from "@/store";
 
-import { HOME_COPY, STACK } from "../../constants";
+import { STACK } from "../../constants";
+import { IViradaFaceData } from "../../hooks/useHomeFaces";
 import { FlameBadge } from "../FlameBadge";
 import { ProgressLine } from "../ProgressLine";
 
@@ -17,25 +16,23 @@ const CHEVRON = 18;
 const BAR_HEIGHT = 5;
 
 // Face "Modo Virada" da pilha: estado da disputa, diferença de pontos e barra.
-export const ViradaFace: React.FC<{ isFresh: boolean }> = ({ isFresh }) => {
+export const ViradaFace: React.FC<{ data: IViradaFaceData; isFresh: boolean }> = ({
+	data,
+	isFresh,
+}) => {
 	const { theme } = useTheme();
-	const state = useStore((s) => s.viradaState);
-	const scenario = VIRADA[state];
-	const isDone = state === "done";
-	const diff = scenario.us - scenario.rival;
-	const styles = createViradaFaceStyles(theme, scenario.tone, STACK.height);
+	const styles = createViradaFaceStyles(theme, data.tone, STACK.height);
 
 	return (
 		<GlassSurface appearance={styles.appearance} radius={theme.pace.radii.hero} style={styles.card}>
 			<View style={styles.header}>
-				<FlameBadge isDone={isDone} size={FLAME} />
+				<FlameBadge isDone={data.isDone} size={FLAME} />
 				<View style={styles.texts}>
 					<Text style={styles.title} numberOfLines={1}>
-						{scenario.label}
+						{data.label}
 					</Text>
-					<Text style={styles.sub}>
-						{HOME_COPY.viradaSub}
-						{RIVAL.name}
+					<Text style={styles.sub} numberOfLines={1}>
+						{data.sub}
 					</Text>
 				</View>
 				{isFresh ? (
@@ -47,14 +44,14 @@ export const ViradaFace: React.FC<{ isFresh: boolean }> = ({ isFresh }) => {
 			<View>
 				<View style={styles.bottomRow}>
 					<Text style={styles.diff}>
-						{diff > 0 ? "+" : "−"}
-						<CountUp key={diff} value={String(Math.abs(diff))} />
+						{data.sign}
+						<CountUp key={data.diff} value={data.diff} />
 						<Text style={styles.diffUnit}> pts</Text>
 					</Text>
-					<Text style={styles.position}>{isDone ? HOME_COPY.viradaDone : HOME_COPY.viradaUp}</Text>
+					<Text style={styles.position}>{data.move}</Text>
 				</View>
 				<View style={styles.bar}>
-					<ProgressLine progress={scenario.progress} isDone={isDone} height={BAR_HEIGHT} />
+					<ProgressLine progress={data.progress} isDone={data.isDone} height={BAR_HEIGHT} />
 				</View>
 			</View>
 		</GlassSurface>

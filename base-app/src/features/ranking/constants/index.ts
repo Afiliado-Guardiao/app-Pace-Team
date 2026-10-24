@@ -2,7 +2,7 @@ export const RANKING_COPY = {
 	title: "Ranking",
 	week: "Semana 42 · fecha em 2d 14h",
 	rules: "Regras",
-	city: "Campinas",
+	city: "Sua cidade",
 	worldTitle: "Ranking mundial em breve",
 	worldBody: "Ativamos quando houver equipes suficientes em outros países.",
 	rulesTitle: "Como pontuamos",

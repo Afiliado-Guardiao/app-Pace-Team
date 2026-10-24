@@ -3,7 +3,8 @@ import { Text, View } from "react-native";
 
 import { GlassCard } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
-import { formatPoints, HEAD_TO_HEAD } from "@/lib/pace";
+import { IViradaView } from "@/lib/data";
+import { formatPoints } from "@/lib/pace";
 
 import { VIRADA_COPY } from "../../constants";
 
@@ -42,13 +43,13 @@ const createHeadToHeadStyles = (theme: ITheme) => {
 };
 
 // Resultado das últimas semanas contra o rival (V = vitória, D = derrota).
-export const HeadToHead: React.FC = () => {
+export const HeadToHead: React.FC<{ weeks: IViradaView["headToHead"] }> = ({ weeks }) => {
 	const { theme } = useTheme();
 	const styles = createHeadToHeadStyles(theme);
 
 	return (
 		<GlassCard padding={theme.pace.spacing[1.5]}>
-			{HEAD_TO_HEAD.map((h, i) => {
+			{weeks.map((h, i) => {
 				const isWin = h.us > h.them;
 				return (
 					<View key={h.week} style={[styles.row, i > 0 ? styles.divider : null]}>

@@ -1,4 +1,5 @@
 import { Database } from "./database.types";
+import { IPrivacySettings } from "./pace.types";
 
 // Linhas cruas das tabelas (snake_case, como o Postgres retorna).
 export type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -17,6 +18,9 @@ export interface IUser {
 	handle?: string | null;
 	city?: string | null;
 	state?: string | null;
+	// URL pública da foto de perfil (bucket "avatars") ou null
+	avatarUrl?: string | null;
+	privacy?: IPrivacySettings;
 }
 
 // Onboarding consumido pelo app (camelCase).

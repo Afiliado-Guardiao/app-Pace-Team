@@ -6,6 +6,7 @@ import Animated from "react-native-reanimated";
 import { ITheme, useTheme } from "@/theme";
 
 import { STACK } from "../../constants";
+import { useHomeFaces } from "../../hooks/useHomeFaces";
 import { IStackCardId, IStackPhase, useHomeStack } from "../../hooks/useHomeStack";
 import { useStackCardStyle } from "../../hooks/useStackCardStyle";
 import { TeamRunFace } from "../TeamRunFace";
@@ -60,11 +61,12 @@ const createHomeStackStyles = (theme: ITheme) => {
 interface IStackCardProps {
 	id: IStackCardId;
 	stack: ReturnType<typeof useHomeStack>;
+	faces: ReturnType<typeof useHomeFaces>;
 	styles: ReturnType<typeof createHomeStackStyles>;
 }
 
 // Um card da pilha: pose inclinada, sombra e escurecimento quando está atrás.
-const StackCard: React.FC<IStackCardProps> = ({ id, stack, styles }) => {
+const StackCard: React.FC<IStackCardProps> = ({ id, stack, faces, styles }) => {
 	const isFront = stack.front === id;
 	const phase: IStackPhase = stack.phase;
 	const pose = useStackCardStyle(
@@ -80,7 +82,11 @@ const StackCard: React.FC<IStackCardProps> = ({ id, stack, styles }) => {
 			testID={`home-stack-${id}`}
 		>
 			<View style={isFront ? styles.frontShadow : styles.backShadow}>
-				{id === "run" ? <TeamRunFace /> : <ViradaFace isFresh={stack.isFresh} />}
+				{id === "run" ? (
+					<TeamRunFace data={faces.teamRun} />
+				) : (
+					<ViradaFace data={faces.virada} isFresh={stack.isFresh} />
+				)}
 				{isFront ? null : <View style={styles.dim} pointerEvents="none" />}
 			</View>
 		</Animated.View>
@@ -93,12 +99,13 @@ const CARDS: readonly IStackCardId[] = ["run", "virada"];
 export const HomeStack: React.FC<IHomeStackProps> = ({ onOpen }) => {
 	const { theme } = useTheme();
 	const stack = useHomeStack({ onOpen });
+	const faces = useHomeFaces();
 	const styles = createHomeStackStyles(theme);
 
 	return (
 		<View style={styles.root}>
 			{CARDS.map((id) => (
-				<StackCard key={id} id={id} stack={stack} styles={styles} />
+				<StackCard key={id} id={id} stack={stack} faces={faces} styles={styles} />
 			))}
 			<View style={styles.dots} pointerEvents="none">
 				{CARDS.map((id) => (

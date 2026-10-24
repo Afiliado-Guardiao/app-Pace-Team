@@ -7,10 +7,12 @@ import {
 	IFeedRow,
 	IMyInvite,
 	IMyStats,
+	IPrivacySettings,
 	IRunStatusDb,
 	ITeamDetails,
 	ITeamRankingEntry,
 } from "./pace.types";
+import { ITeamLastRuns, ITeamOnlineMate, IVirada } from "./teamLive.types";
 
 export interface Database {
 	public: {
@@ -27,6 +29,8 @@ export interface Database {
 					handle: string | null;
 					city: string | null;
 					state: string | null;
+					avatar_path: string | null;
+					privacy: IPrivacySettings;
 					created_at: string;
 					updated_at: string;
 				};
@@ -40,6 +44,11 @@ export interface Database {
 				Update: {
 					name?: string;
 					birthday?: string | null;
+					handle?: string | null;
+					city?: string | null;
+					state?: string | null;
+					avatar_path?: string | null;
+					privacy?: IPrivacySettings;
 				};
 				Relationships: [];
 			};
@@ -198,6 +207,9 @@ export interface Database {
 			};
 			buddy_register_device: { Args: { p_token: string; p_platform?: string }; Returns: undefined };
 			get_feed: { Args: { p_limit?: number }; Returns: IFeedRow[] };
+			get_virada: { Args: Record<string, never>; Returns: IVirada | null };
+			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };
+			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
 		};
 		Enums: Record<string, never>;
 		CompositeTypes: Record<string, never>;

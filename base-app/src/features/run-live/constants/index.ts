@@ -6,6 +6,7 @@ export const RUN_LIVE_COPY = {
 	titleTeamHighlight: "juntos",
 	teamRunning: "3 correndo com você",
 	crewRunning: "do time correndo agora",
+	onlineNow: " do time online agora",
 	paused: "Pausada",
 	total: "Tempo total",
 	finish: "Finalizar",

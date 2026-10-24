@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { GradientLayers } from "@/components/pace";
 import { useTheme } from "@/theme";
-import { formatKm, formatPace, MEMBERS, MY_TEAM } from "@/lib/pace";
+import { formatKm, formatPace } from "@/lib/pace";
 
 import { IShareTemplateId, SHARE_COPY, STORY } from "../../constants";
 import { storyDuration } from "../../utils/storyRoute";
@@ -21,9 +21,9 @@ interface IFeatureTemplatesProps {
 
 const CX = STORY.width / 2;
 const BAR = { x: 190, w: 760, h: 20 } as const;
-const DEMO_POINTS = "+86";
-const RANKED = [...MEMBERS].sort((a, b) => b.km - a.km);
-const MAX_KM = RANKED[0]?.km ?? 1;
+// Cabem 5 integrantes entre o título e a pílula da equipe
+const MAX_MEMBERS = 5;
+const MIN_BAR_KM = 0.1;
 
 // Modelos de destaque: km gigante, ranking de integrantes e minimalista.
 export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) => {
@@ -33,16 +33,19 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 	const pace = formatPace(run.km ? run.seconds / run.km : 0);
 	const time = storyDuration(run.seconds);
 	const medals = [colors.storyGold, colors.storySilver, colors.storyBronze];
+	const teamName = run.team?.name ?? SHARE_COPY.noTeam;
+	const ranked = [...run.members].sort((a, b) => b.km - a.km).slice(0, MAX_MEMBERS);
+	const maxKm = Math.max(ranked[0]?.km ?? 0, MIN_BAR_KM);
 
 	if (id === "destaque") {
 		const stats = [
 			[SHARE_COPY.pace, pace],
 			[SHARE_COPY.time, time],
-			[SHARE_COPY.points, DEMO_POINTS],
+			[SHARE_COPY.points, `+${String(run.points)}`],
 		] as const;
 		return (
 			<>
-				<StoryRoute box={{ x: 300, y: 260, w: 480, h: 420 }} lineWidth={11} />
+				<StoryRoute box={{ x: 300, y: 260, w: 480, h: 420 }} points={run.route} lineWidth={11} />
 				<StoryText x={CX} y={1040} size={280} weight={800} align="center" spacing={-6}>
 					{km}
 				</StoryText>
@@ -74,11 +77,14 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 						</StoryText>
 					</React.Fragment>
 				))}
-				<StoryTeamPill
-					cx={CX}
-					y={1450}
-					options={{ hasMark: true, gradient: "storyMarkNavy", rank: 3 }}
-				/>
+				{run.team ? (
+					<StoryTeamPill
+						team={run.team}
+						cx={CX}
+						y={1450}
+						options={{ hasMark: true, gradient: "storyMarkNavy" }}
+					/>
+				) : null}
 				<StoryLogo x={CX - 200} y={1680} width={400} />
 			</>
 		);
@@ -91,7 +97,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 					{SHARE_COPY.teamRun}
 				</StoryText>
 				<StoryText x={90} y={330} size={96} weight={800}>
-					{MY_TEAM.name}
+					{teamName}
 				</StoryText>
 				<StoryText
 					x={90}
@@ -99,10 +105,10 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 					size={40}
 					weight={600}
 				>{`${km} km  ·  ${time}  ·  ${pace}/km`}</StoryText>
-				{RANKED.map((m, i) => {
+				{ranked.map((m, i) => {
 					const y = 560 + i * 150;
 					return (
-						<React.Fragment key={m.name}>
+						<React.Fragment key={`${m.name}-${String(i)}`}>
 							<StoryText
 								x={90}
 								y={y + 48}
@@ -111,7 +117,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 								color={medals[i] ?? colors.storyMuted}
 							>{`${String(i + 1)}º`}</StoryText>
 							<StoryText x={BAR.x} y={y + 30} size={38}>
-								{m.you ? SHARE_COPY.you : m.name}
+								{m.isYou ? SHARE_COPY.you : m.name}
 							</StoryText>
 							<View
 								style={{
@@ -129,7 +135,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 									position: "absolute",
 									left: BAR.x,
 									top: y + 58,
-									width: (BAR.w * m.km) / MAX_KM,
+									width: (BAR.w * m.km) / maxKm,
 									height: BAR.h,
 									borderRadius: 10,
 									overflow: "hidden",
@@ -150,7 +156,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 						</React.Fragment>
 					);
 				})}
-				<StoryTeamPill cx={CX} y={1440} />
+				{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1440} /> : null}
 				<StoryLogo x={CX - 200} y={1680} width={400} />
 			</>
 		);
@@ -158,15 +164,13 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 
 	return (
 		<>
-			<StoryTeamPill
-				cx={CX}
-				y={170}
-				options={{ initials: "PS", gradient: "storyMarkPeach", rank: 6, isUp: false }}
-			/>
-			<StoryRoute box={{ x: 140, y: 420, w: 800, h: 820 }} lineWidth={16} />
+			{run.team ? (
+				<StoryTeamPill team={run.team} cx={CX} y={170} options={{ gradient: "storyMarkPeach" }} />
+			) : null}
+			<StoryRoute box={{ x: 140, y: 420, w: 800, h: 820 }} points={run.route} lineWidth={16} />
 			<StoryText x={90} y={1540} size={120} weight={800} spacing={-2}>{`${km} KM`}</StoryText>
 			<StoryText x={90} y={1610} size={34} weight={600} spacing={3}>
-				{`${time}   ${pace}/km   ${MY_TEAM.name.toUpperCase()}`}
+				{`${time}   ${pace}/km   ${teamName.toUpperCase()}`}
 			</StoryText>
 			<StoryLogo x={STORY.width - 390} y={1720} width={300} />
 		</>

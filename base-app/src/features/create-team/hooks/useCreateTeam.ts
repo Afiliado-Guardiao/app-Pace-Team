@@ -6,6 +6,7 @@ import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { teamErrorMessage, useTeamActions } from "@/lib/data";
 import { ME } from "@/lib/pace";
 import { useStore } from "@/store";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 import { CITY_OPTIONS, CREATE_TEAM_COPY, REGION_OPTIONS } from "../constants";
@@ -27,7 +28,8 @@ export const useCreateTeam = () => {
 	const [city, setCity] = useState<string>(cityOptions[0] ?? CITY_OPTIONS[0]);
 	const [region, setRegion] = useState<string>(REGION_OPTIONS[0]);
 	const [size, setSize] = useState("5");
-	const [captain, setCaptain] = useState(user?.name || ME.name);
+	// Sem nome no cadastro o campo começa vazio (o nome do design só na prévia)
+	const [captain, setCaptain] = useState(user?.name || (IS_PREVIEW ? ME.name : ""));
 
 	const logoToast: IFloatingToastData = {
 		tone: "info",

@@ -6,6 +6,7 @@ import Svg, { Path } from "react-native-svg";
 import { GradientLayers, Logo, useLayoutSize } from "@/components/pace";
 import { useTheme } from "@/theme";
 import { CREW, formatDurationShort, formatKm, formatPaceClock, MY_TEAM } from "@/lib/pace";
+import { IS_PREVIEW } from "@/constants/preview";
 
 import { PostPin } from "./PostPin";
 import { PostTeamBadge } from "./PostTeamBadge";
@@ -25,7 +26,8 @@ interface IPostArtProps {
 	seconds: number;
 	km: number;
 	layers?: IPostArtLayers;
-	team?: { name: string; rank: number; isUp: boolean };
+	// null = atleta sem equipe (o selo da equipe não aparece)
+	team?: { name: string; rank: number; isUp: boolean } | null;
 	style?: StyleProp<ViewStyle>;
 }
 
@@ -33,11 +35,14 @@ interface IPostArtProps {
 const ROUTE_D =
 	"M38 74 C30 66 33 52 42 54 C50 56 46 64 53 64 C61 64 57 50 66 51 C74 52 72 63 66 68 C61 72 68 77 63 82 C58 87 48 82 42 86 C35 90 24 86 26 79 C28 73 44 80 38 74 Z";
 const ALL_LAYERS: IPostArtLayers = { route: true, stats: true, badge: true };
-const DEFAULT_TEAM = { name: MY_TEAM.name, rank: MY_TEAM.rank, isUp: true };
-const PINS = [
-	{ image: CREW[0], x: 33, y: 49.5 },
-	{ image: CREW[1], x: 63, y: 44 },
-] as const;
+// Equipe e fotos de colegas no percurso são do design: só na prévia por link
+const DEFAULT_TEAM = IS_PREVIEW ? { name: MY_TEAM.name, rank: MY_TEAM.rank, isUp: true } : null;
+const PINS = IS_PREVIEW
+	? [
+			{ image: CREW[0], x: 33, y: 49.5 },
+			{ image: CREW[1], x: 63, y: 44 },
+		]
+	: [];
 const LOGO_WIDTH = 34;
 const LOGO_RATIO = 696 / 222;
 const COPY = { distance: "Distância", pace: "Ritmo", time: "Tempo" } as const;
@@ -106,7 +111,7 @@ export const PostArt: React.FC<IPostArtProps> = ({
 								<PostPin key={String(pin.x)} image={pin.image} x={pin.x} y={pin.y} cqw={cqw} />
 							))
 						: null}
-					{layers.badge ? (
+					{layers.badge && team ? (
 						<PostTeamBadge team={team.name} rank={team.rank} isUp={team.isUp} cqw={cqw} />
 					) : null}
 					<View style={styles.logo} pointerEvents="none">

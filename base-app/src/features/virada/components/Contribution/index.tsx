@@ -113,17 +113,18 @@ const ContributionRow: React.FC<{
 export const Contribution: React.FC<IContributionProps> = ({ members, total }) => {
 	const { theme } = useTheme();
 	const styles = createContributionStyles(theme);
-	const top = members[0]?.points ?? 1;
+	// Mínimo 1: sem pontos na semana as barras ficam vazias (sem dividir por zero)
+	const top = Math.max(1, members[0]?.points ?? 0);
 
 	return (
 		<GlassCard padding={theme.pace.spacing[1.5]}>
 			{members.map((member, index) => (
 				<ContributionRow
-					key={member.name}
+					key={`${member.name}-${String(index)}`}
 					member={member}
 					index={index}
 					top={top}
-					total={total}
+					total={Math.max(1, total)}
 					styles={styles}
 				/>
 			))}

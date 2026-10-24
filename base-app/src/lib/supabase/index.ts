@@ -7,5 +7,7 @@ export * from "./posts";
 export * from "./profile";
 export * from "./referral";
 export * from "./runs";
+export * from "./teamLive";
+export * from "./teamLive.types";
 export * from "./teams";
 export * from "./types";
