@@ -12,6 +12,7 @@ import {
 import { useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
+import { ResetPasswordSheet } from "./components/ResetPasswordSheet";
 import { LOGIN_COPY } from "./constants";
 import { useLoginScreen } from "./hooks/useLoginScreen";
 import { createLoginStyles } from "./styles";
@@ -94,6 +95,7 @@ export const LoginScreen: React.FC = () => {
 					</Text>
 				</Text>
 			</ScreenScroll>
+			<ResetPasswordSheet reset={login.reset} />
 			<FloatingToast toast={login.toast} />
 		</View>
 	);

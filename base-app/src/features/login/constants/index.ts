@@ -12,13 +12,25 @@ export const LOGIN_COPY = {
 	createAccount: "Criar conta",
 } as const;
 
+// "Esqueci minha senha" com código de 6 dígitos (sem precisar de link)
+export const RESET_COPY = {
+	title: "Redefinir senha",
+	emailBody: "Vamos mandar um código de 6 dígitos para o seu e-mail.",
+	email: "E-mail",
+	send: "Enviar código",
+	codeSentTo: "Digite o código que enviamos para ",
+	code: "Código",
+	codePlaceholder: "000000",
+	newPassword: "Nova senha",
+	passwordHint: "Mínimo de 8 caracteres",
+	confirm: "Salvar nova senha",
+	resend: "Reenviar código",
+	emailInvalid: "Digite um e-mail válido.",
+	codeInvalid: "Digite os 6 dígitos do código.",
+	passwordShort: "A senha precisa ter pelo menos 8 caracteres.",
+} as const;
+
 export const LOGIN_TOASTS = {
-	resetSent: {
-		tone: "success",
-		title: "Link enviado",
-		message: "Confira seu e-mail para criar uma nova senha.",
-	},
-	resetError: { tone: "danger", title: "Não deu para enviar o link" },
 	appleError: { tone: "danger", title: "Não deu para entrar com Apple" },
 	appleUnavailable: {
 		tone: "info",

@@ -14,6 +14,7 @@ import {
 } from "@/components/pace";
 import { useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
+import { openLegalPage } from "@/constants/legal";
 
 import { CITIES, SIGNUP_COPY, STATES } from "./constants";
 import { useSignupScreen } from "./hooks/useSignupScreen";
@@ -22,6 +23,13 @@ import { createSignupStyles } from "./styles";
 const CAMERA_ICON = 24;
 const PLUS_ICON = 14;
 const PLUS_STROKE = 2.6;
+
+const openTerms = (): void => {
+	openLegalPage("terms");
+};
+const openPrivacy = (): void => {
+	openLegalPage("privacy");
+};
 
 // 04 Cadastro: dados do atleta, aceite dos termos e conta no Supabase.
 export const SignupScreen: React.FC = () => {
@@ -127,9 +135,24 @@ export const SignupScreen: React.FC = () => {
 					label={
 						<Text>
 							{SIGNUP_COPY.termsStart}
-							<Text style={styles.termsLink}>{SIGNUP_COPY.terms}</Text>
+							<Text
+								style={styles.termsLink}
+								onPress={openTerms}
+								accessibilityRole="link"
+								testID="signup-terms-link"
+							>
+								{SIGNUP_COPY.terms}
+							</Text>
 							{SIGNUP_COPY.and}
-							<Text style={styles.termsLink}>{SIGNUP_COPY.privacy}</Text>.
+							<Text
+								style={styles.termsLink}
+								onPress={openPrivacy}
+								accessibilityRole="link"
+								testID="signup-privacy-link"
+							>
+								{SIGNUP_COPY.privacy}
+							</Text>
+							.
 						</Text>
 					}
 					testID="signup-terms"

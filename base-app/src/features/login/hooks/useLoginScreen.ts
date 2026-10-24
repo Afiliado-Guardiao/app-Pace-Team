@@ -5,12 +5,14 @@ import { useRouter } from "expo-router";
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { signInWithAppleNative } from "@/lib/auth/appleSignIn";
 import { authErrorMessage } from "@/lib/auth/authErrors";
-import { sendPasswordReset, signInWithEmail } from "@/lib/supabase";
+import { signInWithEmail } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
 import { LOGIN_TOASTS } from "../constants";
 import { ILoginErrors, validateLogin } from "../validation";
+
+import { useResetPassword } from "./useResetPassword";
 
 interface IUseLoginScreenReturn {
 	email: string;
@@ -22,6 +24,7 @@ interface IUseLoginScreenReturn {
 	setPassword: (value: string) => void;
 	handleSubmit: () => void;
 	handleForgot: () => void;
+	reset: ReturnType<typeof useResetPassword>;
 	handleApple: () => void;
 	handleGoogle: () => void;
 	handleBack: () => void;
@@ -37,6 +40,7 @@ export const useLoginScreen = (): IUseLoginScreenReturn => {
 	const [password, setPassword] = useState("");
 	const [errors, setErrors] = useState<ILoginErrors>({});
 	const [isLoading, setIsLoading] = useState(false);
+	const reset = useResetPassword();
 
 	const handleSubmit = useCallback(() => {
 		const found = validateLogin({ email, password });
@@ -56,20 +60,10 @@ export const useLoginScreen = (): IUseLoginScreenReturn => {
 			});
 	}, [email, password, isLoading, router, setHasTeam]);
 
+	// Abre a folha de redefinição já com o e-mail digitado no login
 	const handleForgot = useCallback(() => {
-		const found = validateLogin({ email, password: "-" });
-		if (found.email) {
-			setErrors({ email: "Digite seu e-mail para receber o link." });
-			return;
-		}
-		sendPasswordReset(email.trim())
-			.then(() => {
-				showToast(LOGIN_TOASTS.resetSent);
-			})
-			.catch((error: unknown) => {
-				showToast({ ...LOGIN_TOASTS.resetError, message: authErrorMessage(error) });
-			});
-	}, [email, password, showToast]);
+		reset.open(email);
+	}, [email, reset]);
 
 	const handleApple = useCallback(() => {
 		signInWithAppleNative()
@@ -105,6 +99,7 @@ export const useLoginScreen = (): IUseLoginScreenReturn => {
 		setPassword,
 		handleSubmit,
 		handleForgot,
+		reset,
 		handleApple,
 		handleGoogle,
 		handleBack,

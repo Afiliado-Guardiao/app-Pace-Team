@@ -1,0 +1,130 @@
+/* Páginas legais do PACE TEAM (cores da marca: azul-marinho e laranja) */
+:root {
+  --bg: #1b2733;
+  --card: #223140;
+  --text: #f3f5f8;
+  --muted: #b7c2cf;
+  --accent: #fd5a0c;
+  --line: rgba(255, 255, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    "Montserrat",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 18px;
+}
+
+.brand span {
+  color: var(--accent);
+}
+
+h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  margin: 0 0 4px;
+}
+
+h2 {
+  font-size: 19px;
+  margin: 32px 0 8px;
+  color: var(--accent);
+}
+
+h3 {
+  font-size: 16px;
+  margin: 20px 0 4px;
+}
+
+p,
+li {
+  color: var(--muted);
+}
+
+strong {
+  color: var(--text);
+}
+
+a {
+  color: var(--accent);
+}
+
+ul {
+  padding-left: 20px;
+}
+
+.updated {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+
+th {
+  color: var(--text);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted);
+}

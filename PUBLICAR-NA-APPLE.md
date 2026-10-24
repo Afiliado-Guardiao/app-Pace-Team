@@ -61,18 +61,28 @@ npx eas submit -p ios
    SMTP próprio é **grátis no plano gratuito**: o Resend (3.000 e-mails/mês)
    ou o Brevo (300/dia) têm plano sem custo. Crie a conta, copie host, porta,
    usuário e senha SMTP e cole nessa tela.
-4. **Confirmação de e-mail**: hoje está **desligada**, e o cadastro conta com
+4. **E-mail de "Esqueci minha senha"** (Authentication › Emails › Templates ›
+   *Reset Password*): o app pede um **código de 6 dígitos**, então o modelo
+   precisa mostrar `{{ .Token }}`. Cole no assunto `Seu código PACE TEAM` e no
+   corpo:
+   ```html
+   <h2>Redefinir sua senha</h2>
+   <p>Use este código no app PACE TEAM:</p>
+   <p style="font-size:28px;font-weight:700;letter-spacing:6px">{{ .Token }}</p>
+   <p>Ele vale por 1 hora. Se não foi você, ignore este e-mail.</p>
+   ```
+5. **Confirmação de e-mail**: hoje está **desligada**, e o cadastro conta com
    isso (o usuário anônimo do onboarding vira conta na hora). **Não ligue**
    antes de o app ganhar a tela "confirme seu e-mail".
-5. **Senhas vazadas** (Authentication › Policies): a proteção contra senhas
+6. **Senhas vazadas** (Authentication › Policies): a proteção contra senhas
    vazadas só existe no plano Pro — ligue depois de mudar de plano.
 
 ### App Store Connect (página do app)
-- **Política de Privacidade (URL obrigatória)** e Termos de Uso **do PACE
-  TEAM**. A política da própria Apple (apple.com/legal/privacy) não serve: ela
-  explica o que a Apple faz com os dados, não o que o PACE TEAM coleta
-  (localização das corridas, fotos, nome, e-mail, posts). A Apple e a LGPD
-  exigem a do app. Hoje os textos no cadastro não abrem nada.
+- **URLs** (já usadas pelo app, depois de publicar a pasta `legal/` no
+  repositório público `pace-team-site` com o GitHub Pages ligado):
+  - Política de Privacidade: https://afiliado-guardiao.github.io/pace-team-site/privacidade.html
+  - Termos de Uso (EULA): https://afiliado-guardiao.github.io/pace-team-site/termos.html
+  - Suporte: https://afiliado-guardiao.github.io/pace-team-site/
 - **Privacidade do app** (questionário): localização precisa (corridas),
   fotos, nome, e-mail, ID do usuário, conteúdo do usuário (posts) e
   identificadores de push. Se o Paywallo/Superwall forem ligados, declarar
@@ -86,10 +96,10 @@ npx eas submit -p ios
 
 ## 3. Pendências no app antes de enviar
 
-- **"Esqueci minha senha" incompleto**: o e-mail é enviado, mas o link não
-  volta para o app e não existe tela para criar a senha nova.
-- **Termos e Política de Privacidade**: escrever, publicar numa URL e deixar
-  os textos do cadastro clicáveis.
+- **Termos e Política de Privacidade**: textos prontos em `legal/`. Falta o
+  nome completo do responsável (marcado `[NOME COMPLETO DO RESPONSÁVEL]`) e
+  publicar no repositório público `pace-team-site`. Recomendado: uma leitura
+  de um advogado antes do lançamento.
 - **Assinatura (Paywallo/Superwall)**: as chaves estão vazias. Decidir se o
   app terá assinatura no lançamento; se não, dá para tirar esses SDKs.
 - **Ícone do Android**: ainda usa a arte antiga com cantos arredondados (só

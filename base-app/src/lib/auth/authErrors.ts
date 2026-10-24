@@ -9,6 +9,14 @@ const MESSAGES: { match: RegExp; text: string }[] = [
 	{ match: /password should be at least/i, text: "A senha precisa ter pelo menos 8 caracteres." },
 	{ match: /rate limit|too many/i, text: "Muitas tentativas. Espere um pouco e tente de novo." },
 	{ match: /network|fetch/i, text: "Sem conexão. Verifique a internet e tente de novo." },
+	{
+		match: /token has expired|invalid token|otp|expired/i,
+		text: "Código inválido ou vencido. Peça um novo código.",
+	},
+	{
+		match: /should be different|same password/i,
+		text: "Use uma senha diferente da anterior.",
+	},
 ];
 
 const FALLBACK = "Não deu certo agora. Tente de novo em instantes.";

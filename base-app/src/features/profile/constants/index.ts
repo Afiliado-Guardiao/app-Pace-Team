@@ -16,6 +16,8 @@ export const PROFILE_COPY = {
 	settingsBody: "Você pode entrar de novo quando quiser com o mesmo e-mail ou Apple.",
 	close: "Fechar",
 	deleteAccount: "Excluir conta",
+	terms: "Termos de Uso",
+	privacyPolicy: "Política de Privacidade",
 } as const;
 
 export const EDIT_COPY = {

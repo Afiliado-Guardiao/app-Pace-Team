@@ -17,6 +17,7 @@ import { PHOTOS } from "@/lib/pace";
 
 import { DeleteAccountSheet } from "./components/DeleteAccountSheet";
 import { EditProfileSheet } from "./components/EditProfileSheet";
+import { LegalLinks } from "./components/LegalLinks";
 import { MedalsRow } from "./components/MedalsRow";
 import { PrivacyList } from "./components/PrivacyList";
 import { ProfileHeader } from "./components/ProfileHeader";
@@ -160,6 +161,7 @@ export const ProfileScreen: React.FC = () => {
 				}
 			>
 				<Text style={styles.settingsText}>{PROFILE_COPY.settingsBody}</Text>
+				<LegalLinks />
 			</Sheet>
 			<EditProfileSheet edit={edit} />
 			<DeleteAccountSheet

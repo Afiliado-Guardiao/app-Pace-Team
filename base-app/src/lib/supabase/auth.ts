@@ -119,10 +119,28 @@ export async function signUpWithEmail(params: {
 	await syncAuthState();
 }
 
-// "Esqueci minha senha": envia o e-mail de redefinição do Supabase.
+// "Esqueci minha senha": envia o e-mail de redefinição do Supabase (com o
+// código de 6 dígitos {{ .Token }} no modelo "Reset Password" do painel).
 export async function sendPasswordReset(email: string): Promise<void> {
 	const { error } = await supabase.auth.resetPasswordForEmail(email);
 	if (error) throw error;
+}
+
+// Confere o código do e-mail, grava a senha nova e já deixa o atleta logado.
+export async function resetPasswordWithCode(params: {
+	email: string;
+	code: string;
+	newPassword: string;
+}): Promise<void> {
+	const { error } = await supabase.auth.verifyOtp({
+		email: params.email,
+		token: params.code,
+		type: "recovery",
+	});
+	if (error) throw error;
+	const { error: updateError } = await supabase.auth.updateUser({ password: params.newPassword });
+	if (updateError) throw updateError;
+	await syncAuthState();
 }
 
 // Login social — prontos para uso quando o app integrar os módulos nativos.
