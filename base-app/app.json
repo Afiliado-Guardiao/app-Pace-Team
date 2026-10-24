@@ -4,7 +4,7 @@
 		"slug": "pace-team",
 		"version": "1.0.0",
 		"orientation": "portrait",
-		"icon": "./assets/brand/app-icon-tile.png",
+		"icon": "./assets/brand/app-icon-1024.png",
 		"userInterfaceStyle": "dark",
 		"newArchEnabled": true,
 		"scheme": "paceteam",
@@ -13,6 +13,17 @@
 			"supportsTablet": false,
 			"bundleIdentifier": "com.paceteam.app",
 			"usesAppleSignIn": true,
+			"config": {
+				"usesNonExemptEncryption": false
+			},
+			"privacyManifests": {
+				"NSPrivacyAccessedAPITypes": [
+					{
+						"NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+						"NSPrivacyAccessedAPITypeReasons": ["CA92.1", "1C8F.1"]
+					}
+				]
+			},
 			"infoPlist": {
 				"LSApplicationQueriesSchemes": ["whatsapp"],
 				"NSSupportsLiveActivities": true,
