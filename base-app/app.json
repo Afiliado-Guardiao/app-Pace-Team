@@ -2,6 +2,7 @@
 	"expo": {
 		"name": "PACE TEAM",
 		"slug": "pace-team",
+		"owner": "paceteam-app",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/brand/app-icon-1024.png",
@@ -96,6 +97,11 @@
 			],
 			"@bacons/apple-targets",
 			"./plugins/withBuddyAppIntents"
-		]
+		],
+		"extra": {
+			"eas": {
+				"projectId": "62d160f4-7e98-4bec-b09e-a229e474cabc"
+			}
+		}
 	}
 }
