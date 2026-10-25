@@ -3,6 +3,7 @@
 // corrida pelo Buddy sem abrir o app. Em iOS mais antigo o app agenda uma
 // notificação com som no lugar (src/lib/buddy/notifications.ts).
 // O módulo PaceBuddy chama esta classe pelo nome (PaceBuddyAlarmBridge).
+import AppIntents
 import Foundation
 import SwiftUI
 #if canImport(AlarmKit)
