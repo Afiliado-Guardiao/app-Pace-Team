@@ -18,9 +18,9 @@ export const BUDDY_SCREEN_COPY = {
 } as const;
 
 export const SHORTCUT_STEPS = [
-	"No app Atalhos, procure PACE TEAM e toque em Chamar Pace Buddy.",
+	"No app Atalhos, toque em + › Adicionar Ação, procure Pace Buddy e escolha Chamar Pace Buddy. Toque em OK para salvar.",
 	"Abra Ajustes › Acessibilidade › Toque › Tocar Atrás › Toque Duplo.",
-	"Escolha Chamar Pace Buddy.",
+	"Role até o fim da lista e, em Atalhos, escolha Chamar Pace Buddy.",
 ] as const;
 
 // Domingo primeiro, como no calendário do iPhone
