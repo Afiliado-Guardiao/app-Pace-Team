@@ -121,6 +121,16 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     let pending = BuddyPendingRun(
       mode: current.withTeam ? "team" : "dist", seconds: (finishedAt - current.startedAt) / 1000,
       km: current.meters / 1000, finishedAt: finishedAt, route: current.route, goalReached: goalReached)
+    // Encerra na hora (contador, Dynamic Island e "Correndo" no cartão) e só
+    // depois envia ao servidor — antes o envio segurava o fim da corrida.
+    run = nil
+    last = nil
+    BuddyStore.saveActiveRun(nil)
+    // "Encerrar" some na hora; meta batida comemora por 2 min e some
+    await endActivities(km: km, unlocked: nil, isDone: goalReached, keepFor: goalReached ? 120 : nil)
+    BuddyStore.reloadWidgets()
+    isFinishing = false
+
     let saved = await BuddySupabase.saveRun(pending)
     var unlocked: String?
     if goalReached, saved, let result = await BuddySupabase.completeGoal() {
@@ -129,23 +139,19 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     }
     // Sem internet ou sem sessão: o app envia quando abrir
     if !saved { BuddyStore.appendPending(pending) }
-    await endActivities(km: km, unlocked: unlocked, isDone: goalReached)
     if goalReached {
       let speech = BuddySpeech.celebrate(km: current.goalKm, withTeam: current.withTeam, teamName: BuddyStore.state().teamName)
       let extra = unlocked.map { " Novo acessório: \($0)." } ?? ""
       BuddyNotifier.show(speech.title, speech.subtitle + extra)
     }
-    run = nil
-    last = nil
-    BuddyStore.saveActiveRun(nil)
-    BuddyStore.reloadWidgets()
-    isFinishing = false
   }
 
-  private func endActivities(km: Double, unlocked: String?, isDone: Bool) async {
+  private func endActivities(km: Double, unlocked: String?, isDone: Bool, keepFor seconds: TimeInterval?) async {
     let content = ActivityContent(state: BuddyRunAttributes.ContentState(km: km, isDone: isDone, unlocked: unlocked), staleDate: nil)
+    var policy = ActivityUIDismissalPolicy.immediate
+    if let seconds { policy = .after(Date().addingTimeInterval(seconds)) }
     for item in Activity<BuddyRunAttributes>.activities {
-      await item.end(content, dismissalPolicy: .after(Date().addingTimeInterval(15 * 60)))
+      await item.end(content, dismissalPolicy: policy)
     }
     activity = nil
   }
