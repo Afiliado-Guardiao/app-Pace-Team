@@ -68,6 +68,7 @@
 				{
 					"locationWhenInUsePermission": "O PACE TEAM usa sua localização durante a corrida para medir distância, ritmo e rota e somar pontos para o seu time.",
 					"locationAlwaysAndWhenInUsePermission": "O PACE TEAM continua medindo sua corrida com a tela bloqueada. A localização só é usada enquanto uma corrida está em andamento.",
+					"locationAlwaysPermission": "O PACE TEAM continua medindo sua corrida com a tela bloqueada. A localização só é usada enquanto uma corrida está em andamento.",
 					"isIosBackgroundLocationEnabled": true,
 					"isAndroidBackgroundLocationEnabled": true,
 					"isAndroidForegroundServiceEnabled": true
