@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import Svg, { Defs, Path } from "react-native-svg";
 
@@ -29,12 +29,14 @@ export const GlassRim: React.FC<IGlassRimProps> = ({ width, height, radius, bott
 	});
 
 	return (
-		<Svg width={width} height={height} style={StyleSheet.absoluteFill} pointerEvents="none">
-			<Defs>
-				<GradientDef layer={rimLayer} id={id} width={width} height={height} />
-			</Defs>
-			<Path d={path} fill="none" stroke={`url(#${id})`} strokeWidth={stroke} />
-		</Svg>
+		<View style={StyleSheet.absoluteFill} pointerEvents="none">
+			<Svg width={width} height={height} style={StyleSheet.absoluteFill}>
+				<Defs>
+					<GradientDef layer={rimLayer} id={id} width={width} height={height} />
+				</Defs>
+				<Path d={path} fill="none" stroke={`url(#${id})`} strokeWidth={stroke} />
+			</Svg>
+		</View>
 	);
 };
 

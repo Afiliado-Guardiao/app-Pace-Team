@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import Svg, { Defs, Rect } from "react-native-svg";
 
@@ -15,22 +15,24 @@ export const GradientLayers: React.FC<IGradientLayersProps> = ({ layers, width, 
 	const ordered = [...layers].reverse();
 
 	return (
-		<Svg width={width} height={height} style={StyleSheet.absoluteFill} pointerEvents="none">
-			<Defs>
-				{ordered.map((layer, index) => (
-					<GradientDef
-						key={ids[index]}
-						layer={layer}
-						id={ids[index]}
-						width={width}
-						height={height}
-					/>
+		<View style={StyleSheet.absoluteFill} pointerEvents="none">
+			<Svg width={width} height={height} style={StyleSheet.absoluteFill}>
+				<Defs>
+					{ordered.map((layer, index) => (
+						<GradientDef
+							key={ids[index]}
+							layer={layer}
+							id={ids[index]}
+							width={width}
+							height={height}
+						/>
+					))}
+				</Defs>
+				{ids.map((id) => (
+					<Rect key={id} width={width} height={height} fill={`url(#${id})`} />
 				))}
-			</Defs>
-			{ids.map((id) => (
-				<Rect key={id} width={width} height={height} fill={`url(#${id})`} />
-			))}
-		</Svg>
+			</Svg>
+		</View>
 	);
 };
 
