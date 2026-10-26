@@ -36,12 +36,12 @@ export const useShortcutGuide = (): IUseShortcutGuideReturn => {
 			Linking.openURL("shortcuts://").catch(() => undefined);
 		},
 		allowAlways: () => {
+			// O iOS só mostra o pedido de "Sempre" uma vez; depois disso (ou se a
+			// localização foi negada) o único caminho é Ajustes › PACE TEAM.
 			const ask = async (): Promise<void> => {
 				const fg = await Location.requestForegroundPermissionsAsync();
-				if (!fg.granted) return;
-				const bg = await Location.requestBackgroundPermissionsAsync();
-				// Já negou antes: só dá para mudar em Ajustes
-				if (!bg.granted && !bg.canAskAgain) await Linking.openSettings();
+				const bg = fg.granted ? await Location.requestBackgroundPermissionsAsync() : null;
+				if (!bg?.granted) await Linking.openSettings();
 				refresh();
 			};
 			ask().catch(() => undefined);

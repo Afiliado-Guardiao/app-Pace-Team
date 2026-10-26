@@ -247,11 +247,13 @@ struct BuddyPanelView: View {
 
   private var chooseActions: some View {
     VStack(spacing: 4) {
+      // Três quadrados do mesmo tamanho (grid de 3 colunas do design)
       HStack(spacing: 6) {
         Button(intent: BuddyPanelRunIntent(withTeam: false)) {
           BuddyChoiceTile(icon: "figure.run", label: "Correr\nsozinho", isActive: false)
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
         Button(intent: BuddyPanelRunIntent(withTeam: true)) {
           BuddyChoiceTile(
             icon: "person.3.fill",
@@ -259,10 +261,11 @@ struct BuddyPanelView: View {
             isActive: model.mode == .team)
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
         BuddyGoalTile(km: model.state.goalKm)
           .frame(maxWidth: .infinity)
-          .layoutPriority(1)
       }
+      .frame(maxWidth: .infinity)
       Button(intent: BuddyPanelDismissIntent()) {
         Text("Agora não")
           .font(.system(size: 11.5, weight: .semibold))
@@ -359,7 +362,7 @@ private struct BuddyGoalTile: View {
           Image(systemName: "chevron.left")
             .font(.system(size: 13, weight: .bold))
             .foregroundStyle(Color.buddyOrange400)
-            .frame(width: 22, height: 26)
+            .frame(width: 18, height: 28)
         }
         .buttonStyle(.plain)
         HStack(alignment: .firstTextBaseline, spacing: 2) {
@@ -367,13 +370,14 @@ private struct BuddyGoalTile: View {
           Text("km").font(.system(size: 11, weight: .semibold)).foregroundStyle(.white.opacity(0.6))
         }
         .foregroundStyle(.white)
-        .frame(minWidth: 40)
         .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .frame(minWidth: 30)
         Button(intent: BuddyPanelKmIntent(delta: 1)) {
           Image(systemName: "chevron.right")
             .font(.system(size: 13, weight: .bold))
             .foregroundStyle(Color.buddyOrange400)
-            .frame(width: 22, height: 26)
+            .frame(width: 18, height: 28)
         }
         .buttonStyle(.plain)
       }

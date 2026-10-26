@@ -97,7 +97,15 @@
 				}
 			],
 			"@bacons/apple-targets",
-			"./plugins/withBuddyAppIntents"
+			"./plugins/withBuddyAppIntents",
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"deploymentTarget": "16.4"
+					}
+				}
+			]
 		],
 		"extra": {
 			"eas": {
