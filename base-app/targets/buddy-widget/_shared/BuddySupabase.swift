@@ -111,9 +111,30 @@ enum BuddySupabase {
   }
 
   // Colegas da equipe online nos últimos 15 min (RPC get_team_online)
-  static func teamOnline() async -> [String] {
+  static func teamOnline() async -> [String]? {
     guard let data = await post("/rest/v1/rpc/get_team_online", json: [String: Any]()),
-          let list = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return [] }
+          let list = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return nil }
     return list.compactMap { $0["name"] as? String }
+  }
+
+  private static let onlineCacheKey = "buddyTeamOnline"
+
+  // Para o cartão: espera no máximo ~1 s pela internet; se demorar, usa a
+  // última lista conhecida (o cartão não pode ficar carregando).
+  static func teamOnlineQuick() async -> [String] {
+    let cached = BuddyStore.defaults?.stringArray(forKey: onlineCacheKey) ?? []
+    let fresh: [String]? = await withTaskGroup(of: [String]?.self) { group in
+      group.addTask { await teamOnline() }
+      group.addTask {
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        return nil
+      }
+      let first = await group.next() ?? nil
+      group.cancelAll()
+      return first
+    }
+    guard let fresh else { return cached }
+    BuddyStore.defaults?.set(fresh, forKey: onlineCacheKey)
+    return fresh
   }
 }

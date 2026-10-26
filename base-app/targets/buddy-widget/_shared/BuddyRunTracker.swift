@@ -40,7 +40,11 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
   private var isFinishing = false
 
   static var hasAlwaysPermission: Bool { CLLocationManager().authorizationStatus == .authorizedAlways }
-  var isRunning: Bool { run != nil || BuddyStore.activeRun() != nil }
+  // Também conta um contador que ficou na tela sem corrida salva, para o
+  // cartão mostrar "Encerrar" e limpar.
+  var isRunning: Bool {
+    run != nil || BuddyStore.activeRun() != nil || !Activity<BuddyRunAttributes>.activities.isEmpty
+  }
 
   func start(withTeam: Bool) async {
     guard run == nil else { return }
@@ -52,6 +56,10 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     shownKm = 0
     isFinishing = false
     BuddyStore.saveActiveRun(active)
+    // Fecha qualquer contador antigo antes de abrir o novo
+    for item in Activity<BuddyRunAttributes>.activities {
+      await item.end(nil, dismissalPolicy: .immediate)
+    }
     await MainActor.run { self.startLocation() }
     startActivity(state: state, run: active, startedAt: now)
     BuddyStore.reloadWidgets()
@@ -110,11 +118,22 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
 
   // Encerra: meta batida (automático) ou "Encerrar" na Dynamic Island
   func finish(goalReached: Bool) async {
-    guard !isFinishing, let current = run ?? BuddyStore.activeRun() else { return }
+    guard !isFinishing else { return }
     isFinishing = true
     await MainActor.run {
       self.manager?.stopUpdatingLocation()
       self.manager = nil
+    }
+    // Sem corrida salva (ex.: ficou de uma versão anterior do app): mesmo
+    // assim desliga tudo — contador na tela, Dynamic Island e GPS.
+    guard let current = run ?? BuddyStore.activeRun() else {
+      run = nil
+      last = nil
+      BuddyStore.saveActiveRun(nil)
+      await endActivities(km: 0, unlocked: nil, isDone: false, keepFor: nil)
+      BuddyStore.reloadWidgets()
+      isFinishing = false
+      return
     }
     let finishedAt = Date().timeIntervalSince1970 * 1000
     let km = goalReached ? max(current.goalKm, current.meters / 1000) : current.meters / 1000

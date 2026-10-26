@@ -30,7 +30,11 @@ struct BuddyPanelModel {
   // Falas do painel do design (renderVals → spT / spS)
   var speech: BuddySpeech {
     let base = BuddySpeech.now(state)
-    if isRunning { return base }
+    if isRunning {
+      // Contador na tela sem corrida salva: pede para encerrar
+      return base.pose == .run ? base
+        : BuddySpeech(title: "Correndo", subtitle: "Toque em Encerrar corrida para parar.", pose: .run)
+    }
     switch mode {
     case .bye:
       return BuddySpeech(title: "Tchau!", subtitle: "Dois toques atrás e eu volto.", pose: .wave)
@@ -62,7 +66,7 @@ struct BuddyPanelSnippetIntent: SnippetIntent {
   func perform() async throws -> some IntentResult & ShowsSnippetView {
     let mode = BuddyPanelMode.current
     // Mini Buddies de quem está online aparecem assim que o cartão abre
-    let online = BuddyStore.state().hasTeam ? await BuddySupabase.teamOnline() : []
+    let online = BuddyStore.state().hasTeam ? await BuddySupabase.teamOnlineQuick() : []
     let model = BuddyPanelModel(
       state: BuddyStore.state(), mode: mode, online: online, isRunning: BuddyRunTracker.shared.isRunning)
     return .result(view: BuddyPanelView(model: model))

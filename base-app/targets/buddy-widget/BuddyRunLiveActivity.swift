@@ -58,8 +58,21 @@ private struct BuddyRunLockScreen: View {
             Text(context.attributes.startedAt, style: .timer)
               .font(.system(size: 12, weight: .semibold).monospacedDigit()).foregroundStyle(.white.opacity(0.62))
           }
-          Text("\(buddyKm(context.state.km)) / \(buddyGoalLabel(context.attributes.goalKm)) km")
-            .font(.system(size: 20, weight: .bold).monospacedDigit()).foregroundStyle(Color.buddyOrange400)
+          HStack(alignment: .center) {
+            Text("\(buddyKm(context.state.km)) / \(buddyGoalLabel(context.attributes.goalKm)) km")
+              .font(.system(size: 20, weight: .bold).monospacedDigit()).foregroundStyle(Color.buddyOrange400)
+            Spacer(minLength: 6)
+            // Encerrar direto da tela bloqueada
+            Button(intent: FinishBuddyRunIntent()) {
+              Label("Encerrar", systemImage: "stop.fill")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 10)
+                .frame(height: 28)
+                .background(Capsule().fill(Color.buddyOrange))
+            }
+            .buttonStyle(.plain)
+          }
           BuddyProgressBar(value: progress)
         }
       }
