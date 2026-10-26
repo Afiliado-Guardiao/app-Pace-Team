@@ -2,7 +2,7 @@ import React from "react";
 
 import Svg, { Circle, Defs, LinearGradient, Path, Stop } from "react-native-svg";
 
-import { useSvgId } from "@/components/pace";
+import { splitStopColor, useSvgId } from "@/components/pace";
 import { useTheme } from "@/theme";
 
 import { STORY } from "../../constants";
@@ -58,7 +58,7 @@ export const StoryRoute: React.FC<IStoryRouteProps> = ({
 					y2={box.y + box.h}
 				>
 					{stops.map((s) => (
-						<Stop key={s.offset} offset={s.offset} stopColor={s.color} />
+						<Stop key={s.offset} offset={s.offset} {...splitStopColor(s.color)} />
 					))}
 				</LinearGradient>
 			</Defs>

@@ -12,4 +12,4 @@ export * from "./navigation";
 export type { IGlassAppearance, IGlassFill, IGlassSurfaceProps } from "./primitives";
 export { GlassSurface, GradientLayers } from "./primitives";
 export * from "./surfaces";
-export { tracking } from "./utils";
+export { splitStopColor, tracking } from "./utils";

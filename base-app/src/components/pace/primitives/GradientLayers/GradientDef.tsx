@@ -2,14 +2,14 @@ import React from "react";
 
 import { LinearGradient, RadialGradient, Stop } from "react-native-svg";
 
-import { linearGeometry, radialGeometry } from "../../utils";
+import { linearGeometry, radialGeometry, splitStopColor } from "../../utils";
 
 import { IGradientLayerProps } from "./types";
 
 // Definição SVG de uma camada (linear ou radial) em coordenadas absolutas.
 export const GradientDef: React.FC<IGradientLayerProps> = ({ layer, id, width, height }) => {
 	const stops = layer.stops.map((stop, index) => (
-		<Stop key={index} offset={stop.offset} stopColor={stop.color} />
+		<Stop key={index} offset={stop.offset} {...splitStopColor(stop.color)} />
 	));
 
 	if (layer.type === "linear") {

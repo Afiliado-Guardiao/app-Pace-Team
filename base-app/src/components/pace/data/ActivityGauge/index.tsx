@@ -15,6 +15,7 @@ import { useTheme } from "@/theme";
 
 import { CountUp } from "../../core/CountUp";
 import { useSvgId } from "../../hooks";
+import { splitStopColor } from "../../utils";
 
 import {
 	DEFAULT_SIZE,
@@ -55,7 +56,7 @@ export const ActivityGauge: React.FC<IActivityGaugeProps> = ({
 				<Defs>
 					<LinearGradient id={`${id}-grad`} x1="0" y1="1" x2="1" y2="0">
 						{progressLayer.stops.map((stop, index) => (
-							<Stop key={index} offset={stop.offset} stopColor={stop.color} />
+							<Stop key={index} offset={stop.offset} {...splitStopColor(stop.color)} />
 						))}
 					</LinearGradient>
 					<Filter id={`${id}-glow`} x="-30%" y="-30%" width="160%" height="160%">

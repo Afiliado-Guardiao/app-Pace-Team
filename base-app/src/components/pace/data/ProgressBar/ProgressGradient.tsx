@@ -6,6 +6,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useTheme } from "@/theme";
 
 import { useSvgId } from "../../hooks";
+import { splitStopColor } from "../../utils";
 
 // --gradient-progress esticado na largura atual do preenchimento (como no CSS,
 // a ponta clara acompanha a frente da barra).
@@ -19,7 +20,7 @@ export const ProgressGradient: React.FC = () => {
 			<Defs>
 				<LinearGradient id={id} x1="0" y1="0" x2="1" y2="0">
 					{layer.stops.map((stop, index) => (
-						<Stop key={index} offset={stop.offset} stopColor={stop.color} />
+						<Stop key={index} offset={stop.offset} {...splitStopColor(stop.color)} />
 					))}
 				</LinearGradient>
 			</Defs>
