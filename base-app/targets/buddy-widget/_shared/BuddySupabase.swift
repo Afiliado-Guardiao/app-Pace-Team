@@ -109,4 +109,11 @@ enum BuddySupabase {
   static func pingOnline() async {
     _ = await post("/functions/v1/buddy-team-online", json: [String: Any]())
   }
+
+  // Colegas da equipe online nos últimos 15 min (RPC get_team_online)
+  static func teamOnline() async -> [String] {
+    guard let data = await post("/rest/v1/rpc/get_team_online", json: [String: Any]()),
+          let list = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return [] }
+    return list.compactMap { $0["name"] as? String }
+  }
 }
