@@ -15,12 +15,12 @@ struct BuddySpeech {
       return BuddySpeech(title: "Tô com febre…", subtitle: "Faz 7 dias sem correr. Um trote leve já me cura.", pose: .sick)
     }
     let km = state.goalKm
-    if km >= 42 { return BuddySpeech(title: "Uma maratona inteira?!", subtitle: "Respeito total. Hidrata e bora.", pose: .excited) }
-    if km >= 21 { return BuddySpeech(title: "Meia maratona?!", subtitle: "Meta de atleta. Vai com calma no ritmo.", pose: .excited) }
+    if km >= 42 { return BuddySpeech(title: "Uma maratona inteira?!", subtitle: "Respeito total. Hidrata e bora.", pose: .celebrate) }
+    if km >= 21 { return BuddySpeech(title: "Meia maratona?!", subtitle: "Meta de atleta. Vai com calma no ritmo.", pose: .celebrate) }
     if km >= 15 {
       return BuddySpeech(title: "Uau, \(buddyGoalLabel(km)) km?!", subtitle: "Meta alta. O time vai sentir esse treino.", pose: .excited)
     }
-    return BuddySpeech(title: "Bora correr?", subtitle: "Escolhe a meta e como você vai.", pose: .wave)
+    return BuddySpeech(title: "Bora correr?", subtitle: "Escolhe a meta e como você vai.", pose: .idle)
   }
 
   // "Meta batida!" (painel de comemoração)

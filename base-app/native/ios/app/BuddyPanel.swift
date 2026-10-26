@@ -61,7 +61,8 @@ struct BuddyPanelSnippetIntent: SnippetIntent {
 
   func perform() async throws -> some IntentResult & ShowsSnippetView {
     let mode = BuddyPanelMode.current
-    let online = mode == .team ? await BuddySupabase.teamOnline() : []
+    // Mini Buddies de quem está online aparecem assim que o cartão abre
+    let online = BuddyStore.state().hasTeam ? await BuddySupabase.teamOnline() : []
     let model = BuddyPanelModel(
       state: BuddyStore.state(), mode: mode, online: online, isRunning: BuddyRunTracker.shared.isRunning)
     return .result(view: BuddyPanelView(model: model))
@@ -190,7 +191,7 @@ struct BuddyPanelView: View {
         BuddyView(color: model.state.color, accessories: model.state.accessories, pose: speech.pose)
           .scaleEffect(0.86)
           .frame(width: 140, height: 120)
-        if model.mode == .team && !model.online.isEmpty {
+        if !model.online.isEmpty && model.mode != .bye {
           BuddyTeamRow(names: model.online).offset(x: 120, y: 92)
         }
       }
