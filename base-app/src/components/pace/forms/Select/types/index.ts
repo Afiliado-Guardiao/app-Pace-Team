@@ -23,6 +23,7 @@ export interface ISelectStyles {
 	value: TextStyle;
 	placeholder: TextStyle;
 	list: ViewStyle;
+	listScroll: ViewStyle;
 	appearance: IGlassAppearance;
 	iconColor: string;
 }

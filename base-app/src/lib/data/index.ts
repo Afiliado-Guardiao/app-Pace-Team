@@ -4,6 +4,7 @@ export { DATA_KEYS } from "./keys";
 export { runDate, runTitle, toRun } from "./mappers";
 export type { ITeamView } from "./teamView";
 export { useAthleteSearch } from "./useAthleteSearch";
+export { useDeleteRun } from "./useDeleteRun";
 export { useFeed } from "./useFeed";
 export { useMyChallenges } from "./useMyChallenges";
 export { useMyInvites } from "./useMyInvites";

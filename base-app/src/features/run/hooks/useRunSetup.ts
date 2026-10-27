@@ -4,11 +4,12 @@ import { useFocusEffect, useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import {
-	currentFix,
 	IRunGoal,
 	IRunMode,
 	requestRunPermission,
+	startGpsWatch,
 	startTracking,
+	useGpsStore,
 	useRunStore,
 } from "@/lib/run";
 import { ROUTES } from "@/constants/routes";
@@ -40,9 +41,11 @@ export const useRunSetup = (): IUseRunSetupReturn => {
 	const setMode = useRunStore((s) => s.setMode);
 	const setGoal = useRunStore((s) => s.setGoal);
 	const start = useRunStore((s) => s.start);
-	const [gps, setGps] = useState<IGpsState>("searching");
-	const [accuracy, setAccuracy] = useState(0);
-	const [position, setPosition] = useState<readonly [number, number] | null>(null);
+	const fix = useGpsStore((s) => s.fix);
+	const [isDenied, setIsDenied] = useState(false);
+	// O GPS fica ligado desde a abertura do app (useGpsWarmup): com uma
+	// posição já conhecida, o INICIAR libera na hora
+	const gps: IGpsState = isDenied ? "denied" : fix ? "ready" : "searching";
 
 	// Corrida em andamento (app reaberto no meio): volta direto para ela
 	useFocusEffect(
@@ -53,23 +56,14 @@ export const useRunSetup = (): IUseRunSetupReturn => {
 
 	useEffect(() => {
 		let active = true;
-		// Função (e não a variável) para o TS não "fixar" o valor entre os awaits
-		const isCancelled = (): boolean => !active;
 		const locate = async (): Promise<void> => {
 			const permission = await requestRunPermission();
-			if (isCancelled()) return;
-			if (permission === "denied") {
-				setGps("denied");
-				return;
-			}
-			const fix = await currentFix();
-			if (isCancelled() || !fix) return;
-			setPosition([fix.lat, fix.lng]);
-			setAccuracy(fix.accuracy);
-			setGps("ready");
+			if (!active) return;
+			setIsDenied(permission === "denied");
+			if (permission === "granted") await startGpsWatch();
 		};
 		locate().catch(() => {
-			if (active) setGps("denied");
+			if (active) setIsDenied(true);
 		});
 		return () => {
 			active = false;
@@ -95,8 +89,8 @@ export const useRunSetup = (): IUseRunSetupReturn => {
 
 	return {
 		gps,
-		accuracy,
-		position,
+		accuracy: fix?.accuracy ?? 0,
+		position: fix ? ([fix.lat, fix.lng] as const) : null,
 		mode,
 		goal,
 		toast,

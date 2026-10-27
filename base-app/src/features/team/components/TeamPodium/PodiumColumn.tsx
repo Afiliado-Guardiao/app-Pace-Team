@@ -77,6 +77,7 @@ export const PodiumColumn: React.FC<IPodiumColumnProps> = ({ member, place, valu
 			<View>
 				<Avatar
 					name={member.name}
+					src={member.avatarUrl ?? undefined}
 					size={place === 0 ? 56 : 46}
 					ring={member.you}
 					style={styles.avatar}

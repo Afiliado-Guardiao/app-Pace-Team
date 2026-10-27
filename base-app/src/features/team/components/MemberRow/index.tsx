@@ -72,7 +72,12 @@ export const MemberRow: React.FC<IMemberRowProps> = ({ member, position }) => {
 
 	return (
 		<GlassSurface appearance={styles.appearance} radius={20} style={styles.row}>
-			<Avatar name={member.name} size={40} ring={member.you} />
+			<Avatar
+				name={member.name}
+				src={member.avatarUrl ?? undefined}
+				size={40}
+				ring={member.you}
+			/>
 			<View style={styles.body}>
 				<View style={styles.nameRow}>
 					<Text style={styles.name}>{member.name}</Text>

@@ -91,7 +91,7 @@ export const RunRow: React.FC<IRunRowProps> = ({ run, seed, onPress }) => {
 		>
 			<GlassSurface appearance={styles.appearance} radius={22} style={styles.row}>
 				<View style={styles.thumb}>
-					<MiniRoute seed={seed} size={THUMB} />
+					<MiniRoute seed={seed} size={THUMB} route={run.route} />
 				</View>
 				<View style={styles.body}>
 					<View style={styles.top}>

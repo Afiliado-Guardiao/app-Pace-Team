@@ -11,14 +11,14 @@ import {
 	Label,
 	ScreenBackground,
 	ScreenScroll,
-	Select,
 	TopBar,
 } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
+import { PlaceFields } from "./components/PlaceFields";
 import { TeamPreviewCard } from "./components/TeamPreviewCard";
-import { CREATE_TEAM_COPY, REGION_OPTIONS, SIZE_OPTIONS } from "./constants";
+import { CREATE_TEAM_COPY, SIZE_OPTIONS } from "./constants";
 import { useCreateTeam } from "./hooks/useCreateTeam";
 
 const LOGO = 84;
@@ -72,16 +72,13 @@ const createCreateTeamStyles = (theme: ITheme) => {
 			lineHeight: typography.sizes.label * 1.45,
 			color: colors.textTertiary,
 		},
-		twoCols: { flexDirection: "row" as const, gap: 10 },
-		cityCol: { flex: 1.3 },
-		regionCol: { flex: 1 },
 		fieldLabel: {
 			marginBottom: 10,
 			fontFamily: typography.fonts.semibold,
 			fontSize: typography.sizes.label,
 			color: colors.textSecondary,
 		},
-		chips: { flexDirection: "row" as const, gap: 8 },
+		chips: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: 8 },
 		previewLabel: { marginTop: 6 },
 	};
 };
@@ -91,12 +88,16 @@ export const CreateTeamScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const form = useCreateTeam();
 	const styles = createCreateTeamStyles(theme);
+	const title = form.isEdit ? CREATE_TEAM_COPY.editTitle : CREATE_TEAM_COPY.title;
+	const submitLabel = form.isEdit ? CREATE_TEAM_COPY.editSubmit : CREATE_TEAM_COPY.submit;
+	const sizeLabel = (v: string): string =>
+		v === "2" ? `${CREATE_TEAM_COPY.duo} (2)` : `${v}${CREATE_TEAM_COPY.members}`;
 
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.citySkylineDusk} />
 			<ScreenScroll bottom={40}>
-				<TopBar title={CREATE_TEAM_COPY.title} onBack={form.goBack} />
+				<TopBar title={title} onBack={form.goBack} />
 				<View style={styles.logoRow}>
 					<Pressable
 						onPress={form.pickLogo}
@@ -126,24 +127,7 @@ export const CreateTeamScreen: React.FC = () => {
 					onChangeText={form.setName}
 					testID="create-team-name"
 				/>
-				<View style={styles.twoCols}>
-					<Select
-						label={CREATE_TEAM_COPY.city}
-						options={form.cityOptions}
-						value={form.city}
-						onChange={form.setCity}
-						style={styles.cityCol}
-						testID="create-team-city"
-					/>
-					<Select
-						label={CREATE_TEAM_COPY.region}
-						options={REGION_OPTIONS}
-						value={form.region}
-						onChange={form.setRegion}
-						style={styles.regionCol}
-						testID="create-team-region"
-					/>
-				</View>
+				<PlaceFields form={form} />
 				<View>
 					<Text style={styles.fieldLabel}>{CREATE_TEAM_COPY.category}</Text>
 					<View style={styles.chips}>
@@ -156,7 +140,7 @@ export const CreateTeamScreen: React.FC = () => {
 								}}
 								testID={`create-team-size-${v}`}
 							>
-								{`${v}${CREATE_TEAM_COPY.members}`}
+								{sizeLabel(v)}
 							</Chip>
 						))}
 					</View>
@@ -169,7 +153,7 @@ export const CreateTeamScreen: React.FC = () => {
 					testID="create-team-captain"
 				/>
 				<Label style={styles.previewLabel}>{CREATE_TEAM_COPY.preview}</Label>
-				<TeamPreviewCard name={form.name} city={form.city} size={form.slots} />
+				<TeamPreviewCard name={form.name} city={form.city.value} size={form.slots} />
 				<Button
 					size="lg"
 					fullWidth
@@ -178,7 +162,7 @@ export const CreateTeamScreen: React.FC = () => {
 					onPress={form.submit}
 					testID="create-team-submit"
 				>
-					{CREATE_TEAM_COPY.submit}
+					{submitLabel}
 				</Button>
 			</ScreenScroll>
 			<FloatingToast toast={form.toast} />

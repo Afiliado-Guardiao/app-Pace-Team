@@ -28,5 +28,7 @@ export interface IRunMapProps {
 	regions?: readonly IMapRegionBubble[];
 	friends?: readonly IMapFriend[];
 	interactive?: boolean;
+	// Corrida ao vivo: a câmera acompanha o atleta (em `me` ou na ponta da rota)
+	follow?: boolean;
 	style?: StyleProp<ViewStyle>;
 }

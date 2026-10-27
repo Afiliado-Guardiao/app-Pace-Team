@@ -4,11 +4,13 @@ import { useRouter } from "expo-router";
 
 import { runPayload, useSaveRun } from "@/lib/data";
 import { formatKm, ONLINE } from "@/lib/pace";
-import { elapsedSeconds, stopTracking, useRunStore } from "@/lib/run";
+import { elapsedSeconds, stopTracking, useGpsStore, useRunStore } from "@/lib/run";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 const TICK_MS = 1000;
+// Posição do GPS da tela vale para o ponto do atleta se for recente
+const FRESH_FIX_MS = 15_000;
 
 // Corrida em andamento: relógio, pausa, finalização e atalhos do pós-corrida.
 export const useRunLive = () => {
@@ -36,6 +38,15 @@ export const useRunLive = () => {
 	}, []);
 
 	const route = useMemo(() => points.map((p) => [p.lat, p.lng] as const), [points]);
+	const fix = useGpsStore((s) => s.fix);
+	const isFresh = fix !== null && now - fix.t < FRESH_FIX_MS;
+	const fixLat = isFresh ? fix.lat : null;
+	const fixLng = isFresh ? fix.lng : null;
+	// O mapa segue o atleta: posição mais nova do GPS ou a ponta da rota
+	const me = useMemo(
+		() => (fixLat !== null && fixLng !== null ? ([fixLat, fixLng] as const) : null),
+		[fixLat, fixLng],
+	);
 	const km = meters / 1000;
 
 	// Modo equipe na prévia: amigos ao longo do mesmo trajeto (simulação do design).
@@ -73,6 +84,7 @@ export const useRunLive = () => {
 		seconds: elapsedSeconds({ elapsedBefore, segmentStart }, now),
 		km,
 		route,
+		me,
 		friends,
 		isConfirmOpen,
 		pause,

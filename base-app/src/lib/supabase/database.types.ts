@@ -192,7 +192,23 @@ export interface Database {
 				Returns: undefined;
 			};
 			create_team: {
-				Args: { p_name: string; p_city: string; p_region: string; p_size: number };
+				Args: {
+					p_name: string;
+					p_city: string;
+					p_region: string;
+					p_size: number;
+					p_country?: string;
+				};
+				Returns: string;
+			};
+			update_team: {
+				Args: {
+					p_name: string;
+					p_city: string;
+					p_region: string;
+					p_size: number;
+					p_country?: string;
+				};
 				Returns: string;
 			};
 			join_team: { Args: { p_team_id: string }; Returns: undefined };

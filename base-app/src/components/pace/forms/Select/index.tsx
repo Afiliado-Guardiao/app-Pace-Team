@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { useTheme } from "@/theme";
 
@@ -55,7 +55,11 @@ export const Select: React.FC<ISelectProps> = ({
 				</GlassSurface>
 			</Pressable>
 			<Sheet open={select.isOpen} title={label} onClose={select.close} testID={`${testID}-sheet`}>
-				<View style={styles.list}>
+				<ScrollView
+					style={styles.listScroll}
+					contentContainerStyle={styles.list}
+					showsVerticalScrollIndicator={false}
+				>
 					{select.items.map((item) => (
 						<Radio
 							key={item.value}
@@ -67,7 +71,7 @@ export const Select: React.FC<ISelectProps> = ({
 							testID={`${testID}-option-${item.value}`}
 						/>
 					))}
-				</View>
+				</ScrollView>
 			</Sheet>
 		</View>
 	);

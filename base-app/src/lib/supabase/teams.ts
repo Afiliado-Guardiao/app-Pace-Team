@@ -51,18 +51,32 @@ export async function getTeamRanking(
 	return data;
 }
 
-export async function createTeam(params: {
+export interface ITeamForm {
 	name: string;
 	city: string;
 	region: string;
 	size: number;
-}): Promise<string> {
-	const { data, error } = await supabase.rpc("create_team", {
-		p_name: params.name,
-		p_city: params.city,
-		p_region: params.region,
-		p_size: params.size,
-	});
+	// Código do país (BR, PT, US…)
+	country: string;
+}
+
+const teamArgs = (params: ITeamForm) => ({
+	p_name: params.name,
+	p_city: params.city,
+	p_region: params.region,
+	p_size: params.size,
+	p_country: params.country,
+});
+
+export async function createTeam(params: ITeamForm): Promise<string> {
+	const { data, error } = await supabase.rpc("create_team", teamArgs(params));
+	if (error) throw error;
+	return data;
+}
+
+// Capitão edita nome, cidade, região, país e categoria da equipe
+export async function updateTeam(params: ITeamForm): Promise<string> {
+	const { data, error } = await supabase.rpc("update_team", teamArgs(params));
 	if (error) throw error;
 	return data;
 }

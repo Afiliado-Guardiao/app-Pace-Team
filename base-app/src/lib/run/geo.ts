@@ -25,18 +25,22 @@ export const distanceMeters = (a: IRunPoint, b: IRunPoint): number => {
 
 export const GPS_FILTER = {
 	// Precisão pior que isso é descartada (m)
-	maxAccuracy: 25,
+	maxAccuracy: 20,
 	// Ritmo humano máximo de corrida: ~32 km/h (m/s)
 	maxSpeed: 9,
 	// Movimento mínimo para contar (evita "tremer" parado) (m)
-	minStep: 2,
+	minStep: 3,
+	// O passo também precisa ser maior que metade do erro do GPS: sem isso,
+	// andando devagar, o sinal oscilando desenha bicos e zigue-zagues
+	accuracyStep: 0.5,
 } as const;
 
 // Aceita o ponto novo? (precisão boa, velocidade humana, movimento real)
 export const isValidStep = (prev: IRunPoint, next: IRunPoint): boolean => {
 	if ((next.accuracy ?? 0) > GPS_FILTER.maxAccuracy) return false;
 	const meters = distanceMeters(prev, next);
-	if (meters < GPS_FILTER.minStep) return false;
+	const minStep = Math.max(GPS_FILTER.minStep, (next.accuracy ?? 0) * GPS_FILTER.accuracyStep);
+	if (meters < minStep) return false;
 	const seconds = Math.max(0.5, (next.t - prev.t) / 1000);
 	return meters / seconds <= GPS_FILTER.maxSpeed;
 };

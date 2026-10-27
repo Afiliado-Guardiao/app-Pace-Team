@@ -1,5 +1,12 @@
 export const CREATE_TEAM_COPY = {
 	title: "Criar equipe",
+	editTitle: "Editar equipe",
+	editSubmit: "Salvar alterações",
+	country: "País",
+	otherCity: "Digite o nome da cidade",
+	otherRegion: "Digite a região",
+	cityMissing: "Escolha a cidade da equipe (ou digite em Outra).",
+	duo: "Dupla",
 	logo: "Logo",
 	logoHint: "Envie o escudo do time. PNG ou JPG quadrado, mínimo 512 px.",
 	logoDenied: "Libere o acesso às fotos em Ajustes › PACE TEAM › Fotos.",
@@ -19,8 +26,7 @@ export const CREATE_TEAM_COPY = {
 	namePlaceholder: "Ex.: Pace Sharks",
 } as const;
 
-export const CITY_OPTIONS = ["Campinas", "Valinhos", "Paulínia"] as const;
-export const REGION_OPTIONS = ["RMC", "Capital", "Litoral"] as const;
-export const SIZE_OPTIONS = ["3", "5", "10"] as const;
+// 2 = dupla (casal, amigos); a cidade e a região vêm de @/lib/pace (places)
+export const SIZE_OPTIONS = ["2", "3", "5", "10"] as const;
 // Só o capitão entrou até agora
 export const JOINED = 1;

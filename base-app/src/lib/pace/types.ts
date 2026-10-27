@@ -24,6 +24,8 @@ export interface ITeamMember {
 	km: number;
 	pts: number;
 	you?: boolean;
+	// Foto do perfil do atleta (null = iniciais)
+	avatarUrl?: string | null;
 }
 
 export interface IRankedTeam {
@@ -46,6 +48,8 @@ export interface IRun {
 	pts: number;
 	status: IRunStatus;
 	image: ImageSourcePropType;
+	// Percurso gravado pelo GPS (só nas corridas reais; a prévia não tem)
+	route?: readonly (readonly [number, number])[];
 }
 
 export interface IOnlineFriend {

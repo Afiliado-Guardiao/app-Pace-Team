@@ -109,6 +109,7 @@ export const MapScreen: React.FC = () => {
 							title={run.title}
 							meta={`${run.km} km · ${run.time}`}
 							seed={i}
+							route={run.route}
 							isSelected={i === map.selected}
 							onPress={() => {
 								map.openCard(i);

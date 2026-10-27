@@ -57,7 +57,7 @@ export const RunSetupScreen: React.FC = () => {
 					me={me}
 					showRoute={false}
 					showMe={Boolean(me)}
-					interactive={false}
+					interactive
 					friends={friends}
 				/>
 			</View>

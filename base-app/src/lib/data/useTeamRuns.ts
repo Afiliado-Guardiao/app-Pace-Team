@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { formatPace, GROUP_RUN, MY_TEAM } from "@/lib/pace";
-import { getTeamLastRuns, ITeamLastRun, ITeamLastRuns } from "@/lib/supabase";
+import { avatarUrlOf, getTeamLastRuns, ITeamLastRun, ITeamLastRuns } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { DATA_KEYS } from "./keys";
@@ -14,6 +14,7 @@ export interface ITeamRunMember {
 	pace: string;
 	points: number;
 	isYou: boolean;
+	avatarUrl?: string | null;
 }
 
 // "Corrida da equipe": quem correu no dia mais recente com corrida da equipe.
@@ -69,6 +70,7 @@ const byAthlete = (runs: readonly ITeamLastRun[]): ITeamRunMember[] => {
 			pace: formatPace(r.km > 0 ? r.seconds / r.km : 0),
 			points: r.points,
 			isYou: r.isYou,
+			avatarUrl: r.avatarPath ? avatarUrlOf(r.avatarPath) : null,
 		}))
 		.sort((a, b) => b.km - a.km);
 };

@@ -49,6 +49,7 @@ export interface ITeamLastRun {
 	id: string;
 	userId: string;
 	name: string;
+	avatarPath?: string | null;
 	isYou: boolean;
 	km: number;
 	seconds: number;

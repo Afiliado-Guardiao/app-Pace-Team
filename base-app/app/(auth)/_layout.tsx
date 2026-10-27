@@ -4,6 +4,7 @@ import { useTheme } from "@/theme";
 import { useBuddyBridge } from "@/lib/buddy";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { usePaywallGate } from "@/lib/purchases";
+import { useGpsWarmup } from "@/lib/run";
 
 // Área logada: abas com trilho lateral + telas internas empilhadas por cima.
 // O Pace Buddy vive fora do app (atalho e widget do iPhone); aqui o app só
@@ -12,6 +13,7 @@ export default function AuthLayout() {
 	const { theme } = useTheme();
 	const { shouldRender } = useAuthGuard();
 	useBuddyBridge();
+	useGpsWarmup();
 	usePaywallGate();
 
 	if (!shouldRender) return null;

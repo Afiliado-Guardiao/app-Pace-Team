@@ -4,6 +4,7 @@ import { ActivityIndicator, Text, View } from "react-native";
 import {
 	Avatar,
 	Badge,
+	Button,
 	GlassCard,
 	ListRow,
 	ProgressBar,
@@ -51,7 +52,8 @@ const createTeamDetailsStyles = (theme: ITheme) => {
 // 12 Detalhes da equipe: identidade, números, semana, conquistas e funções.
 export const TeamDetailsScreen: React.FC = () => {
 	const { theme } = useTheme();
-	const { team, isLoading, achievements, goBack, openInvite } = useTeamDetails();
+	const details = useTeamDetails();
+	const { team, isLoading, achievements, goBack, openInvite } = details;
 	const styles = createTeamDetailsStyles(theme);
 	const goal = (team?.size ?? 0) * WEEKLY_KM_PER_MEMBER;
 
@@ -62,14 +64,20 @@ export const TeamDetailsScreen: React.FC = () => {
 				<TopBar
 					title={TEAM_DETAILS_COPY.title}
 					onBack={goBack}
-					right={{ icon: "share-2", label: TEAM_DETAILS_COPY.share }}
+					right={{ icon: "share-2", label: TEAM_DETAILS_COPY.share, onPress: details.share }}
 				/>
 				{isLoading ? (
 					<ActivityIndicator style={styles.loading} color={theme.pace.colors.textPrimary} />
 				) : null}
 				{team ? (
 					<View style={styles.identity}>
-						<Avatar name={team.name} square size={64} style={styles.logo} />
+						<Avatar
+							name={team.name}
+							src={team.logoUrl ?? undefined}
+							square
+							size={64}
+							style={styles.logo}
+						/>
 						<View style={styles.identityText}>
 							<Text style={styles.name}>{team.name}</Text>
 							<View style={styles.badges}>
@@ -80,6 +88,17 @@ export const TeamDetailsScreen: React.FC = () => {
 					</View>
 				) : null}
 				{team ? <Text style={styles.about}>{team.description || team.place}</Text> : null}
+				{details.canEdit ? (
+					<Button
+						variant="glass"
+						size="sm"
+						icon="pencil"
+						onPress={details.openEdit}
+						testID="team-details-edit"
+					>
+						{TEAM_DETAILS_COPY.edit}
+					</Button>
+				) : null}
 				{team ? (
 					<View style={styles.row}>
 						<GlassCard padding={14} radius={22} style={styles.cell}>

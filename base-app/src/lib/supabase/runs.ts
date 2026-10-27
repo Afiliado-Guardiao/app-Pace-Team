@@ -9,6 +9,8 @@ export interface ISavedRun {
 	status: IRunStatusDb;
 	points: number;
 	route: [number, number][];
+	// "team" = correu com a equipe (pelo app ou pelo Buddy)
+	mode?: string;
 }
 
 export interface ISaveRunPayload {
@@ -22,7 +24,7 @@ export interface ISaveRunPayload {
 // Percurso guardado com no máximo ~400 pontos (o suficiente para o desenho)
 const MAX_ROUTE_POINTS = 400;
 const COORD_DECIMALS = 5;
-const RUN_COLUMNS = "id, started_at, duration_s, distance_m, status, points, route";
+const RUN_COLUMNS = "id, started_at, duration_s, distance_m, status, points, route, mode";
 
 const simplify = (route: ISaveRunPayload["route"]): [number, number][] => {
 	const step = Math.max(1, Math.ceil(route.length / MAX_ROUTE_POINTS));
@@ -42,6 +44,7 @@ const toSavedRun = (row: {
 	status: IRunStatusDb;
 	points: number;
 	route: unknown;
+	mode?: string;
 }): ISavedRun => ({
 	id: row.id,
 	startedAt: row.started_at,
@@ -50,6 +53,7 @@ const toSavedRun = (row: {
 	status: row.status,
 	points: row.points,
 	route: Array.isArray(row.route) ? row.route.filter(isPoint) : [],
+	mode: row.mode,
 });
 
 // Salva a corrida; o banco valida (ritmo humano, mínimos) e calcula os pontos.
@@ -70,6 +74,12 @@ export async function saveRun(payload: ISaveRunPayload): Promise<ISavedRun> {
 		.single();
 	if (error) throw error;
 	return toSavedRun(data);
+}
+
+// Descarta uma corrida minha (sai do histórico, do ranking e dos pontos)
+export async function deleteRun(id: string): Promise<void> {
+	const { error } = await supabase.from("runs").delete().eq("id", id);
+	if (error) throw error;
 }
 
 export async function getMyRuns(limit = 50): Promise<ISavedRun[]> {

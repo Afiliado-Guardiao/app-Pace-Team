@@ -10,6 +10,8 @@ interface IRouteCardProps {
 	title: string;
 	meta: string;
 	seed: number;
+	// Percurso real (a prévia não tem e usa o traçado de exemplo)
+	route?: readonly (readonly [number, number])[];
 	isSelected: boolean;
 	onPress: () => void;
 }
@@ -57,6 +59,7 @@ export const RouteCard: React.FC<IRouteCardProps> = ({
 	title,
 	meta,
 	seed,
+	route,
 	isSelected,
 	onPress,
 }) => {
@@ -73,7 +76,7 @@ export const RouteCard: React.FC<IRouteCardProps> = ({
 		>
 			<GlassSurface appearance={styles.appearance} radius={22} style={styles.card}>
 				<View style={styles.thumb}>
-					<MiniRoute seed={seed} size={THUMB} />
+					<MiniRoute seed={seed} size={THUMB} route={route} />
 				</View>
 				<View style={styles.texts}>
 					<Text style={styles.title} numberOfLines={1}>

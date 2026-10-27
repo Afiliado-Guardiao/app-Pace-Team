@@ -14,6 +14,11 @@ interface IUpdateProfilePayload {
 
 const AVATAR_BUCKET = "avatars";
 
+// URL pública da foto de perfil a partir do caminho salvo no banco
+export function avatarUrlOf(path: string): string {
+	return supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
 async function currentUserId(): Promise<string> {
 	const {
 		data: { user },

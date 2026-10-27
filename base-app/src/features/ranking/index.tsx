@@ -50,7 +50,13 @@ const createRankingStyles = (theme: ITheme) => {
 			fontSize: sizes.label,
 			color: colors.textSecondary,
 		},
-		filters: { flexDirection: "row" as const, gap: spacing[2], alignItems: "center" as const },
+		filters: {
+			flexDirection: "row" as const,
+			flexWrap: "wrap" as const,
+			rowGap: spacing[2],
+			gap: spacing[2],
+			alignItems: "center" as const,
+		},
 		city: {
 			marginLeft: "auto" as const,
 			flexDirection: "row" as const,

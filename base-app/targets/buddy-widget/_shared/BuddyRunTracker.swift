@@ -28,9 +28,11 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
   static let shared = BuddyRunTracker()
 
   // Filtro do GPS (GPS_FILTER do app)
-  private let maxAccuracy: Double = 25
+  private let maxAccuracy: Double = 20
   private let maxSpeed: Double = 9
-  private let minStep: Double = 2
+  private let minStep: Double = 3
+  // Passo maior que metade do erro do GPS (evita bicos andando devagar)
+  private let accuracyStep: Double = 0.5
 
   private var manager: CLLocationManager?
   private var run: BuddyActiveRun?
@@ -95,7 +97,8 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
       if let last {
         let meters = location.distance(from: last)
         let seconds = max(0.5, location.timestamp.timeIntervalSince(last.timestamp))
-        if meters < minStep || meters / seconds > maxSpeed { continue }
+        let step = max(minStep, location.horizontalAccuracy * accuracyStep)
+        if meters < step || meters / seconds > maxSpeed { continue }
         current.meters += meters
       }
       last = location

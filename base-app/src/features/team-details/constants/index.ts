@@ -1,6 +1,9 @@
 export const TEAM_DETAILS_COPY = {
 	title: "Detalhes da equipe",
 	share: "Compartilhar",
+	edit: "Editar equipe",
+	shareA: "Bora correr com a ",
+	shareB: " no PACE TEAM? No app, vá em Equipe > Entrar em uma equipe e use o código ",
 	name: "Pace Sharks",
 	category: "5 x 5",
 	since: "Desde mar 2026",
@@ -29,6 +32,8 @@ export const WEEK_BARS = [62, 78, 54, 90, 70, 96, 40] as const;
 export const WEEK_DAYS = "STQQSSD";
 export const WEEK_AREA = 110;
 export const WEEK_HIGHLIGHT = 5;
+
+export const INVITE_LINK_BASE = "paceteam://invite/";
 
 // Meta coletiva da semana: 50 km por vaga (5 x 5 = 250 km)
 export const WEEKLY_KM_PER_MEMBER = 50;

@@ -38,7 +38,14 @@ export const RunLiveScreen: React.FC = () => {
 
 	return (
 		<View style={styles.root} onLayout={onLayout}>
-			<RunMap route={live.route} friends={live.friends} showMe interactive={false} />
+			<RunMap
+				route={live.route}
+				me={live.me}
+				friends={live.friends}
+				showMe
+				interactive={false}
+				follow
+			/>
 			{size ? (
 				<>
 					<View style={styles.topScrim} pointerEvents="none">

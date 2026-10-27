@@ -6,6 +6,8 @@ import { ISelectStyles } from "../types";
 const FIELD_HEIGHT = 54;
 const FIELD_PADDING_X = 16;
 const LIST_GAP = 18;
+// Listas longas (ex.: cidades) rolam dentro da folha
+const LIST_MAX_HEIGHT = 380;
 
 export const createSelectStyles = (theme: ITheme): ISelectStyles => {
 	const { blur, colors, shadows, spacing, typography } = theme.pace;
@@ -29,7 +31,8 @@ export const createSelectStyles = (theme: ITheme): ISelectStyles => {
 		},
 		value: { ...valueText, color: colors.textPrimary },
 		placeholder: { ...valueText, color: colors.textTertiary },
-		list: { gap: LIST_GAP, paddingTop: spacing[1] },
+		list: { gap: LIST_GAP, paddingTop: spacing[1], paddingBottom: spacing[1] },
+		listScroll: { maxHeight: LIST_MAX_HEIGHT },
 		appearance: {
 			fill: { color: colors.surfaceInput },
 			blur: blur.intensity.glass,

@@ -13,6 +13,7 @@ import {
 	POST_SAMPLE_PHOTOS,
 } from "@/lib/pace";
 import {
+	avatarUrlOf,
 	IFeedRow,
 	ISavedRun,
 	ITeamMemberStat,
@@ -71,6 +72,7 @@ export const toRun = (run: ISavedRun, index: number): IRun => {
 		pts: run.points,
 		status: run.status,
 		image: RUN_PHOTOS[index % RUN_PHOTOS.length] ?? PHOTOS.runnerCitySunset,
+		route: run.route,
 	};
 };
 
@@ -81,6 +83,7 @@ export const toTeamMember = (m: ITeamMemberStat): ITeamMember => ({
 	km: m.km,
 	pts: m.points,
 	you: m.isYou,
+	avatarUrl: m.avatarPath ? avatarUrlOf(m.avatarPath) : null,
 });
 
 export const toRankedTeam = (t: ITeamRankingEntry): IRankedTeam => ({

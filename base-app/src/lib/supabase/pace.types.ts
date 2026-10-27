@@ -22,6 +22,8 @@ export interface ITeamMemberStat {
 	isYou: boolean;
 	km: number;
 	points: number;
+	// Foto de perfil (caminho no bucket "avatars")
+	avatarPath?: string | null;
 }
 
 export interface ITeamInviteRow {
@@ -36,6 +38,8 @@ export interface ITeamDetails {
 	city: string;
 	region: string | null;
 	state: string | null;
+	// Código do país (BR, PT, US…)
+	country?: string;
 	size: number;
 	description: string | null;
 	logoUrl: string | null;

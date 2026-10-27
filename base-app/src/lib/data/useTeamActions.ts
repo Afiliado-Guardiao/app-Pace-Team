@@ -1,6 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { createTeam, inviteToTeam, joinTeamByCode, leaveTeam, respondInvite } from "@/lib/supabase";
+import {
+	createTeam,
+	inviteToTeam,
+	joinTeamByCode,
+	leaveTeam,
+	respondInvite,
+	updateTeam,
+} from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { DATA_KEYS } from "./keys";
@@ -23,6 +30,7 @@ export const useTeamActions = () => {
 	};
 
 	const create = useMutation({ mutationFn: live(createTeam), onSuccess: refresh });
+	const update = useMutation({ mutationFn: live(updateTeam), onSuccess: refresh });
 	const joinByCode = useMutation({ mutationFn: live(joinTeamByCode), onSuccess: refresh });
 	const leave = useMutation({ mutationFn: live(leaveTeam), onSuccess: refresh });
 	const invite = useMutation({ mutationFn: live(inviteToTeam), onSuccess: refresh });
@@ -32,7 +40,7 @@ export const useTeamActions = () => {
 		onSuccess: refresh,
 	});
 
-	return { create, joinByCode, leave, invite, respond };
+	return { create, update, joinByCode, leave, invite, respond };
 };
 
 // Mensagem amigável para os erros das funções de equipe.
@@ -43,5 +51,8 @@ export const teamErrorMessage = (error: unknown): string => {
 	if (text.includes("team_not_found")) return "Não encontramos essa equipe. Confira o código.";
 	if (text.includes("invite_not_found")) return "Esse convite não está mais disponível.";
 	if (text.includes("no_team")) return "Crie ou entre em uma equipe para convidar.";
+	if (text.includes("not_captain")) return "Só o capitão pode editar a equipe.";
+	if (text.includes("team_too_small"))
+		return "A equipe já tem mais integrantes que essa categoria. Escolha uma maior.";
 	return "Não deu certo agora. Verifique a conexão e tente de novo.";
 };

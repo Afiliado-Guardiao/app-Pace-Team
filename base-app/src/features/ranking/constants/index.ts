@@ -19,7 +19,8 @@ export const RANKING_SCOPES = ["Cidade", "Região", "Estado", "País"] as const;
 export const WORLD_SCOPE = "Mundo";
 
 // Categorias do campeonato (equipes de 3, 5 ou 10)
-export const RANKING_CATEGORIES = ["3", "5", "10"] as const;
+// 2 x 2 = duplas
+export const RANKING_CATEGORIES = ["2", "3", "5", "10"] as const;
 
 export const RANKING_RULES = [
 	{ icon: "footprints", text: "8 pts por km validado, até 20 km por corrida." },

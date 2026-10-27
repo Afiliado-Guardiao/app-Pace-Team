@@ -8,6 +8,9 @@ export interface ITeamView {
 	id: string;
 	name: string;
 	city: string;
+	region: string;
+	// Código do país (BR, PT, US…)
+	country: string;
 	// "Campinas · RMC · SP"
 	place: string;
 	size: number;
@@ -34,6 +37,8 @@ export const toTeamView = (t: ITeamDetails): ITeamView => ({
 	id: t.id,
 	name: t.name,
 	city: t.city,
+	region: t.region ?? "",
+	country: t.country ?? "BR",
 	place: [t.city, t.region, t.state].filter(Boolean).join(" · "),
 	size: t.size,
 	category: `${String(t.size)} x ${String(t.size)}`,
@@ -57,6 +62,8 @@ export const DEMO_TEAM_VIEW: ITeamView = {
 	id: "demo",
 	name: MY_TEAM.name,
 	city: "Campinas",
+	region: "RMC",
+	country: "BR",
 	place: "Campinas · Região Metropolitana · SP",
 	size: MY_TEAM.size,
 	category: `${String(MY_TEAM.size)} x ${String(MY_TEAM.size)}`,
