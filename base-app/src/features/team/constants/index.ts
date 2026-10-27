@@ -13,6 +13,7 @@ export const TEAM_COPY = {
 	podiumTitle: "Pódio da equipe",
 	podiumSub: "Esta semana · reinicia na segunda",
 	you: "Você",
+	online: "Online agora · ",
 	membersTitle: "Integrantes · ",
 	membersAction: "Detalhes da equipe",
 	weekKm: " km na semana",

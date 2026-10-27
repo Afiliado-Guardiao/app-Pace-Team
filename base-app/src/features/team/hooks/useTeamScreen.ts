@@ -1,9 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
-import { ITeamView, teamErrorMessage, useMyInvites, useMyTeam, useTeamActions } from "@/lib/data";
+import {
+	ITeamView,
+	teamErrorMessage,
+	useMyInvites,
+	useMyTeam,
+	useTeamActions,
+	useTeamOnline,
+} from "@/lib/data";
 import { IMyInvite } from "@/lib/supabase";
 import { ROUTES } from "@/constants/routes";
 
@@ -36,7 +43,27 @@ interface IUseTeamScreenReturn {
 // 09 Equipe: com time (capa, números, pódio, integrantes) ou sem time.
 export const useTeamScreen = (): IUseTeamScreenReturn => {
 	const router = useRouter();
-	const { team, isLoading } = useMyTeam();
+	const { team: myTeam, isLoading, refetch } = useMyTeam();
+	const { mates, refetch: refetchOnline } = useTeamOnline();
+	// Quem entrou na equipe ou ficou online aparece ao abrir a aba
+	useFocusEffect(
+		useCallback(() => {
+			refetch();
+			refetchOnline();
+		}, [refetch, refetchOnline]),
+	);
+	// Bolinha verde de online: colegas com o app aberto (e você, que está aqui)
+	const team = useMemo((): ITeamView | null => {
+		if (!myTeam) return null;
+		const online = new Set(mates.map((m) => m.id));
+		return {
+			...myTeam,
+			members: myTeam.members.map((m) => ({
+				...m,
+				isOnline: Boolean(m.you) || (m.id !== undefined && online.has(m.id)),
+			})),
+		};
+	}, [myTeam, mates]);
 	const { invites } = useMyInvites();
 	const actions = useTeamActions();
 	const { toast, showToast } = useFloatingToast();

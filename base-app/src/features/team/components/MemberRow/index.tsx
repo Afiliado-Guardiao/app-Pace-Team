@@ -30,6 +30,23 @@ const createMemberRowStyles = (theme: ITheme, isYou: boolean) => {
 			rim: true,
 		},
 		body: { flex: 1 },
+		avatar: { position: "relative" as const },
+		onlineDot: {
+			position: "absolute" as const,
+			right: -1,
+			bottom: -1,
+			width: 13,
+			height: 13,
+			borderRadius: 7,
+			borderWidth: 2,
+			borderColor: colors.bgApp,
+			backgroundColor: colors.statusSuccess,
+		},
+		online: {
+			fontFamily: typography.fonts.semibold,
+			fontSize: typography.sizes.label,
+			color: colors.statusSuccess,
+		},
 		nameRow: { flexDirection: "row" as const, gap: 6, alignItems: "center" as const },
 		name: {
 			fontFamily: typography.fonts.bold,
@@ -69,23 +86,28 @@ export const MemberRow: React.FC<IMemberRowProps> = ({ member, position }) => {
 	const { theme } = useTheme();
 	const styles = createMemberRowStyles(theme, Boolean(member.you));
 	const isCaptain = member.role === "Capitão";
+	const sub = `${member.role} · ${formatKm(member.km, 1)}${TEAM_COPY.weekKm}`;
 
 	return (
 		<GlassSurface appearance={styles.appearance} radius={20} style={styles.row}>
-			<Avatar
-				name={member.name}
-				src={member.avatarUrl ?? undefined}
-				size={40}
-				ring={member.you}
-			/>
+			<View style={styles.avatar}>
+				<Avatar
+					name={member.name}
+					src={member.avatarUrl ?? undefined}
+					size={40}
+					ring={member.you}
+				/>
+				{member.isOnline ? <View style={styles.onlineDot} /> : null}
+			</View>
 			<View style={styles.body}>
 				<View style={styles.nameRow}>
 					<Text style={styles.name}>{member.name}</Text>
 					{isCaptain ? <Icon name="crown" size={14} color={theme.pace.colors.rankGold} /> : null}
 				</View>
-				<Text
-					style={styles.sub}
-				>{`${member.role} · ${formatKm(member.km, 1)}${TEAM_COPY.weekKm}`}</Text>
+				<Text style={styles.sub}>
+					{member.isOnline ? <Text style={styles.online}>{TEAM_COPY.online}</Text> : null}
+					{sub}
+				</Text>
 			</View>
 			<Text style={styles.points}>
 				{member.pts}

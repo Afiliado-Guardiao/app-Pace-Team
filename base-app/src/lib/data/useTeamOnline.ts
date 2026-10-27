@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { ImageSourcePropType } from "react-native";
 
 import { useQuery } from "@tanstack/react-query";
@@ -18,9 +19,10 @@ export interface ITeamOnlineView {
 interface IUseTeamOnlineReturn {
 	mates: ITeamOnlineView[];
 	isLoading: boolean;
+	refetch: () => void;
 }
 
-const REFRESH_MS = 60_000;
+const REFRESH_MS = 30_000;
 
 const DEMO_MATES: ITeamOnlineView[] = ONLINE.map((f) => ({
 	id: f.name,
@@ -37,9 +39,15 @@ export const useTeamOnline = (): IUseTeamOnlineReturn => {
 		refetchInterval: REFRESH_MS,
 	});
 
-	if (IS_PREVIEW) return { mates: DEMO_MATES, isLoading: false };
+	const refetch = query.refetch;
+	const reload = useCallback(() => {
+		void refetch();
+	}, [refetch]);
+
+	if (IS_PREVIEW) return { mates: DEMO_MATES, isLoading: false, refetch: reload };
 	return {
 		mates: (query.data ?? []).map((m) => ({ id: m.id, name: m.name || "Atleta" })),
 		isLoading: query.isLoading,
+		refetch: reload,
 	};
 };

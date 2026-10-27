@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import { useQuery } from "@tanstack/react-query";
 
 import { getMyTeam } from "@/lib/supabase";
@@ -29,12 +31,11 @@ const fetchMyTeam = async (): Promise<ITeamView | null> => {
 // Minha equipe (null = ainda sem time).
 export const useMyTeam = (): IUseMyTeamReturn => {
 	const query = useQuery({ queryKey: DATA_KEYS.myTeam, queryFn: fetchMyTeam });
+	const queryRefetch = query.refetch;
+	// Estável: pode ir nas dependências de efeitos (ex.: recarregar ao focar)
+	const refetch = useCallback(() => {
+		void queryRefetch();
+	}, [queryRefetch]);
 
-	return {
-		team: query.data ?? null,
-		isLoading: query.isLoading,
-		refetch: () => {
-			void query.refetch();
-		},
-	};
+	return { team: query.data ?? null, isLoading: query.isLoading, refetch };
 };
