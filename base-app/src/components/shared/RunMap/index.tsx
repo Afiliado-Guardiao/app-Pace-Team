@@ -18,6 +18,7 @@ export const RunMap: React.FC<IRunMapProps> = ({
 	showRoute = true,
 	showMe = false,
 	me,
+	meImage,
 	regions,
 	friends,
 	interactive = true,
@@ -74,8 +75,8 @@ export const RunMap: React.FC<IRunMapProps> = ({
 					</Marker>
 				) : null}
 				{(showMe || showRoute) && map.mePosition ? (
-					<Marker coordinate={map.mePosition} anchor={{ x: 0.5, y: 0.5 }}>
-						<MePin />
+					<Marker coordinate={map.mePosition} anchor={{ x: 0.5, y: meImage ? 0.35 : 0.5 }}>
+						{meImage ? <FriendPin image={meImage} name="Você" label="Você" /> : <MePin />}
 					</Marker>
 				) : null}
 				{regions?.map((r, i) => (
@@ -101,7 +102,7 @@ export const RunMap: React.FC<IRunMapProps> = ({
 						coordinate={{ latitude: f.position[0], longitude: f.position[1] }}
 						anchor={{ x: 0.5, y: 0.35 }}
 					>
-						<FriendPin image={f.image} label={f.label} />
+						<FriendPin image={f.image} name={f.name ?? f.label} label={f.label} />
 					</Marker>
 				))}
 			</MapView>

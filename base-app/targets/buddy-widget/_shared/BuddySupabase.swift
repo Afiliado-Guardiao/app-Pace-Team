@@ -13,6 +13,13 @@ struct BuddyConfig: Codable {
   var storageKey: String
 }
 
+// Colega online com o Buddy do jeito que ele configurou no app dele
+struct BuddyMate: Codable, Equatable {
+  var name: String
+  var color: String
+  var accessories: [String]
+}
+
 enum BuddySupabase {
   private static let maxRoutePoints = 400
 
@@ -94,7 +101,15 @@ enum BuddySupabase {
       "distance_m": (run.km * 10_000).rounded() / 10,
       "route": route,
     ]
-    return await post("/rest/v1/runs", json: body, prefer: "return=minimal") != nil
+    guard let data = await post("/rest/v1/runs?select=id", json: body, prefer: "return=representation") else {
+      return false
+    }
+    // Colegas recebem a notificação "fulano concluiu uma corrida"
+    if let rows = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]],
+       let id = rows.first?["id"] as? String {
+      _ = await post("/functions/v1/team-run-push", json: ["runId": id])
+    }
+    return true
   }
 
   // Meta cumprida: soma no servidor e devolve o acessório liberado
@@ -105,25 +120,42 @@ enum BuddySupabase {
     return (goals, object["unlocked"] as? String)
   }
 
+  // Correndo com a equipe: a posição ao vivo (os colegas veem a foto no mapa)
+  static func setLivePosition(lat: Double, lng: Double) async {
+    _ = await post("/rest/v1/rpc/set_live_position", json: ["p_lat": lat, "p_lng": lng])
+  }
+
+  // Terminou: ninguém mais vê onde o atleta está
+  static func clearLivePosition() async {
+    _ = await post("/rest/v1/rpc/clear_live_position", json: [String: Any]())
+  }
+
   // Avisa a equipe que este atleta está online (push com limite de 2 h)
   static func pingOnline() async {
     _ = await post("/functions/v1/buddy-team-online", json: [String: Any]())
   }
 
-  // Colegas da equipe online nos últimos 15 min (RPC get_team_online)
-  static func teamOnline() async -> [String]? {
+  // Colegas da equipe online nos últimos 15 min (RPC get_team_online), com a
+  // cor e os acessórios do Buddy de cada um
+  static func teamOnline() async -> [BuddyMate]? {
     guard let data = await post("/rest/v1/rpc/get_team_online", json: [String: Any]()),
           let list = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return nil }
-    return list.compactMap { $0["name"] as? String }
+    return list.map { item in
+      BuddyMate(
+        name: item["name"] as? String ?? "",
+        color: item["color"] as? String ?? "branco",
+        accessories: item["equipped"] as? [String] ?? [])
+    }
   }
 
-  private static let onlineCacheKey = "buddyTeamOnline"
+  private static let onlineCacheKey = "buddyTeamMates"
 
   // Para o cartão: espera no máximo ~1 s pela internet; se demorar, usa a
   // última lista conhecida (o cartão não pode ficar carregando).
-  static func teamOnlineQuick() async -> [String] {
-    let cached = BuddyStore.defaults?.stringArray(forKey: onlineCacheKey) ?? []
-    let fresh: [String]? = await withTaskGroup(of: [String]?.self) { group in
+  static func teamOnlineQuick() async -> [BuddyMate] {
+    let cached = BuddyStore.defaults?.data(forKey: onlineCacheKey)
+      .flatMap { try? JSONDecoder().decode([BuddyMate].self, from: $0) } ?? []
+    let fresh: [BuddyMate]? = await withTaskGroup(of: [BuddyMate]?.self) { group in
       group.addTask { await teamOnline() }
       group.addTask {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
@@ -134,7 +166,7 @@ enum BuddySupabase {
       return first
     }
     guard let fresh else { return cached }
-    BuddyStore.defaults?.set(fresh, forKey: onlineCacheKey)
+    BuddyStore.defaults?.set(try? JSONEncoder().encode(fresh), forKey: onlineCacheKey)
     return fresh
   }
 }

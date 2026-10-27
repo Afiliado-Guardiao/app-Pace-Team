@@ -10,6 +10,8 @@ import { ROUTES } from "@/constants/routes";
 
 import { FALLBACK_RESULT, RUN_SUMMARY_COPY } from "../constants";
 
+import { useTeamRunSource } from "./useTeamRunSource";
+
 export type IRunSummaryVariant = "summary" | "detail";
 export type IRunPointsStatus = "valid" | "pending" | "invalid";
 
@@ -62,15 +64,28 @@ const splitsOf = (points: readonly IRunPoint[]): ISplit[] => {
 // Resumo/detalhe: a última corrida, uma do histórico (?id=) ou a de exemplo.
 export const useRunSummary = (variant: IRunSummaryVariant) => {
 	const router = useRouter();
-	const params = useLocalSearchParams<{ mode?: string; id?: string }>();
+	const params = useLocalSearchParams<{ mode?: string; id?: string; teamRun?: string }>();
 	const lastResult = useRunStore((s) => s.lastResult);
 	const { saved } = useMyRuns();
 	const saveRun = useSaveRun();
 	const isDetail = variant === "detail";
 	const isGroup = params.mode === "team";
+	const own = params.id ? saved.find((r) => r.id === params.id) : undefined;
+	// Corrida de colega (aviso / Histórico › Equipe) ou a minha corrida com a equipe
+	const teamRunId = params.teamRun ?? (own?.mode === "team" ? own.id : undefined);
+	const team = useTeamRunSource(teamRunId);
+	const mate = params.teamRun ? team.run : null;
 
 	const source = useMemo((): IRunSource => {
-		const fromHistory = params.id ? saved.find((r) => r.id === params.id) : undefined;
+		if (mate) {
+			return {
+				...mate,
+				startedAt: new Date(mate.startedAt),
+				timedPoints: [],
+				savedId: mate.isYou ? mate.id : null,
+			};
+		}
+		const fromHistory = own;
 		if (fromHistory) {
 			return {
 				...fromHistory,
@@ -103,7 +118,8 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 			timedPoints: [],
 			savedId: null,
 		};
-	}, [params.id, saved, lastResult]);
+	}, [mate, own, lastResult]);
+	const runner = mate && !mate.isYou ? `${mate.name} · ` : "";
 
 	const splits = useMemo(() => splitsOf(source.timedPoints), [source.timedPoints]);
 	const emptyMeta = IS_PREVIEW ? RUN_SUMMARY_COPY.demoMeta : "";
@@ -119,7 +135,11 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		isDetail,
 		title: isDetail || isGroup ? RUN_SUMMARY_COPY.titleDetail : RUN_SUMMARY_COPY.titleDone,
 		meta: source.startedAt ? runDate(source.startedAt) : emptyMeta,
-		runTitle: source.startedAt ? runTitle(source.startedAt) : emptyTitle,
+		runTitle: source.startedAt ? `${runner}${runTitle(source.startedAt)}` : emptyTitle,
+		// Fotos de quem correu (no fim do percurso de cada um)
+		pins: team.pins,
+		// Corrida de outra pessoa não vai para o meu Compartilhar
+		canShare: !mate || mate.isYou,
 		seconds: source.seconds,
 		km: source.km,
 		points: source.points,

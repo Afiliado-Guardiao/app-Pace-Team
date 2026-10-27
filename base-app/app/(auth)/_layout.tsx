@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import { useTheme } from "@/theme";
 import { useBuddyBridge } from "@/lib/buddy";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
+import { usePushRouting } from "@/lib/hooks/usePushRouting";
 import { usePaywallGate } from "@/lib/purchases";
 import { useGpsWarmup } from "@/lib/run";
 
@@ -14,6 +15,7 @@ export default function AuthLayout() {
 	const { shouldRender } = useAuthGuard();
 	useBuddyBridge();
 	useGpsWarmup();
+	usePushRouting();
 	usePaywallGate();
 
 	if (!shouldRender) return null;

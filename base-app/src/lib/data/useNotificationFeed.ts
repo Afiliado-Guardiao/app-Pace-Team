@@ -15,6 +15,8 @@ export interface INotificationEntry extends INotification {
 	// Convite de equipe que o atleta ainda pode aceitar ou recusar
 	inviteId?: string;
 	teamName?: string;
+	// Corrida do colega que o aviso abre
+	runId?: string;
 	// false = item calculado no app (disputa da semana), sem linha no servidor
 	isStored: boolean;
 }
@@ -62,6 +64,7 @@ const toEntry = (
 	invite: row.kind === "invite" && pendingInvites.has(row.data.inviteId ?? ""),
 	inviteId: row.data.inviteId,
 	teamName: row.data.teamName,
+	runId: row.data.runId,
 	isStored: true,
 });
 

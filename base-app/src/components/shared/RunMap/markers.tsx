@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, ImageSourcePropType, Text, View } from "react-native";
 
+import { Avatar } from "@/components/pace";
 import { useTheme } from "@/theme";
 
 import { createRunMapStyles } from "./styles";
@@ -27,15 +28,21 @@ export const MePin: React.FC = () => {
 	);
 };
 
-export const FriendPin: React.FC<{ image: ImageSourcePropType; label: string }> = ({
+// Colega no mapa: foto do perfil (ou as iniciais, sem foto) e o rótulo
+export const FriendPin: React.FC<{ image?: ImageSourcePropType; name: string; label: string }> = ({
 	image,
+	name,
 	label,
 }) => {
 	const { theme } = useTheme();
 	const styles = createRunMapStyles(theme);
 	return (
 		<View style={styles.friend}>
-			<Image source={image} style={styles.friendPhoto} />
+			{image ? (
+				<Image source={image} style={styles.friendPhoto} />
+			) : (
+				<Avatar name={name} size={styles.friendPhoto.width as number} ring />
+			)}
 			<View style={styles.friendLabel}>
 				<Text style={styles.friendText}>{label}</Text>
 			</View>

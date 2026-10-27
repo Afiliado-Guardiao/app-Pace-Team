@@ -25,7 +25,7 @@ enum BuddyPanelMode: String {
 struct BuddyPanelModel {
   let state: BuddyState
   let mode: BuddyPanelMode
-  let online: [String]
+  let online: [BuddyMate]
   let isRunning: Bool
   // Atividades ao Vivo desligadas em Ajustes: o contador não aparece
   var liveActivitiesOff = false
@@ -200,7 +200,7 @@ struct BuddyPanelView: View {
           .scaleEffect(0.86)
           .frame(width: 140, height: 120)
         if !model.online.isEmpty && model.mode != .bye {
-          BuddyTeamRow(names: model.online).offset(x: 120, y: 92)
+          BuddyTeamRow(mates: model.online).offset(x: 120, y: 92)
         }
       }
       .frame(maxWidth: .infinity)
@@ -408,14 +408,12 @@ private struct BuddyGoalTile: View {
 // Mini Buddies de quem está online, com o pontinho verde (teamRow do design)
 @available(iOS 26.0, *)
 private struct BuddyTeamRow: View {
-  let names: [String]
-
-  private static let colors = ["lilas", "azul", "verde", "amarelo", "branco"]
+  let mates: [BuddyMate]
 
   var body: some View {
     HStack(spacing: 3) {
-      ForEach(Array(names.prefix(5).enumerated()), id: \.offset) { index, _ in
-        MiniTeamBuddy(color: Self.colors[index % Self.colors.count])
+      ForEach(Array(mates.prefix(5).enumerated()), id: \.offset) { _, mate in
+        MiniTeamBuddy(mate: mate)
       }
     }
   }
@@ -423,29 +421,20 @@ private struct BuddyTeamRow: View {
 
 @available(iOS 26.0, *)
 private struct MiniTeamBuddy: View {
-  let color: String
+  let mate: BuddyMate
 
+  // O Buddy do colega igual ao do app dele: cor e acessórios
   var body: some View {
-    let shades = BuddyPalette.of(color).body
     ZStack(alignment: .topLeading) {
-      UnevenRoundedRectangle(
-        topLeadingRadius: 10, bottomLeadingRadius: 8, bottomTrailingRadius: 8, topTrailingRadius: 10,
-        style: .continuous)
-        .fill(RadialGradient(colors: shades, center: UnitPoint(x: 0.3, y: 0.12), startRadius: 0, endRadius: 22))
-        .frame(width: 20, height: 17)
-        .offset(y: 2)
-      HStack(spacing: 4) {
-        Capsule().fill(Color.buddyInk).frame(width: 2.6, height: 4.2)
-        Capsule().fill(Color.buddyInk).frame(width: 2.6, height: 4.2)
-      }
-      .frame(width: 20)
-      .offset(y: 6)
+      BuddyView(color: mate.color, accessories: mate.accessories, pose: .idle)
+        .scaleEffect(0.21)
+        .frame(width: 29, height: 28)
       Circle()
         .fill(Color.buddyOnline)
         .frame(width: 6, height: 6)
         .overlay(Circle().stroke(Color.buddyNavyDeep, lineWidth: 1.5))
-        .offset(x: -2)
+        .offset(x: 2, y: 4)
     }
-    .frame(width: 20, height: 19, alignment: .topLeading)
+    .frame(width: 29, height: 28, alignment: .topLeading)
   }
 }

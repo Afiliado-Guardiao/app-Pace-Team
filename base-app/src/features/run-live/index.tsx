@@ -41,6 +41,7 @@ export const RunLiveScreen: React.FC = () => {
 			<RunMap
 				route={live.route}
 				me={live.me}
+				meImage={live.meImage}
 				friends={live.friends}
 				showMe
 				interactive={false}

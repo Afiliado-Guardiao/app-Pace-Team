@@ -12,7 +12,9 @@ export interface IMapRegionBubble {
 
 export interface IMapFriend {
 	position: ILatLng;
-	image: ImageSourcePropType;
+	// Foto do perfil (sem ela, as iniciais de `name`)
+	image?: ImageSourcePropType;
+	name?: string;
 	label: string;
 }
 
@@ -25,6 +27,8 @@ export interface IRunMapProps {
 	// Mostra o ponto pulsante do atleta (no fim do trecho desenhado ou em `me`)
 	showMe?: boolean;
 	me?: ILatLng | null;
+	// Foto do atleta no lugar do ponto branco (correndo com a equipe)
+	meImage?: ImageSourcePropType;
 	regions?: readonly IMapRegionBubble[];
 	friends?: readonly IMapFriend[];
 	interactive?: boolean;

@@ -42,6 +42,8 @@ export const ScreenScroll: React.FC<IScreenScrollProps> = ({
 			contentContainerStyle={[styles.content, contentStyle]}
 			showsVerticalScrollIndicator={false}
 			keyboardShouldPersistTaps="handled"
+			// O campo em edição sobe acima do teclado
+			automaticallyAdjustKeyboardInsets
 		>
 			{backdrop ? (
 				<View style={styles.backdrop} pointerEvents="box-none">

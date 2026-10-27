@@ -1,8 +1,10 @@
 import { useMemo } from "react";
+import { ImageSourcePropType } from "react-native";
 
-import { ITeamView, useMyTeam, useTeamOnline } from "@/lib/data";
+import { ITeamRunView, ITeamView, useMyTeam, useTeamOnline, useTeamRun } from "@/lib/data";
 import { MEMBERS, MY_TEAM } from "@/lib/pace";
 import { ROUTE, useRunStore } from "@/lib/run";
+import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { IStoryRun, IStoryTeam } from "../components/StoryTemplate";
@@ -38,14 +40,31 @@ const DEMO_RUN: IStoryRun = {
 
 const storyTeam = (team: ITeamView | null): IStoryTeam | null =>
 	team
-		? { name: team.name, initials: initialsOf(team.name), rank: team.position, isUp: true }
+		? {
+				name: team.name,
+				initials: initialsOf(team.name),
+				rank: team.position,
+				isUp: true,
+				logoUrl: team.logoUrl,
+			}
 		: null;
+
+// Correu com a equipe: a sua foto e a de quem correu junto no mesmo horário
+const crewOf = (myPhoto: string | null, teamRun: ITeamRunView | null): ImageSourcePropType[] => {
+	if (!teamRun) return [];
+	const photos = [myPhoto ?? teamRun.avatarUrl, ...teamRun.mates.map((m) => m.avatarUrl)];
+	const crew = photos.filter((url): url is string => Boolean(url)).map((uri) => ({ uri }));
+	return crew.length > 1 ? crew : [];
+};
 
 // Story da última corrida: métricas, percurso de verdade e a equipe atual.
 export const useStoryRun = (): IUseStoryRunReturn => {
 	const lastResult = useRunStore((s) => s.lastResult);
 	const { team } = useMyTeam();
 	const { mates } = useTeamOnline();
+	const myPhoto = useStore((s) => s.user?.avatarUrl ?? null);
+	const savedId = lastResult?.mode === "team" ? lastResult.saved?.id : undefined;
+	const { run: teamRun } = useTeamRun(savedId);
 
 	return useMemo(() => {
 		if (IS_PREVIEW) {
@@ -61,7 +80,7 @@ export const useStoryRun = (): IUseStoryRunReturn => {
 				points: lastResult?.saved?.points ?? provisionalPoints(km),
 				route: (lastResult?.points ?? []).map((p) => [p.lat, p.lng] as const),
 				team: storyTeam(team),
-				crew: [],
+				crew: crewOf(myPhoto, teamRun),
 				members: (team?.members ?? []).map((m) => ({
 					name: m.name,
 					km: m.km,
@@ -69,5 +88,5 @@ export const useStoryRun = (): IUseStoryRunReturn => {
 				})),
 			},
 		};
-	}, [lastResult, team, mates]);
+	}, [lastResult, team, mates, myPhoto, teamRun]);
 };

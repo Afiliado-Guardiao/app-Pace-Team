@@ -14,6 +14,7 @@ import { ROUTES } from "@/constants/routes";
 
 import { POST_COPY, POST_FALLBACK, POST_MIN_KM, POST_PHOTOS } from "../constants";
 
+import { usePostTrack } from "./usePostTrack";
 import { useShutterFlash } from "./useShutterFlash";
 
 type IStep = "camera" | "edit";
@@ -45,7 +46,10 @@ export const useRunPost = () => {
 	const demoRun = lastResult && lastResult.km > POST_MIN_KM ? lastResult : POST_FALLBACK;
 	const run = IS_PREVIEW ? demoRun : (lastResult ?? EMPTY_RUN);
 	const { team: myTeam } = useMyTeam();
-	const team = myTeam ? { name: myTeam.name, rank: myTeam.position, isUp: true } : null;
+	const team = myTeam
+		? { name: myTeam.name, rank: myTeam.position, isUp: true, logoUrl: myTeam.logoUrl }
+		: null;
+	const track = usePostTrack();
 
 	// No iPhone abre direto na câmera ao vivo quando há permissão
 	useEffect(() => {
@@ -105,6 +109,7 @@ export const useRunPost = () => {
 		step,
 		run,
 		team,
+		track,
 		cameraRef,
 		facing,
 		isFlashOn,

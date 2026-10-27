@@ -77,6 +77,7 @@ export const EditStep: React.FC<IEditStepProps> = ({ post }) => {
 						seconds={post.run.seconds}
 						km={post.run.km}
 						team={post.team}
+						track={post.track}
 						layers={post.layers}
 					/>
 				</View>

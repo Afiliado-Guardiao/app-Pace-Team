@@ -4,10 +4,10 @@ import { useTheme } from "@/theme";
 import { formatKm, formatPace } from "@/lib/pace";
 
 import { IShareTemplateId, SHARE_COPY, STORY } from "../../constants";
-import { projectRoute, storyDuration } from "../../utils/storyRoute";
+import { storyDuration } from "../../utils/storyRoute";
 
+import { StoryCrew } from "./StoryCrew";
 import { StoryLogo } from "./StoryLogo";
-import { StoryPin } from "./StoryPin";
 import { StoryRoute } from "./StoryRoute";
 import { StoryTeamPill } from "./StoryTeamPill";
 import { StoryText } from "./StoryText";
@@ -19,8 +19,10 @@ interface IStatsTemplatesProps {
 }
 
 const CX = STORY.width / 2;
-const CREW_AT = [0.06, 0.3, 0.55, 0.8] as const;
 const EQUIPE_BOX = { x: 150, y: 760, w: 780, h: 600 };
+const CENTRO_BOX = { x: CX - 190, y: 1120, w: 380, h: 340 };
+const CLASSICO_BOX = { x: 160, y: 760, w: 760, h: 620 };
+const MAX_CREW = 4;
 
 const statsOf = (run: IStoryRun): readonly (readonly [string, string])[] => [
 	[SHARE_COPY.distance, `${formatKm(run.km)} km`],
@@ -47,12 +49,13 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 					</React.Fragment>
 				))}
 				<StoryRoute
-					box={{ x: CX - 190, y: 1120, w: 380, h: 340 }}
+					box={CENTRO_BOX}
 					points={run.route}
 					lineWidth={7}
 					hasGlow={false}
 					solid={theme.pace.colors.storyRouteSolid}
 				/>
+				<StoryCrew box={CENTRO_BOX} run={run} radius={36} />
 				{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1500} /> : null}
 				<StoryLogo x={CX - 170} y={1690} width={340} />
 			</>
@@ -72,16 +75,16 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 						</StoryText>
 					</React.Fragment>
 				))}
-				<StoryRoute box={{ x: 160, y: 760, w: 760, h: 620 }} points={run.route} lineWidth={13} />
+				<StoryRoute box={CLASSICO_BOX} points={run.route} lineWidth={13} />
+				<StoryCrew box={CLASSICO_BOX} run={run} />
 				{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1460} /> : null}
 				<StoryLogo x={CX - 200} y={1680} width={400} />
 			</>
 		);
 	}
 
-	const route = projectRoute(EQUIPE_BOX, run.route);
-	const crew = run.crew.slice(0, CREW_AT.length);
-	const runners = crew.length > 0 ? `${String(crew.length + 1)}${SHARE_COPY.runners}` : "";
+	const crewSize = Math.min(run.crew.length, MAX_CREW);
+	const runners = crewSize > 1 ? `${String(crewSize)}${SHARE_COPY.runners}` : "";
 
 	return (
 		<>
@@ -109,10 +112,7 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 				{runners}
 			</StoryText>
 			<StoryRoute box={EQUIPE_BOX} points={run.route} lineWidth={12} />
-			{crew.map((photo, i) => {
-				const [x, y] = route.at(CREW_AT[i] ?? 0);
-				return <StoryPin key={i} image={photo} x={x} y={y} radius={i === 0 ? 58 : 50} />;
-			})}
+			<StoryCrew box={EQUIPE_BOX} run={run} />
 			{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1460} /> : null}
 			<StoryLogo x={CX - 200} y={1680} width={400} />
 		</>

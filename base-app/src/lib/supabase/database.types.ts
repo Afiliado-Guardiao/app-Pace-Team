@@ -234,6 +234,11 @@ export interface Database {
 			get_virada: { Args: Record<string, never>; Returns: IVirada | null };
 			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };
 			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
+			get_team_runs: { Args: { p_limit?: number }; Returns: unknown };
+			get_team_run: { Args: { p_run_id: string }; Returns: unknown };
+			set_live_position: { Args: { p_lat: number; p_lng: number }; Returns: undefined };
+			clear_live_position: { Args: Record<string, never>; Returns: undefined };
+			get_team_live_positions: { Args: Record<string, never>; Returns: unknown };
 			get_notifications: { Args: Record<string, never>; Returns: INotificationRow[] };
 			report_post: { Args: { p_post_id: string; p_reason: string }; Returns: undefined };
 			block_user: { Args: { p_user_id: string }; Returns: undefined };

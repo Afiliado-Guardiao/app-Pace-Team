@@ -38,7 +38,12 @@ export const CameraStep: React.FC<ICameraStepProps> = ({ post }) => {
 							flash={post.isFlashOn ? "on" : "off"}
 						/>
 						<View style={styles.fill} pointerEvents="none">
-							<PostArt seconds={post.run.seconds} km={post.run.km} team={post.team} />
+							<PostArt
+								seconds={post.run.seconds}
+								km={post.run.km}
+								team={post.team}
+								track={post.track}
+							/>
 						</View>
 					</View>
 				) : (
@@ -47,6 +52,7 @@ export const CameraStep: React.FC<ICameraStepProps> = ({ post }) => {
 						seconds={post.run.seconds}
 						km={post.run.km}
 						team={post.team}
+						track={post.track}
 					/>
 				)}
 			</View>

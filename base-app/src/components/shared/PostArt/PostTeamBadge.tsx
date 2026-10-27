@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import { GradientLayers } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
@@ -8,6 +8,8 @@ interface IPostTeamBadgeProps {
 	team: string;
 	rank: number;
 	isUp: boolean;
+	// Escudo que o capitão colocou (sem ele, a sigla)
+	logoUrl?: string | null;
 	cqw: number;
 }
 
@@ -42,6 +44,7 @@ const createPostTeamBadgeStyles = (theme: ITheme, cqw: number, isUp: boolean) =>
 			justifyContent: "center" as const,
 		},
 		markLayer: { position: "absolute" as const, top: 0, left: 0 },
+		logo: { width: 6 * cqw, height: 6 * cqw },
 		initials: {
 			fontFamily: typography.fonts.extrabold,
 			fontSize: 2.4 * cqw,
@@ -87,7 +90,13 @@ const initialsOf = (team: string): string =>
 		.slice(0, 2);
 
 // Pílula da equipe na arte: sigla, nome, posição e tendência no ranking.
-export const PostTeamBadge: React.FC<IPostTeamBadgeProps> = ({ team, rank, isUp, cqw }) => {
+export const PostTeamBadge: React.FC<IPostTeamBadgeProps> = ({
+	team,
+	rank,
+	isUp,
+	logoUrl,
+	cqw,
+}) => {
 	const { theme } = useTheme();
 	const styles = createPostTeamBadgeStyles(theme, cqw, isUp);
 	const mark = 6 * cqw;
@@ -97,10 +106,16 @@ export const PostTeamBadge: React.FC<IPostTeamBadgeProps> = ({ team, rank, isUp,
 	return (
 		<View style={styles.root} pointerEvents="none">
 			<View style={styles.mark}>
-				<View style={styles.markLayer}>
-					<GradientLayers layers={theme.pace.gradients.teamMark} width={mark} height={mark} />
-				</View>
-				<Text style={styles.initials}>{initialsOf(team)}</Text>
+				{logoUrl ? (
+					<Image source={{ uri: logoUrl }} style={styles.logo} />
+				) : (
+					<>
+						<View style={styles.markLayer}>
+							<GradientLayers layers={theme.pace.gradients.teamMark} width={mark} height={mark} />
+						</View>
+						<Text style={styles.initials}>{initialsOf(team)}</Text>
+					</>
+				)}
 			</View>
 			<View>
 				<Text style={styles.team}>{team}</Text>

@@ -65,7 +65,7 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 	return (
 		<View style={styles.root} onLayout={onLayout}>
 			<View style={styles.map} pointerEvents="none">
-				<RunMap route={run.route} progress={1} interactive={false} />
+				<RunMap route={run.route} progress={1} interactive={false} friends={run.pins} />
 			</View>
 			<View style={styles.map} pointerEvents="none">
 				{size ? (
@@ -86,7 +86,11 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 				<TopBar
 					title={run.title}
 					onBack={run.goBack}
-					right={{ icon: "share-2", label: RUN_SUMMARY_COPY.share, onPress: run.share }}
+					right={
+						run.canShare
+							? { icon: "share-2", label: RUN_SUMMARY_COPY.share, onPress: run.share }
+							: undefined
+					}
 				/>
 			</View>
 		</View>

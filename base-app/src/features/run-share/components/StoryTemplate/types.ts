@@ -8,6 +8,8 @@ export interface IStoryTeam {
 	initials: string;
 	rank: number;
 	isUp: boolean;
+	// Escudo que o capitão colocou (null = sigla)
+	logoUrl?: string | null;
 }
 
 export interface IStoryMember {
@@ -25,7 +27,7 @@ export interface IStoryRun {
 	route: readonly IStoryPoint[];
 	// null = atleta sem equipe (a pílula da equipe não aparece)
 	team: IStoryTeam | null;
-	// Fotos dos colegas no traçado (só na prévia; atletas reais ainda não têm foto)
+	// Fotos de quem correu junto (você e os colegas), em cima do traçado
 	crew: ImageSourcePropType[];
 	// Integrantes por km na semana (modelo "Integrantes")
 	members: IStoryMember[];

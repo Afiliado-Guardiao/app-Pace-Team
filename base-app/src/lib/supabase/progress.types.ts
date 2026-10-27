@@ -11,7 +11,7 @@ export type INotificationKind =
 	| "medal"
 	| "challenge";
 
-export type INotificationLink = "disputa" | "team" | "challenges" | "ranking";
+export type INotificationLink = "disputa" | "team" | "challenges" | "ranking" | "team_run";
 
 export interface INotificationRow {
 	id: string;
@@ -21,8 +21,8 @@ export interface INotificationRow {
 	title: string;
 	sub: string;
 	link: INotificationLink | null;
-	// Convite: { inviteId, teamName }
-	data: { inviteId?: string; teamName?: string };
+	// Convite: { inviteId, teamName } · corrida de colega: { runId }
+	data: { inviteId?: string; teamName?: string; runId?: string };
 	createdAt: string;
 	isRead: boolean;
 }

@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "expo-router";
 
-import { runPayload, useSaveRun } from "@/lib/data";
+import { runPayload, useSaveRun, useTeamLive } from "@/lib/data";
 import { formatKm, ONLINE } from "@/lib/pace";
 import { elapsedSeconds, stopTracking, useGpsStore, useRunStore } from "@/lib/run";
+import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
@@ -48,17 +49,31 @@ export const useRunLive = () => {
 		[fixLat, fixLng],
 	);
 	const km = meters / 1000;
+	const myPhoto = useStore((s) => s.user?.avatarUrl ?? null);
 
-	// Modo equipe na prévia: amigos ao longo do mesmo trajeto (simulação do design).
-	// No app real ainda não há posição ao vivo dos colegas, então o mapa fica só com você.
+	// Correndo com a equipe: a foto de cada colega anda no mapa, ao vivo
+	const liveMates = useTeamLive({
+		isActive: mode === "team" && status !== "idle",
+		me: me ?? route.at(-1) ?? null,
+	});
+
+	// Na prévia por link, amigos de exemplo ao longo do mesmo trajeto (design)
 	const friends = useMemo(() => {
-		if (!IS_PREVIEW || mode !== "team" || route.length < 2) return [];
+		if (!IS_PREVIEW) {
+			return liveMates.map((m) => ({
+				position: m.position,
+				image: m.avatarUrl ? { uri: m.avatarUrl } : undefined,
+				name: m.name,
+				label: m.name.split(" ")[0] ?? m.name,
+			}));
+		}
+		if (mode !== "team" || route.length < 2) return [];
 		return ONLINE.map((f) => {
 			const at = Math.min(1, Math.max(0, f.pace + f.lead));
 			const position = route[Math.round(at * (route.length - 1))] ?? route[0];
 			return { position, image: f.image, label: `${formatKm(km * f.pace)} km` };
 		});
-	}, [mode, route, km]);
+	}, [mode, route, km, liveMates]);
 
 	const handleFinish = useCallback(() => {
 		setIsConfirmOpen(false);
@@ -85,6 +100,8 @@ export const useRunLive = () => {
 		km,
 		route,
 		me,
+		// Correndo com a equipe, a sua foto anda no mapa como a dos colegas
+		meImage: mode === "team" && myPhoto ? { uri: myPhoto } : undefined,
 		friends,
 		isConfirmOpen,
 		pause,

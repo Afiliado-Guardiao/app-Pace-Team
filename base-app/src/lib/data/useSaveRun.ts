@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { IRunResult, useRunReviewStore, useRunStore } from "@/lib/run";
-import { ISavedRun, ISaveRunPayload, saveRun } from "@/lib/supabase";
+import { ISavedRun, ISaveRunPayload, pushTeamRun, saveRun } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { DATA_KEYS } from "./keys";
@@ -40,6 +40,8 @@ export const useSaveRun = () => {
 				.setLastSaved({ id: saved.id, status: saved.status, points: saved.points });
 			// Corrida do app já passou pelo resumo: não abre o aviso do Buddy
 			useRunReviewStore.getState().markReviewed(saved.id);
+			// Colegas recebem a notificação no celular (uma vez por corrida)
+			if (!IS_PREVIEW && saved.status === "valid") pushTeamRun(saved.id).catch(() => undefined);
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myStats });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myRuns });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myTeam });

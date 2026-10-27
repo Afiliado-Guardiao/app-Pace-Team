@@ -11,5 +11,6 @@ export * from "./referral";
 export * from "./runs";
 export * from "./teamLive";
 export * from "./teamLive.types";
+export * from "./teamRuns";
 export * from "./teams";
 export * from "./types";

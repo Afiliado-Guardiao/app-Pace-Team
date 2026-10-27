@@ -81,7 +81,10 @@ export const HistoryScreen: React.FC = () => {
 						/>
 					))}
 				</View>
-				{history.isEmpty ? <InfoNote icon="footprints">{HISTORY_COPY.empty}</InfoNote> : null}
+				{history.isEmpty ? <InfoNote icon="footprints">{history.emptyText}</InfoNote> : null}
+				{history.isTeam && !history.isEmpty ? (
+					<InfoNote icon="lock">{HISTORY_COPY.teamRoutes}</InfoNote>
+				) : null}
 				{history.showInvalidNote ? (
 					<InfoNote icon="info">{HISTORY_COPY.invalidNote}</InfoNote>
 				) : null}

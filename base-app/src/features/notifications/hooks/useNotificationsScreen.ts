@@ -37,6 +37,7 @@ const LINK_ROUTES: Record<NonNullable<INotification["link"]>, string> = {
 	team: ROUTES.TEAM,
 	challenges: ROUTES.CHALLENGES,
 	ranking: ROUTES.RANKING,
+	team_run: ROUTES.RUN_DETAIL,
 };
 
 // Lista de avisos: marcar lidas (no servidor), abrir o destino e responder convites.
@@ -70,10 +71,13 @@ export const useNotificationsScreen = (): IUseNotificationsScreenReturn => {
 
 	const openItem = useCallback(
 		(item: INotification) => {
-			markRead(
-				feed.find((n) => n.id === item.id),
-				item.id,
-			);
+			const entry = feed.find((n) => n.id === item.id);
+			markRead(entry, item.id);
+			// "Fulano concluiu uma corrida": abre a corrida dele
+			if (item.link === "team_run" && entry?.runId) {
+				router.push({ pathname: ROUTES.RUN_DETAIL, params: { teamRun: entry.runId } });
+				return;
+			}
 			if (item.link) router.push(LINK_ROUTES[item.link]);
 		},
 		[feed, markRead, router],

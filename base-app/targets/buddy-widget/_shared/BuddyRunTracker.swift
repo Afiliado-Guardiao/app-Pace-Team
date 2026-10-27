@@ -39,6 +39,9 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
   private var last: CLLocation?
   private var activity: Activity<BuddyRunAttributes>?
   private var shownKm: Double = 0
+  // Correndo com a equipe: última vez que a posição ao vivo foi enviada
+  private var liveSentAt: Date = .distantPast
+  private let liveEvery: TimeInterval = 5
   private var isFinishing = false
 
   static var hasAlwaysPermission: Bool { CLLocationManager().authorizationStatus == .authorizedAlways }
@@ -106,6 +109,12 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     }
     run = current
     BuddyStore.saveActiveRun(current)
+    if current.withTeam, let point = last, Date().timeIntervalSince(liveSentAt) >= liveEvery {
+      liveSentAt = Date()
+      let lat = point.coordinate.latitude
+      let lng = point.coordinate.longitude
+      Task { await BuddySupabase.setLivePosition(lat: lat, lng: lng) }
+    }
     let km = current.meters / 1000
     if km >= current.goalKm {
       Task { await self.finish(goalReached: true) }
@@ -148,6 +157,7 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     run = nil
     last = nil
     BuddyStore.saveActiveRun(nil)
+    if current.withTeam { Task { await BuddySupabase.clearLivePosition() } }
     // "Encerrar" some na hora; meta batida comemora por 2 min e some
     await endActivities(km: km, unlocked: nil, isDone: goalReached, keepFor: goalReached ? 120 : nil)
     BuddyStore.reloadWidgets()

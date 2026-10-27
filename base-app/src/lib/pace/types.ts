@@ -101,6 +101,6 @@ export interface INotification {
 	sub: string;
 	time: string;
 	unread?: boolean;
-	link?: "disputa" | "team" | "challenges" | "ranking";
+	link?: "disputa" | "team" | "challenges" | "ranking" | "team_run";
 	invite?: boolean;
 }
