@@ -3,6 +3,7 @@
 // (Pace Buddy.dc.html): o Buddy, os mini Buddies de quem está online, a fala,
 // "Correr sozinho", "Correr com a equipe", a meta ‹ km › e "Agora não".
 // Cada botão roda uma intent e o iOS redesenha o cartão em seguida.
+import ActivityKit
 import AppIntents
 import SwiftUI
 
@@ -26,6 +27,8 @@ struct BuddyPanelModel {
   let mode: BuddyPanelMode
   let online: [String]
   let isRunning: Bool
+  // Atividades ao Vivo desligadas em Ajustes: o contador não aparece
+  var liveActivitiesOff = false
 
   // Falas do painel do design (renderVals → spT / spS)
   var speech: BuddySpeech {
@@ -68,7 +71,8 @@ struct BuddyPanelSnippetIntent: SnippetIntent {
     // Mini Buddies de quem está online aparecem assim que o cartão abre
     let online = BuddyStore.state().hasTeam ? await BuddySupabase.teamOnlineQuick() : []
     let model = BuddyPanelModel(
-      state: BuddyStore.state(), mode: mode, online: online, isRunning: BuddyRunTracker.shared.isRunning)
+      state: BuddyStore.state(), mode: mode, online: online, isRunning: BuddyRunTracker.shared.isRunning,
+      liveActivitiesOff: !ActivityAuthorizationInfo().areActivitiesEnabled)
     return .result(view: BuddyPanelView(model: model))
   }
 }
@@ -214,6 +218,13 @@ struct BuddyPanelView: View {
         }
         .multilineTextAlignment(.center)
         .padding(.top, 2)
+
+        if model.liveActivitiesOff && model.mode != .bye {
+          Text("O contador da corrida não aparece: ligue Atividades ao Vivo em Ajustes › PACE TEAM.")
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(Color.buddyOrange200)
+            .multilineTextAlignment(.center)
+        }
 
         if model.isRunning {
           runningActions

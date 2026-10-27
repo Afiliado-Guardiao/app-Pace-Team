@@ -96,10 +96,16 @@ struct BuddyRunLiveActivity: Widget {
         }
         DynamicIslandExpandedRegion(.trailing) {
           VStack(alignment: .trailing, spacing: 2) {
-            Text("\(buddyKm(context.state.km)) km")
-              .font(.system(size: 18, weight: .bold).monospacedDigit()).foregroundStyle(Color.buddyOrange400)
-            Text("meta \(buddyGoalLabel(context.attributes.goalKm)) km")
-              .font(.system(size: 11, weight: .semibold)).foregroundStyle(.white.opacity(0.62))
+            if context.state.isDone {
+              Text("\(buddyKm(context.state.km)) km")
+                .font(.system(size: 18, weight: .bold).monospacedDigit()).foregroundStyle(Color.buddyOrange400)
+            } else {
+              Text(context.attributes.startedAt, style: .timer)
+                .font(.system(size: 20, weight: .bold).monospacedDigit()).foregroundStyle(.white)
+                .multilineTextAlignment(.trailing)
+              Text("\(buddyKm(context.state.km)) / \(buddyGoalLabel(context.attributes.goalKm)) km")
+                .font(.system(size: 12, weight: .bold).monospacedDigit()).foregroundStyle(Color.buddyOrange400)
+            }
           }
         }
         DynamicIslandExpandedRegion(.bottom) {
@@ -109,23 +115,35 @@ struct BuddyRunLiveActivity: Widget {
             VStack(spacing: 8) {
               BuddyProgressBar(value: context.state.km / max(0.1, context.attributes.goalKm))
               Button(intent: FinishBuddyRunIntent()) {
-                Label("Encerrar", systemImage: "stop.fill").font(.system(size: 12, weight: .bold))
+                Label("Encerrar corrida", systemImage: "stop.fill")
+                  .font(.system(size: 12, weight: .bold))
+                  .foregroundStyle(.white)
+                  .padding(.horizontal, 14)
+                  .frame(height: 30)
+                  .background(Capsule().fill(Color.buddyOrange))
               }
-              .tint(Color.buddyOrange)
+              .buttonStyle(.plain)
             }
           }
         }
       } compactLeading: {
-        HStack(spacing: 6) {
-          BuddyMiniRing()
-          Text("Correndo").font(.system(size: 11.5, weight: .semibold)).foregroundStyle(.white)
-        }
+        // Buddy pequenininho na cor e com os acessórios do atleta
+        BuddyView(color: context.attributes.color, accessories: context.attributes.accessories,
+                  pose: context.state.isDone ? .celebrate : .run)
+          .scaleEffect(0.18).frame(width: 26, height: 25)
       } compactTrailing: {
-        Text("\(buddyKm(context.state.km))/\(buddyGoalLabel(context.attributes.goalKm)) km")
-          .font(.system(size: 12, weight: .bold).monospacedDigit())
-          .foregroundStyle(Color.buddyOrange400)
+        if context.state.isDone {
+          Image(systemName: "checkmark.circle.fill").foregroundStyle(Color.buddyOrange400)
+        } else {
+          Text(context.attributes.startedAt, style: .timer)
+            .font(.system(size: 12, weight: .bold).monospacedDigit())
+            .foregroundStyle(Color.buddyOrange400)
+            .frame(maxWidth: 46)
+            .multilineTextAlignment(.trailing)
+        }
       } minimal: {
-        BuddyMiniRing()
+        BuddyView(color: context.attributes.color, accessories: context.attributes.accessories, pose: .run)
+          .scaleEffect(0.16).frame(width: 23, height: 22)
       }
       .keylineTint(Color.buddyOrange)
     }
