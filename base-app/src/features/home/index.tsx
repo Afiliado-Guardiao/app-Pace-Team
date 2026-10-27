@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
+import { BuddyRunner } from "@/components/buddy";
 import {
 	Avatar,
 	FloatingToast,
@@ -22,6 +23,8 @@ import { usePostMenu } from "./hooks/usePostMenu";
 import { useWeekSummary } from "./hooks/useWeekSummary";
 
 const AVATAR = 48;
+// Chão do Buddy corredor: no alto do card "Sua semana", por trás dele
+const RUNNER_FEET_Y = 157;
 
 const createHomeStyles = (theme: ITheme) => {
 	const { colors, spacing, typography } = theme.pace;
@@ -52,7 +55,12 @@ export const HomeScreen: React.FC = () => {
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.runnerCitySunset} />
-			<ScreenScroll hasRail scrollRef={feed.scrollRef} testID="home-scroll">
+			<ScreenScroll
+				hasRail
+				scrollRef={feed.scrollRef}
+				testID="home-scroll"
+				backdrop={<BuddyRunner feetY={RUNNER_FEET_Y} />}
+			>
 				<View style={styles.header}>
 					<Pressable
 						onPress={home.openProfile}

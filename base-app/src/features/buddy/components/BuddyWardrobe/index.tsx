@@ -1,11 +1,11 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
+import { MiniBuddy } from "@/components/buddy";
 import { Icon, Label } from "@/components/pace";
 import { useTheme } from "@/theme";
 
 import { useBuddyWardrobe } from "../../hooks/useBuddyWardrobe";
-import { MiniBuddy } from "../MiniBuddy";
 
 import { createBuddyWardrobeStyles } from "./styles";
 

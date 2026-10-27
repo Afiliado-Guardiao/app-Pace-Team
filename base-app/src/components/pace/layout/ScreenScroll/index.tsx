@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,6 +26,7 @@ export const ScreenScroll: React.FC<IScreenScrollProps> = ({
 	bottom,
 	contentStyle,
 	scrollRef,
+	backdrop,
 	testID,
 }) => {
 	const { theme } = useTheme();
@@ -42,6 +43,11 @@ export const ScreenScroll: React.FC<IScreenScrollProps> = ({
 			showsVerticalScrollIndicator={false}
 			keyboardShouldPersistTaps="handled"
 		>
+			{backdrop ? (
+				<View style={styles.backdrop} pointerEvents="box-none">
+					{backdrop}
+				</View>
+			) : null}
 			{items.map((child, index) => (
 				<RiseItem key={index} index={index}>
 					{child}

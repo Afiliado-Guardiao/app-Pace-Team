@@ -9,3 +9,6 @@ export type { IBuddyAlarm } from "./store";
 export { DEFAULT_ALARM, useBuddyStore } from "./store";
 export { useBuddyBridge } from "./useBuddyBridge";
 export { useBuddyContext } from "./useBuddyContext";
+export { useBuddyLook } from "./useBuddyLook";
+export type { IBuddyMood } from "./useBuddyMood";
+export { useBuddyMood } from "./useBuddyMood";

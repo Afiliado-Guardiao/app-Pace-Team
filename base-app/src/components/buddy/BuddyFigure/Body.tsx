@@ -6,8 +6,8 @@ import Animated from "react-native-reanimated";
 import { GradientLayers } from "@/components/pace";
 import { BUDDY_ACC_ORDER, IBuddyAccessoryId, IBuddyPalette } from "@/lib/buddy/constants";
 
-import { anim, EASE_SPRING } from "../../animations";
-import { bodyInsetShadow, bodyLayers, bodyOuterShadow, chromeLayers } from "../../palette";
+import { anim, EASE_SPRING } from "../animations";
+import { bodyInsetShadow, bodyLayers, bodyOuterShadow, chromeLayers } from "../palette";
 
 import { HeadAccessory } from "./accessories/HeadAccessory";
 import { Eyes } from "./Eyes";

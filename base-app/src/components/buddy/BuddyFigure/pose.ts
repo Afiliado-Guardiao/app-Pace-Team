@@ -3,7 +3,7 @@ import { TransformsStyle } from "react-native";
 
 import { IBuddyAct, IBuddyPhase } from "@/lib/buddy/constants";
 
-import { anim, EASE_OUT } from "../../animations";
+import { anim, EASE_OUT } from "../animations";
 
 export interface IBuddyPose {
 	act: IBuddyAct;

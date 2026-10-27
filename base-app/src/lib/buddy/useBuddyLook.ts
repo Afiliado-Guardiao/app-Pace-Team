@@ -1,7 +1,7 @@
-import { IBuddyAccessoryId, IBuddyColorId } from "@/lib/buddy/constants";
-import { effectiveColor, wornAccessories } from "@/lib/buddy/rules";
-import { useBuddyStore } from "@/lib/buddy/store";
-import { useBuddyContext } from "@/lib/buddy/useBuddyContext";
+import { IBuddyAccessoryId, IBuddyColorId } from "./constants";
+import { effectiveColor, wornAccessories } from "./rules";
+import { useBuddyStore } from "./store";
+import { useBuddyContext } from "./useBuddyContext";
 
 interface IUseBuddyLookReturn {
 	color: IBuddyColorId;

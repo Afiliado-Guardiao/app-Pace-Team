@@ -8,6 +8,8 @@ const TOP_SCRIM = 140;
 const FADE_TOP = 330;
 const FADE_HEIGHT = 160;
 const SIDE = 20;
+// Margem lateral do bloco de baixo (o Buddy corredor compensa para cruzar a tela)
+export const RUN_SIDE = SIDE;
 const RIGHT = 76;
 const BOTTOM = 40;
 const TITLE = 30;

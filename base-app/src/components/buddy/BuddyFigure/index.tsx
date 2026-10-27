@@ -6,8 +6,8 @@ import Animated from "react-native-reanimated";
 import { GradientLayers } from "@/components/pace";
 import { IBuddyAccessoryId, IBuddyColorId } from "@/lib/buddy/constants";
 
-import { anim, EASE_SPRING } from "../../animations";
-import { paletteOf } from "../../palette";
+import { anim, EASE_SPRING } from "../animations";
+import { paletteOf } from "../palette";
 
 import { Cape } from "./accessories/Cape";
 import { Body } from "./Body";

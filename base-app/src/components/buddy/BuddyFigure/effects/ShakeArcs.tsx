@@ -3,7 +3,7 @@ import { ViewStyle } from "react-native";
 
 import Animated from "react-native-reanimated";
 
-import { anim } from "../../../animations";
+import { anim } from "../../animations";
 
 import { ORANGE } from "./shared";
 

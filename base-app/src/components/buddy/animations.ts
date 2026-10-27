@@ -187,6 +187,12 @@ export const KF: Record<string, IKeyframes> = {
 	},
 	// Ilha da corrida abrindo (124 → 240 px, como a Dynamic Island do design)
 	island: { "0%": { width: 124 }, "100%": { width: 240 } },
+	// "+1" da corrida do dia subindo em cima do Buddy
+	pointUp: {
+		"0%": { opacity: 0, transform: [{ translateY: 6 }, { scale: 0.6 }] },
+		"25%": { opacity: 1, transform: [{ translateY: 0 }, { scale: 1.1 }] },
+		"100%": { opacity: 0, transform: [{ translateY: -22 }, { scale: 1 }] },
+	},
 	leg: {
 		"0%": { transform: [{ rotate: "-38deg" }] },
 		"50%": { transform: [{ rotate: "38deg" }] },

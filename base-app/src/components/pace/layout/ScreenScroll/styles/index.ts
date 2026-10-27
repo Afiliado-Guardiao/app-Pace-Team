@@ -23,5 +23,12 @@ export const createScreenScrollStyles = (
 			paddingBottom: options.insets.bottom + bottom,
 			gap: spacing.stackGap,
 		},
+		backdrop: {
+			position: "absolute",
+			top: options.insets.top + TOP_GAP,
+			left: 0,
+			right: 0,
+			bottom: 0,
+		},
 	};
 };

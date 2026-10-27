@@ -7,7 +7,7 @@ import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
 import { GradientLayers, useSvgId } from "@/components/pace";
 import { IBuddyPhase } from "@/lib/buddy/constants";
 
-import { anim, EASE_SPRING } from "../../animations";
+import { anim, EASE_SPRING } from "../animations";
 
 interface IRunRingProps {
 	phase: IBuddyPhase;

@@ -3,7 +3,7 @@ import React from "react";
 import Animated from "react-native-reanimated";
 import Svg, { Polygon } from "react-native-svg";
 
-import { anim } from "../../../animations";
+import { anim } from "../../animations";
 
 import { ISpark, STAR } from "./shared";
 

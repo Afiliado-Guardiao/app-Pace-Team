@@ -5,7 +5,7 @@ import Animated from "react-native-reanimated";
 
 import { IBuddyAccessoryId, IBuddyPalette } from "@/lib/buddy/constants";
 
-import { anim, EASE_OUT } from "../../../animations";
+import { anim, EASE_OUT } from "../../animations";
 
 import { Aureola } from "./Aureola";
 import { Bone } from "./Bone";

@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import Animated from "react-native-reanimated";
 
-import { anim } from "../../../animations";
+import { anim } from "../../animations";
 
 import { ISpark } from "./shared";
 

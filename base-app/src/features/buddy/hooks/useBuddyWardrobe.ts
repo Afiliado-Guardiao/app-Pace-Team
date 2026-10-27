@@ -11,8 +11,7 @@ import {
 import { isUnlocked, requirementText } from "@/lib/buddy/rules";
 import { useBuddyStore } from "@/lib/buddy/store";
 import { useBuddyContext } from "@/lib/buddy/useBuddyContext";
-
-import { useBuddyLook } from "./useBuddyLook";
+import { useBuddyLook } from "@/lib/buddy/useBuddyLook";
 
 export interface IColorItem {
 	id: IBuddyColorId;

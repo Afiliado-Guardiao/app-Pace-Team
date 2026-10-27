@@ -6,7 +6,7 @@ import Svg, { Defs, LinearGradient, Polygon, Stop } from "react-native-svg";
 
 import { useSvgId } from "@/components/pace";
 
-import { anim, EASE_OUT } from "../../../animations";
+import { anim, EASE_OUT } from "../../animations";
 
 interface ICapeProps {
 	isNew: boolean;

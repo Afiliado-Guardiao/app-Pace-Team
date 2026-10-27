@@ -2,7 +2,7 @@ import React from "react";
 
 import Animated from "react-native-reanimated";
 
-import { anim } from "../../../animations";
+import { anim } from "../../animations";
 
 import { abs } from "./shared";
 

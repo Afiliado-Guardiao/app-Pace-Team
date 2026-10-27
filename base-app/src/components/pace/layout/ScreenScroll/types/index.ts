@@ -8,10 +8,14 @@ export interface IScreenScrollProps {
 	hasRail?: boolean;
 	bottom?: number;
 	contentStyle?: StyleProp<ViewStyle>;
+	// Camada por trás de todos os blocos (ex.: o Buddy que corre pela tela),
+	// com o topo no começo do conteúdo
+	backdrop?: React.ReactNode;
 	testID?: string;
 }
 
 export interface IScreenScrollStyles {
 	scroll: ViewStyle;
 	content: ViewStyle;
+	backdrop: ViewStyle;
 }

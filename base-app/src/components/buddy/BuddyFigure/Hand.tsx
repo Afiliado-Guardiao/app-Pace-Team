@@ -6,8 +6,8 @@ import Animated from "react-native-reanimated";
 import { GradientLayers } from "@/components/pace";
 import { IBuddyPalette } from "@/lib/buddy/constants";
 
-import { EASE_SPRING } from "../../animations";
-import { handLayers } from "../../palette";
+import { EASE_SPRING } from "../animations";
+import { handLayers } from "../palette";
 
 import { handAnimation, handPositions, IBuddyPose, isRingPhase, isSleepAct } from "./pose";
 

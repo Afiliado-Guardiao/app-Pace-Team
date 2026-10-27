@@ -4,7 +4,7 @@ import Animated from "react-native-reanimated";
 
 import { IBuddyPalette } from "@/lib/buddy/constants";
 
-import { anim } from "../../animations";
+import { anim } from "../animations";
 
 import { Rays } from "./effects/Rays";
 import { ShakeArcs } from "./effects/ShakeArcs";

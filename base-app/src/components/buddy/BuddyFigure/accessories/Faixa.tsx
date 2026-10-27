@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { GradientLayers } from "@/components/pace";
 
-import { ORANGE_LAYERS } from "../../../palette";
+import { ORANGE_LAYERS } from "../../palette";
 
 import { abs } from "./shared";
 
