@@ -19,6 +19,6 @@ export const RUN_LIVE_COPY = {
 	confirmTitle: "Finalizar corrida?",
 	confirmSave: "Finalizar e salvar",
 	confirmKeep: "Continuar correndo",
-	confirmBody: " km em ",
+	confirmBody: " em ",
 	confirmNote: ". Os pontos contam após a verificação.",
 } as const;

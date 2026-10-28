@@ -1,5 +1,5 @@
 import { ITeamRunMember, useTeamRuns } from "@/lib/data";
-import { formatKm } from "@/lib/pace";
+import { distanceParts, formatKm } from "@/lib/pace";
 
 import { RUN_SUMMARY_COPY } from "../constants";
 
@@ -10,6 +10,8 @@ interface IUseGroupRunReturn {
 	totalPoints: string;
 	maxKm: number;
 	members: ITeamRunMember[];
+	// Distância de cada um ("511 m" abaixo de 1 km), na ordem de members
+	distances: { value: string; unit: string }[];
 	// Fotos para a pilha de avatares (sem foto, as iniciais)
 	people: { name: string; src?: string }[];
 }
@@ -24,6 +26,7 @@ export const useGroupRun = (): IUseGroupRunReturn => {
 		totalPoints: `+${String(view.totalPoints)}`,
 		maxKm: Math.max(1, ...view.members.map((m) => m.km)),
 		members: view.members,
+		distances: view.members.map((m) => distanceParts(m.km)),
 		people: view.members.map((m) => ({ name: m.name, src: m.avatarUrl ?? undefined })),
 	};
 };

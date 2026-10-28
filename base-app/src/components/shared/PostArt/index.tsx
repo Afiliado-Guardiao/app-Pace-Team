@@ -5,7 +5,7 @@ import Svg, { Path } from "react-native-svg";
 
 import { GradientLayers, Logo, useLayoutSize } from "@/components/pace";
 import { useTheme } from "@/theme";
-import { CREW, formatDurationShort, formatKm, formatPaceClock, MY_TEAM } from "@/lib/pace";
+import { CREW, formatDistance, formatDurationText, formatPace, MY_TEAM } from "@/lib/pace";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { PostPin } from "./PostPin";
@@ -76,7 +76,7 @@ export const PostArt: React.FC<IPostArtProps> = ({
 	const width = size?.width ?? 0;
 	const cqw = width / 100;
 	const styles = createPostArtStyles(theme, cqw);
-	const pace = `${formatPaceClock(km > 0 ? seconds / km : 0)} /km`;
+	const pace = `${formatPace(km > 0 ? seconds / km : 0)} min/km`;
 	const real = track ? postTrack(track.route) : null;
 	const routeD = real ? real.d : ROUTE_D;
 	const pins = real
@@ -110,11 +110,11 @@ export const PostArt: React.FC<IPostArtProps> = ({
 					{layers.stats ? (
 						<View style={styles.stats} pointerEvents="none">
 							<Text style={styles.label}>{COPY.distance}</Text>
-							<Text style={styles.value}>{`${formatKm(km)} km`}</Text>
+							<Text style={styles.value}>{formatDistance(km)}</Text>
 							<Text style={styles.label}>{COPY.pace}</Text>
 							<Text style={styles.value}>{pace}</Text>
 							<Text style={styles.label}>{COPY.time}</Text>
-							<Text style={[styles.value, styles.lastValue]}>{formatDurationShort(seconds)}</Text>
+							<Text style={[styles.value, styles.lastValue]}>{formatDurationText(seconds)}</Text>
 						</View>
 					) : null}
 					{hasRoute ? (

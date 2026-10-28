@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { GradientLayers } from "@/components/pace";
 import { useTheme } from "@/theme";
-import { formatKm, formatPace } from "@/lib/pace";
+import { distanceParts, formatKm, formatPace } from "@/lib/pace";
 
 import { IShareTemplateId, SHARE_COPY, STORY } from "../../constants";
 import { storyDuration } from "../../utils/storyRoute";
@@ -29,7 +29,9 @@ const MIN_BAR_KM = 0.1;
 export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) => {
 	const { theme } = useTheme();
 	const { colors } = theme.pace;
-	const km = formatKm(run.km);
+	const distance = distanceParts(run.km);
+	const km = distance.value;
+	const bigLabel = distance.unit === "m" ? SHARE_COPY.metersWithTeam : SHARE_COPY.kmWithTeam;
 	const pace = formatPace(run.km ? run.seconds / run.km : 0);
 	const time = storyDuration(run.seconds);
 	const medals = [colors.storyGold, colors.storySilver, colors.storyBronze];
@@ -57,7 +59,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 					align="center"
 					spacing={6}
 				>
-					{SHARE_COPY.kmWithTeam}
+					{bigLabel}
 				</StoryText>
 				{stats.map(([label, value], i) => (
 					<React.Fragment key={label}>
@@ -104,7 +106,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 					y={410}
 					size={40}
 					weight={600}
-				>{`${km} km  ·  ${time}  ·  ${pace}/km`}</StoryText>
+				>{`${km} ${distance.unit}  ·  ${time}  ·  ${pace} min/km`}</StoryText>
 				{ranked.map((m, i) => {
 					const y = 560 + i * 150;
 					return (
@@ -168,9 +170,9 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 				<StoryTeamPill team={run.team} cx={CX} y={170} options={{ gradient: "storyMarkPeach" }} />
 			) : null}
 			<StoryRoute box={{ x: 140, y: 420, w: 800, h: 820 }} points={run.route} lineWidth={16} />
-			<StoryText x={90} y={1540} size={120} weight={800} spacing={-2}>{`${km} KM`}</StoryText>
+			<StoryText x={90} y={1540} size={120} weight={800} spacing={-2}>{`${km} ${distance.unit.toUpperCase()}`}</StoryText>
 			<StoryText x={90} y={1610} size={34} weight={600} spacing={3}>
-				{`${time}   ${pace}/km   ${teamName.toUpperCase()}`}
+				{`${time}   ${pace} min/km   ${teamName.toUpperCase()}`}
 			</StoryText>
 			<StoryLogo x={STORY.width - 390} y={1720} width={300} />
 		</>

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { IMapFriend } from "@/components/shared/RunMap";
 import { ITeamRunView, useTeamRun } from "@/lib/data";
-import { formatKm } from "@/lib/pace";
+import { formatDistance } from "@/lib/pace";
 
 interface IUseTeamRunSourceReturn {
 	// Corrida aberta pelo aviso ou pelo Histórico › Equipe (null = não é)
@@ -20,7 +20,7 @@ const pinOf = (who: IPinSource): IMapFriend | null => {
 	return {
 		position: end,
 		image: { uri: who.avatarUrl },
-		label: `${who.isYou ? "Você" : who.name} · ${formatKm(who.km)} km`,
+		label: `${who.isYou ? "Você" : who.name} · ${formatDistance(who.km)}`,
 	};
 };
 

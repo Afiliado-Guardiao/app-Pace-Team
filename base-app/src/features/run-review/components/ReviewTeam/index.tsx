@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { Avatar, Badge } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { ITeamRunMember } from "@/lib/data";
-import { formatKm } from "@/lib/pace";
+import { formatDistance } from "@/lib/pace";
 
 import { RUN_REVIEW_COPY } from "../../constants";
 
@@ -57,14 +57,14 @@ export const ReviewTeam: React.FC<IReviewTeamProps> = ({ members }) => {
 						<Text style={styles.name} numberOfLines={1}>
 							{m.isYou ? RUN_REVIEW_COPY.you : m.name}
 						</Text>
-						<Text style={styles.sub}>{`${m.pace} /km · ${String(m.points)} pts`}</Text>
+						<Text style={styles.sub}>{`${m.pace} min/km · ${String(m.points)} pts`}</Text>
 					</View>
 					{i === 0 ? (
 						<Badge tone="accent" dot>
 							{RUN_REVIEW_COPY.best}
 						</Badge>
 					) : null}
-					<Text style={styles.km}>{`${formatKm(m.km)} km`}</Text>
+					<Text style={styles.km}>{formatDistance(m.km)}</Text>
 				</View>
 			))}
 		</View>

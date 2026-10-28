@@ -107,7 +107,7 @@ export const MapScreen: React.FC = () => {
 						<RouteCard
 							key={run.id}
 							title={run.title}
-							meta={`${run.km} km · ${run.time}`}
+							meta={`${run.km} ${run.unit ?? "km"} · ${run.time}`}
 							seed={i}
 							route={run.route}
 							isSelected={i === map.selected}

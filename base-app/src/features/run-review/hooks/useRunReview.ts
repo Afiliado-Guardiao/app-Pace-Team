@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 
 import { runDate, useDeleteRun, useMyRuns, useTeamRuns } from "@/lib/data";
-import { formatDuration, formatKm, formatPace, formatSpeed } from "@/lib/pace";
+import { distanceParts, durationParts, formatPace, formatSpeed } from "@/lib/pace";
 import { useRunReviewStore, useRunStore } from "@/lib/run";
 import { ISavedRun } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -71,8 +71,8 @@ export const useRunReview = () => {
 		date: run ? runDate(new Date(run.startedAt)) : "",
 		route: run?.route ?? [],
 		stats: {
-			km: formatKm(run?.km ?? 0),
-			time: formatDuration(run?.seconds ?? 0),
+			distance: distanceParts(run?.km ?? 0),
+			time: durationParts(run?.seconds ?? 0),
 			pace: formatPace(run && run.km > 0 ? run.seconds / run.km : 0),
 			speed: formatSpeed(run?.km ?? 0, run?.seconds ?? 0),
 		},

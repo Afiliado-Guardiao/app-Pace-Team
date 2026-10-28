@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import { GlassCard, StatTile } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
-import { formatDuration, formatKm, formatPace, formatSpeed } from "@/lib/pace";
+import { distanceParts, durationParts, formatPace, formatSpeed } from "@/lib/pace";
 
 import { RUN_SUMMARY_COPY } from "../../constants";
 
@@ -27,6 +27,8 @@ export const RunStatsCard: React.FC<IRunStatsCardProps> = ({ seconds, km }) => {
 	const { theme } = useTheme();
 	const styles = createRunStatsCardStyles(theme);
 	const pace = formatPace(km > 0 ? seconds / km : 0);
+	const distance = distanceParts(km);
+	const time = durationParts(seconds);
 
 	return (
 		<GlassCard>
@@ -35,21 +37,22 @@ export const RunStatsCard: React.FC<IRunStatsCardProps> = ({ seconds, km }) => {
 					style={styles.cell}
 					icon="map-pin"
 					label={RUN_SUMMARY_COPY.distance}
-					value={formatKm(km)}
-					unit="km"
+					value={distance.value}
+					unit={distance.unit}
 				/>
 				<StatTile
 					style={styles.cell}
 					icon="timer"
 					label={RUN_SUMMARY_COPY.totalTime}
-					value={formatDuration(seconds)}
+					value={time.value}
+					unit={time.unit}
 				/>
 				<StatTile
 					style={styles.cell}
 					icon="gauge"
 					label={RUN_SUMMARY_COPY.avgPace}
 					value={pace}
-					unit="/km"
+					unit="min/km"
 				/>
 				<StatTile
 					style={styles.cell}

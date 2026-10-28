@@ -47,6 +47,8 @@ export interface IRun {
 	title: string;
 	date: string;
 	km: string;
+	// Unidade da distância ("m" abaixo de 1 km; sem ela, "km")
+	unit?: string;
 	time: string;
 	pace: string;
 	pts: number;

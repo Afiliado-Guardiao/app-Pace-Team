@@ -13,7 +13,7 @@ import {
 } from "@/components/pace";
 import { RunMap } from "@/components/shared/RunMap";
 import { useTheme } from "@/theme";
-import { formatKm } from "@/lib/pace";
+import { formatDistance } from "@/lib/pace";
 
 import { GroupRunDetail } from "./components/GroupRunDetail";
 import { PointsCard } from "./components/PointsCard";
@@ -34,7 +34,7 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 	const { size, onLayout } = useLayoutSize();
 	const run = useRunSummary(variant);
 	const styles = createRunSummaryStyles(theme, insets);
-	const halfway = `${formatKm(run.km / 2)} km`;
+	const halfway = formatDistance(run.km / 2);
 
 	const soloContent = [
 		<View key="head">

@@ -104,7 +104,7 @@ export const RunRow: React.FC<IRunRowProps> = ({ run, seed, onPress }) => {
 					<View style={styles.stats}>
 						<Text style={styles.number}>
 							{run.km}
-							<Text style={styles.unit}> km</Text>
+							<Text style={styles.unit}>{` ${run.unit ?? "km"}`}</Text>
 						</Text>
 						<Text style={styles.number}>{run.time}</Text>
 						<Text style={styles.number}>{run.pace}</Text>

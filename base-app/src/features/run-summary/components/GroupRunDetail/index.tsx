@@ -4,7 +4,6 @@ import { Text, View } from "react-native";
 import { Avatar, AvatarStack, CountUp, GlassCard, InfoNote } from "@/components/pace";
 import { SpringBar } from "@/components/shared/SpringBar";
 import { useTheme } from "@/theme";
-import { formatKm } from "@/lib/pace";
 
 import { RUN_SUMMARY_COPY } from "../../constants";
 import { useGroupRun } from "../../hooks/useGroupRun";
@@ -62,8 +61,11 @@ export const GroupRunDetail: React.FC = () => {
 							<View style={styles.between}>
 								<Text style={styles.name}>{m.isYou ? RUN_SUMMARY_COPY.you : m.name}</Text>
 								<Text style={styles.km}>
-									<CountUp value={formatKm(m.km)} delay={BASE_DELAY + i * STAGGER} />
-									<Text style={styles.unit}> km</Text>
+									<CountUp
+										value={group.distances[i]?.value ?? "0"}
+										delay={BASE_DELAY + i * STAGGER}
+									/>
+									<Text style={styles.unit}>{` ${group.distances[i]?.unit ?? "km"}`}</Text>
 								</Text>
 							</View>
 							<View style={styles.barRow}>

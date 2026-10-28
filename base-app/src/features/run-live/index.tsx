@@ -18,7 +18,14 @@ import {
 import { GpsDot } from "@/components/shared/GpsDot";
 import { RunMap } from "@/components/shared/RunMap";
 import { useTheme } from "@/theme";
-import { formatDuration, formatKm, formatPace, formatSpeed } from "@/lib/pace";
+import {
+	distanceParts,
+	formatDistance,
+	formatDuration,
+	formatDurationText,
+	formatPace,
+	formatSpeed,
+} from "@/lib/pace";
 
 import { MetricPill } from "./components/MetricPill";
 import { RUN_LIVE_COPY } from "./constants";
@@ -35,6 +42,8 @@ export const RunLiveScreen: React.FC = () => {
 	const crew = useLiveCrew(live.isTeam);
 	const styles = createRunLiveStyles(theme, insets);
 	const pace = formatPace(live.km > 0 ? live.seconds / live.km : 0);
+	// Abaixo de 1 km em metros ("620 m"), para não confundir com 62 km
+	const distance = distanceParts(live.km);
 
 	return (
 		<View style={styles.root} onLayout={onLayout}>
@@ -118,8 +127,8 @@ export const RunLiveScreen: React.FC = () => {
 					<GlassSurface appearance={styles.pinAppearance} radius={22} style={styles.pin}>
 						<Icon name="map-pin" size={18} />
 					</GlassSurface>
-					<Text style={styles.km}>{formatKm(live.km)}</Text>
-					<Text style={styles.kmLabel}>km</Text>
+					<Text style={styles.km}>{distance.value}</Text>
+					<Text style={styles.kmLabel}>{distance.unit}</Text>
 				</View>
 				{live.isPaused ? (
 					<View style={styles.pausedActions}>
@@ -178,7 +187,7 @@ export const RunLiveScreen: React.FC = () => {
 					</>
 				}
 			>
-				{`${formatKm(live.km)}${RUN_LIVE_COPY.confirmBody}${formatDuration(live.seconds)}${RUN_LIVE_COPY.confirmNote}`}
+				{`${formatDistance(live.km)}${RUN_LIVE_COPY.confirmBody}${formatDurationText(live.seconds)}${RUN_LIVE_COPY.confirmNote}`}
 			</Sheet>
 		</View>
 	);

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useTheme } from "@/theme";
-import { formatKm, formatPace } from "@/lib/pace";
+import { formatDistance, formatPace } from "@/lib/pace";
 
 import { IShareTemplateId, SHARE_COPY, STORY } from "../../constants";
 import { storyDuration } from "../../utils/storyRoute";
@@ -25,8 +25,8 @@ const CLASSICO_BOX = { x: 160, y: 760, w: 760, h: 620 };
 const MAX_CREW = 4;
 
 const statsOf = (run: IStoryRun): readonly (readonly [string, string])[] => [
-	[SHARE_COPY.distance, `${formatKm(run.km)} km`],
-	[SHARE_COPY.pace, `${formatPace(run.km ? run.seconds / run.km : 0)} /km`],
+	[SHARE_COPY.distance, formatDistance(run.km)],
+	[SHARE_COPY.pace, `${formatPace(run.km ? run.seconds / run.km : 0)} min/km`],
 	[SHARE_COPY.time, storyDuration(run.seconds)],
 ];
 

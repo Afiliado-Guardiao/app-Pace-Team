@@ -56,6 +56,7 @@ export const SHARE_COPY = {
 	teamRun: "CORRIDA DA EQUIPE",
 	runners: " corredores",
 	kmWithTeam: "QUILÔMETROS COM A EQUIPE",
+	metersWithTeam: "METROS COM A EQUIPE",
 	yourTeam: "SUA EQUIPE",
 	inRanking: "NO RANKING",
 	distance: "Distância",

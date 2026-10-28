@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { formatDuration, formatKm, formatPace, IRun, PHOTOS } from "@/lib/pace";
+import { distanceParts, formatDurationText, formatPace, IRun, PHOTOS } from "@/lib/pace";
 import { getTeamRuns, ITeamRunRow } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
@@ -19,8 +19,9 @@ const toTeamRun = (r: ITeamRunRow): IRun => {
 		id: r.id,
 		title: `${r.isYou ? "Você" : r.name} · ${runTitle(date)}`,
 		date: runDate(date),
-		km: formatKm(r.km),
-		time: formatDuration(r.seconds),
+		km: distanceParts(r.km).value,
+		unit: distanceParts(r.km).unit,
+		time: formatDurationText(r.seconds),
 		pace: formatPace(r.km > 0 ? r.seconds / r.km : 0),
 		pts: r.points,
 		status: r.status,

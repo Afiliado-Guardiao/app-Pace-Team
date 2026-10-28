@@ -2,8 +2,8 @@
 import { ImageSourcePropType } from "react-native";
 
 import {
-	formatDuration,
-	formatKm,
+	distanceParts,
+	formatDurationText,
 	formatPace,
 	IFeedPost,
 	IRankedTeam,
@@ -66,8 +66,9 @@ export const toRun = (run: ISavedRun, index: number): IRun => {
 		id: run.id,
 		title: runTitle(date),
 		date: runDate(date),
-		km: formatKm(run.km),
-		time: formatDuration(run.seconds),
+		km: distanceParts(run.km).value,
+		unit: distanceParts(run.km).unit,
+		time: formatDurationText(run.seconds),
 		pace: formatPace(run.km > 0 ? run.seconds / run.km : 0),
 		pts: run.points,
 		status: run.status,

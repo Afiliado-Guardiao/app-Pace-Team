@@ -1,3 +1,5 @@
+import { formatDurationText } from "@/lib/pace";
+
 export interface IStoryBox {
 	x: number;
 	y: number;
@@ -55,10 +57,5 @@ export const projectRoute = (
 };
 
 // 1610 s → "26:50" · 5070 s → "1:24:30" (minutos sem zero à esquerda)
-export const storyDuration = (totalSeconds: number): string => {
-	const s = Math.max(0, Math.floor(totalSeconds));
-	const h = Math.floor(s / 3600);
-	const m = Math.floor((s % 3600) / 60);
-	const sec = String(s % 60).padStart(2, "0");
-	return h ? `${String(h)}:${String(m).padStart(2, "0")}:${sec}` : `${String(m)}:${sec}`;
-};
+// Tempo por extenso ("13 min 17 s"), para não parecer hora do relógio
+export const storyDuration = (totalSeconds: number): string => formatDurationText(totalSeconds);
