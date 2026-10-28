@@ -28,7 +28,7 @@ export const GroupRunDetail: React.FC = () => {
 			</View>
 			<GlassCard variant="accent">
 				<View style={styles.between}>
-					<AvatarStack people={group.members} max={5} size={34} />
+					<AvatarStack people={group.people} max={5} size={34} />
 					<Text style={styles.ran}>{group.ran}</Text>
 				</View>
 				<View style={styles.totals}>
@@ -57,7 +57,7 @@ export const GroupRunDetail: React.FC = () => {
 						key={`${m.name}-${String(i)}`}
 						style={[styles.member, i > 0 ? styles.memberDivider : null]}
 					>
-						<Avatar name={m.name} size={38} ring={m.isYou} />
+						<Avatar name={m.name} src={m.avatarUrl ?? undefined} size={38} ring={m.isYou} />
 						<View style={styles.memberBody}>
 							<View style={styles.between}>
 								<Text style={styles.name}>{m.isYou ? RUN_SUMMARY_COPY.you : m.name}</Text>

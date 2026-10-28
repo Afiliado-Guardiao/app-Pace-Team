@@ -69,4 +69,6 @@ export interface ITeamOnlineMate {
 	id: string;
 	name: string;
 	lastSeen: string;
+	// Foto de perfil (bucket "avatars")
+	avatarPath?: string | null;
 }

@@ -38,7 +38,7 @@ export const useLiveCrew = (isTeam: boolean): IUseLiveCrewReturn => {
 	return {
 		isVisible: mates.length > 0,
 		photos: [],
-		people: mates.map((m) => ({ name: m.name })),
+		people: mates.map((m) => ({ name: m.name, src: m.image })),
 		text: `${String(mates.length)}${RUN_LIVE_COPY.onlineNow}`,
 	};
 };

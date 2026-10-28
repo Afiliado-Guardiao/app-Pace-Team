@@ -12,6 +12,8 @@ import {
 	useGpsStore,
 	useRunStore,
 } from "@/lib/run";
+import { notifyTeamRunStart, pingTeamOnline } from "@/lib/supabase";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 import { RUN_TOASTS } from "../constants";
@@ -80,12 +82,18 @@ export const useRunSetup = (): IUseRunSetupReturn => {
 		startTracking()
 			.then(() => {
 				router.push(ROUTES.RUN_LIVE);
+				// Correndo com a equipe: os colegas recebem "fulano está online" e
+				// "sua equipe está correndo, só falta você!"
+				if (mode === "team" && !IS_PREVIEW) {
+					pingTeamOnline(true).catch(() => undefined);
+					notifyTeamRunStart().catch(() => undefined);
+				}
 			})
 			.catch(() => {
 				useRunStore.getState().reset();
 				showToast(RUN_TOASTS.error);
 			});
-	}, [gps, start, router, showToast]);
+	}, [gps, start, router, showToast, mode]);
 
 	return {
 		gps,

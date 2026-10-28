@@ -74,36 +74,31 @@ export const useRunPost = () => {
 		return p.kind === "shot" ? { uri: p.uri } : undefined;
 	};
 
-	const publish = useCallback(() => {
-		const post = {
-			sample: photo.kind === "sample" ? photo.index : 0,
-			uri: photo.kind === "shot" ? photo.uri : undefined,
-			seconds: run.seconds,
-			km: run.km,
-			layers,
-			caption: caption.trim() || POST_COPY.defaultCaption,
-		};
-		const done = (): void => {
-			setHasJustPosted(true);
-			router.replace(ROUTES.HOME);
-		};
-		if (IS_PREVIEW) {
-			addMyPost({ ...post, id: `me-${String(Date.now())}`, createdAt: Date.now() });
-			done();
-			return;
-		}
-		publishMutation.mutate({ ...post, runId: savedRunId }, { onSuccess: done });
-	}, [
-		addMyPost,
-		photo,
-		run,
-		layers,
-		caption,
-		router,
-		publishMutation,
-		savedRunId,
-		setHasJustPosted,
-	]);
+	// Onde vai o post: no meu perfil ou na equipe (foto do grupo)
+	const publish = useCallback(
+		(scope: "personal" | "team" = "personal") => {
+			const post = {
+				scope,
+				sample: photo.kind === "sample" ? photo.index : 0,
+				uri: photo.kind === "shot" ? photo.uri : undefined,
+				seconds: run.seconds,
+				km: run.km,
+				layers,
+				caption: caption.trim() || POST_COPY.defaultCaption,
+			};
+			const done = (): void => {
+				setHasJustPosted(true);
+				router.replace(ROUTES.HOME);
+			};
+			if (IS_PREVIEW) {
+				addMyPost({ ...post, id: `me-${String(Date.now())}`, createdAt: Date.now() });
+				done();
+				return;
+			}
+			publishMutation.mutate({ ...post, runId: savedRunId }, { onSuccess: done });
+		},
+		[addMyPost, photo, run, layers, caption, router, publishMutation, savedRunId, setHasJustPosted],
+	);
 
 	return {
 		step,

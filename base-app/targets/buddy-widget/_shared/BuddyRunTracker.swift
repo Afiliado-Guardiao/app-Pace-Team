@@ -68,7 +68,10 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     await MainActor.run { self.startLocation() }
     startActivity(state: state, run: active, startedAt: now)
     BuddyStore.reloadWidgets()
-    if withTeam { await BuddySupabase.pingOnline() }
+    if withTeam {
+      await BuddySupabase.pingOnline()
+      await BuddySupabase.notifyTeamRunStart()
+    }
   }
 
   private func startLocation() {

@@ -47,9 +47,12 @@ export const useRankingScreen = () => {
 	const podium = useMemo(
 		() =>
 			hasPodium
-				? teams
-						.slice(0, PODIUM_SIZE)
-						.map((t) => ({ id: t.id, name: t.name, points: formatPoints(t.points) }))
+				? teams.slice(0, PODIUM_SIZE).map((t) => ({
+						id: t.id,
+						name: t.name,
+						points: formatPoints(t.points),
+						logo: t.logoUrl ?? undefined,
+					}))
 				: [],
 		[teams, hasPodium],
 	);

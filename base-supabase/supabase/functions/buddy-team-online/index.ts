@@ -1,9 +1,11 @@
 // =============================================================================
 // Edge Function: buddy-team-online
 // -----------------------------------------------------------------------------
-// O app chama ao abrir ou ao comecar uma corrida. Registra o atleta como
-// online na equipe (RPC buddy_ping_online, como o proprio usuario) e manda um
-// push da Expo para os colegas que ainda nao foram avisados nas ultimas 2 h.
+// O app chama ao abrir (so presenca, notify: false) e quando o atleta vai
+// usar de verdade: comecou a correr ou ficou 5 min com o app aberto (notify:
+// true). Registra o atleta como online na equipe (RPC buddy_ping_online, como
+// o proprio usuario) e, com notify, manda um push da Expo para os colegas que
+// ainda nao foram avisados nas ultimas 2 h.
 //
 // Seguranca: verify_jwt ligado. A RPC roda com o JWT de quem chamou, entao
 // so avisa a equipe do proprio usuario e respeita o limite de 2 h no banco.
@@ -96,7 +98,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
     },
   );
 
-  const { data, error } = await userClient.rpc("buddy_ping_online");
+  // Sem corpo (Buddy fora do app, ao comecar a correr) vale como notify: true
+  const input = await req.json().catch(() => null) as { notify?: unknown } | null;
+  const notify = input?.notify !== false;
+  const { data, error } = await userClient.rpc("buddy_ping_online", { p_notify: notify });
   if (error) {
     const status = error.message.includes("not_authenticated") ? 401 : 500;
     return json({ error: "ping_failed", detail: error.message }, status);

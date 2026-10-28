@@ -23,6 +23,8 @@ interface IUseTeamDetailsReturn {
 	openInvite: () => void;
 	openEdit: () => void;
 	share: () => void;
+	// Perfil de um integrante
+	openAthlete: (id: string | undefined) => void;
 }
 
 // Detalhes da equipe do ranking (?id=) ou da minha equipe.
@@ -45,6 +47,9 @@ export const useTeamDetails = (): IUseTeamDetailsReturn => {
 		},
 		openInvite: () => {
 			router.push(ROUTES.INVITE);
+		},
+		openAthlete: (id) => {
+			if (id) router.push({ pathname: ROUTES.ATHLETE, params: { id } });
 		},
 		openEdit: () => {
 			router.push({ pathname: ROUTES.CREATE_TEAM, params: { edit: "1" } });

@@ -25,7 +25,8 @@ if (Platform.OS !== "web") {
 }
 
 // Tocar na notificação abre o lugar certo: "fulano concluiu uma corrida" abre
-// a corrida dele; "fulano está online" abre a aba Equipe.
+// a corrida dele; "sua equipe está correndo" abre Correr; "fulano está
+// online" abre a aba Equipe.
 export const usePushRouting = (): void => {
 	const router = useRouter();
 
@@ -35,6 +36,8 @@ export const usePushRouting = (): void => {
 			const data = response?.notification.request.content.data as IPushData | undefined;
 			if (data?.type === "team_run" && data.runId) {
 				router.push({ pathname: ROUTES.RUN_DETAIL, params: { teamRun: data.runId } });
+			} else if (data?.type === "team_running") {
+				router.navigate(ROUTES.RUN);
 			} else if (data?.type === "team_online") {
 				router.navigate(ROUTES.TEAM);
 			}

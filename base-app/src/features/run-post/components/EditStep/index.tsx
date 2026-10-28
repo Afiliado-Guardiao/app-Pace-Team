@@ -13,6 +13,7 @@ import { PostArt } from "@/components/shared/PostArt";
 import { ITheme, useTheme } from "@/theme";
 
 import { POST_COPY } from "../../constants";
+import { usePostScope } from "../../hooks/usePostScope";
 import { IUseRunPostReturn } from "../../hooks/useRunPost";
 
 interface IEditStepProps {
@@ -65,6 +66,7 @@ const createEditStepStyles = (theme: ITheme) => {
 export const EditStep: React.FC<IEditStepProps> = ({ post }) => {
 	const { theme } = useTheme();
 	const styles = createEditStepStyles(theme);
+	const where = usePostScope();
 
 	return (
 		<View style={styles.root}>
@@ -110,6 +112,30 @@ export const EditStep: React.FC<IEditStepProps> = ({ post }) => {
 						{POST_COPY.team}
 					</Chip>
 				</View>
+				{where.hasTeam ? (
+					<View style={styles.chips}>
+						<Chip
+							icon="user"
+							selected={where.scope === "personal"}
+							onPress={() => {
+								where.setScope("personal");
+							}}
+							testID="post-scope-mine"
+						>
+							{POST_COPY.whereMine}
+						</Chip>
+						<Chip
+							icon="users"
+							selected={where.scope === "team"}
+							onPress={() => {
+								where.setScope("team");
+							}}
+							testID="post-scope-team"
+						>
+							{POST_COPY.whereTeam}
+						</Chip>
+					</View>
+				) : null}
 				<GlassSurface
 					appearance={styles.captionAppearance}
 					radius={CAPTION_RADIUS}
@@ -126,7 +152,15 @@ export const EditStep: React.FC<IEditStepProps> = ({ post }) => {
 						testID="post-caption"
 					/>
 				</GlassSurface>
-				<Button fullWidth size="lg" icon="send" onPress={post.publish} testID="post-publish">
+				<Button
+					fullWidth
+					size="lg"
+					icon="send"
+					onPress={() => {
+						post.publish(where.scope);
+					}}
+					testID="post-publish"
+				>
 					{POST_COPY.publish}
 				</Button>
 				{post.isPreview ? <Text style={styles.note}>{POST_COPY.demoNote}</Text> : null}

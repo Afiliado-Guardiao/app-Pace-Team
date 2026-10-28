@@ -131,6 +131,7 @@ export interface Database {
 					km?: number;
 					layers?: unknown;
 					caption?: string;
+					scope?: "personal" | "team";
 				};
 				Update: Record<string, never>;
 				Relationships: [];
@@ -239,6 +240,7 @@ export interface Database {
 			set_live_position: { Args: { p_lat: number; p_lng: number }; Returns: undefined };
 			clear_live_position: { Args: Record<string, never>; Returns: undefined };
 			get_team_live_positions: { Args: Record<string, never>; Returns: unknown };
+			get_athlete_profile: { Args: { p_user_id: string }; Returns: unknown };
 			get_notifications: { Args: Record<string, never>; Returns: INotificationRow[] };
 			report_post: { Args: { p_post_id: string; p_reason: string }; Returns: undefined };
 			block_user: { Args: { p_user_id: string }; Returns: undefined };

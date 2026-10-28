@@ -59,8 +59,16 @@ export async function registerBuddyDevice(token: string): Promise<void> {
 	if (error) throw error;
 }
 
-// "Estou online": a equipe recebe o aviso com o Buddy (no máximo 1 a cada 2 h)
-export async function pingTeamOnline(): Promise<void> {
-	const { error } = await supabase.functions.invoke("buddy-team-online", { body: {} });
+// "Estou online": a bolinha verde aparece para a equipe. Com notify, a equipe
+// também recebe o aviso no celular (no máximo 1 a cada 2 h): só quando o
+// atleta começa a correr ou fica 5 min com o app aberto.
+export async function pingTeamOnline(notify = false): Promise<void> {
+	const { error } = await supabase.functions.invoke("buddy-team-online", { body: { notify } });
+	if (error) throw error;
+}
+
+// Começou a correr com a equipe: "Sua equipe está correndo, só falta você!"
+export async function notifyTeamRunStart(): Promise<void> {
+	const { error } = await supabase.functions.invoke("team-run-start", { body: {} });
 	if (error) throw error;
 }

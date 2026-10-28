@@ -6,7 +6,6 @@ import {
 	Badge,
 	Button,
 	GlassCard,
-	ListRow,
 	ProgressBar,
 	ScreenBackground,
 	ScreenScroll,
@@ -18,6 +17,7 @@ import { ITheme, useTheme } from "@/theme";
 import { formatKm, formatPoints, PHOTOS } from "@/lib/pace";
 
 import { AchievementTile } from "./components/AchievementTile";
+import { MemberLine } from "./components/MemberLine";
 import { WeeklyCard } from "./components/WeeklyCard";
 import { TEAM_DETAILS_COPY, WEEKLY_KM_PER_MEMBER } from "./constants";
 import { useTeamDetails } from "./hooks/useTeamDetails";
@@ -136,15 +136,12 @@ export const TeamDetailsScreen: React.FC = () => {
 				/>
 				<View style={styles.members}>
 					{(team?.members ?? []).map((m) => (
-						<ListRow
+						<MemberLine
 							key={m.id ?? m.name}
-							title={m.name}
-							sub={`${m.role} · ${formatKm(m.km, 1)}${TEAM_DETAILS_COPY.weekKm}`}
-							right={
-								m.role === "Capitão" ? (
-									<Badge tone="solid">{TEAM_DETAILS_COPY.captain}</Badge>
-								) : null
-							}
+							member={m}
+							onPress={() => {
+								details.openAthlete(m.id);
+							}}
 						/>
 					))}
 				</View>

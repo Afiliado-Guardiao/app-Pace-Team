@@ -21,6 +21,14 @@ export const createFeedPostStyles = (theme: ITheme, aspectRatio: number) => {
 			paddingHorizontal: spacing[1],
 		} as ViewStyle,
 		author: { flex: 1, minWidth: 0 } as ViewStyle,
+		// Foto + nome: tocar abre o perfil (ou a equipe)
+		authorButton: {
+			flex: 1,
+			minWidth: 0,
+			flexDirection: "row",
+			alignItems: "center",
+			gap: spacing[2.5],
+		} as ViewStyle,
 		name: {
 			fontFamily: fonts.bold,
 			fontSize: sizes.ui,

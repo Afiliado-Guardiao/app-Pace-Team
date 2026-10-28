@@ -25,6 +25,7 @@ export const ROUTES = {
 	CREATE_TEAM: "/(auth)/create-team",
 	INVITE: "/(auth)/invite",
 	TEAM_DETAILS: "/(auth)/team-details",
+	ATHLETE: "/(auth)/athlete",
 	HISTORY: "/(auth)/history",
 	CHALLENGES: "/(auth)/challenges",
 	BUDDY: "/(auth)/buddy",

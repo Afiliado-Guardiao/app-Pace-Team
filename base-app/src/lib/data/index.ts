@@ -3,6 +3,8 @@
 export { DATA_KEYS } from "./keys";
 export { runDate, runTitle, toRun } from "./mappers";
 export type { ITeamView } from "./teamView";
+export type { IAthleteView } from "./useAthleteProfile";
+export { useAthleteProfile } from "./useAthleteProfile";
 export { useAthleteSearch } from "./useAthleteSearch";
 export { useDeleteRun } from "./useDeleteRun";
 export { useFeed } from "./useFeed";

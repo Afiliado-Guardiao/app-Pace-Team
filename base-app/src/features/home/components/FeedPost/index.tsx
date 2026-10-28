@@ -3,13 +3,14 @@ import { Image, Pressable, Text, View } from "react-native";
 
 import Animated from "react-native-reanimated";
 
-import { Avatar, GlassSurface, Icon, useEntrance } from "@/components/pace";
+import { GlassSurface, Icon, useEntrance } from "@/components/pace";
 import { POST_ART_RATIO, PostArt } from "@/components/shared/PostArt";
 import { useTheme } from "@/theme";
 import { IFeedPost } from "@/lib/pace";
 
 import { HOME_COPY, POST_MENU_COPY } from "../../constants";
 import { useFeedPost } from "../../hooks/useFeedPost";
+import { FeedPostHeader } from "../FeedPostHeader";
 
 import { createFeedPostStyles } from "./styles";
 
@@ -35,41 +36,13 @@ export const FeedPost: React.FC<IFeedPostProps> = ({ post, index, onMore }) => {
 
 	return (
 		<Animated.View style={[styles.post, entrance]}>
-			<View style={styles.header}>
-				<Avatar name={post.name} size={36} ring />
-				<View style={styles.author}>
-					<Text style={styles.name} numberOfLines={1}>
-						{post.name}
-						{post.with ? <Text style={styles.with}>{HOME_COPY.feedWith + post.with}</Text> : null}
-					</Text>
-					<Text style={styles.meta}>{post.team ? `${post.team} · ${post.time}` : post.time}</Text>
-				</View>
-				{post.rank ? (
-					<GlassSurface
-						appearance={styles.rankAppearance}
-						radius={theme.pace.radii.pill}
-						style={styles.rank}
-					>
-						<Text style={styles.rankText}>#{post.rank}</Text>
-						<Icon
-							name={post.up ? "trending-up" : "trending-down"}
-							size={13}
-							color={post.up ? colors.trendUp : colors.trendDown}
-						/>
-					</GlassSurface>
-				) : null}
-				<Pressable
-					onPress={() => {
-						onMore(post);
-					}}
-					hitSlop={10}
-					accessibilityRole="button"
-					accessibilityLabel={POST_MENU_COPY.more}
-					testID={`feed-post-more-${post.id}`}
-				>
-					<Icon name="more-horizontal" size={ACTION_ICON} color={colors.textSecondary} />
-				</Pressable>
-			</View>
+			<FeedPostHeader
+				post={post}
+				onOpen={feed.openAuthor}
+				onMore={() => {
+					onMore(post);
+				}}
+			/>
 			<Pressable onPress={feed.handleImageTap} accessibilityLabel={`Corrida de ${post.team}`}>
 				<GlassSurface
 					appearance={styles.imageAppearance}
@@ -82,7 +55,12 @@ export const FeedPost: React.FC<IFeedPostProps> = ({ post, index, onMore }) => {
 								seconds={post.art.seconds}
 								km={post.art.km}
 								layers={post.art.layers}
-								team={post.team ? { name: post.team, rank: post.rank, isUp: post.up } : null}
+								team={
+									post.team
+										? { name: post.team, rank: post.rank, isUp: post.up, logoUrl: post.teamLogo }
+										: null
+								}
+								track={post.art.route ? { route: post.art.route, crew: [] } : undefined}
 							/>
 						) : (
 							<Image source={post.image} style={styles.image} accessibilityIgnoresInvertColors />

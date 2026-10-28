@@ -10,6 +10,8 @@ interface ITeamPreviewCardProps {
 	name: string;
 	city: string;
 	size: number;
+	// Escudo escolhido (sem ele, a sigla)
+	logoUri?: string | null;
 }
 
 const createTeamPreviewCardStyles = (theme: ITheme) => {
@@ -42,7 +44,7 @@ const createTeamPreviewCardStyles = (theme: ITheme) => {
 };
 
 // Prévia do cartão da equipe com as vagas preenchidas.
-export const TeamPreviewCard: React.FC<ITeamPreviewCardProps> = ({ name, city, size }) => {
+export const TeamPreviewCard: React.FC<ITeamPreviewCardProps> = ({ name, city, size, logoUri }) => {
 	const { theme } = useTheme();
 	const styles = createTeamPreviewCardStyles(theme);
 	const slots = Array.from({ length: size }, (_, i) => i);
@@ -50,7 +52,12 @@ export const TeamPreviewCard: React.FC<ITeamPreviewCardProps> = ({ name, city, s
 	return (
 		<GlassCard variant="accent">
 			<View style={styles.row}>
-				<Avatar name={name || CREATE_TEAM_COPY.fallbackAvatar} square size={50} />
+				<Avatar
+					name={name || CREATE_TEAM_COPY.fallbackAvatar}
+					src={logoUri ?? undefined}
+					square
+					size={50}
+				/>
 				<View style={styles.body}>
 					<Text style={styles.name}>{name || CREATE_TEAM_COPY.fallbackName}</Text>
 					<Text style={styles.sub}>{`${city} · ${String(size)} x ${String(size)}`}</Text>

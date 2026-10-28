@@ -38,6 +38,8 @@ export interface IRankedTeam {
 	km: number;
 	delta: number;
 	you?: boolean;
+	// Escudo que o capitão colocou (null = sigla)
+	logoUrl?: string | null;
 }
 
 export interface IRun {
@@ -67,12 +69,20 @@ export interface IFeedPostArt {
 	seconds: number;
 	km: number;
 	layers: { route: boolean; stats: boolean; badge: boolean };
+	// Percurso real (posts reais); sem ele, o traçado de exemplo da prévia
+	route?: readonly (readonly [number, number])[];
 }
 
 export interface IFeedPost {
 	id: string;
 	// Autor e foto enviada (posts reais: denunciar, bloquear, apagar)
 	authorId?: string;
+	// Foto do autor (null = iniciais)
+	avatarUrl?: string | null;
+	teamId?: string | null;
+	teamLogo?: string | null;
+	// Post da equipe (foto do grupo): o cabeçalho mostra a equipe
+	isTeamPost?: boolean;
 	isMine?: boolean;
 	imagePath?: string | null;
 	image: ImageSourcePropType;

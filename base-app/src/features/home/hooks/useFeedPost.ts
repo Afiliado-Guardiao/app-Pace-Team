@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image, Share } from "react-native";
 
+import { useRouter } from "expo-router";
+
 import {
 	Easing,
 	useAnimatedStyle,
@@ -12,6 +14,7 @@ import {
 import { usePostActions } from "@/lib/data";
 import { formatKm, IFeedPost } from "@/lib/pace";
 import { LEGAL_URLS } from "@/constants/legal";
+import { ROUTES } from "@/constants/routes";
 
 import { DOUBLE_TAP_MS, POST_MENU_COPY } from "../constants";
 
@@ -23,6 +26,8 @@ interface IUseFeedPostReturn {
 	toggleLike: () => void;
 	handleImageTap: () => void;
 	share: () => void;
+	// Perfil do autor (ou a equipe, nos posts da equipe)
+	openAuthor: () => void;
 }
 
 const FALLBACK_RATIO = 4 / 5;
@@ -31,6 +36,7 @@ const HEART_MS = 800;
 // Curtir pelo botão ou com dois toques na foto (coração "pula" no centro).
 // Posts reais (isLiked definido) gravam a curtida no Supabase.
 export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
+	const router = useRouter();
 	const { image } = post;
 	const isReal = post.isLiked !== undefined;
 	const baseLikes = post.likes - (post.isLiked ? 1 : 0);
@@ -92,6 +98,13 @@ export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
 			void Share.share({
 				message: `${post.name}${km}${POST_MENU_COPY.shareText}${LEGAL_URLS.support}`,
 			}).catch(() => undefined);
+		},
+		openAuthor: () => {
+			if (post.isTeamPost && post.teamId) {
+				router.push({ pathname: ROUTES.TEAM_DETAILS, params: { id: post.teamId } });
+			} else if (post.authorId) {
+				router.push({ pathname: ROUTES.ATHLETE, params: { id: post.authorId } });
+			}
 		},
 	};
 };

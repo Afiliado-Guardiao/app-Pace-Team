@@ -16,6 +16,9 @@ const ignore = (): undefined => undefined;
 // Com o app aberto, avisa de novo que está online (a equipe vê online quem
 // avisou nos últimos 15 min; o aviso no celular deles sai no máximo a cada 2 h)
 const HEARTBEAT_MS = 5 * 60_000;
+// Só avisa a equipe no celular depois de 5 min seguidos com o app aberto
+// (quem só abre e fecha não dispara o aviso)
+const NOTIFY_AFTER_MS = 5 * 60_000;
 
 // Meta de km trocada no widget ou no atalho, fora do app
 const adoptNativeKm = (): void => {
@@ -33,6 +36,7 @@ export const useBuddyAppEvents = (): void => {
 
 	useEffect(() => {
 		if (IS_PREVIEW) return undefined;
+		let activeSince = Date.now();
 		const sync = async (): Promise<void> => {
 			adoptNativeKm();
 			if ((await flushPendingRuns()) > 0) {
@@ -44,12 +48,12 @@ export const useBuddyAppEvents = (): void => {
 			}
 			const profile = await getBuddyProfile();
 			if (profile) useBuddyStore.getState().hydrate(profile);
-			await pingTeamOnline();
+			await pingTeamOnline(false);
 			await client.invalidateQueries({ queryKey: DATA_KEYS.teamOnline });
 		};
 		const heartbeat = (): void => {
 			if (AppState.currentState !== "active") return;
-			pingTeamOnline()
+			pingTeamOnline(Date.now() - activeSince >= NOTIFY_AFTER_MS)
 				.then(() => client.invalidateQueries({ queryKey: DATA_KEYS.teamOnline }))
 				.catch(ignore);
 		};
@@ -57,7 +61,9 @@ export const useBuddyAppEvents = (): void => {
 		registerPushToken().catch(ignore);
 		const timer = setInterval(heartbeat, HEARTBEAT_MS);
 		const subscription = AppState.addEventListener("change", (status) => {
-			if (status === "active") sync().catch(ignore);
+			if (status !== "active") return;
+			activeSince = Date.now();
+			sync().catch(ignore);
 		});
 		return () => {
 			clearInterval(timer);

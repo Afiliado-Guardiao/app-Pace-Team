@@ -172,6 +172,7 @@ export const RankingScreen: React.FC = () => {
 								km={t.km}
 								points={formatPoints(t.points)}
 								delta={t.delta}
+								logo={t.logoUrl ?? undefined}
 								isYou={t.you}
 								onPress={() => {
 									ranking.openTeam(t);

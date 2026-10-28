@@ -20,6 +20,7 @@ export const HOME_COPY = {
 	feedTag: "Exemplos fictícios",
 	feedEmpty: "Ainda não há corridas postadas. Depois de correr, poste a sua foto para a equipe.",
 	feedWith: " com ",
+	teamPostBy: "por ",
 	like: "Curtir",
 } as const;
 

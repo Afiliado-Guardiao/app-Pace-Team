@@ -4,7 +4,7 @@ import { ImageSourcePropType } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 import { ONLINE } from "@/lib/pace";
-import { getTeamOnline } from "@/lib/supabase";
+import { avatarUrlOf, getTeamOnline } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { DATA_KEYS } from "./keys";
@@ -12,7 +12,7 @@ import { DATA_KEYS } from "./keys";
 export interface ITeamOnlineView {
 	id: string;
 	name: string;
-	// Só na prévia (fotos do design); atletas reais aparecem com as iniciais
+	// Foto do perfil (sem foto, as iniciais)
 	image?: ImageSourcePropType;
 }
 
@@ -46,7 +46,11 @@ export const useTeamOnline = (): IUseTeamOnlineReturn => {
 
 	if (IS_PREVIEW) return { mates: DEMO_MATES, isLoading: false, refetch: reload };
 	return {
-		mates: (query.data ?? []).map((m) => ({ id: m.id, name: m.name || "Atleta" })),
+		mates: (query.data ?? []).map((m) => ({
+			id: m.id,
+			name: m.name || "Atleta",
+			image: m.avatarPath ? { uri: avatarUrlOf(m.avatarPath) } : undefined,
+		})),
 		isLoading: query.isLoading,
 		refetch: reload,
 	};

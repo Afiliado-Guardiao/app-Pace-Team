@@ -10,6 +10,8 @@ interface IUseGroupRunReturn {
 	totalPoints: string;
 	maxKm: number;
 	members: ITeamRunMember[];
+	// Fotos para a pilha de avatares (sem foto, as iniciais)
+	people: { name: string; src?: string }[];
 }
 
 // Corrida da equipe: quem correu no último dia com corrida, total e pontos.
@@ -22,5 +24,6 @@ export const useGroupRun = (): IUseGroupRunReturn => {
 		totalPoints: `+${String(view.totalPoints)}`,
 		maxKm: Math.max(1, ...view.members.map((m) => m.km)),
 		members: view.members,
+		people: view.members.map((m) => ({ name: m.name, src: m.avatarUrl ?? undefined })),
 	};
 };

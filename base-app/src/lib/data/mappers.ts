@@ -94,6 +94,7 @@ export const toRankedTeam = (t: ITeamRankingEntry): IRankedTeam => ({
 	km: t.km,
 	delta: t.delta,
 	you: t.isYou,
+	logoUrl: t.logoUrl,
 });
 
 const postImage = (row: IFeedRow): ImageSourcePropType =>
@@ -115,10 +116,14 @@ export const toFeedPost = (row: IFeedRow): IFeedPost => ({
 	isMine: row.isMine,
 	imagePath: row.imagePath,
 	image: postImage(row),
-	art: { seconds: row.seconds, km: row.km, layers: row.layers },
+	art: { seconds: row.seconds, km: row.km, layers: row.layers, route: row.route ?? [] },
 	name: row.name || "Atleta",
+	avatarUrl: row.avatarPath ? avatarUrlOf(row.avatarPath) : null,
 	team: row.team,
-	rank: 0,
+	teamId: row.teamId,
+	teamLogo: row.teamLogo ?? null,
+	isTeamPost: row.scope === "team",
+	rank: row.teamRank ?? 0,
 	up: true,
 	time: postTime(row.createdAt),
 	likes: row.likes,

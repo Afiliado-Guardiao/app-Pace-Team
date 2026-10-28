@@ -12,6 +12,8 @@ export interface IPublishPostPayload {
 	layers: { route: boolean; stats: boolean; badge: boolean };
 	caption: string;
 	runId?: string | null;
+	// "personal" = no perfil; "team" = post da equipe (foto do grupo)
+	scope?: "personal" | "team";
 }
 
 const uniqueName = (): string =>
@@ -43,10 +45,12 @@ export async function publishPost(payload: IPublishPostPayload): Promise<void> {
 		image_path: imagePath,
 		sample: imagePath ? null : (payload.sample ?? 0),
 		seconds: Math.round(payload.seconds),
-		km: Math.round(payload.km * 100) / 100,
+		// 3 casas: com 2, o ritmo do post saía diferente do detalhe da corrida
+		km: Math.round(payload.km * 1000) / 1000,
 		layers: payload.layers,
 		caption: payload.caption,
 		run_id: payload.runId ?? null,
+		scope: payload.scope ?? "personal",
 	});
 	if (error) throw error;
 }

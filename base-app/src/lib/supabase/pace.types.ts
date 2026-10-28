@@ -92,8 +92,17 @@ export interface IFeedRow {
 	id: string;
 	authorId: string;
 	name: string;
+	// Foto do autor (bucket "avatars")
+	avatarPath?: string | null;
 	team: string;
 	teamId: string | null;
+	teamLogo?: string | null;
+	// Posição da equipe no ranking da cidade nesta semana
+	teamRank?: number | null;
+	// "personal" = no perfil do autor; "team" = post da equipe
+	scope?: "personal" | "team";
+	// Percurso real da corrida (cortado no início e no fim se o autor escolheu)
+	route?: [number, number][];
 	imagePath: string | null;
 	sample: number | null;
 	seconds: number;

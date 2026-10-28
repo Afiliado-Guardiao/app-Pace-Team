@@ -153,7 +153,12 @@ export const CreateTeamScreen: React.FC = () => {
 					testID="create-team-captain"
 				/>
 				<Label style={styles.previewLabel}>{CREATE_TEAM_COPY.preview}</Label>
-				<TeamPreviewCard name={form.name} city={form.city.value} size={form.slots} />
+				<TeamPreviewCard
+					name={form.name}
+					city={form.city.value}
+					size={form.slots}
+					logoUri={form.logoUri}
+				/>
 				<Button
 					size="lg"
 					fullWidth

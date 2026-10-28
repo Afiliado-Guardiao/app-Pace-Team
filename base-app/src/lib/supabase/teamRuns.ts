@@ -90,3 +90,30 @@ export async function getTeamLivePositions(): Promise<ILivePosition[]> {
 	if (error) throw error;
 	return (data ?? []) as ILivePosition[];
 }
+
+// Perfil de outro atleta (feed, equipe). Perfil fechado vem sem números.
+export interface IAthleteProfile {
+	id: string;
+	name: string;
+	handle: string | null;
+	avatarPath: string | null;
+	isYou: boolean;
+	isPrivate: boolean;
+	city: string | null;
+	state: string | null;
+	team: {
+		id: string;
+		name: string;
+		logoUrl: string | null;
+		size: number;
+		city: string;
+		position: number;
+	} | null;
+	stats: { runs: number; totalKm: number; weekKm: number; weekPoints: number } | null;
+}
+
+export async function getAthleteProfile(id: string): Promise<IAthleteProfile | null> {
+	const { data, error } = await supabase.rpc("get_athlete_profile", { p_user_id: id });
+	if (error) throw error;
+	return data as IAthleteProfile | null;
+}

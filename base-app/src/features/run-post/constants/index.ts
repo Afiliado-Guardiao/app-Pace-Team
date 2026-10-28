@@ -22,6 +22,9 @@ export const POST_COPY = {
 	team: "Equipe",
 	captionPlaceholder: "Escreva uma legenda…",
 	publish: "Publicar no feed",
+	whereTitle: "Onde postar",
+	whereMine: "No meu perfil",
+	whereTeam: "Na equipe",
 	demoNote: "Protótipo · foto e dados de exemplo",
 	defaultCaption: "Corrida com a equipe.",
 } as const;

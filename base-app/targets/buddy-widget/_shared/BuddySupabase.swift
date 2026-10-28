@@ -132,7 +132,12 @@ enum BuddySupabase {
 
   // Avisa a equipe que este atleta está online (push com limite de 2 h)
   static func pingOnline() async {
-    _ = await post("/functions/v1/buddy-team-online", json: [String: Any]())
+    _ = await post("/functions/v1/buddy-team-online", json: ["notify": true])
+  }
+
+  // Começou a correr com a equipe: "Sua equipe está correndo, só falta você!"
+  static func notifyTeamRunStart() async {
+    _ = await post("/functions/v1/team-run-start", json: [String: Any]())
   }
 
   // Colegas da equipe online nos últimos 15 min (RPC get_team_online), com a
