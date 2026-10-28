@@ -22,7 +22,8 @@ interface IUseTeamOnlineReturn {
 	refetch: () => void;
 }
 
-const REFRESH_MS = 30_000;
+// Bolinha verde quase na hora (a presença é registrada assim que o app abre)
+const REFRESH_MS = 10_000;
 
 const DEMO_MATES: ITeamOnlineView[] = ONLINE.map((f) => ({
 	id: f.name,
