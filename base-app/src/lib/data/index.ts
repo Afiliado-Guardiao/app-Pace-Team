@@ -17,6 +17,7 @@ export type { INotificationEntry } from "./useNotificationFeed";
 export { useNotificationFeed } from "./useNotificationFeed";
 export { usePostActions } from "./usePostActions";
 export { useRanking } from "./useRanking";
+export { useRouteComparison } from "./useRouteComparison";
 export { runPayload, useSaveRun } from "./useSaveRun";
 export { useTeam } from "./useTeam";
 export type { ITeamAchievementView } from "./useTeamAchievements";

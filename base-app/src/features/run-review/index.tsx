@@ -1,9 +1,11 @@
 import React from "react";
-import { Modal, Text, View } from "react-native";
+import { Modal, ScrollView, Text, useWindowDimensions, View } from "react-native";
 
 import Animated from "react-native-reanimated";
 
 import { Badge, Button, GlassSurface, IconButton } from "@/components/pace";
+import { Confetti } from "@/components/shared/Confetti";
+import { RouteCompareCard } from "@/components/shared/RouteCompareCard";
 import { RunMap } from "@/components/shared/RunMap";
 import { useTheme } from "@/theme";
 
@@ -19,6 +21,7 @@ import { SHAKE_ANIMATION } from "./styles/shake";
 export const RunReviewPopup: React.FC = () => {
 	const { theme } = useTheme();
 	const review = useRunReview();
+	const { height } = useWindowDimensions();
 	const styles = createRunReviewStyles(theme);
 	const badge = RUN_STATUS_BADGE[review.status];
 	const confirmLabel = review.isInvalid ? RUN_REVIEW_COPY.understood : RUN_REVIEW_COPY.validate;
@@ -26,7 +29,13 @@ export const RunReviewPopup: React.FC = () => {
 	if (!review.isOpen) return null;
 
 	return (
-		<Modal transparent visible animationType="fade" statusBarTranslucent onRequestClose={review.close}>
+		<Modal
+			transparent
+			visible
+			animationType="fade"
+			statusBarTranslucent
+			onRequestClose={review.close}
+		>
 			<View style={styles.backdrop}>
 				<Animated.View style={review.isConfirming ? null : SHAKE_ANIMATION}>
 					<GlassSurface appearance={styles.appearance} radius={28} style={styles.card}>
@@ -43,18 +52,28 @@ export const RunReviewPopup: React.FC = () => {
 								testID="run-review-close"
 							/>
 						</View>
-						<View style={styles.map} pointerEvents="none">
-							<RunMap route={review.route} interactive={false} />
-						</View>
-						<View style={styles.statusRow}>
-							<Badge tone={badge.tone} dot>
-								{badge.label}
-							</Badge>
-							<Text style={styles.points}>{`+${String(review.points)} pts`}</Text>
-						</View>
-						<ReviewStats stats={review.stats} />
-						{review.isInvalid ? <Text style={styles.note}>{RUN_REVIEW_COPY.invalidNote}</Text> : null}
-						{review.team.length > 0 ? <ReviewTeam members={review.team} /> : null}
+						<ScrollView style={{ maxHeight: height * 0.55 }} contentContainerStyle={styles.scroll}>
+							<View style={styles.map} pointerEvents="none">
+								<RunMap route={review.route} interactive={false} />
+							</View>
+							<View style={styles.statusRow}>
+								<Badge tone={badge.tone} dot>
+									{badge.label}
+								</Badge>
+								<Text style={styles.points}>{`+${String(review.points)} pts`}</Text>
+							</View>
+							<ReviewStats stats={review.stats} />
+							{review.comparison ? (
+								<RouteCompareCard
+									comparison={review.comparison}
+									previousDate={review.previousDate}
+								/>
+							) : null}
+							{review.isInvalid ? (
+								<Text style={styles.note}>{RUN_REVIEW_COPY.invalidNote}</Text>
+							) : null}
+							{review.team.length > 0 ? <ReviewTeam members={review.team} /> : null}
+						</ScrollView>
 						{review.isConfirming ? (
 							<>
 								<Text style={styles.title}>{RUN_REVIEW_COPY.confirmTitle}</Text>
@@ -126,6 +145,7 @@ export const RunReviewPopup: React.FC = () => {
 						)}
 					</GlassSurface>
 				</Animated.View>
+				{review.isRecord ? <Confetti height={height} /> : null}
 			</View>
 		</Modal>
 	);

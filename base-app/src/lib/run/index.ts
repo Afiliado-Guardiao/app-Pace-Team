@@ -7,6 +7,8 @@ export type { IGpsFix } from "./gps";
 export { startGpsWatch, useGpsStore } from "./gps";
 export { RUN_LOCATION_TASK } from "./locationTask";
 export { useRunReviewStore } from "./reviewStore";
+export type { IRouteComparison, IRouteRun } from "./routeMatch";
+export { compareWithPrevious, isSameRoute } from "./routeMatch";
 export type { IRunGoal, IRunMode, IRunResult, IRunSaved, IRunStatus } from "./runStore";
 export { DEFAULT_GOAL, elapsedSeconds, useRunStore } from "./runStore";
 export type { ILocationPermission } from "./tracking";

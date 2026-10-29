@@ -193,12 +193,21 @@ struct BuddyPanelView: View {
   private var speech: BuddySpeech { model.speech }
   private var palette: BuddyPalette { BuddyPalette.of(model.state.color) }
 
+  // Parado, o Buddy faz o gesto do último toque nele
+  private var pose: BuddyPose {
+    if model.isRunning || model.mode == .bye { return speech.pose }
+    return BuddyPoke.pose(at: Date()) ?? speech.pose
+  }
+
   var body: some View {
     VStack(spacing: -6) {
       ZStack(alignment: .topLeading) {
-        BuddyView(color: model.state.color, accessories: model.state.accessories, pose: speech.pose)
-          .scaleEffect(0.86)
-          .frame(width: 140, height: 120)
+        Button(intent: PokeBuddyIntent()) {
+          BuddyView(color: model.state.color, accessories: model.state.accessories, pose: pose)
+            .scaleEffect(0.86)
+            .frame(width: 140, height: 120)
+        }
+        .buttonStyle(.plain)
         if !model.online.isEmpty && model.mode != .bye {
           BuddyTeamRow(mates: model.online).offset(x: 120, y: 92)
         }

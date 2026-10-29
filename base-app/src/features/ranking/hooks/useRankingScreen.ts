@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "expo-router";
 
+import { useBuddyRankStore } from "@/lib/buddy";
 import { useMyTeam, useRanking } from "@/lib/data";
 import { formatPoints, IRankedTeam } from "@/lib/pace";
 import { IRankingScope } from "@/lib/supabase";
@@ -43,6 +44,14 @@ export const useRankingScreen = () => {
 	const isWorld = scope === WORLD_SCOPE;
 	const { teams, isLoading } = useRanking(Number(category), SCOPE_KEYS[scope] ?? "city");
 	const hasPodium = teams.length >= PODIUM_SIZE;
+	const noteRank = useBuddyRankStore((s) => s.noteRank);
+	const myPosition = teams.findIndex((t) => t.you) + 1;
+
+	// Subiu ou caiu desde a última vez que viu este ranking: o Buddy reage
+	useEffect(() => {
+		if (isLoading || myPosition === 0) return;
+		noteRank(`${scope}-${category}`, myPosition);
+	}, [isLoading, myPosition, scope, category, noteRank]);
 
 	const podium = useMemo(
 		() =>

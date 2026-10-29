@@ -43,7 +43,11 @@ export const ReviewStats: React.FC<IReviewStatsProps> = ({ stats }) => {
 	const { theme } = useTheme();
 	const styles = createReviewStatsStyles(theme);
 	const cells = [
-		{ label: RUN_REVIEW_COPY.distance, value: stats.distance.value, unit: ` ${stats.distance.unit}` },
+		{
+			label: RUN_REVIEW_COPY.distance,
+			value: stats.distance.value,
+			unit: ` ${stats.distance.unit}`,
+		},
 		{ label: RUN_REVIEW_COPY.time, value: stats.time.value, unit: ` ${stats.time.unit}` },
 		{ label: RUN_REVIEW_COPY.pace, value: stats.pace, unit: " min/km" },
 		{ label: RUN_REVIEW_COPY.speed, value: stats.speed, unit: " km/h" },

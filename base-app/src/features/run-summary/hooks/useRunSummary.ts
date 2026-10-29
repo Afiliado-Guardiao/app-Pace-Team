@@ -140,6 +140,9 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		pins: team.pins,
 		// Corrida de outra pessoa não vai para o meu Compartilhar
 		canShare: !mate || mate.isYou,
+		// Para comparar com a última vez no mesmo percurso (só as minhas)
+		startedAt: source.startedAt,
+		runId: source.savedId,
 		seconds: source.seconds,
 		km: source.km,
 		points: source.points,

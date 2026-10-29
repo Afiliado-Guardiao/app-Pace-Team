@@ -4,7 +4,7 @@
 import SwiftUI
 
 enum BuddyPose: String, Codable, Hashable {
-  case idle, wave, sleep, sick, celebrate, run, excited
+  case idle, wave, sleep, sick, celebrate, run, excited, wink, armsUp, tilt
 }
 
 // Corpo: cantos 36/34 em cima e 30/28 embaixo (border-radius elíptico do design)
@@ -54,6 +54,7 @@ struct BuddyView: View {
     switch pose {
     case .run: return 7
     case .sick: return -4
+    case .tilt: return -11
     default: return 0
     }
   }
@@ -64,6 +65,7 @@ struct BuddyView: View {
     case .sick: return 6
     case .run: return -8
     case .celebrate, .excited: return -6
+    case .armsUp: return -5
     default: return 0
     }
   }
@@ -146,6 +148,9 @@ private struct BuddyEyes: View {
       BuddyArc(isUp: false).stroke(Color.buddyInk, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
     case .celebrate:
       BuddyArc(isUp: true).stroke(Color.buddyInk, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 4)
+    case .wink where i == 1:
+      // Piscadinha: o olho direito fecha
+      BuddyArc(isUp: true).stroke(Color.buddyInk, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 5)
     case .sick:
       BuddyArc(isUp: false).fill(Color.buddyInk).frame(width: 11, height: 9)
         .rotationEffect(.degrees(i == 1 ? 12 : -12)).padding(.top, 7)
@@ -211,7 +216,9 @@ private struct BuddyHand: View {
     case .celebrate: return isRight ? CGSize(width: 10, height: -44) : CGSize(width: -4, height: -4)
     case .excited: return CGSize(width: isRight ? 7 : -7, height: -22)
     case .run: return isRight ? CGSize(width: 2, height: 2) : CGSize(width: -2, height: -4)
-    case .idle: return .zero
+    case .armsUp: return CGSize(width: isRight ? 8 : -8, height: -36)
+    case .wink: return isRight ? CGSize(width: 4, height: -24) : .zero
+    case .idle, .tilt: return .zero
     }
   }
 
@@ -283,7 +290,7 @@ private struct BuddyEffects: View {
         BuddyDrop().buddyAt(34, 30, 7, 10)
         BuddyDrop().buddyAt(104, 40, 7, 10)
       }
-      if pose == .celebrate || pose == .excited {
+      if pose == .celebrate || pose == .excited || pose == .armsUp {
         sparks([(6, 18, 14), (118, 6, 16), (126, 74, 12), (2, 90, 12), (62, -6, 10)], color: Color.buddyOrange300)
       } else if let ink = pal.ink {
         sparks(pal.spark ? [(12, 28, 12), (116, 18, 9), (124, 88, 10), (2, 84, 8), (70, 4, 8)] : [(16, 30, 10), (116, 22, 8), (122, 90, 9)], color: ink)

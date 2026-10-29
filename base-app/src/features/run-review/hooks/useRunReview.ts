@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useRouter } from "expo-router";
 
-import { runDate, useDeleteRun, useMyRuns, useTeamRuns } from "@/lib/data";
+import { runDate, useDeleteRun, useMyRuns, useRouteComparison, useTeamRuns } from "@/lib/data";
 import { distanceParts, durationParts, formatPace, formatSpeed } from "@/lib/pace";
 import { useRunReviewStore, useRunStore } from "@/lib/run";
 import { ISavedRun } from "@/lib/supabase";
@@ -49,6 +49,8 @@ export const useRunReview = () => {
 		[saved, reviewed],
 	);
 	const isTeam = run?.mode === "team" && team.hasRuns;
+	// Mesmo percurso de antes: mais rápido ou mais lento que a última vez
+	const comparison = useRouteComparison(run);
 
 	const done = (): void => {
 		setIsConfirming(false);
@@ -77,6 +79,9 @@ export const useRunReview = () => {
 			speed: formatSpeed(run?.km ?? 0, run?.seconds ?? 0),
 		},
 		team: isTeam ? team.members : [],
+		comparison,
+		previousDate: comparison ? runDate(new Date(comparison.previous.startedAt)) : "",
+		isRecord: Boolean(comparison?.isFaster),
 		close: done,
 		validate: done,
 		askDiscard: () => {

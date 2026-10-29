@@ -28,6 +28,16 @@ struct BuddyProvider: TimelineProvider {
       let date = Date(timeIntervalSince1970: sickAt / 1000)
       if date > now { entries.append(BuddyEntry(date: date, state: state)) }
     }
+    // Troca de pose na madrugada, manhã, tarde e noite
+    for hour in [5, 11, 17, 22] {
+      if let date = Calendar.current.nextDate(after: now, matching: DateComponents(hour: hour, minute: 0),
+                                              matchingPolicy: .nextTime) {
+        entries.append(BuddyEntry(date: date, state: state))
+      }
+    }
+    // Volta ao normal depois do gesto do toque
+    if let end = BuddyPoke.endsAt, end > now { entries.append(BuddyEntry(date: end, state: state)) }
+    entries.sort { $0.date < $1.date }
     completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(6 * 3600))))
   }
 }
@@ -47,8 +57,18 @@ struct BuddyWidgetView: View {
     }
   }
 
+  // Correndo, mostra a corrida; parado, o gesto do último toque
+  private var pose: BuddyPose {
+    if BuddyStore.activeRun() != nil { return speech.pose }
+    return BuddyPoke.pose(at: entry.date) ?? speech.pose
+  }
+
+  // Tocar no Buddy troca o gesto (o resto do widget abre o app)
   private var figure: some View {
-    BuddyView(color: entry.state.color, accessories: entry.state.accessories, pose: speech.pose)
+    Button(intent: PokeBuddyIntent()) {
+      BuddyView(color: entry.state.color, accessories: entry.state.accessories, pose: pose)
+    }
+    .buttonStyle(.plain)
   }
 
   private var small: some View {

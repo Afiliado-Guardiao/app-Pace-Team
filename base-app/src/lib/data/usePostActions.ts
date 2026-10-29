@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { useBuddyLive } from "@/lib/buddy/liveStore";
 import {
 	blockUser,
 	deletePost,
@@ -23,7 +24,10 @@ export const usePostActions = () => {
 	const publish = useMutation({
 		mutationFn: (payload: IPublishPostPayload) =>
 			IS_PREVIEW ? Promise.resolve() : publishPost(payload),
-		onSuccess: refresh,
+		onSuccess: () => {
+			refresh();
+			useBuddyLive.getState().emit("post");
+		},
 	});
 	const like = useMutation({
 		mutationFn: (params: { postId: string; liked: boolean }) =>

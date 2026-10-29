@@ -62,3 +62,45 @@ struct ChangeBuddyKmIntent: AppIntent {
     return .result()
   }
 }
+
+// Toques no Buddy (widget e cartão do Toque Traseiro): cada toque troca o
+// gesto, que fica um pouco na tela e depois ele volta ao normal
+enum BuddyPoke {
+  private static let countKey = "buddyPokeCount"
+  private static let atKey = "buddyPokeAt"
+  static let gestures: [BuddyPose] = [.wave, .wink, .armsUp, .excited, .tilt, .celebrate]
+  static let showFor: TimeInterval = 90
+
+  static func next() {
+    let count = (BuddyStore.defaults?.integer(forKey: countKey) ?? 0) + 1
+    BuddyStore.defaults?.set(count, forKey: countKey)
+    BuddyStore.defaults?.set(Date().timeIntervalSince1970, forKey: atKey)
+  }
+
+  // Quando o gesto do último toque some
+  static var endsAt: Date? {
+    guard let at = BuddyStore.defaults?.double(forKey: atKey), at > 0 else { return nil }
+    return Date(timeIntervalSince1970: at + showFor)
+  }
+
+  // Gesto do último toque, se ainda está na tela
+  static func pose(at date: Date) -> BuddyPose? {
+    guard let end = endsAt, date < end else { return nil }
+    let count = BuddyStore.defaults?.integer(forKey: countKey) ?? 0
+    return gestures[count % gestures.count]
+  }
+}
+
+@available(iOS 17.0, *)
+struct PokeBuddyIntent: AppIntent {
+  static let title: LocalizedStringResource = "Cutucar o Pace Buddy"
+  static let isDiscoverable = false
+
+  init() {}
+
+  func perform() async throws -> some IntentResult {
+    BuddyPoke.next()
+    BuddyStore.reloadWidgets()
+    return .result()
+  }
+}

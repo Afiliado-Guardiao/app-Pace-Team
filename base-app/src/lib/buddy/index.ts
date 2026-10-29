@@ -1,7 +1,10 @@
 // Pace Buddy: regras, memória no aparelho e ponte com o widget/atalho do iPhone.
 export * from "./constants";
+export type { IBuddyEvent } from "./liveStore";
+export { useBuddyLive } from "./liveStore";
 export { BUDDY_KEYS, buddyNative } from "./native";
 export { ensureNotificationPermission, scheduleBuddyAlarm } from "./notifications";
+export { useBuddyRankStore } from "./rankStore";
 export * from "./rules";
 export type { IBuddySharedState } from "./sharedState";
 export { buildSharedState } from "./sharedState";

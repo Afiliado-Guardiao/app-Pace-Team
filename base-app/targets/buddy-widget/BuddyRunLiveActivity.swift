@@ -31,6 +31,16 @@ private struct BuddyMiniRing: View {
   }
 }
 
+// Cara do Buddy conforme a corrida avança: correndo, piscadinha passando da
+// metade, empolgado perto da meta e comemorando quando bate
+private func buddyRunPose(_ context: ActivityViewContext<BuddyRunAttributes>) -> BuddyPose {
+  if context.state.isDone { return .celebrate }
+  let progress = context.state.km / max(0.1, context.attributes.goalKm)
+  if progress >= 0.85 { return .excited }
+  if progress >= 0.5 { return .wink }
+  return .run
+}
+
 private struct BuddyRunLockScreen: View {
   let context: ActivityViewContext<BuddyRunAttributes>
 
@@ -39,7 +49,7 @@ private struct BuddyRunLockScreen: View {
   var body: some View {
     HStack(spacing: 12) {
       BuddyView(color: context.attributes.color, accessories: context.attributes.accessories,
-                pose: context.state.isDone ? .celebrate : .run)
+                pose: buddyRunPose(context))
         .scaleEffect(0.5).frame(width: 70, height: 68)
       VStack(alignment: .leading, spacing: 6) {
         if context.state.isDone {
@@ -91,7 +101,7 @@ struct BuddyRunLiveActivity: Widget {
       DynamicIsland {
         DynamicIslandExpandedRegion(.leading) {
           BuddyView(color: context.attributes.color, accessories: context.attributes.accessories,
-                    pose: context.state.isDone ? .celebrate : .run)
+                    pose: buddyRunPose(context))
             .scaleEffect(0.42).frame(width: 59, height: 57)
         }
         DynamicIslandExpandedRegion(.trailing) {
@@ -129,7 +139,7 @@ struct BuddyRunLiveActivity: Widget {
       } compactLeading: {
         // Buddy pequenininho na cor e com os acessórios do atleta
         BuddyView(color: context.attributes.color, accessories: context.attributes.accessories,
-                  pose: context.state.isDone ? .celebrate : .run)
+                  pose: buddyRunPose(context))
           .scaleEffect(0.18).frame(width: 26, height: 25)
       } compactTrailing: {
         if context.state.isDone {
@@ -142,7 +152,7 @@ struct BuddyRunLiveActivity: Widget {
             .multilineTextAlignment(.trailing)
         }
       } minimal: {
-        BuddyView(color: context.attributes.color, accessories: context.attributes.accessories, pose: .run)
+        BuddyView(color: context.attributes.color, accessories: context.attributes.accessories, pose: buddyRunPose(context))
           .scaleEffect(0.16).frame(width: 23, height: 22)
       }
       .keylineTint(Color.buddyOrange)

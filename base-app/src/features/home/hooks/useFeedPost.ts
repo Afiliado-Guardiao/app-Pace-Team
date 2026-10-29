@@ -11,6 +11,7 @@ import {
 	withTiming,
 } from "react-native-reanimated";
 
+import { useBuddyLive } from "@/lib/buddy";
 import { usePostActions } from "@/lib/data";
 import { formatKm, IFeedPost } from "@/lib/pace";
 import { LEGAL_URLS } from "@/constants/legal";
@@ -58,7 +59,10 @@ export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
 
 	const toggleLike = useCallback(() => {
 		const next = !liked;
-		if (next) pop();
+		if (next) {
+			pop();
+			useBuddyLive.getState().emit("like");
+		}
 		setLiked(next);
 		if (isReal) like.mutate({ postId: post.id, liked: next });
 	}, [liked, pop, isReal, like, post.id]);

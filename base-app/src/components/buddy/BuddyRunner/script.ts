@@ -26,6 +26,7 @@ export const TIMES = {
 	look: 750,
 	awayMin: 6000,
 	awayExtra: 7000,
+	awayCheck: 500,
 } as const;
 
 // Quanto tempo dura cada gesto quando ele para
@@ -41,26 +42,33 @@ const ACT_MS: Partial<Record<IBuddyAct, number>> = {
 	salute: 1400,
 	tilt: 1400,
 	sick: 2000,
+	armsUp: 1300,
+	peek: 1800,
+	wake: 1200,
 };
 
 // Gestos de cada humor: correu hoje comemora; com a vida baixando fica
 // com sono e curioso ("não vai correr?"); doente só fica doente
 const ACTS = {
-	celebrate: ["celebrate", "celebrate", "excited", "impressed", "wave"],
-	normal: ["wave", "curious", "shake", "wink", "salute", "tilt"],
-	tired: ["sleep", "sleep", "curious", "shake", "tilt"],
+	celebrate: ["celebrate", "celebrate", "excited", "impressed", "armsUp", "wave"],
+	normal: ["wave", "curious", "shake", "wink", "salute", "tilt", "armsUp", "impressed"],
+	tired: ["sleep", "sleep", "peek", "wake", "curious", "shake", "tilt"],
 	sick: ["sick"],
 } as const satisfies Record<string, readonly IBuddyAct[]>;
 
 // Vida abaixo disso: o Buddy já anda com sono
 const TIRED_LIFE = 0.6;
 
+export const reactionFor = (act: IBuddyAct): { act: IBuddyAct; ms: number } => ({
+	act,
+	ms: ACT_MS[act] ?? 1400,
+});
+
 // Reação ao parar, sorteada entre os gestos do humor do dia
 export const reactionOf = (vitals: IBuddyVitals, lucky: number): { act: IBuddyAct; ms: number } => {
 	const tired = vitals.mood === "normal" && vitals.life < TIRED_LIFE;
 	const list: readonly IBuddyAct[] = tired ? ACTS.tired : ACTS[vitals.mood];
-	const act = list[Math.floor(lucky * list.length)] ?? "wave";
-	return { act, ms: ACT_MS[act] ?? 1400 };
+	return reactionFor(list[Math.floor(lucky * list.length)] ?? "wave");
 };
 
 const pose = (act: IBuddyAct, phase: IBuddyPose["phase"] = null): IBuddyPose => ({

@@ -31,7 +31,12 @@ export const BuddyRunner: React.FC<IBuddyRunnerProps> = ({
 	if (!runner.isVisible) return null;
 
 	return (
-		<View style={styles.track} pointerEvents="box-none">
+		<View
+			ref={runner.trackRef}
+			onLayout={runner.onTrackLayout}
+			style={styles.track}
+			pointerEvents="box-none"
+		>
 			<Animated.View style={[styles.mover, runner.moveStyle]}>
 				<Pressable
 					testID={testID}

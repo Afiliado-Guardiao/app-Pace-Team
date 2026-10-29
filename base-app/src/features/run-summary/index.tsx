@@ -11,6 +11,8 @@ import {
 	TopBar,
 	useLayoutSize,
 } from "@/components/pace";
+import { Confetti } from "@/components/shared/Confetti";
+import { RouteCompareCard } from "@/components/shared/RouteCompareCard";
 import { RunMap } from "@/components/shared/RunMap";
 import { useTheme } from "@/theme";
 import { formatDistance } from "@/lib/pace";
@@ -21,6 +23,7 @@ import { RunStatsCard } from "./components/RunStatsCard";
 import { SplitsCard } from "./components/SplitsCard";
 import { RUN_SUMMARY_COPY } from "./constants";
 import { IRunSummaryVariant, useRunSummary } from "./hooks/useRunSummary";
+import { useSummaryCompare } from "./hooks/useSummaryCompare";
 import { createRunSummaryStyles, MAP_HEIGHT } from "./styles";
 
 interface IRunSummaryScreenProps {
@@ -33,6 +36,7 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 	const insets = useSafeAreaInsets();
 	const { size, onLayout } = useLayoutSize();
 	const run = useRunSummary(variant);
+	const compare = useSummaryCompare(run);
 	const styles = createRunSummaryStyles(theme, insets);
 	const halfway = formatDistance(run.km / 2);
 
@@ -42,6 +46,13 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 			<Text style={styles.title}>{run.runTitle}</Text>
 		</View>,
 		<RunStatsCard key="stats" seconds={run.seconds} km={run.km} />,
+		compare.comparison ? (
+			<RouteCompareCard
+				key="compare"
+				comparison={compare.comparison}
+				previousDate={compare.previousDate}
+			/>
+		) : null,
 		<PointsCard key="points" points={run.points} status={run.status} />,
 		run.isDetail && run.splits.length ? <SplitsCard key="splits" splits={run.splits} /> : null,
 		run.isDetail ? null : (
@@ -82,6 +93,7 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 			<View style={styles.tooltip} pointerEvents="none">
 				<Tooltip>{halfway}</Tooltip>
 			</View>
+			{compare.isRecord && size ? <Confetti height={size.height} /> : null}
 			<View style={styles.topBar}>
 				<TopBar
 					title={run.title}

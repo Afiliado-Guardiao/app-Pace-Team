@@ -17,6 +17,7 @@ interface IRunReviewStyles {
 	note: TextStyle;
 	row: ViewStyle;
 	action: ViewStyle;
+	scroll: ViewStyle;
 }
 
 export const MAP_HEIGHT = 150;
@@ -70,6 +71,7 @@ export const createRunReviewStyles = (theme: ITheme): IRunReviewStyles => {
 			color: colors.textTertiary,
 		},
 		row: { flexDirection: "row", gap: spacing[2] },
+		scroll: { gap: spacing[3] },
 		action: { flex: 1 },
 	};
 };

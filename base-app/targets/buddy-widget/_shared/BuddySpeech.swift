@@ -20,7 +20,22 @@ struct BuddySpeech {
     if km >= 15 {
       return BuddySpeech(title: "Uau, \(buddyGoalLabel(km)) km?!", subtitle: "Meta alta. O time vai sentir esse treino.", pose: .excited)
     }
-    return BuddySpeech(title: "Bora correr?", subtitle: "Escolhe a meta e como você vai.", pose: .idle)
+    return byHour(date)
+  }
+
+  // Sem meta especial, o Buddy muda com a hora do dia
+  private static func byHour(_ date: Date) -> BuddySpeech {
+    let hour = Calendar.current.component(.hour, from: date)
+    if hour >= 22 || hour < 5 {
+      return BuddySpeech(title: "Zzz… correr agora?", subtitle: "Eu acordo rapidinho. Escolhe a meta.", pose: .sleep)
+    }
+    if hour < 11 {
+      return BuddySpeech(title: "Bom dia! Bora correr?", subtitle: "Treino cedo deixa o dia mais leve.", pose: .wave)
+    }
+    if hour < 17 {
+      return BuddySpeech(title: "Bora correr?", subtitle: "Escolhe a meta e como você vai.", pose: .wink)
+    }
+    return BuddySpeech(title: "Corrida no fim do dia?", subtitle: "Solta o estresse e soma km pro time.", pose: .armsUp)
   }
 
   // "Meta batida!" (painel de comemoração)
