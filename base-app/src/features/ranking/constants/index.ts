@@ -18,13 +18,16 @@ export const RANKING_COPY = {
 export const RANKING_SCOPES = ["Cidade", "Região", "Estado", "País"] as const;
 export const WORLD_SCOPE = "Mundo";
 
-// Categorias do campeonato (equipes de 3, 5 ou 10)
-// 2 x 2 = duplas
+// Categorias do campeonato (2 x 2 = duplas). Equipe de outro tamanho ganha a
+// categoria dela na lista.
 export const RANKING_CATEGORIES = ["2", "3", "5", "10"] as const;
 
 export const RANKING_RULES = [
 	{ icon: "footprints", text: "8 pts por km validado, até 20 km por corrida." },
 	{ icon: "calendar", text: "Semana de segunda 00:00 a domingo 23:59." },
-	{ icon: "users", text: "Só equipes completas (3, 5 ou 10) entram no campeonato." },
+	{
+		icon: "users",
+		text: "Só equipes completas entram no campeonato, contra equipes do mesmo tamanho.",
+	},
 	{ icon: "shield-check", text: "Corridas passam por verificação de GPS, ritmo e sensores." },
 ] as const;

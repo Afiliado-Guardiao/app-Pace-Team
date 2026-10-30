@@ -9,7 +9,7 @@ import { IRankingScope } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
 
-import { RANKING_COPY, RANKING_SCOPES, WORLD_SCOPE } from "../constants";
+import { RANKING_CATEGORIES, RANKING_COPY, RANKING_SCOPES, WORLD_SCOPE } from "../constants";
 
 const SCOPE_KEYS: Record<string, IRankingScope> = {
 	Cidade: "city",
@@ -53,6 +53,12 @@ export const useRankingScreen = () => {
 		noteRank(`${scope}-${category}`, myPosition);
 	}, [isLoading, myPosition, scope, category, noteRank]);
 
+	const categories = useMemo(() => {
+		const all = new Set<string>(RANKING_CATEGORIES);
+		if (team) all.add(String(team.size));
+		return [...all].sort((a, b) => Number(a) - Number(b));
+	}, [team]);
+
 	const podium = useMemo(
 		() =>
 			hasPodium
@@ -77,6 +83,7 @@ export const useRankingScreen = () => {
 	return {
 		scope,
 		setScope,
+		categories,
 		category,
 		setCategory,
 		isWorld,

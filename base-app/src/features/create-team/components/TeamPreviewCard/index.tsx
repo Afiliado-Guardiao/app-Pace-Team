@@ -30,8 +30,15 @@ const createTeamPreviewCardStyles = (theme: ITheme) => {
 			fontSize: typography.sizes.label,
 			color: colors.textSecondary,
 		},
-		slots: { flexDirection: "row" as const, gap: 6, marginTop: 14 },
-		slot: { flex: 1, height: 6, borderRadius: 3, backgroundColor: colors.slotEmpty },
+		// Equipe grande quebra em mais de uma linha
+		slots: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: 6, marginTop: 14 },
+		slot: {
+			flexGrow: 1,
+			flexBasis: 10,
+			height: 6,
+			borderRadius: 3,
+			backgroundColor: colors.slotEmpty,
+		},
 		slotOn: { backgroundColor: colors.orange[500] },
 		note: {
 			marginTop: 10,

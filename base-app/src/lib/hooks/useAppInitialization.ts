@@ -27,6 +27,7 @@ export const useAppInitialization = (): {
 	const [error, setError] = useState<Error | null>(null);
 
 	const hasHydrated = useStore((state) => state._hasHydrated);
+	const hasApp = useStore((state) => state.isAuthenticated || state.isCompleted);
 
 	const [fontsLoaded, fontError] = useFonts({
 		Inter_400Regular,
@@ -72,10 +73,11 @@ export const useAppInitialization = (): {
 	}, [fontsLoaded, fontError, hasHydrated, isInitialized, error]);
 
 	const onLayoutRootView = useCallback(() => {
-		if (isReady) {
+		// Quem já tem o app: a BootSplash esconde quando a foto dela estiver pronta
+		if (isReady && !hasApp) {
 			void SplashScreen.hideAsync();
 		}
-	}, [isReady]);
+	}, [isReady, hasApp]);
 
 	// Na prévia, fonte que não carregar cai na do sistema em vez de travar o app
 	return { isReady, error: error || (IS_PREVIEW ? null : fontError), onLayoutRootView };

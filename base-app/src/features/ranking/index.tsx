@@ -20,7 +20,7 @@ import { ITheme, useTheme } from "@/theme";
 import { formatPoints, PHOTOS } from "@/lib/pace";
 
 import { RulesList } from "./components/RulesList";
-import { RANKING_CATEGORIES, RANKING_COPY, RANKING_SCOPES } from "./constants";
+import { RANKING_COPY, RANKING_SCOPES } from "./constants";
 import { useRankingScreen } from "./hooks/useRankingScreen";
 
 const TITLE = 30;
@@ -120,7 +120,7 @@ export const RankingScreen: React.FC = () => {
 					testID="ranking-scope"
 				/>
 				<View style={styles.filters}>
-					{RANKING_CATEGORIES.map((v) => (
+					{ranking.categories.map((v) => (
 						<Chip
 							key={v}
 							size="sm"

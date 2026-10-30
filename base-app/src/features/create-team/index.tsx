@@ -3,7 +3,6 @@ import { Image, Pressable, Text, View } from "react-native";
 
 import {
 	Button,
-	Chip,
 	FloatingToast,
 	GlassSurface,
 	Icon,
@@ -17,8 +16,9 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { PlaceFields } from "./components/PlaceFields";
+import { SizeField } from "./components/SizeField";
 import { TeamPreviewCard } from "./components/TeamPreviewCard";
-import { CREATE_TEAM_COPY, SIZE_OPTIONS } from "./constants";
+import { CREATE_TEAM_COPY } from "./constants";
 import { useCreateTeam } from "./hooks/useCreateTeam";
 
 const LOGO = 84;
@@ -72,13 +72,6 @@ const createCreateTeamStyles = (theme: ITheme) => {
 			lineHeight: typography.sizes.label * 1.45,
 			color: colors.textTertiary,
 		},
-		fieldLabel: {
-			marginBottom: 10,
-			fontFamily: typography.fonts.semibold,
-			fontSize: typography.sizes.label,
-			color: colors.textSecondary,
-		},
-		chips: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: 8 },
 		previewLabel: { marginTop: 6 },
 	};
 };
@@ -90,8 +83,6 @@ export const CreateTeamScreen: React.FC = () => {
 	const styles = createCreateTeamStyles(theme);
 	const title = form.isEdit ? CREATE_TEAM_COPY.editTitle : CREATE_TEAM_COPY.title;
 	const submitLabel = form.isEdit ? CREATE_TEAM_COPY.editSubmit : CREATE_TEAM_COPY.submit;
-	const sizeLabel = (v: string): string =>
-		v === "2" ? `${CREATE_TEAM_COPY.duo} (2)` : `${v}${CREATE_TEAM_COPY.members}`;
 
 	return (
 		<View style={styles.root}>
@@ -128,23 +119,7 @@ export const CreateTeamScreen: React.FC = () => {
 					testID="create-team-name"
 				/>
 				<PlaceFields form={form} />
-				<View>
-					<Text style={styles.fieldLabel}>{CREATE_TEAM_COPY.category}</Text>
-					<View style={styles.chips}>
-						{SIZE_OPTIONS.map((v) => (
-							<Chip
-								key={v}
-								selected={form.size === v}
-								onPress={() => {
-									form.setSize(v);
-								}}
-								testID={`create-team-size-${v}`}
-							>
-								{sizeLabel(v)}
-							</Chip>
-						))}
-					</View>
-				</View>
+				<SizeField field={form.teamSize} />
 				<Input
 					label={CREATE_TEAM_COPY.captain}
 					icon="crown"

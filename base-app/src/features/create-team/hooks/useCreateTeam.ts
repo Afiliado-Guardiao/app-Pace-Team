@@ -15,6 +15,7 @@ import { ROUTES } from "@/constants/routes";
 import { CREATE_TEAM_COPY } from "../constants";
 
 import { usePlaceField } from "./usePlaceField";
+import { useTeamSize } from "./useTeamSize";
 
 const MIN_NAME = 2;
 
@@ -45,7 +46,7 @@ export const useCreateTeam = () => {
 	const city = usePlaceField(cityOptions[0] ?? "");
 	const region = usePlaceField(regionOptions[0] ?? "");
 	const [name, setName] = useState("");
-	const [size, setSize] = useState("5");
+	const teamSize = useTeamSize();
 	// Sem nome no cadastro o campo começa vazio (o nome do design só na prévia)
 	const [captain, setCaptain] = useState(user?.name || (IS_PREVIEW ? ME.name : ""));
 	const [logoUri, setLogoUri] = useState<string | null>(null);
@@ -58,10 +59,10 @@ export const useCreateTeam = () => {
 		const saved = countryOf(team.country);
 		setCountryCode(team.country);
 		setName(team.name);
-		setSize(String(team.size));
+		teamSize.fill(String(team.size));
 		city.fill(team.city, placeOptions(saved.cities, team.city));
 		region.fill(team.region, placeOptions(saved.regions));
-	}, [isEdit, team, city, region]);
+	}, [isEdit, team, city, region, teamSize]);
 
 	const warn = (message: string): void => {
 		showToast({ tone: "warning", title: CREATE_TEAM_COPY.title, message });
@@ -85,7 +86,13 @@ export const useCreateTeam = () => {
 			warn(CREATE_TEAM_COPY.cityMissing);
 			return;
 		}
-		const form = { name: name.trim(), city: city.value, region: region.value, size: Number(size), country };
+		const form = {
+			name: name.trim(),
+			city: city.value,
+			region: region.value,
+			size: Number(teamSize.size),
+			country,
+		};
 		if (isEdit) {
 			update.mutate(form, {
 				onSuccess: (id) => {
@@ -124,11 +131,10 @@ export const useCreateTeam = () => {
 		cityOptions,
 		region,
 		regionOptions,
-		size,
-		setSize,
+		teamSize,
 		captain,
 		setCaptain,
-		slots: Number(size),
+		slots: Number(teamSize.size),
 		isSubmitting: create.isPending || update.isPending,
 		logoUri: logoUri ?? (isEdit ? (team?.logoUrl ?? null) : null),
 		pickLogo: () => {

@@ -17,6 +17,8 @@ interface IInviteCardProps {
 }
 
 const DOT = 10;
+// Equipe maior que isso mostra só o texto das vagas (as bolinhas não cabem)
+const MAX_DOTS = 10;
 
 const createInviteCardStyles = (theme: ITheme, left: number) => {
 	const { colors, typography } = theme.pace;
@@ -57,7 +59,7 @@ export const InviteCard: React.FC<IInviteCardProps> = ({
 }) => {
 	const { theme } = useTheme();
 	const styles = createInviteCardStyles(theme, left);
-	const slots = Array.from({ length: capacity }, (_, i) => i);
+	const slots = Array.from({ length: capacity > MAX_DOTS ? 0 : capacity }, (_, i) => i);
 	const leftLabel = left === 1 ? INVITE_COPY.leftOne : INVITE_COPY.leftMany;
 
 	return (

@@ -209,7 +209,7 @@ struct BuddyPanelView: View {
         }
         .buttonStyle(.plain)
         if !model.online.isEmpty && model.mode != .bye {
-          BuddyTeamRow(mates: model.online).offset(x: 120, y: 92)
+          BuddyTeamRow(mates: model.online).offset(x: 120, y: 80)
         }
       }
       .frame(maxWidth: .infinity)
@@ -432,18 +432,32 @@ private struct BuddyTeamRow: View {
 private struct MiniTeamBuddy: View {
   let mate: BuddyMate
 
+  // Só o primeiro nome: é o que cabe em cima do mini Buddy
+  private var firstName: String {
+    mate.name.split(separator: " ").first.map(String.init) ?? ""
+  }
+
   // O Buddy do colega igual ao do app dele: cor e acessórios
   var body: some View {
-    ZStack(alignment: .topLeading) {
-      BuddyView(color: mate.color, accessories: mate.accessories, pose: .idle)
-        .scaleEffect(0.21)
-        .frame(width: 29, height: 28)
-      Circle()
-        .fill(Color.buddyOnline)
-        .frame(width: 6, height: 6)
-        .overlay(Circle().stroke(Color.buddyNavyDeep, lineWidth: 1.5))
-        .offset(x: 2, y: 4)
+    VStack(spacing: 0) {
+      Text(firstName)
+        .font(.system(size: 8, weight: .bold))
+        .foregroundStyle(.white.opacity(0.85))
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .frame(width: 34, height: 12)
+      ZStack(alignment: .topLeading) {
+        BuddyView(color: mate.color, accessories: mate.accessories, pose: .idle)
+          .scaleEffect(0.21)
+          .frame(width: 29, height: 28)
+        Circle()
+          .fill(Color.buddyOnline)
+          .frame(width: 6, height: 6)
+          .overlay(Circle().stroke(Color.buddyNavyDeep, lineWidth: 1.5))
+          .offset(x: 2, y: 4)
+      }
+      .frame(width: 29, height: 28, alignment: .topLeading)
     }
-    .frame(width: 29, height: 28, alignment: .topLeading)
+    .frame(width: 34)
   }
 }

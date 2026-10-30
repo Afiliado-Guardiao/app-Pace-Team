@@ -7,6 +7,8 @@ export const CREATE_TEAM_COPY = {
 	otherRegion: "Digite a região",
 	cityMissing: "Escolha a cidade da equipe (ou digite em Outra).",
 	duo: "Dupla",
+	otherSize: "Outra",
+	otherSizeLabel: "Quantidade de integrantes",
 	logo: "Logo",
 	logoHint: "Envie o escudo do time. PNG ou JPG quadrado, mínimo 512 px.",
 	logoDenied: "Libere o acesso às fotos em Ajustes › PACE TEAM › Fotos.",
@@ -28,5 +30,15 @@ export const CREATE_TEAM_COPY = {
 
 // 2 = dupla (casal, amigos); a cidade e a região vêm de @/lib/pace (places)
 export const SIZE_OPTIONS = ["2", "3", "5", "10"] as const;
+// "Outra": a pessoa escolhe qualquer número de 2 a 50
+export const MIN_TEAM_SIZE = 2;
+export const MAX_TEAM_SIZE = 50;
+export const OTHER_SIZE_OPTIONS = Array.from(
+	{ length: MAX_TEAM_SIZE - MIN_TEAM_SIZE + 1 },
+	(_, i) => ({
+		value: String(i + MIN_TEAM_SIZE),
+		label: `${String(i + MIN_TEAM_SIZE)}${CREATE_TEAM_COPY.members}`,
+	}),
+);
 // Só o capitão entrou até agora
 export const JOINED = 1;
