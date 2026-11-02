@@ -12,22 +12,35 @@ interface IStoryCrewProps {
 	radius?: number;
 }
 
-// Onde cada foto fica no traçado (fração do percurso)
-const CREW_AT = [0.92, 0.66, 0.4, 0.16] as const;
+const MAX_PINS = 4;
+// Duas fotos no mesmo lugar (ex.: os dois parados na largada): lado a lado
+const NEAR = 40;
 
-// Fotos redondas de quem correu junto, em cima do percurso
+// Foto de cada um que correu junto no lugar dele no percurso, com o nome e
+// quanto correu
 export const StoryCrew: React.FC<IStoryCrewProps> = ({ box, run, radius = 54 }) => {
 	const route = projectRoute(box, run.route);
-	const crew = run.crew.slice(0, CREW_AT.length);
+	const placed: (readonly [number, number])[] = [];
+	const pins = run.crew.slice(0, MAX_PINS).map((pin) => {
+		const [x, y] = route.at(pin.at);
+		const crowd = placed.filter(([px, py]) => Math.abs(px - x) < NEAR && Math.abs(py - y) < NEAR);
+		placed.push([x, y]);
+		return { pin, x: x + crowd.length * (radius * 2 + 40), y };
+	});
 
 	return (
 		<>
-			{crew.map((photo, i) => {
-				const [x, y] = route.at(CREW_AT[i] ?? 0);
-				return (
-					<StoryPin key={i} image={photo} x={x} y={y} radius={i === 0 ? radius + 4 : radius} />
-				);
-			})}
+			{pins.map(({ pin, x, y }, i) => (
+				<StoryPin
+					key={`${pin.name}-${String(i)}`}
+					image={pin.image}
+					name={pin.name}
+					label={pin.label}
+					x={x}
+					y={y}
+					radius={radius}
+				/>
+			))}
 		</>
 	);
 };

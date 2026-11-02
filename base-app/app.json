@@ -30,7 +30,8 @@
 				"LSApplicationQueriesSchemes": ["whatsapp"],
 				"NSSupportsLiveActivities": true,
 				"NSSupportsLiveActivitiesFrequentUpdates": true,
-				"NSAlarmKitUsageDescription": "O Pace Buddy usa o despertador para te acordar na hora da corrida que você marcou."
+				"NSAlarmKitUsageDescription": "O Pace Buddy usa o despertador para te acordar na hora da corrida que você marcou.",
+				"NSPhotoLibraryAddUsageDescription": "O PACE TEAM salva na sua galeria as imagens das corridas que você escolher guardar."
 			},
 			"entitlements": {
 				"com.apple.security.application-groups": ["group.com.paceteam.app"]

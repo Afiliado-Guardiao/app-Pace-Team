@@ -16,7 +16,7 @@ export const RUN_COPY = {
 	pace: "Ritmo",
 	goalHint: "Ajuste dois valores e o terceiro é calculado. Toque no número para digitar.",
 	onlineTitleSuffix: " do time online",
-	onlineSub: "Abriram o app nos últimos 15 min",
+	onlineSub: "Com o app aberto ou correndo agora",
 	onlineNone: "Ninguém do time online agora",
 	onlineNoneSub: "Quem abrir o app aparece aqui",
 	ready: "Prontos",

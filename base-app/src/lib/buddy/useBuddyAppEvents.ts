@@ -4,7 +4,7 @@ import { AppState } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { DATA_KEYS } from "@/lib/data/keys";
-import { getBuddyProfile, pingTeamOnline } from "@/lib/supabase";
+import { getBuddyProfile, goOffline, pingTeamOnline } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { BUDDY_KEYS, buddyNative } from "./native";
@@ -13,9 +13,10 @@ import { flushPendingRuns } from "./pendingRuns";
 import { useBuddyStore } from "./store";
 
 const ignore = (): undefined => undefined;
-// Com o app aberto, avisa de novo que está online (a equipe vê online quem
-// avisou nos últimos 15 min; o aviso no celular deles sai no máximo a cada 2 h)
-const HEARTBEAT_MS = 5 * 60_000;
+// Com o app aberto, avisa de novo que está online a cada 1 min (a equipe vê
+// online quem avisou nos últimos 3 min; o aviso no celular deles sai no
+// máximo a cada 2 h). Ao ir para o fundo, sai da lista na hora.
+const HEARTBEAT_MS = 60_000;
 // Só avisa a equipe no celular depois de 5 min seguidos com o app aberto
 // (quem só abre e fecha não dispara o aviso)
 const NOTIFY_AFTER_MS = 5 * 60_000;
@@ -61,6 +62,12 @@ export const useBuddyAppEvents = (): void => {
 		registerPushToken().catch(ignore);
 		const timer = setInterval(heartbeat, HEARTBEAT_MS);
 		const subscription = AppState.addEventListener("change", (status) => {
+			if (status === "background") {
+				goOffline()
+					.then(() => client.invalidateQueries({ queryKey: DATA_KEYS.teamOnline }))
+					.catch(ignore);
+				return;
+			}
 			if (status !== "active") return;
 			activeSince = Date.now();
 			sync().catch(ignore);

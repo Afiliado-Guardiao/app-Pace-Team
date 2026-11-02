@@ -11,6 +11,7 @@ import {
 	TopBar,
 } from "@/components/pace";
 import { RunRow } from "@/components/shared/RunRow";
+import { SwipeToDelete } from "@/components/shared/SwipeToDelete";
 import { ITheme, useTheme } from "@/theme";
 
 import { HISTORY_COPY, HISTORY_FILTERS } from "./constants";
@@ -71,14 +72,20 @@ export const HistoryScreen: React.FC = () => {
 				/>
 				<View style={styles.runs}>
 					{history.runs.map((run, i) => (
-						<RunRow
+						<SwipeToDelete
 							key={run.id}
-							run={run}
-							seed={i}
-							onPress={() => {
-								history.openRun(run.id);
-							}}
-						/>
+							isEnabled={!history.isTeam}
+							onDelete={() => history.removeRun(run)}
+							testID={`history-run-${String(i)}`}
+						>
+							<RunRow
+								run={run}
+								seed={i}
+								onPress={() => {
+									history.openRun(run.id);
+								}}
+							/>
+						</SwipeToDelete>
 					))}
 				</View>
 				{history.isEmpty ? <InfoNote icon="footprints">{history.emptyText}</InfoNote> : null}

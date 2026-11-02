@@ -170,7 +170,13 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 				<StoryTeamPill team={run.team} cx={CX} y={170} options={{ gradient: "storyMarkPeach" }} />
 			) : null}
 			<StoryRoute box={{ x: 140, y: 420, w: 800, h: 820 }} points={run.route} lineWidth={16} />
-			<StoryText x={90} y={1540} size={120} weight={800} spacing={-2}>{`${km} ${distance.unit.toUpperCase()}`}</StoryText>
+			<StoryText
+				x={90}
+				y={1540}
+				size={120}
+				weight={800}
+				spacing={-2}
+			>{`${km} ${distance.unit.toUpperCase()}`}</StoryText>
 			<StoryText x={90} y={1610} size={34} weight={600} spacing={3}>
 				{`${time}   ${pace} min/km   ${teamName.toUpperCase()}`}
 			</StoryText>

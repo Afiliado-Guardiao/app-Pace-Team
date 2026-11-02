@@ -5,6 +5,7 @@ import Svg, { Path } from "react-native-svg";
 
 import { GradientLayers, Logo, useLayoutSize } from "@/components/pace";
 import { useTheme } from "@/theme";
+import type { IRunCrewPin } from "@/lib/data";
 import { CREW, formatDistance, formatDurationText, formatPace, MY_TEAM } from "@/lib/pace";
 import { IS_PREVIEW } from "@/constants/preview";
 
@@ -37,7 +38,7 @@ interface IPostArtProps {
 	// null = atleta sem equipe (o selo da equipe não aparece)
 	team?: IPostArtTeam | null;
 	// Percurso real e fotos de quem correu junto (sem isso, o traçado do design)
-	track?: { route: readonly (readonly [number, number])[]; crew: ImageSourcePropType[] };
+	track?: { route: readonly (readonly [number, number])[]; crew: IRunCrewPin[] };
 	style?: StyleProp<ViewStyle>;
 }
 
@@ -49,14 +50,39 @@ const ALL_LAYERS: IPostArtLayers = { route: true, stats: true, badge: true };
 const DEFAULT_TEAM: IPostArtTeam | null = IS_PREVIEW
 	? { name: MY_TEAM.name, rank: MY_TEAM.rank, isUp: true }
 	: null;
-const PINS = IS_PREVIEW
+const PINS: IArtPin[] = IS_PREVIEW
 	? [
-			{ image: CREW[0], x: 33, y: 49.5 },
-			{ image: CREW[1], x: 63, y: 44 },
+			{ image: CREW[0], name: "", x: 33, y: 49.5 },
+			{ image: CREW[1], name: "", x: 63, y: 44 },
 		]
 	: [];
-// Onde as fotos de quem correu ficam no percurso real (fração do caminho)
-const CREW_AT = [0.92, 0.62, 0.32] as const;
+const MAX_PINS = 3;
+// Sem percurso desenhado (ninguém andou): as fotos ficam no meio da arte
+const CENTER = [50, 64] as const;
+// Duas fotos no mesmo lugar ficam lado a lado (em % da largura)
+const NEAR = 4;
+const SPREAD = 12;
+
+interface IArtPin {
+	image?: ImageSourcePropType;
+	name: string;
+	label?: string;
+	x: number;
+	y: number;
+}
+
+const placePins = (
+	crew: readonly IRunCrewPin[],
+	at: (fraction: number) => readonly [number, number],
+): IArtPin[] => {
+	const placed: (readonly [number, number])[] = [];
+	return crew.slice(0, MAX_PINS).map((pin) => {
+		const [x, y] = at(pin.at);
+		const crowd = placed.filter(([px, py]) => Math.abs(px - x) < NEAR && Math.abs(py - y) < NEAR);
+		placed.push([x, y]);
+		return { image: pin.image, name: pin.name, label: pin.label, x: x + crowd.length * SPREAD, y };
+	});
+};
 const LOGO_WIDTH = 34;
 const LOGO_RATIO = 696 / 222;
 const COPY = { distance: "Distância", pace: "Ritmo", time: "Tempo" } as const;
@@ -79,14 +105,10 @@ export const PostArt: React.FC<IPostArtProps> = ({
 	const pace = `${formatPace(km > 0 ? seconds / km : 0)} min/km`;
 	const real = track ? postTrack(track.route) : null;
 	const routeD = real ? real.d : ROUTE_D;
-	const pins = real
-		? (track?.crew ?? []).slice(0, CREW_AT.length).map((image, i) => {
-				const [x, y] = real.at(CREW_AT[i] ?? 0);
-				return { image, x, y };
-			})
-		: PINS;
+	const pins = track ? placePins(track.crew, real ? real.at : () => CENTER) : PINS;
 	// Corrida real sem percurso gravado: sem traçado (nada de desenho de exemplo)
 	const hasRoute = layers.route && (real !== null || !track);
+	const hasPins = layers.route && pins.length > 0;
 
 	return (
 		<View style={[styles.root, image ? null : styles.overlayOnly, style]} onLayout={onLayout}>
@@ -131,9 +153,17 @@ export const PostArt: React.FC<IPostArtProps> = ({
 							</Svg>
 						</View>
 					) : null}
-					{hasRoute
+					{hasPins
 						? pins.map((pin) => (
-								<PostPin key={String(pin.x)} image={pin.image} x={pin.x} y={pin.y} cqw={cqw} />
+								<PostPin
+									key={`${pin.name}-${String(pin.x)}`}
+									image={pin.image}
+									name={pin.name}
+									label={pin.label}
+									x={pin.x}
+									y={pin.y}
+									cqw={cqw}
+								/>
 							))
 						: null}
 					{layers.badge && team ? (

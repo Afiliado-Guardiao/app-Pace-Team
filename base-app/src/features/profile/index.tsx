@@ -13,6 +13,7 @@ import {
 	Sheet,
 } from "@/components/pace";
 import { RunRow } from "@/components/shared/RunRow";
+import { SwipeToDelete } from "@/components/shared/SwipeToDelete";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
@@ -112,14 +113,19 @@ export const ProfileScreen: React.FC = () => {
 				<View style={styles.runs}>
 					{profile.recentRuns.length ? null : <InfoNote icon="footprints">{NO_RUNS}</InfoNote>}
 					{profile.recentRuns.map((run, i) => (
-						<RunRow
+						<SwipeToDelete
 							key={run.id}
-							run={run}
-							seed={i}
-							onPress={() => {
-								profile.openRun(run.id);
-							}}
-						/>
+							onDelete={() => profile.removeRun(run)}
+							testID={`profile-run-${String(i)}`}
+						>
+							<RunRow
+								run={run}
+								seed={i}
+								onPress={() => {
+									profile.openRun(run.id);
+								}}
+							/>
+						</SwipeToDelete>
 					))}
 				</View>
 			</ScreenScroll>

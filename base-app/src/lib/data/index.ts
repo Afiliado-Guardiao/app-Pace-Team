@@ -2,6 +2,8 @@
 // (EXPO_PUBLIC_PREVIEW_MODE=1) os hooks devolvem os dados de exemplo.
 export { DATA_KEYS } from "./keys";
 export { runDate, runTitle, toRun } from "./mappers";
+export type { IRunCrew, IRunCrewPin } from "./runCrew";
+export { buildRunCrew } from "./runCrew";
 export type { ITeamView } from "./teamView";
 export type { IAthleteView } from "./useAthleteProfile";
 export { useAthleteProfile } from "./useAthleteProfile";
@@ -17,6 +19,7 @@ export type { INotificationEntry } from "./useNotificationFeed";
 export { useNotificationFeed } from "./useNotificationFeed";
 export { usePostActions } from "./usePostActions";
 export { useRanking } from "./useRanking";
+export { useRemoveRun } from "./useRemoveRun";
 export { useRouteComparison } from "./useRouteComparison";
 export { runPayload, useSaveRun } from "./useSaveRun";
 export { useTeam } from "./useTeam";

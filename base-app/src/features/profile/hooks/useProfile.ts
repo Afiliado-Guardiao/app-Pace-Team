@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 
 import { useFloatingToast } from "@/components/pace";
-import { useMyChallenges, useMyRuns, useMyStats, useMyTeam } from "@/lib/data";
+import { useMyChallenges, useMyRuns, useMyStats, useMyTeam, useRemoveRun } from "@/lib/data";
 import { formatKm, formatPace, ME, MEDALS } from "@/lib/pace";
 import { queryClient } from "@/lib/react-query";
 import { signOut } from "@/lib/supabase/auth";
@@ -31,6 +31,7 @@ export const useProfile = () => {
 	const { team } = useMyTeam();
 	const { runs } = useMyRuns();
 	const { challenges } = useMyChallenges();
+	const { remove } = useRemoveRun();
 	const earned = MEDALS.filter((m) => challenges.medals.includes(m.id)).slice(0, MEDAL_SLOTS);
 	const medals = [
 		...earned.map((m) => ({ key: m.id, icon: m.icon, color: m.color })),
@@ -87,6 +88,8 @@ export const useProfile = () => {
 		openBuddy: () => {
 			router.push(ROUTES.BUDDY);
 		},
+		// Arrastar a corrida para a esquerda exclui
+		removeRun: remove,
 		openRun: (id: string | number) => {
 			router.push({ pathname: ROUTES.RUN_DETAIL, params: typeof id === "string" ? { id } : {} });
 		},

@@ -31,7 +31,7 @@ const DEMO_MATES: ITeamOnlineView[] = ONLINE.map((f) => ({
 	image: f.image,
 }));
 
-// Colegas de equipe com o app aberto nos últimos 15 minutos.
+// Colegas de equipe com o app aberto agora ou correndo com a equipe.
 export const useTeamOnline = (): IUseTeamOnlineReturn => {
 	const query = useQuery({
 		queryKey: DATA_KEYS.teamOnline,

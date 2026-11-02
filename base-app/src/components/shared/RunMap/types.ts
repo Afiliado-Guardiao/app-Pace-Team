@@ -11,6 +11,8 @@ export interface IMapRegionBubble {
 }
 
 export interface IMapFriend {
+	// Quem é (mantém a foto certa no marcador certo)
+	id?: string;
 	position: ILatLng;
 	// Foto do perfil (sem ela, as iniciais de `name`)
 	image?: ImageSourcePropType;

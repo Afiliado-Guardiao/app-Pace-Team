@@ -239,6 +239,7 @@ export interface Database {
 			get_team_run: { Args: { p_run_id: string }; Returns: unknown };
 			set_live_position: { Args: { p_lat: number; p_lng: number }; Returns: undefined };
 			clear_live_position: { Args: Record<string, never>; Returns: undefined };
+			go_offline: { Args: Record<string, never>; Returns: undefined };
 			get_team_live_positions: { Args: Record<string, never>; Returns: unknown };
 			get_athlete_profile: { Args: { p_user_id: string }; Returns: unknown };
 			get_notifications: { Args: Record<string, never>; Returns: INotificationRow[] };

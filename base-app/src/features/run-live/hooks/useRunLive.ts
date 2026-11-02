@@ -10,8 +10,6 @@ import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 const TICK_MS = 1000;
-// Posição do GPS da tela vale para o ponto do atleta se for recente
-const FRESH_FIX_MS = 15_000;
 
 // Corrida em andamento: relógio, pausa, finalização e atalhos do pós-corrida.
 export const useRunLive = () => {
@@ -40,13 +38,15 @@ export const useRunLive = () => {
 
 	const route = useMemo(() => points.map((p) => [p.lat, p.lng] as const), [points]);
 	const fix = useGpsStore((s) => s.fix);
-	const isFresh = fix !== null && now - fix.t < FRESH_FIX_MS;
-	const fixLat = isFresh ? fix.lat : null;
-	const fixLng = isFresh ? fix.lng : null;
-	// O mapa segue o atleta: posição mais nova do GPS ou a ponta da rota
+	const tip = points.at(-1);
+	// O mapa segue o atleta: a posição mais nova entre o GPS e a ponta da rota.
+	// Parado, continua no último lugar conhecido (nunca some do mapa).
+	const newest = fix && (!tip || fix.t >= tip.t) ? fix : tip;
+	const meLat = newest?.lat ?? null;
+	const meLng = newest?.lng ?? null;
 	const me = useMemo(
-		() => (fixLat !== null && fixLng !== null ? ([fixLat, fixLng] as const) : null),
-		[fixLat, fixLng],
+		() => (meLat !== null && meLng !== null ? ([meLat, meLng] as const) : null),
+		[meLat, meLng],
 	);
 	const km = meters / 1000;
 	const myPhoto = useStore((s) => s.user?.avatarUrl ?? null);
@@ -54,13 +54,14 @@ export const useRunLive = () => {
 	// Correndo com a equipe: a foto de cada colega anda no mapa, ao vivo
 	const liveMates = useTeamLive({
 		isActive: mode === "team" && status !== "idle",
-		me: me ?? route.at(-1) ?? null,
+		me,
 	});
 
 	// Na prévia por link, amigos de exemplo ao longo do mesmo trajeto (design)
 	const friends = useMemo(() => {
 		if (!IS_PREVIEW) {
 			return liveMates.map((m) => ({
+				id: m.id,
 				position: m.position,
 				image: m.avatarUrl ? { uri: m.avatarUrl } : undefined,
 				name: m.name,

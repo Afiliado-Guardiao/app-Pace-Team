@@ -67,6 +67,13 @@ export async function pingTeamOnline(notify = false): Promise<void> {
 	if (error) throw error;
 }
 
+// Saiu do app: some na hora da lista de online da equipe (quem está correndo
+// com a equipe continua aparecendo pela posição ao vivo)
+export async function goOffline(): Promise<void> {
+	const { error } = await supabase.rpc("go_offline");
+	if (error) throw error;
+}
+
 // Começou a correr com a equipe: "Sua equipe está correndo, só falta você!"
 export async function notifyTeamRunStart(): Promise<void> {
 	const { error } = await supabase.functions.invoke("team-run-start", { body: {} });

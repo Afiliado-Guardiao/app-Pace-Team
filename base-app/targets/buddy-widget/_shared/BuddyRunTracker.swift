@@ -68,9 +68,12 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     await MainActor.run { self.startLocation() }
     startActivity(state: state, run: active, startedAt: now)
     BuddyStore.reloadWidgets()
+    // Avisos da equipe vão por trás: o botão responde na hora
     if withTeam {
-      await BuddySupabase.pingOnline()
-      await BuddySupabase.notifyTeamRunStart()
+      Task.detached {
+        await BuddySupabase.pingOnline()
+        await BuddySupabase.notifyTeamRunStart()
+      }
     }
   }
 

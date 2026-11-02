@@ -26,7 +26,7 @@ export interface ITeamMember {
 	you?: boolean;
 	// Foto do perfil do atleta (null = iniciais)
 	avatarUrl?: string | null;
-	// Com o app aberto nos últimos 15 minutos
+	// Com o app aberto agora ou correndo com a equipe
 	isOnline?: boolean;
 }
 

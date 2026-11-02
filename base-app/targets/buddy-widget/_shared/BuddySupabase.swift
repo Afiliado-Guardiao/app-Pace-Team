@@ -22,6 +22,8 @@ struct BuddyMate: Codable, Equatable {
 
 enum BuddySupabase {
   private static let maxRoutePoints = 400
+  // Internet ruim: desiste em 8 s em vez de deixar o botão travado
+  private static let requestTimeout: TimeInterval = 8
 
   private static func loadConfig() -> BuddyConfig? { BuddyStore.read(BuddyKeys.config, as: BuddyConfig.self) }
 
@@ -49,6 +51,7 @@ enum BuddySupabase {
     request.setValue(config.anonKey, forHTTPHeaderField: "apikey")
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpBody = try? JSONSerialization.data(withJSONObject: ["refresh_token": refreshToken])
+    request.timeoutInterval = requestTimeout
     guard let result = try? await URLSession.shared.data(for: request),
           (result.1 as? HTTPURLResponse)?.statusCode == 200,
           let fresh = try? JSONSerialization.jsonObject(with: result.0) as? [String: Any],
@@ -78,6 +81,7 @@ enum BuddySupabase {
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     if let prefer { request.setValue(prefer, forHTTPHeaderField: "Prefer") }
     request.httpBody = body
+    request.timeoutInterval = requestTimeout
     guard let result = try? await URLSession.shared.data(for: request),
           let status = (result.1 as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else { return nil }
     return result.0
@@ -140,7 +144,7 @@ enum BuddySupabase {
     _ = await post("/functions/v1/team-run-start", json: [String: Any]())
   }
 
-  // Colegas da equipe online nos últimos 15 min (RPC get_team_online), com a
+  // Colegas da equipe online agora (RPC get_team_online), com a
   // cor e os acessórios do Buddy de cada um
   static func teamOnline() async -> [BuddyMate]? {
     guard let data = await post("/rest/v1/rpc/get_team_online", json: [String: Any]()),
@@ -154,24 +158,35 @@ enum BuddySupabase {
   }
 
   private static let onlineCacheKey = "buddyTeamMates"
+  private static let onlineCacheAtKey = "buddyTeamMatesAt"
+  // Lista buscada há menos que isso: o cartão usa direto, sem esperar
+  private static let onlineFreshFor: TimeInterval = 20
 
-  // Para o cartão: espera no máximo ~1 s pela internet; se demorar, usa a
-  // última lista conhecida (o cartão não pode ficar carregando).
+  // Para o cartão, que não pode ficar carregando: com a lista recente, usa na
+  // hora; senão espera no máximo 0,4 s pela internet e, se demorar, mostra a
+  // última conhecida. A busca continua por trás e deixa a lista pronta para o
+  // próximo toque.
   static func teamOnlineQuick() async -> [BuddyMate] {
     let cached = BuddyStore.defaults?.data(forKey: onlineCacheKey)
       .flatMap { try? JSONDecoder().decode([BuddyMate].self, from: $0) } ?? []
+    let cachedAt = BuddyStore.defaults?.double(forKey: onlineCacheAtKey) ?? 0
+    if Date().timeIntervalSince1970 - cachedAt < onlineFreshFor { return cached }
+    let refresh = Task { () -> [BuddyMate]? in
+      guard let fresh = await teamOnline() else { return nil }
+      BuddyStore.defaults?.set(try? JSONEncoder().encode(fresh), forKey: onlineCacheKey)
+      BuddyStore.defaults?.set(Date().timeIntervalSince1970, forKey: onlineCacheAtKey)
+      return fresh
+    }
     let fresh: [BuddyMate]? = await withTaskGroup(of: [BuddyMate]?.self) { group in
-      group.addTask { await teamOnline() }
+      group.addTask { await refresh.value }
       group.addTask {
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        try? await Task.sleep(nanoseconds: 400_000_000)
         return nil
       }
       let first = await group.next() ?? nil
       group.cancelAll()
       return first
     }
-    guard let fresh else { return cached }
-    BuddyStore.defaults?.set(try? JSONEncoder().encode(fresh), forKey: onlineCacheKey)
-    return fresh
+    return fresh ?? cached
   }
 }

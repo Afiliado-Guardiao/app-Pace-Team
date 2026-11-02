@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useRouter } from "expo-router";
 
-import { useMyRuns, useMyStats, useTeamRunList } from "@/lib/data";
+import { useMyRuns, useMyStats, useRemoveRun, useTeamRunList } from "@/lib/data";
 import { formatKm, formatPoints, IRun } from "@/lib/pace";
 import { ROUTES } from "@/constants/routes";
 
@@ -19,6 +19,8 @@ interface IUseHistoryReturn {
 	month: { label: string; km: string; runs: string; points: string };
 	showInvalidNote: boolean;
 	openRun: (id: IRun["id"]) => void;
+	// Arrastar para a esquerda exclui (só as minhas corridas, não as da equipe)
+	removeRun: (run: IRun) => Promise<boolean>;
 	goBack: () => void;
 }
 
@@ -29,6 +31,7 @@ export const useHistory = (): IUseHistoryReturn => {
 	const { runs: allRuns, isLoading } = useMyRuns();
 	const { stats } = useMyStats();
 	const team = useTeamRunList();
+	const { remove } = useRemoveRun();
 	const isTeam = filter === TEAM_FILTER;
 
 	const runs = useMemo(() => {
@@ -63,6 +66,7 @@ export const useHistory = (): IUseHistoryReturn => {
 				params: typeof id === "string" ? { [key]: id } : {},
 			});
 		},
+		removeRun: remove,
 		goBack: () => {
 			if (router.canGoBack()) router.back();
 			else router.navigate(ROUTES.PROFILE);

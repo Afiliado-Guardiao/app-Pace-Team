@@ -1,17 +1,24 @@
 import React from "react";
-import { Image, ImageSourcePropType, View } from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 
 import { ITheme, useTheme } from "@/theme";
 
 interface IPostPinProps {
-	image: ImageSourcePropType;
+	// Sem foto: a inicial do nome
+	image?: ImageSourcePropType;
+	name: string;
+	// "Wesley · 1,2 km", embaixo da foto
+	label?: string;
 	// Posição da ponta do alfinete em % da arte
 	x: number;
 	y: number;
 	cqw: number;
 }
 
-const createPostPinStyles = (theme: ITheme, { x, y, cqw }: Omit<IPostPinProps, "image">) => {
+const createPostPinStyles = (
+	theme: ITheme,
+	{ x, y, cqw }: Pick<IPostPinProps, "x" | "y" | "cqw">,
+) => {
 	const { colors } = theme.pace;
 	const size = 9 * cqw;
 	const arrowHeight = 2 * cqw;
@@ -32,6 +39,29 @@ const createPostPinStyles = (theme: ITheme, { x, y, cqw }: Omit<IPostPinProps, "
 			backgroundColor: colors.ink.white,
 		},
 		photo: { width: "100%" as const, height: "100%" as const, borderRadius: size / 2 },
+		initial: {
+			width: "100%" as const,
+			height: "100%" as const,
+			borderRadius: size / 2,
+			backgroundColor: colors.orange[500],
+			textAlign: "center" as const,
+			lineHeight: size - 1.4 * cqw,
+			fontFamily: theme.pace.typography.fonts.extrabold,
+			fontSize: 4 * cqw,
+			color: colors.ink.white,
+		},
+		label: {
+			position: "absolute" as const,
+			top: size + arrowHeight + 0.6 * cqw,
+			left: -10 * cqw,
+			right: -10 * cqw,
+			textAlign: "center" as const,
+			fontFamily: theme.pace.typography.fonts.bold,
+			fontSize: 2.6 * cqw,
+			color: colors.ink.white,
+			textShadowColor: colors.navy[950],
+			textShadowRadius: 4,
+		},
 		arrow: {
 			alignSelf: "center" as const,
 			marginTop: -0.4 * cqw,
@@ -48,16 +78,21 @@ const createPostPinStyles = (theme: ITheme, { x, y, cqw }: Omit<IPostPinProps, "
 };
 
 // Alfinete com a foto de quem correu junto, sobre o percurso da arte.
-export const PostPin: React.FC<IPostPinProps> = ({ image, x, y, cqw }) => {
+export const PostPin: React.FC<IPostPinProps> = ({ image, name, label, x, y, cqw }) => {
 	const { theme } = useTheme();
 	const styles = createPostPinStyles(theme, { x, y, cqw });
 
 	return (
 		<View style={styles.root} pointerEvents="none">
 			<View style={styles.disc}>
-				<Image source={image} style={styles.photo} />
+				{image ? (
+					<Image source={image} style={styles.photo} />
+				) : (
+					<Text style={styles.initial}>{name.charAt(0).toUpperCase()}</Text>
+				)}
 			</View>
 			<View style={styles.arrow} />
+			{label ? <Text style={styles.label}>{label}</Text> : null}
 		</View>
 	);
 };
