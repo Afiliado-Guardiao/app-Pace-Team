@@ -23,7 +23,7 @@ jobs:
   # Monta o projeto do iPhone de verdade (prebuild + Xcode, sem assinar) para
   # pegar erro de configuração dos alvos (app, widget e cartão do Buddy).
   build:
-    needs: typecheck
+    # needs: typecheck
     runs-on: macos-15
     timeout-minutes: 75
     defaults:
@@ -49,10 +49,16 @@ jobs:
           ls targets/buddy-intents targets/buddy-intents/shared
       - name: Compilar (simulador, sem assinatura)
         run: |
-          set -o pipefail
-          xcodebuild build -workspace ios/*.xcworkspace -scheme PACETEAM -configuration Debug \
+          WS=$(ls -d ios/*.xcworkspace | head -1)
+          SCHEME=$(basename "$WS" .xcworkspace)
+          echo "::notice::workspace=$WS scheme=$SCHEME"
+          xcodebuild build -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
             -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee /tmp/xcodebuild.log | grep -E "error:|warning: .*Buddy|BUILD" || true
-          grep -E "^/.*: error: " /tmp/xcodebuild.log | sed -E "s#^$GITHUB_WORKSPACE/##" \
-            | sed -nE 's#^([^:]+):([0-9]+):([0-9]+): error: (.*)$#::error file=\1,line=\2,col=\3::\4#p' | head -40
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > /tmp/xcodebuild.log 2>&1 || true
+          tail -40 /tmp/xcodebuild.log
+          # Cada linha com "error" vira uma anotação (dá para ler sem login)
+          grep -E "error:|\\*\\* BUILD FAILED|Command .* failed" /tmp/xcodebuild.log | sort -u \
+            | sed -E "s#$GITHUB_WORKSPACE/##g" | head -45 | while IFS= read -r line; do
+              echo "::error::${line:0:900}"
+            done
           grep -q "BUILD SUCCEEDED" /tmp/xcodebuild.log
