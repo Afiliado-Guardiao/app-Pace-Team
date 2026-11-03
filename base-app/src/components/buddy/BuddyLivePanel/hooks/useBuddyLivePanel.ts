@@ -15,6 +15,8 @@ import { ROUTES } from "@/constants/routes";
 import { IBuddyPose } from "../../BuddyFigure";
 import { actForGoal, speechOf, TAP_ACTS } from "../speech";
 
+import { useBuddyIdle } from "./useBuddyIdle";
+
 const BLINK_MS = 140;
 const BLINK_EVERY = { min: 2200, extra: 2200 } as const;
 // Tempo do gesto antes de sair do painel (correr, "Agora não")
@@ -23,6 +25,7 @@ const clamp = (n: number, limit: number): number => Math.max(-limit, Math.min(li
 
 // Buddy vivo por cima da tela (Toque Traseiro com o app aberto): olha para
 // onde o dedo está, pisca sozinho e cada toque ou botão faz um gesto.
+// Sem toque, ele fica curioso, inquieto e com sono (useBuddyIdle).
 export const useBuddyLivePanel = () => {
 	const router = useRouter();
 	const isOpen = useBuddyLive((s) => s.isPanelOpen);
@@ -39,6 +42,7 @@ export const useBuddyLivePanel = () => {
 	const center = useRef({ x: 0, y: 0 });
 	const taps = useRef(0);
 	const km = BUDDY_KMS[kmIdx] ?? 5;
+	const idle = useBuddyIdle(isOpen, setAct);
 
 	useEffect(() => {
 		if (!isOpen) return undefined;
@@ -82,6 +86,15 @@ export const useBuddyLivePanel = () => {
 		react(actForGoal(BUDDY_KMS[nextIdx] ?? km, delta));
 	};
 
+	// O olhar segue o dedo em qualquer lugar do painel
+	const follow = (event: GestureResponderEvent): void => {
+		const { pageX, pageY } = event.nativeEvent;
+		setGaze({
+			gx: clamp((pageX - center.current.x) / 25, 5),
+			gy: clamp((pageY - center.current.y) / 40, 4),
+		});
+	};
+
 	const run = (withTeam: boolean): void => {
 		leave(withTeam ? "armsUp" : "salute", () => {
 			setMode(withTeam ? "team" : "free");
@@ -95,21 +108,19 @@ export const useBuddyLivePanel = () => {
 		look,
 		km,
 		hasTeam: team !== null,
-		speech: speechOf(km),
+		speech: idle.idleSpeech ?? speechOf(km),
 		figureRef,
 		onFigureLayout: () => {
 			figureRef.current?.measureInWindow((x, y, w, h) => {
 				center.current = { x: x + w / 2, y: y + h / 2 };
 			});
 		},
-		// O olhar segue o dedo em qualquer lugar do painel
-		onTouch: (event: GestureResponderEvent) => {
-			const { pageX, pageY } = event.nativeEvent;
-			setGaze({
-				gx: clamp((pageX - center.current.x) / 25, 5),
-				gy: clamp((pageY - center.current.y) / 40, 4),
-			});
+		// Encostou no painel: ele para de cobrar (e acorda, se dormia)
+		onTouchStart: (event: GestureResponderEvent) => {
+			idle.bump();
+			follow(event);
 		},
+		onTouch: follow,
 		tapBuddy: () => {
 			taps.current += 1;
 			react(TAP_ACTS[taps.current % TAP_ACTS.length] ?? "wave");

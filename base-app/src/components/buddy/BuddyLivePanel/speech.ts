@@ -37,3 +37,41 @@ export const TAP_ACTS: readonly IBuddyAct[] = [
 	"shake",
 	"celebrate",
 ];
+
+export interface IIdleStep {
+	// Quanto tempo sem toque até este momento (ms)
+	at: number;
+	act: IBuddyAct;
+	title: string;
+	subtitle: string;
+	isAsleep?: boolean;
+	// Vibra de leve para cobrar uma atitude
+	isNudge?: boolean;
+}
+
+const RESTLESS = {
+	title: "Tô ficando inquieto!",
+	subtitle: "A meta não se corre sozinha.",
+} as const;
+
+// Ninguém tocou: curioso, depois inquieto cobrando, depois com sono até dormir
+export const IDLE_STEPS: readonly IIdleStep[] = [
+	{ at: 5000, act: "curious", title: "E aí, bora?", subtitle: "Tô esperando você escolher." },
+	{ at: 10000, act: "shake", ...RESTLESS, isNudge: true },
+	{ at: 12500, act: "tilt", ...RESTLESS },
+	{ at: 14500, act: "shake", ...RESTLESS, isNudge: true },
+	{
+		at: 19000,
+		act: "peek",
+		title: "Tô com soninho…",
+		subtitle: "Se a gente não correr, eu cochilo.",
+		isAsleep: true,
+	},
+	{
+		at: 24000,
+		act: "sleep",
+		title: "Zzz…",
+		subtitle: "Toca em mim pra me acordar.",
+		isAsleep: true,
+	},
+];

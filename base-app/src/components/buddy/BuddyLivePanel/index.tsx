@@ -30,7 +30,7 @@ export const BuddyLivePanel: React.FC = () => {
 
 	return (
 		<Modal visible={panel.isOpen} transparent animationType="fade" onRequestClose={panel.dismiss}>
-			<View style={styles.backdrop} onTouchStart={panel.onTouch} onTouchMove={panel.onTouch}>
+			<View style={styles.backdrop} onTouchStart={panel.onTouchStart} onTouchMove={panel.onTouch}>
 				<GlassCard padding={18}>
 					<View style={styles.sheet}>
 						<Pressable

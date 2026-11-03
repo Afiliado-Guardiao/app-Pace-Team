@@ -166,6 +166,9 @@ enum BuddySupabase {
   // hora; senão espera no máximo 0,4 s pela internet e, se demorar, mostra a
   // última conhecida. A busca continua por trás e deixa a lista pronta para o
   // próximo toque.
+  // Sem TaskGroup de propósito: ele só termina quando TODAS as tarefas acabam,
+  // então o cartão (e cada toque nos botões) ficava preso até a internet
+  // responder, até 16 s com a renovação do login.
   static func teamOnlineQuick() async -> [BuddyMate] {
     let cached = BuddyStore.defaults?.data(forKey: onlineCacheKey)
       .flatMap { try? JSONDecoder().decode([BuddyMate].self, from: $0) } ?? []
@@ -177,16 +180,31 @@ enum BuddySupabase {
       BuddyStore.defaults?.set(Date().timeIntervalSince1970, forKey: onlineCacheAtKey)
       return fresh
     }
-    let fresh: [BuddyMate]? = await withTaskGroup(of: [BuddyMate]?.self) { group in
-      group.addTask { await refresh.value }
-      group.addTask {
+    return await withCheckedContinuation { continuation in
+      let first = BuddyFirstAnswer(continuation)
+      Task { first.resume(await refresh.value ?? cached) }
+      Task {
         try? await Task.sleep(nanoseconds: 400_000_000)
-        return nil
+        first.resume(cached)
       }
-      let first = await group.next() ?? nil
-      group.cancelAll()
-      return first
     }
-    return fresh ?? cached
+  }
+}
+
+// Entrega só a primeira resposta (internet ou o limite de tempo) e ignora a outra
+final class BuddyFirstAnswer<Value>: @unchecked Sendable {
+  private let lock = NSLock()
+  private var continuation: CheckedContinuation<Value, Never>?
+
+  init(_ continuation: CheckedContinuation<Value, Never>) {
+    self.continuation = continuation
+  }
+
+  func resume(_ value: Value) {
+    lock.lock()
+    let pending = continuation
+    continuation = nil
+    lock.unlock()
+    pending?.resume(returning: value)
   }
 }
