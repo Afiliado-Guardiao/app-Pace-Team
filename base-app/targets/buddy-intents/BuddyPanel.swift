@@ -3,24 +3,11 @@
 // (Pace Buddy.dc.html): o Buddy, os mini Buddies de quem está online, a fala,
 // "Correr sozinho", "Correr com a equipe", a meta ‹ km › e "Agora não".
 // Cada botão roda uma intent e o iOS redesenha o cartão em seguida.
+// Mora numa extensão própria (App Intents Extension): o iPhone não precisa
+// abrir o app inteiro para mostrar o cartão, então ele aparece na hora.
 import ActivityKit
 import AppIntents
 import SwiftUI
-
-// Momento do cartão, guardado no App Group entre um toque e outro
-enum BuddyPanelMode: String {
-  case choose, team, bye, permission
-
-  private static let key = "buddyPanelMode"
-
-  static var current: BuddyPanelMode {
-    BuddyPanelMode(rawValue: BuddyStore.defaults?.string(forKey: key) ?? "") ?? .choose
-  }
-
-  static func set(_ mode: BuddyPanelMode) {
-    BuddyStore.defaults?.set(mode.rawValue, forKey: key)
-  }
-}
 
 struct BuddyPanelModel {
   let state: BuddyState
@@ -39,6 +26,8 @@ struct BuddyPanelModel {
         : BuddySpeech(title: "Correndo", subtitle: "Toque em Encerrar corrida para parar.", pose: .run)
     }
     switch mode {
+    case .inApp:
+      return BuddySpeech(title: "Tô aqui no app!", subtitle: "Fecha este aviso e brinca comigo na tela.", pose: .wave)
     case .bye:
       return BuddySpeech(title: "Tchau!", subtitle: "Dois toques atrás e eu volto.", pose: .wave)
     case .permission:
@@ -87,39 +76,16 @@ struct CallBuddyIntent: AppIntent {
   init() {}
 
   func perform() async throws -> some IntentResult & ShowsSnippetIntent {
-    BuddyPanelMode.set(.choose)
+    // Com o app aberto na tela, quem aparece é o Buddy vivo do app (segue o
+    // dedo, pisca, reage). O iOS sempre mostra o cartão dele, então ele fica
+    // só com um recado curto.
+    if BuddyAppPresence.isActive {
+      BuddyAppPresence.requestPanel()
+      BuddyPanelMode.set(.inApp)
+    } else {
+      BuddyPanelMode.set(.choose)
+    }
     return .result(snippetIntent: BuddyPanelSnippetIntent())
-  }
-}
-
-// Correr sozinho / com a equipe (o 1º toque na equipe mostra quem está online)
-@available(iOS 26.0, *)
-struct BuddyPanelRunIntent: LiveActivityIntent {
-  static let title: LocalizedStringResource = "Correr com o Pace Buddy"
-  static let isDiscoverable = false
-
-  @Parameter(title: "Com a equipe", default: false)
-  var withTeam: Bool
-
-  init() {}
-
-  init(withTeam: Bool) {
-    self.withTeam = withTeam
-  }
-
-  func perform() async throws -> some IntentResult {
-    let state = BuddyStore.state()
-    if withTeam && state.hasTeam && BuddyPanelMode.current != .team {
-      BuddyPanelMode.set(.team)
-      return .result()
-    }
-    guard BuddyRunTracker.hasAlwaysPermission else {
-      BuddyPanelMode.set(.permission)
-      return .result()
-    }
-    BuddyPanelMode.set(.choose)
-    await BuddyRunTracker.shared.start(withTeam: withTeam && state.hasTeam)
-    return .result()
   }
 }
 
@@ -140,6 +106,7 @@ struct BuddyPanelKmIntent: AppIntent {
   func perform() async throws -> some IntentResult {
     if BuddyPanelMode.current != .team { BuddyPanelMode.set(.choose) }
     BuddyStore.setKmIdx(BuddyStore.state().kmIdx + delta)
+    BuddyPoke.show(BuddyPoke.forGoal(km: BuddyStore.state().goalKm, delta: delta))
     BuddyStore.reloadWidgets()
     return .result()
   }
@@ -154,20 +121,6 @@ struct BuddyPanelDismissIntent: AppIntent {
 
   func perform() async throws -> some IntentResult {
     BuddyPanelMode.set(.bye)
-    return .result()
-  }
-}
-
-@available(iOS 26.0, *)
-struct BuddyPanelFinishIntent: LiveActivityIntent {
-  static let title: LocalizedStringResource = "Encerrar a corrida do Pace Buddy"
-  static let isDiscoverable = false
-
-  init() {}
-
-  func perform() async throws -> some IntentResult {
-    await BuddyRunTracker.shared.finish(goalReached: false)
-    BuddyPanelMode.set(.choose)
     return .result()
   }
 }
@@ -237,7 +190,7 @@ struct BuddyPanelView: View {
 
         if model.isRunning {
           runningActions
-        } else if model.mode == .bye {
+        } else if model.mode == .bye || model.mode == .inApp {
           EmptyView()
         } else {
           chooseActions

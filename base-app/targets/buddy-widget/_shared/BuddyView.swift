@@ -5,6 +5,12 @@ import SwiftUI
 
 enum BuddyPose: String, Codable, Hashable {
   case idle, wave, sleep, sick, celebrate, run, excited, wink, armsUp, tilt
+  // Gestos que existiam só no app: curioso ("?"), impressionado, continência
+  // e cochilo espiando
+  case curious, impressed, salute, peek
+
+  // Dormindo de verdade ou só espiando: corpo amassado e respiração lenta
+  var isSleepy: Bool { self == .sleep || self == .peek }
 }
 
 // Corpo: cantos 36/34 em cima e 30/28 embaixo (border-radius elíptico do design)
@@ -55,16 +61,18 @@ struct BuddyView: View {
     case .run: return 7
     case .sick: return -4
     case .tilt: return -11
+    case .curious: return 9
+    case .impressed: return -5
     default: return 0
     }
   }
 
   private var lift: CGFloat {
     switch pose {
-    case .sleep: return 9
+    case .sleep, .peek: return 9
     case .sick: return 6
     case .run: return -8
-    case .celebrate, .excited: return -6
+    case .celebrate, .excited, .impressed: return -6
     case .armsUp: return -5
     default: return 0
     }
@@ -92,6 +100,8 @@ struct BuddyView: View {
       .offset(y: lift)
     }
     .frame(width: 140, height: 135, alignment: .topLeading)
+    // Troca de pose com um "pulinho" (o cartão e o widget animam a mudança)
+    .animation(.spring(response: 0.38, dampingFraction: 0.62), value: pose)
   }
 }
 
@@ -126,7 +136,7 @@ private struct BuddyBody: View {
     .frame(width: 88, height: 70, alignment: .topLeading)
     .shadow(color: .black.opacity(0.45), radius: 8, x: 0, y: 10)
     .shadow(color: pal.glow ?? Color.buddyOrange.opacity(0.35), radius: 10, x: 0, y: 6)
-    .scaleEffect(x: pose == .sleep ? 1.07 : 1, y: pose == .sleep ? 0.86 : 1, anchor: .bottom)
+    .scaleEffect(x: pose.isSleepy ? 1.07 : 1, y: pose.isSleepy ? 0.86 : 1, anchor: .bottom)
   }
 }
 
@@ -146,6 +156,14 @@ private struct BuddyEyes: View {
     switch pose {
     case .sleep:
       BuddyArc(isUp: false).stroke(Color.buddyInk, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
+    case .peek where i == 0:
+      BuddyArc(isUp: false).stroke(Color.buddyInk, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
+    case .peek:
+      // Um olho só, meio aberto, espiando
+      Ellipse().fill(Color.buddyInk).frame(width: 9, height: 9).padding(.top, 4)
+    case .impressed:
+      // Olhão arregalado
+      Ellipse().fill(Color.buddyInk).frame(width: 12, height: 19)
     case .celebrate:
       BuddyArc(isUp: true).stroke(Color.buddyInk, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 4)
     case .wink where i == 1:
@@ -182,8 +200,10 @@ private struct BuddyMouth: View {
 
   var body: some View {
     switch pose {
-    case .sleep:
+    case .sleep, .peek:
       Capsule().fill(Color.buddyInk.opacity(0.8)).buddyAt(41, 46, 7, 2.5)
+    case .impressed:
+      Ellipse().fill(Color.buddyInk).buddyAt(40, 44, 8, 9)
     case .sick:
       ZStack(alignment: .topLeading) {
         Ellipse().fill(Color.buddyInk).buddyAt(39, 45, 9, 7)
@@ -211,7 +231,10 @@ private struct BuddyHand: View {
   private var offset: CGSize {
     switch pose {
     case .wave: return isRight ? CGSize(width: 4, height: -30) : .zero
-    case .sleep: return CGSize(width: isRight ? 8 : -8, height: 12)
+    case .sleep, .peek: return CGSize(width: isRight ? 8 : -8, height: 12)
+    case .curious: return isRight ? CGSize(width: -6, height: -14) : .zero
+    case .impressed: return CGSize(width: isRight ? 6 : -6, height: -20)
+    case .salute: return isRight ? CGSize(width: -4, height: -42) : .zero
     case .sick: return CGSize(width: isRight ? 3 : -3, height: 8)
     case .celebrate: return isRight ? CGSize(width: 10, height: -44) : CGSize(width: -4, height: -4)
     case .excited: return CGSize(width: isRight ? 7 : -7, height: -22)
@@ -279,7 +302,7 @@ private struct BuddyEffects: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      if pose == .sleep {
+      if pose.isSleepy {
         ForEach(0..<3, id: \.self) { i in
           Text("Z").font(.system(size: [11, 14, 18][i], weight: .heavy))
             .foregroundStyle(Color.buddyOrange300).shadow(color: Color.buddyOrange.opacity(0.8), radius: 4)
@@ -290,7 +313,12 @@ private struct BuddyEffects: View {
         BuddyDrop().buddyAt(34, 30, 7, 10)
         BuddyDrop().buddyAt(104, 40, 7, 10)
       }
-      if pose == .celebrate || pose == .excited || pose == .armsUp {
+      if pose == .curious {
+        Text("?").font(.system(size: 26, weight: .heavy))
+          .foregroundStyle(Color.buddyOrange300).shadow(color: Color.buddyOrange.opacity(0.8), radius: 4)
+          .offset(x: 112, y: 6)
+      }
+      if pose == .celebrate || pose == .excited || pose == .armsUp || pose == .impressed {
         sparks([(6, 18, 14), (118, 6, 16), (126, 74, 12), (2, 90, 12), (62, -6, 10)], color: Color.buddyOrange300)
       } else if let ink = pal.ink {
         sparks(pal.spark ? [(12, 28, 12), (116, 18, 9), (124, 88, 10), (2, 84, 8), (70, 4, 8)] : [(16, 30, 10), (116, 22, 8), (122, 90, 9)], color: ink)

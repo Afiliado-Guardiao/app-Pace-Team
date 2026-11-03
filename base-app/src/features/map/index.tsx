@@ -36,6 +36,8 @@ export const MapScreen: React.FC = () => {
 				progress={1}
 				showRoute={!map.isTeams}
 				showMe={map.isTeams}
+				me={map.me}
+				recenter={map.recenter}
 				regions={map.isTeams ? MAP_REGIONS : undefined}
 			/>
 			{size ? (
@@ -51,7 +53,7 @@ export const MapScreen: React.FC = () => {
 				<TopBar
 					title={MAP_COPY.title}
 					onBack={map.goBack}
-					right={{ icon: "locate-fixed", label: MAP_COPY.locate }}
+					right={{ icon: "locate-fixed", label: MAP_COPY.locate, onPress: map.locate }}
 				/>
 				<SegmentedControl
 					size="sm"

@@ -20,6 +20,7 @@ import { formatDistance } from "@/lib/pace";
 import { GroupRunDetail } from "./components/GroupRunDetail";
 import { PointsCard } from "./components/PointsCard";
 import { RunStatsCard } from "./components/RunStatsCard";
+import { ShareActions } from "./components/ShareActions";
 import { SplitsCard } from "./components/SplitsCard";
 import { RUN_SUMMARY_COPY } from "./constants";
 import { IRunSummaryVariant, useRunSummary } from "./hooks/useRunSummary";
@@ -89,6 +90,7 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 			</View>
 			<ScreenScroll contentStyle={styles.content}>
 				{run.isGroup ? <GroupRunDetail /> : soloContent}
+				{run.canShare ? <ShareActions onShare={run.share} onPost={run.post} /> : null}
 			</ScreenScroll>
 			<View style={styles.tooltip} pointerEvents="none">
 				<Tooltip>{halfway}</Tooltip>

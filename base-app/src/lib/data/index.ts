@@ -1,6 +1,8 @@
 // Dados do PACE TEAM (Supabase + React Query). Na prévia por link
 // (EXPO_PUBLIC_PREVIEW_MODE=1) os hooks devolvem os dados de exemplo.
 export { DATA_KEYS } from "./keys";
+export type { ILastRunInput } from "./lastRun";
+export { setLastRun } from "./lastRun";
 export { runDate, runTitle, toRun } from "./mappers";
 export type { IRunCrew, IRunCrewPin } from "./runCrew";
 export { buildRunCrew } from "./runCrew";

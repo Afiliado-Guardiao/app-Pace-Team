@@ -14,6 +14,7 @@ import { RunRow } from "@/components/shared/RunRow";
 import { SwipeToDelete } from "@/components/shared/SwipeToDelete";
 import { ITheme, useTheme } from "@/theme";
 
+import { MonthSheet } from "./components/MonthSheet";
 import { HISTORY_COPY, HISTORY_FILTERS } from "./constants";
 import { useHistory } from "./hooks/useHistory";
 
@@ -37,7 +38,11 @@ export const HistoryScreen: React.FC = () => {
 				<TopBar
 					title={HISTORY_COPY.title}
 					onBack={history.goBack}
-					right={{ icon: "calendar", label: HISTORY_COPY.calendar }}
+					right={{
+						icon: "calendar",
+						label: HISTORY_COPY.calendar,
+						onPress: history.calendar.openPicker,
+					}}
 				/>
 				<GlassCard padding={16}>
 					<View style={styles.totals}>
@@ -96,6 +101,7 @@ export const HistoryScreen: React.FC = () => {
 					<InfoNote icon="info">{HISTORY_COPY.invalidNote}</InfoNote>
 				) : null}
 			</ScreenScroll>
+			<MonthSheet month={history.calendar} />
 		</View>
 	);
 };

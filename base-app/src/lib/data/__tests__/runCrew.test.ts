@@ -24,9 +24,14 @@ const teamRun = (mates: ITeamRunView["mates"]): ITeamRunView => ({
 });
 
 describe("buildRunCrew", () => {
-	it("sozinho: o próprio percurso e nenhuma foto", () => {
-		const crew = buildRunCrew({ name: "Wesley", photo: null, km: 2, route: PATH }, null);
+	it("sozinho: o próprio percurso com a sua foto redonda na chegada", () => {
+		const crew = buildRunCrew({ name: "Wesley", photo: "w.jpg", km: 2, route: PATH }, null);
 		expect(crew.route).toBe(PATH);
+		expect(crew.crew).toEqual([{ image: { uri: "w.jpg" }, name: "Wesley", at: 1 }]);
+	});
+
+	it("sozinho e sem foto de perfil: só o percurso", () => {
+		const crew = buildRunCrew({ name: "Wesley", photo: null, km: 2, route: PATH }, null);
 		expect(crew.crew).toEqual([]);
 	});
 

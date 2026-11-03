@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Alert } from "react-native";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { usePostActions } from "@/lib/data";
@@ -67,12 +68,20 @@ export const usePostMenu = (): IUsePostMenuReturn => {
 			if (post?.authorId) block.mutate(post.authorId, done(POST_MENU_COPY.blocked));
 		},
 		remove: () => {
-			if (post) {
-				remove.mutate(
-					{ postId: post.id, imagePath: post.imagePath ?? null },
-					done(POST_MENU_COPY.removed),
-				);
-			}
+			if (!post) return;
+			Alert.alert(POST_MENU_COPY.removeTitle, POST_MENU_COPY.removeBody, [
+				{ text: POST_MENU_COPY.cancel, style: "cancel" },
+				{
+					text: POST_MENU_COPY.removeConfirm,
+					style: "destructive",
+					onPress: () => {
+						remove.mutate(
+							{ postId: post.id, imagePath: post.imagePath ?? null },
+							done(POST_MENU_COPY.removed),
+						);
+					},
+				},
+			]);
 		},
 	};
 };

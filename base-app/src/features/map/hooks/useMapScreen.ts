@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { useMyRuns } from "@/lib/data";
 import { useTabRail } from "@/lib/hooks/useTabRail";
 import { RUNS } from "@/lib/pace";
+import { startGpsWatch, useGpsStore } from "@/lib/run";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
@@ -26,6 +27,14 @@ export const useMapScreen = () => {
 	const [layer, setLayer] = useState<ILayer>("mine");
 	const [selected, setSelected] = useState(0);
 	const { runs: myRuns, saved } = useMyRuns();
+	const fix = useGpsStore((s) => s.fix);
+	const [recenter, setRecenter] = useState(0);
+	const fixLat = fix?.lat;
+	const fixLng = fix?.lng;
+	const me = useMemo(
+		() => (fixLat !== undefined && fixLng !== undefined ? ([fixLat, fixLng] as const) : null),
+		[fixLat, fixLng],
+	);
 
 	// Minhas corridas com percurso; a prévia usa as rotas de exemplo do design
 	const items = useMemo(() => {
@@ -85,6 +94,13 @@ export const useMapScreen = () => {
 		openCard,
 		onRailSettle,
 		onRailChange,
+		me,
+		recenter,
+		// Mira: centraliza no atleta (liga o GPS se ainda estiver desligado)
+		locate: () => {
+			startGpsWatch().catch(() => undefined);
+			setRecenter((n) => n + 1);
+		},
 		goBack: () => {
 			router.navigate(ROUTES.RUN);
 		},

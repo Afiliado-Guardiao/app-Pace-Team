@@ -2,9 +2,16 @@ import { useMemo, useState } from "react";
 
 import { useRouter } from "expo-router";
 
-import { runDate, useDeleteRun, useMyRuns, useRouteComparison, useTeamRuns } from "@/lib/data";
+import {
+	runDate,
+	setLastRun,
+	useDeleteRun,
+	useMyRuns,
+	useRouteComparison,
+	useTeamRuns,
+} from "@/lib/data";
 import { distanceParts, durationParts, formatPace, formatSpeed } from "@/lib/pace";
-import { useRunReviewStore, useRunStore } from "@/lib/run";
+import { useRunReviewStore } from "@/lib/run";
 import { ISavedRun } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
@@ -17,21 +24,6 @@ const pendingReview = (saved: readonly ISavedRun[], reviewed: readonly string[])
 	if (!last || reviewed.includes(last.id)) return null;
 	const age = Date.now() - new Date(last.startedAt).getTime();
 	return age <= REVIEW_WINDOW_MS ? last : null;
-};
-
-// Coloca a corrida como "última corrida" para Compartilhar e Postar
-const setAsLastResult = (run: ISavedRun): void => {
-	const startedAt = new Date(run.startedAt).getTime();
-	useRunStore.setState({
-		lastResult: {
-			seconds: run.seconds,
-			km: run.km,
-			points: run.route.map(([lat, lng]) => ({ lat, lng, t: startedAt })),
-			mode: run.mode === "team" ? "team" : "dist",
-			finishedAt: startedAt + run.seconds * 1000,
-			saved: { id: run.id, status: run.status, points: run.points },
-		},
-	});
 };
 
 // Aviso ao abrir o app depois de correr com o Buddy: percurso, números,
@@ -58,7 +50,7 @@ export const useRunReview = () => {
 	};
 	const openAfter = (route: string): void => {
 		if (!run) return;
-		setAsLastResult(run);
+		setLastRun(run);
 		done();
 		router.push(route);
 	};

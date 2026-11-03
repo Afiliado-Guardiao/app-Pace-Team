@@ -10,6 +10,7 @@ import { ROUTES } from "@/constants/routes";
 
 import { FALLBACK_RESULT, RUN_SUMMARY_COPY } from "../constants";
 
+import { useOpenRunArt } from "./useOpenRunArt";
 import { useTeamRunSource } from "./useTeamRunSource";
 
 export type IRunSummaryVariant = "summary" | "detail";
@@ -125,6 +126,20 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 	const emptyMeta = IS_PREVIEW ? RUN_SUMMARY_COPY.demoMeta : "";
 	const emptyTitle = IS_PREVIEW ? RUN_SUMMARY_COPY.morning : RUN_SUMMARY_COPY.titleDetail;
 
+	// Corrida aberta pelo Histórico (ou de um aviso): a arte é desta corrida,
+	// não da última que a pessoa fez
+	const isOpenedRun = Boolean(params.id ?? params.teamRun);
+	const openArt = useOpenRunArt(
+		isOpenedRun && source.savedId && source.startedAt
+			? {
+					...source,
+					id: source.savedId,
+					startedAt: source.startedAt,
+					mode: mate || own?.mode === "team" ? "team" : "dist",
+				}
+			: null,
+	);
+
 	const goBack = useCallback(() => {
 		if (router.canGoBack()) router.back();
 		else router.replace(ROUTES.HOME);
@@ -152,7 +167,10 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		route: source.route.length >= MIN_ROUTE_POINTS || !IS_PREVIEW ? source.route : ROUTE,
 		goBack,
 		share: () => {
-			router.push(ROUTES.RUN_SHARE);
+			openArt(ROUTES.RUN_SHARE);
+		},
+		post: () => {
+			openArt(ROUTES.RUN_POST);
 		},
 		save: () => {
 			if (lastResult && !lastResult.saved && !params.id && !saveRun.isPending) {

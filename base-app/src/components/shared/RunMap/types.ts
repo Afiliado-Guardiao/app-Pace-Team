@@ -36,5 +36,7 @@ export interface IRunMapProps {
 	interactive?: boolean;
 	// Corrida ao vivo: a câmera acompanha o atleta (em `me` ou na ponta da rota)
 	follow?: boolean;
+	// Botão da mira: cada número novo leva a câmera até `me`
+	recenter?: number;
 	style?: StyleProp<ViewStyle>;
 }

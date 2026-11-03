@@ -1,6 +1,8 @@
 export const HISTORY_COPY = {
 	title: "Histórico",
 	calendar: "Calendário",
+	pickMonth: "Escolha o mês",
+	cancel: "Cancelar",
 	month: "Outubro",
 	monthKm: "36,5",
 	runs: "Corridas",

@@ -23,11 +23,12 @@ export const RunMap: React.FC<IRunMapProps> = ({
 	friends,
 	interactive = true,
 	follow = false,
+	recenter,
 	style,
 }) => {
 	const { theme } = useTheme();
 	const styles = createRunMapStyles(theme);
-	const map = useRunMap({ route, progress, me, follow });
+	const map = useRunMap({ route, progress, me, follow, recenter });
 
 	return (
 		<View style={[styles.map, style]} pointerEvents={interactive ? "auto" : "none"}>

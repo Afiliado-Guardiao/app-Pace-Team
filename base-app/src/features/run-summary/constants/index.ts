@@ -7,6 +7,7 @@ export const RUN_SUMMARY_COPY = {
 	titleDone: "Corrida concluída",
 	titleDetail: "Detalhes da corrida",
 	share: "Compartilhar",
+	post: "Postar",
 	demoMeta: "Hoje · 06:42 · Parque Ibirapuera",
 	today: "Hoje · ",
 	morning: "Corrida da manhã",

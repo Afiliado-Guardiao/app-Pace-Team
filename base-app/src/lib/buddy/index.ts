@@ -15,3 +15,4 @@ export { useBuddyContext } from "./useBuddyContext";
 export { useBuddyLook } from "./useBuddyLook";
 export type { IBuddyMood } from "./useBuddyMood";
 export { useBuddyMood } from "./useBuddyMood";
+export { useBuddyPresence } from "./useBuddyPresence";

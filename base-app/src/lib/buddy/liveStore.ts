@@ -20,6 +20,10 @@ interface IBuddyLiveState {
 	touch: { x: number; y: number; t: number } | null;
 	// Gesto pendente: o Buddy faz na próxima parada (ou na hora, se parado)
 	pendingAct: IBuddyAct | null;
+	// Buddy vivo por cima da tela (Toque Traseiro com o app aberto)
+	isPanelOpen: boolean;
+	openPanel: () => void;
+	closePanel: () => void;
 	setTouch: (x: number, y: number) => void;
 	emit: (event: IBuddyEvent) => void;
 	takePendingAct: () => IBuddyAct | null;
@@ -28,6 +32,13 @@ interface IBuddyLiveState {
 export const useBuddyLive = create<IBuddyLiveState>()((set, get) => ({
 	touch: null,
 	pendingAct: null,
+	isPanelOpen: false,
+	openPanel: () => {
+		set({ isPanelOpen: true });
+	},
+	closePanel: () => {
+		set({ isPanelOpen: false });
+	},
 	setTouch: (x, y) => {
 		// No máximo ~12 vezes por segundo (o olhar não precisa de mais)
 		const now = Date.now();

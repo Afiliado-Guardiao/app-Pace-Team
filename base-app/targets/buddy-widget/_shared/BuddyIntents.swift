@@ -58,6 +58,7 @@ struct ChangeBuddyKmIntent: AppIntent {
 
   func perform() async throws -> some IntentResult {
     BuddyStore.setKmIdx(BuddyStore.state().kmIdx + delta)
+    BuddyPoke.show(BuddyPoke.forGoal(km: BuddyStore.state().goalKm, delta: delta))
     BuddyStore.reloadWidgets()
     return .result()
   }
@@ -68,13 +69,37 @@ struct ChangeBuddyKmIntent: AppIntent {
 enum BuddyPoke {
   private static let countKey = "buddyPokeCount"
   private static let atKey = "buddyPokeAt"
-  static let gestures: [BuddyPose] = [.wave, .wink, .armsUp, .excited, .tilt, .celebrate]
-  static let showFor: TimeInterval = 90
+  private static let poseKey = "buddyPokePose"
+  // Cada toque no Buddy faz o próximo gesto da lista
+  static let gestures: [BuddyPose] = [
+    .wave, .wink, .armsUp, .curious, .excited, .tilt, .impressed, .salute, .peek, .celebrate,
+  ]
+  // O gesto fica na tela por um tempo e ele volta ao normal
+  static let showFor: TimeInterval = 40
 
+  // Tocou no Buddy: próximo gesto da lista
   static func next() {
     let count = (BuddyStore.defaults?.integer(forKey: countKey) ?? 0) + 1
     BuddyStore.defaults?.set(count, forKey: countKey)
+    BuddyStore.defaults?.removeObject(forKey: poseKey)
     BuddyStore.defaults?.set(Date().timeIntervalSince1970, forKey: atKey)
+  }
+
+  // Apertou um botão (meta, equipe…): o gesto daquele botão. O último botão
+  // apertado sempre ganha — antes o gesto do toque travava a reação à meta.
+  static func show(_ pose: BuddyPose) {
+    BuddyStore.defaults?.set(pose.rawValue, forKey: poseKey)
+    BuddyStore.defaults?.set(Date().timeIntervalSince1970, forKey: atKey)
+  }
+
+  // Reação à meta: quanto maior, mais animado; diminuindo, uma piscadinha
+  static func forGoal(km: Double, delta: Int) -> BuddyPose {
+    if delta < 0 { return .wink }
+    if km >= 42 { return .celebrate }
+    if km >= 21 { return .armsUp }
+    if km >= 15 { return .impressed }
+    if km >= 10 { return .excited }
+    return .wave
   }
 
   // Quando o gesto do último toque some
@@ -83,9 +108,12 @@ enum BuddyPoke {
     return Date(timeIntervalSince1970: at + showFor)
   }
 
-  // Gesto do último toque, se ainda está na tela
+  // Gesto do último toque ou botão, se ainda está na tela
   static func pose(at date: Date) -> BuddyPose? {
     guard let end = endsAt, date < end else { return nil }
+    if let raw = BuddyStore.defaults?.string(forKey: poseKey), let pose = BuddyPose(rawValue: raw) {
+      return pose
+    }
     let count = BuddyStore.defaults?.integer(forKey: countKey) ?? 0
     return gestures[count % gestures.count]
   }

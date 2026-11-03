@@ -1,0 +1,22 @@
+# Confere se o Swift do Pace Buddy compila (app, widget e cartão) antes de
+# gastar um build da Expo. Roda quando algo é enviado para o ramo
+# ci/swift-check (ou manualmente).
+name: Swift check
+on:
+  push:
+    branches: [ci/swift-check]
+  workflow_dispatch:
+jobs:
+  typecheck:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode 26
+        run: |
+          ls /Applications | grep -i xcode || true
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X"; fi
+          xcodebuild -version
+      - name: Typecheck
+        working-directory: base-app
+        run: bash scripts/swift-typecheck.sh

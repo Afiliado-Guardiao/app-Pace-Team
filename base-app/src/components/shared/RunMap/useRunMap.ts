@@ -10,6 +10,7 @@ interface IUseRunMapOptions {
 	progress: number;
 	me?: ILatLng | null;
 	follow?: boolean;
+	recenter?: number;
 }
 
 interface IUseRunMapReturn {
@@ -31,6 +32,7 @@ const SPAN = 0.012;
 // Acompanhando a corrida: bem perto, para ver as ruas por onde passa
 const FOLLOW_SPAN = 0.004;
 const FOLLOW_MS = 600;
+const RECENTER_MS = 500;
 
 // Enquadra a rota (padding 40, como o fitBounds do protótipo) e calcula o
 // trecho desenhado e a posição do atleta.
@@ -39,6 +41,7 @@ export const useRunMap = ({
 	progress,
 	me,
 	follow = false,
+	recenter,
 }: IUseRunMapOptions): IUseRunMapReturn => {
 	const ref = useRef<MapView | null>(null);
 	const hasCentered = useRef(false);
@@ -74,6 +77,24 @@ export const useRunMap = ({
 			{ duration: follow ? FOLLOW_MS : 400 },
 		);
 	}, [follow, targetLat, targetLng, route.length]);
+
+	// Mira: vai até o atleta, bem perto. Só quando a pessoa toca na mira (a
+	// posição fica guardada à parte para não mover a câmera a cada passo).
+	const latestMe = useRef(me);
+	latestMe.current = me;
+	useEffect(() => {
+		const point = latestMe.current;
+		if (!recenter || !point) return;
+		ref.current?.animateToRegion(
+			{
+				latitude: point[0],
+				longitude: point[1],
+				latitudeDelta: FOLLOW_SPAN,
+				longitudeDelta: FOLLOW_SPAN,
+			},
+			RECENTER_MS,
+		);
+	}, [recenter]);
 
 	return {
 		ref,
