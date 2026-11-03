@@ -1,8 +1,6 @@
-// Partes do cartão do Pace Buddy que também precisam existir no app: o
-// modo do cartão (App Group) e as intents que começam e encerram a corrida.
-// O iOS roda essas intents (LiveActivityIntent) no processo do app, onde
-// ficam o GPS e o contador da Dynamic Island. O resto do cartão mora na
-// extensão leve targets/buddy-intents, que abre na hora.
+// Modo do cartão do Pace Buddy (App Group), as intents que começam e
+// encerram a corrida pelo cartão (rodam no app, onde ficam o GPS e o contador
+// da Dynamic Island) e o aviso de que o app está aberto na tela.
 import AppIntents
 import Foundation
 

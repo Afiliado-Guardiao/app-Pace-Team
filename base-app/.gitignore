@@ -54,6 +54,3 @@ android/local.properties
 # Projetos nativos gerados pelo EAS a partir do app.json (expo prebuild)
 /ios
 /android
-
-# Cópia gerada no prebuild (targets/buddy-intents/expo-target.config.js)
-targets/buddy-intents/shared/

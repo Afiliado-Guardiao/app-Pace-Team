@@ -21,7 +21,7 @@ jobs:
         working-directory: base-app
         run: bash scripts/swift-typecheck.sh
   # Monta o projeto do iPhone de verdade (prebuild + Xcode, sem assinar) para
-  # pegar erro de configuração dos alvos (app, widget e cartão do Buddy).
+  # pegar erro de configuração dos alvos (app com o cartão do Buddy e widget).
   build:
     # needs: typecheck
     runs-on: macos-15
@@ -46,7 +46,7 @@ jobs:
       - name: Alvos do projeto
         run: |
           xcodebuild -list -workspace ios/*.xcworkspace
-          ls targets/buddy-intents targets/buddy-intents/shared
+          ls targets native/ios/app
       - name: Compilar (simulador, sem assinatura)
         run: |
           WS=$(ls -d ios/*.xcworkspace | head -1)

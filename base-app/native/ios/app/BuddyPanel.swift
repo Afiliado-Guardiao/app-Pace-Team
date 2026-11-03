@@ -3,8 +3,8 @@
 // (Pace Buddy.dc.html): o Buddy, os mini Buddies de quem está online, a fala,
 // "Correr sozinho", "Correr com a equipe", a meta ‹ km › e "Agora não".
 // Cada botão roda uma intent e o iOS redesenha o cartão em seguida.
-// Mora numa extensão própria (App Intents Extension): o iPhone não precisa
-// abrir o app inteiro para mostrar o cartão, então ele aparece na hora.
+// Fica no app (não numa extensão): no build 31 o cartão numa App Intents
+// Extension abria, mas nenhum botão respondia.
 import ActivityKit
 import AppIntents
 import SwiftUI

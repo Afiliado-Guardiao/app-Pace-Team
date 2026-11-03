@@ -1,6 +1,6 @@
 #!/bin/bash
-# Confere (sem gerar o app) se o código Swift do Buddy compila, nos três
-# lugares onde ele entra: app, widget e extensão do cartão. Roda num Mac
+# Confere (sem gerar o app) se o código Swift do Buddy compila, nos dois
+# lugares onde ele entra: app (com o cartão) e widget. Roda num Mac
 # (GitHub Actions, .github/workflows/swift-check.yml). Os erros viram
 # anotações do GitHub ("::error file=...").
 set -u
@@ -21,8 +21,7 @@ check() {
     | head -40
 }
 
-check PaceApp arm64-apple-ios16.4 $SHARED native/ios/app/BuddyAlarm.swift
+check PaceApp arm64-apple-ios16.4 $SHARED native/ios/app/*.swift
 check PaceBuddyWidget arm64-apple-ios17.0 $SHARED targets/buddy-widget/*.swift
-check PaceBuddyIntents arm64-apple-ios26.0 $SHARED targets/buddy-intents/*.swift
 
 exit $STATUS
