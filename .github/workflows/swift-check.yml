@@ -20,3 +20,39 @@ jobs:
       - name: Typecheck
         working-directory: base-app
         run: bash scripts/swift-typecheck.sh
+  # Monta o projeto do iPhone de verdade (prebuild + Xcode, sem assinar) para
+  # pegar erro de configuração dos alvos (app, widget e cartão do Buddy).
+  build:
+    needs: typecheck
+    runs-on: macos-15
+    timeout-minutes: 75
+    defaults:
+      run:
+        working-directory: base-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Xcode 26
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X"; fi
+          xcodebuild -version
+      - name: Dependências
+        run: npm ci --no-audit --no-fund
+      - name: Prebuild iOS
+        run: npx expo prebuild --platform ios --clean
+      - name: Alvos do projeto
+        run: |
+          xcodebuild -list -workspace ios/*.xcworkspace
+          ls targets/buddy-intents targets/buddy-intents/shared
+      - name: Compilar (simulador, sem assinatura)
+        run: |
+          set -o pipefail
+          xcodebuild build -workspace ios/*.xcworkspace -scheme PACETEAM -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee /tmp/xcodebuild.log | grep -E "error:|warning: .*Buddy|BUILD" || true
+          grep -E "^/.*: error: " /tmp/xcodebuild.log | sed -E "s#^$GITHUB_WORKSPACE/##" \
+            | sed -nE 's#^([^:]+):([0-9]+):([0-9]+): error: (.*)$#::error file=\1,line=\2,col=\3::\4#p' | head -40
+          grep -q "BUILD SUCCEEDED" /tmp/xcodebuild.log
