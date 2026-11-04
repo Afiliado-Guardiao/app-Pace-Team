@@ -38,5 +38,7 @@ export const RUN_SUMMARY_COPY = {
 	members: "Integrantes",
 	membersHint: "km · ritmo",
 	you: "Você",
+	whoRan: "Quem correu",
+	inTime: "em",
 	groupNote: "Pontos de cada integrante passam por verificação antes de entrar no ranking.",
 } as const;

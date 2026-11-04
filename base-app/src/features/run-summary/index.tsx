@@ -22,6 +22,7 @@ import { PointsCard } from "./components/PointsCard";
 import { RunStatsCard } from "./components/RunStatsCard";
 import { ShareActions } from "./components/ShareActions";
 import { SplitsCard } from "./components/SplitsCard";
+import { TeamMatesCard } from "./components/TeamMatesCard";
 import { RUN_SUMMARY_COPY } from "./constants";
 import { IRunSummaryVariant, useRunSummary } from "./hooks/useRunSummary";
 import { useSummaryCompare } from "./hooks/useSummaryCompare";
@@ -47,6 +48,7 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 			<Text style={styles.title}>{run.runTitle}</Text>
 		</View>,
 		<RunStatsCard key="stats" seconds={run.seconds} km={run.km} />,
+		run.people.length > 0 ? <TeamMatesCard key="mates" people={run.people} /> : null,
 		compare.comparison ? (
 			<RouteCompareCard
 				key="compare"

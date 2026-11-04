@@ -18,6 +18,8 @@ export const BUDDY_KEYS = {
 	config: "buddyConfig",
 	pendingRuns: "buddyPendingRuns",
 	goals: "buddyGoals",
+	// Tempos do cartão (native/ios/app/BuddyTimings.swift)
+	timings: "buddyTimings",
 } as const;
 
 interface IPaceBuddyModule {

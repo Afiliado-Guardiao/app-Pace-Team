@@ -56,13 +56,42 @@ struct BuddyPanelSnippetIntent: SnippetIntent {
   init() {}
 
   func perform() async throws -> some IntentResult & ShowsSnippetView {
+    BuddyTimings.mark("snippet")
     let mode = BuddyPanelMode.current
     // Mini Buddies de quem está online aparecem assim que o cartão abre
     let online = BuddyStore.state().hasTeam ? await BuddySupabase.teamOnlineQuick() : []
     let model = BuddyPanelModel(
       state: BuddyStore.state(), mode: mode, online: online, isRunning: BuddyRunTracker.shared.isRunning,
       liveActivitiesOff: !ActivityAuthorizationInfo().areActivitiesEnabled)
+    BuddyTimings.mark("snippet.done")
     return .result(view: BuddyPanelView(model: model))
+  }
+}
+
+// Depois de cada botão, pede ao iOS para redesenhar o cartão na hora. Sem
+// isso o iOS redesenhava quando queria (uns 20 s depois do toque).
+@available(iOS 26.0, *)
+enum BuddyPanelRefresh {
+  static func now(_ event: String) {
+    BuddyTimings.mark(event)
+    BuddyPanelSnippetIntent.reload()
+  }
+}
+
+// Toque no Buddy dentro do cartão (o do widget é o PokeBuddyIntent)
+@available(iOS 26.0, *)
+struct BuddyPanelPokeIntent: AppIntent {
+  static let title: LocalizedStringResource = "Cutucar o Pace Buddy"
+  static let isDiscoverable = false
+
+  init() {}
+
+  func perform() async throws -> some IntentResult {
+    BuddyTimings.mark("poke")
+    BuddyPoke.next()
+    BuddyPanelRefresh.now("poke.done")
+    BuddyStore.reloadWidgets()
+    return .result()
   }
 }
 
@@ -76,6 +105,7 @@ struct CallBuddyIntent: AppIntent {
   init() {}
 
   func perform() async throws -> some IntentResult & ShowsSnippetIntent {
+    BuddyTimings.mark("call")
     // Com o app aberto na tela, quem aparece é o Buddy vivo do app (segue o
     // dedo, pisca, reage). O iOS sempre mostra o cartão dele, então ele fica
     // só com um recado curto.
@@ -104,9 +134,11 @@ struct BuddyPanelKmIntent: AppIntent {
   }
 
   func perform() async throws -> some IntentResult {
+    BuddyTimings.mark("km")
     if BuddyPanelMode.current != .team { BuddyPanelMode.set(.choose) }
     BuddyStore.setKmIdx(BuddyStore.state().kmIdx + delta)
     BuddyPoke.show(BuddyPoke.forGoal(km: BuddyStore.state().goalKm, delta: delta))
+    BuddyPanelRefresh.now("km.done")
     BuddyStore.reloadWidgets()
     return .result()
   }
@@ -120,7 +152,9 @@ struct BuddyPanelDismissIntent: AppIntent {
   init() {}
 
   func perform() async throws -> some IntentResult {
+    BuddyTimings.mark("bye")
     BuddyPanelMode.set(.bye)
+    BuddyPanelRefresh.now("bye.done")
     return .result()
   }
 }
@@ -155,7 +189,7 @@ struct BuddyPanelView: View {
   var body: some View {
     VStack(spacing: -6) {
       ZStack(alignment: .topLeading) {
-        Button(intent: PokeBuddyIntent()) {
+        Button(intent: BuddyPanelPokeIntent()) {
           BuddyView(color: model.state.color, accessories: model.state.accessories, pose: pose)
             .scaleEffect(0.86)
             .frame(width: 140, height: 120)

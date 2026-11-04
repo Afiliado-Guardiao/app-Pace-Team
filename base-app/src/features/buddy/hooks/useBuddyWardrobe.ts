@@ -3,6 +3,7 @@ import { useWindowDimensions } from "react-native";
 import {
 	BUDDY_ACCESSORIES,
 	BUDDY_COLORS,
+	BUDDY_CROWN,
 	BUDDY_FREE_COLORS,
 	BUDDY_TIER_COLORS,
 	IBuddyAccessoryId,
@@ -54,13 +55,24 @@ export const useBuddyWardrobe = () => {
 		};
 	};
 
+	// A coroa não conta como acessório escolhido (vai sozinha para o 1º)
+	const chosen = accessories.filter((id) => id !== BUDDY_CROWN);
+	const hasCrown = accessories.includes(BUDDY_CROWN);
+	const crownReq = hasCrown ? "Usando · tocar esconde" : "Escondida";
 	const accItems: IAccessoryItem[] = [
 		{
 			id: "base",
 			name: "Sem nada",
-			req: accessories.length === 0 ? "Usando" : "Tirar tudo",
+			req: chosen.length === 0 ? "Usando" : "Tirar tudo",
 			isLocked: false,
-			isWorn: accessories.length === 0,
+			isWorn: chosen.length === 0,
+		},
+		{
+			id: BUDDY_CROWN,
+			name: "Coroa",
+			req: ctx.isLeader ? crownReq : "Só o 1º da equipe",
+			isLocked: !ctx.isLeader,
+			isWorn: hasCrown,
 		},
 		...BUDDY_ACCESSORIES.map((a) => {
 			const isFree = isUnlocked(a, goals, ctx);
@@ -89,7 +101,11 @@ export const useBuddyWardrobe = () => {
 			if (!item.isLocked) useBuddyStore.getState().setColor(item.id, !!BUDDY_COLORS[item.id].tier);
 		},
 		equip: (item: IAccessoryItem) => {
-			if (!item.isLocked) useBuddyStore.getState().equip(item.id);
+			if (item.isLocked) return;
+			const store = useBuddyStore.getState();
+			// Coroa: só mostra ou esconde (ela é do 1º da equipe, não se escolhe)
+			if (item.id === BUDDY_CROWN) store.setHideCrown(!store.hideCrown);
+			else store.equip(item.id);
 		},
 	};
 };

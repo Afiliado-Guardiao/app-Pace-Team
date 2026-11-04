@@ -7,11 +7,16 @@ import { useSvgId } from "@/components/pace";
 
 import { abs } from "./shared";
 
-export const Coroa: React.FC = () => {
+interface ICoroaProps {
+	// Com boné, faixa ou auréola: a coroa sobe e fica por cima deles
+	lift?: number;
+}
+
+export const Coroa: React.FC<ICoroaProps> = ({ lift = 0 }) => {
 	const id = useSvgId("bd-crown");
 	return (
 		<>
-			<Svg width={46} height={30} style={abs({ left: 21, top: -28 })}>
+			<Svg width={46} height={30} style={abs({ left: 21, top: -28 - lift })}>
 				<Defs>
 					<LinearGradient id={id} x1="0" y1="0" x2="0" y2="1">
 						<Stop offset="0" stopColor="#FFE7A3" />
@@ -26,7 +31,7 @@ export const Coroa: React.FC = () => {
 					key={i}
 					style={abs({
 						left: 28 + i * 13,
-						top: -7,
+						top: -7 - lift,
 						width: 6,
 						height: 6,
 						borderRadius: 3,

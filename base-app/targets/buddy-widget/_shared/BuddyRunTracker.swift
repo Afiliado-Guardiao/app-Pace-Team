@@ -42,6 +42,9 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
   // Correndo com a equipe: última vez que a posição ao vivo foi enviada
   private var liveSentAt: Date = .distantPast
   private let liveEvery: TimeInterval = 5
+  // Menos que isso é toque sem querer no Buddy: a corrida não é salva
+  private let minSeconds: Double = 30
+  private let minMeters: Double = 30
   private var isFinishing = false
 
   static var hasAlwaysPermission: Bool { CLLocationManager().authorizationStatus == .authorizedAlways }
@@ -119,7 +122,8 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
       liveSentAt = Date()
       let lat = point.coordinate.latitude
       let lng = point.coordinate.longitude
-      Task { await BuddySupabase.setLivePosition(lat: lat, lng: lng) }
+      let meters = current.meters
+      Task { await BuddySupabase.setLivePosition(lat: lat, lng: lng, meters: meters) }
     }
     let km = current.meters / 1000
     if km >= current.goalKm {
@@ -168,6 +172,9 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     await endActivities(km: km, unlocked: nil, isDone: goalReached, keepFor: goalReached ? 120 : nil)
     BuddyStore.reloadWidgets()
     isFinishing = false
+
+    // Começou e encerrou sem correr (toque sem querer): não salva nem avisa
+    if !goalReached && (pending.seconds < minSeconds || current.meters < minMeters) { return }
 
     let saved = await BuddySupabase.saveRun(pending)
     var unlocked: String?

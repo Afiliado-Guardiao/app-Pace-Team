@@ -145,6 +145,8 @@ export const paceColors = {
 
 	// Mapa
 	route: orange[500],
+	// Rastro de quem vai na frente na corrida em grupo (outra cor que a rota)
+	leaderTrail: semantic.gold,
 
 	// Tendência no ranking (feed)
 	trendUp: "#2FD08A",

@@ -4,6 +4,8 @@ export { DATA_KEYS } from "./keys";
 export type { ILastRunInput } from "./lastRun";
 export { setLastRun } from "./lastRun";
 export { runDate, runTitle, toRun } from "./mappers";
+export type { IStoredCrewPin } from "./postArt";
+export { fromStoredCrew, routeShape, toStoredCrew } from "./postArt";
 export type { IRunCrew, IRunCrewPin } from "./runCrew";
 export { buildRunCrew } from "./runCrew";
 export type { ITeamView } from "./teamView";

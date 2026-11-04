@@ -71,8 +71,10 @@ export interface IFeedPostArt {
 	seconds: number;
 	km: number;
 	layers: { route: boolean; stats: boolean; badge: boolean };
-	// Percurso real (posts reais); sem ele, o traçado de exemplo da prévia
+	// Desenho do percurso (posts reais); sem ele, o traçado de exemplo da prévia
 	route?: readonly (readonly [number, number])[];
+	// Fotos redondas no percurso (foto, nome e "Nome · km · ritmo")
+	crew?: readonly { photo: string | null; name: string; label?: string; at: number }[];
 }
 
 export interface IFeedPost {

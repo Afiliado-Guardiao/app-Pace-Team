@@ -60,7 +60,7 @@ export const FeedPost: React.FC<IFeedPostProps> = ({ post, index, onMore }) => {
 										? { name: post.team, rank: post.rank, isUp: post.up, logoUrl: post.teamLogo }
 										: null
 								}
-								track={post.art.route ? { route: post.art.route, crew: [] } : undefined}
+								track={feed.track}
 							/>
 						) : (
 							<Image source={post.image} style={styles.image} accessibilityIgnoresInvertColors />

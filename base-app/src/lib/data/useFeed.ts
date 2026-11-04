@@ -13,7 +13,7 @@ const fetchFeed = async (): Promise<IFeedPost[]> => {
 	return rows.map(toFeedPost);
 };
 
-// Feed das equipes (posts mais recentes primeiro).
+// Feed de todos os atletas do app (posts mais recentes primeiro).
 export const useFeed = (): { posts: IFeedPost[]; isLoading: boolean } => {
 	const query = useQuery({ queryKey: DATA_KEYS.feed, queryFn: fetchFeed, staleTime: 60_000 });
 	return { posts: query.data ?? [], isLoading: query.isLoading };

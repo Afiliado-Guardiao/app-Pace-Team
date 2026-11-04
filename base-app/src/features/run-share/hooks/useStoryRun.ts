@@ -70,16 +70,14 @@ export const useStoryRun = (): IUseStoryRunReturn => {
 
 	return useMemo(() => {
 		if (IS_PREVIEW) {
-			const crew = mates
-				.slice(0, DEMO_AT.length)
-				.map(
-					(m, i): IRunCrewPin => ({
-						image: m.image,
-						name: m.name,
-						label: m.name,
-						at: DEMO_AT[i] ?? 0,
-					}),
-				);
+			const crew = mates.slice(0, DEMO_AT.length).map(
+				(m, i): IRunCrewPin => ({
+					image: m.image,
+					name: m.name,
+					label: m.name,
+					at: DEMO_AT[i] ?? 0,
+				}),
+			);
 			return { run: { ...DEMO_RUN, crew }, isDemo: true };
 		}
 		const km = lastResult?.km ?? 0;
@@ -89,6 +87,7 @@ export const useStoryRun = (): IUseStoryRunReturn => {
 				name: myName || (teamRun?.name ?? ""),
 				photo: myPhoto ?? teamRun?.avatarUrl ?? null,
 				km,
+				seconds: lastResult?.seconds ?? 0,
 				route: myRoute,
 			},
 			teamRun,

@@ -2,12 +2,21 @@ import { act, renderHook } from "@testing-library/react-native";
 
 import { BUDDY_ACCESSORIES } from "../constants";
 import { BUDDY_KEYS, buddyNative } from "../native";
-import { effectiveColor, isUnlocked, rankOfPosition, sickAt } from "../rules";
+import { effectiveColor, isUnlocked, rankOfPosition, sickAt, wornAccessories } from "../rules";
 import { buildSharedState } from "../sharedState";
 import { DEFAULT_ALARM, useBuddyStore } from "../store";
 import { useBuddySync } from "../useBuddySync";
 
-const mockTeam = { name: "Pace Sharks", isCaptain: true, position: 2 };
+// O 1º do ranking da equipe (com pontos) é quem ganha a coroa
+const mockTeam = {
+	name: "Pace Sharks",
+	isCaptain: false,
+	position: 2,
+	members: [
+		{ name: "Lucas", you: true, pts: 120 },
+		{ name: "Ana", pts: 80 },
+	],
+};
 const mockRuns = [{ startedAt: "2026-10-20T06:00:00.000Z" }];
 
 jest.mock("@/lib/data", () => ({
@@ -39,11 +48,15 @@ describe("Pace Buddy — regras", () => {
 		expect(effectiveColor("prata", "azul", "prata")).toBe("prata");
 	});
 
-	it("acessórios por metas e coroa só para o capitão com equipe", () => {
+	it("acessórios por metas; a coroa vai sozinha para o 1º da equipe, por cima", () => {
 		const ctx = { teamName: "Pace Sharks", isLeader: false, rank: "none" as const };
 		expect(isUnlocked(acc("faixa"), 3, ctx)).toBe(true);
-		expect(isUnlocked(acc("coroa"), 99, ctx)).toBe(false);
-		expect(isUnlocked(acc("coroa"), 0, { ...ctx, isLeader: true })).toBe(true);
+		expect(wornAccessories(["bone"], 20, ctx)).toEqual(["bone"]);
+		expect(wornAccessories(["bone"], 20, { ...ctx, isLeader: true })).toEqual(["bone", "coroa"]);
+		// O líder escondeu a coroa
+		expect(wornAccessories(["bone"], 20, { ...ctx, isLeader: true, hideCrown: true })).toEqual([
+			"bone",
+		]);
 	});
 
 	it("fica doente 7 dias depois da última corrida", () => {

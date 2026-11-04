@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-import { BuddyLivePanel } from "@/components/buddy";
+import { BuddyFlight, BuddyLivePanel } from "@/components/buddy";
 import { useTheme } from "@/theme";
 import { useBuddyBridge, useBuddyPresence } from "@/lib/buddy";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
@@ -37,6 +37,7 @@ export default function AuthLayout() {
 				<Stack.Screen name="paywall" options={{ gestureEnabled: false, animation: "fade" }} />
 			</Stack>
 			<BuddyLivePanel />
+			<BuddyFlight />
 		</>
 	);
 }

@@ -21,6 +21,7 @@ export const RunMap: React.FC<IRunMapProps> = ({
 	meImage,
 	regions,
 	friends,
+	leaderTrail,
 	interactive = true,
 	follow = false,
 	recenter,
@@ -48,6 +49,15 @@ export const RunMap: React.FC<IRunMapProps> = ({
 				rotateEnabled={false}
 				pitchEnabled={false}
 			>
+				{leaderTrail && leaderTrail.length > 1 ? (
+					<Polyline
+						coordinates={leaderTrail.map(([latitude, longitude]) => ({ latitude, longitude }))}
+						strokeColor={styles.leaderColor}
+						strokeWidth={ROUTE_WIDTH}
+						lineCap="round"
+						lineJoin="round"
+					/>
+				) : null}
 				{showRoute && map.drawn.length > 1 ? (
 					<>
 						<Polyline

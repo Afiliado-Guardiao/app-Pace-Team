@@ -9,6 +9,10 @@ const MAX_REVIEWED = 60;
 interface IRunReviewState {
 	reviewed: string[];
 	markReviewed: (id: string) => void;
+	// Voltou para o app e as corridas estão sendo buscadas de novo: o aviso
+	// espera, para não mostrar a lista velha (não fica salvo)
+	isSyncing: boolean;
+	setSyncing: (isSyncing: boolean) => void;
 }
 
 export const useRunReviewStore = create<IRunReviewState>()(
@@ -20,7 +24,15 @@ export const useRunReviewStore = create<IRunReviewState>()(
 				if (list.includes(id)) return;
 				set({ reviewed: [id, ...list].slice(0, MAX_REVIEWED) });
 			},
+			isSyncing: true,
+			setSyncing: (isSyncing) => {
+				set({ isSyncing });
+			},
 		}),
-		{ name: "@pace-team:run-review", storage: createJSONStorage(() => AsyncStorage) },
+		{
+			name: "@pace-team:run-review",
+			storage: createJSONStorage(() => AsyncStorage),
+			partialize: (s) => ({ reviewed: s.reviewed }),
+		},
 	),
 );

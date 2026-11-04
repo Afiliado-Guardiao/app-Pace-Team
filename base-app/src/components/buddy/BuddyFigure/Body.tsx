@@ -57,6 +57,9 @@ const CHEEK: ViewStyle = {
 	backgroundColor: "rgba(255,72,60,.6)",
 };
 
+const HATS: readonly IBuddyAccessoryId[] = ["bone", "boneTras", "faixa", "aureola"];
+const CROWN_LIFT = 14;
+
 // Corpo do Buddy (o "marshmallow"): degradê, sombras, rosto e acessórios.
 export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isMini }) => {
 	const isSleep = isSleepAct(pose.act);
@@ -64,6 +67,8 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 	const heads = accessories
 		.filter((x): x is Exclude<IBuddyAccessoryId, "capa"> => x !== "capa")
 		.sort((a, b) => BUDDY_ACC_ORDER.indexOf(a) - BUDDY_ACC_ORDER.indexOf(b));
+	// A coroa do líder sobe quando há boné, faixa ou auréola
+	const crownLift = heads.some((x) => HATS.includes(x)) ? CROWN_LIFT : 0;
 
 	return (
 		<Animated.View
@@ -116,7 +121,13 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 			<Eyes pose={pose} />
 			<Mouth act={pose.act} />
 			{heads.map((id) => (
-				<HeadAccessory key={id} id={id} pal={pal} isNew={!isMini && dropId === id} />
+				<HeadAccessory
+					key={id}
+					id={id}
+					pal={pal}
+					isNew={!isMini && dropId === id}
+					crownLift={crownLift}
+				/>
 			))}
 		</Animated.View>
 	);

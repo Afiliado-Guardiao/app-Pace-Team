@@ -50,7 +50,12 @@ describe("buildRunCrew", () => {
 		expect(crew.route).toBe(PATH);
 		expect(crew.crew).toEqual([
 			{ image: { uri: "w.jpg" }, name: "Wesley", label: "Wesley · 0 m", at: 0 },
-			{ image: { uri: "m.jpg" }, name: "Matheus Dutra", label: "Matheus · 1,20 km", at: 1 },
+			{
+				image: { uri: "m.jpg" },
+				name: "Matheus Dutra",
+				label: "Matheus · 1,20 km · 8'20\"",
+				at: 1,
+			},
 		]);
 	});
 

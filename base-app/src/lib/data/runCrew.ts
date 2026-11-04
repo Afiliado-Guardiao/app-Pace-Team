@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from "react-native";
 
-import { formatDistance } from "@/lib/pace";
+import { formatDistance, formatPace } from "@/lib/pace";
 
 import { ITeamRunView } from "./useTeamRun";
 
@@ -10,7 +10,8 @@ type IPoint = readonly [number, number];
 export interface IRunCrewPin {
 	image?: ImageSourcePropType;
 	name: string;
-	// "Wesley · 0 m" (correndo sozinho não tem: os números já estão na arte)
+	// "Wesley · 1,20 km · 5'07\"" (correndo sozinho não tem: os números já
+	// estão na arte)
 	label?: string;
 	// Onde fica no percurso desenhado (0 = largada, 1 = chegada)
 	at: number;
@@ -26,6 +27,8 @@ interface IRunner {
 	name: string;
 	photo: string | null;
 	km: number;
+	// Tempo da corrida (para o ritmo de cada um no desenho)
+	seconds?: number;
 	route: readonly IPoint[];
 }
 
@@ -35,10 +38,17 @@ const MAX_PARTIAL = 0.95;
 
 const firstName = (name: string): string => name.trim().split(" ")[0] ?? name;
 
+// Nome, distância e o ritmo de quem andou
+const labelOf = (runner: IRunner): string => {
+	const base = `${firstName(runner.name)} · ${formatDistance(runner.km)}`;
+	const seconds = runner.seconds ?? 0;
+	return runner.km > 0 && seconds > 0 ? `${base} · ${formatPace(seconds / runner.km)}` : base;
+};
+
 const pinOf = (runner: IRunner, at: number): IRunCrewPin => ({
 	image: runner.photo ? { uri: runner.photo } : undefined,
 	name: runner.name,
-	label: `${firstName(runner.name)} · ${formatDistance(runner.km)}`,
+	label: labelOf(runner),
 	at,
 });
 
@@ -57,7 +67,13 @@ export const buildRunCrew = (me: IRunner, teamRun: ITeamRunView | null): IRunCre
 	}
 	const runners: IRunner[] = [
 		me,
-		...mates.map((m) => ({ name: m.name, photo: m.avatarUrl, km: m.km, route: m.route })),
+		...mates.map((m) => ({
+			name: m.name,
+			photo: m.avatarUrl,
+			km: m.km,
+			seconds: m.seconds,
+			route: m.route,
+		})),
 	];
 	const drawn = runners.filter((r) => r.route.length > 1);
 	const main = drawn.reduce<IRunner | null>(

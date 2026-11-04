@@ -73,7 +73,9 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 	const isGroup = params.mode === "team";
 	const own = params.id ? saved.find((r) => r.id === params.id) : undefined;
 	// Corrida de colega (aviso / Histórico › Equipe) ou a minha corrida com a equipe
-	const teamRunId = params.teamRun ?? (own?.mode === "team" ? own.id : undefined);
+	// (a que acabou de terminar também: assim aparece quem correu junto)
+	const justRan = !params.id && lastResult?.mode === "team" ? lastResult.saved?.id : undefined;
+	const teamRunId = params.teamRun ?? (own?.mode === "team" ? own.id : justRan);
 	const team = useTeamRunSource(teamRunId);
 	const mate = params.teamRun ? team.run : null;
 
@@ -153,6 +155,7 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		runTitle: source.startedAt ? `${runner}${runTitle(source.startedAt)}` : emptyTitle,
 		// Fotos de quem correu (no fim do percurso de cada um)
 		pins: team.pins,
+		people: team.people,
 		// Corrida de outra pessoa não vai para o meu Compartilhar
 		canShare: !mate || mate.isYou,
 		// Para comparar com a última vez no mesmo percurso (só as minhas)

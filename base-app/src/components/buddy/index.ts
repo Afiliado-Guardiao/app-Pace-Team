@@ -2,6 +2,7 @@
 export { BuddyButton } from "./BuddyButton";
 export type { IBuddyPose } from "./BuddyFigure";
 export { BUDDY_H, BUDDY_W, BuddyFigure } from "./BuddyFigure";
+export { BuddyFlight } from "./BuddyFlight";
 export { BuddyLivePanel } from "./BuddyLivePanel";
 export { BuddyRunner } from "./BuddyRunner";
 export { MiniBuddy } from "./MiniBuddy";

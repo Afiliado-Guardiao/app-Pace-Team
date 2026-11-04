@@ -29,6 +29,9 @@ interface IBuddyState {
 	// Meta de km escolhida por último no atalho
 	kmIdx: number;
 	alarm: IBuddyAlarm;
+	// O 1º da equipe escondeu a coroa
+	hideCrown: boolean;
+	setHideCrown: (hide: boolean) => void;
 	setKmIdx: (index: number) => void;
 	setGoals: (goals: number) => void;
 	equip: (id: IBuddyAccessoryId | "base") => boolean;
@@ -40,6 +43,7 @@ interface IBuddyState {
 		color: string;
 		lastFree: string;
 		equipped: string[];
+		hideCrown?: boolean;
 	}) => void;
 }
 
@@ -66,6 +70,10 @@ export const useBuddyStore = create<IBuddyState>()(
 			lastFree: "branco",
 			kmIdx: BUDDY_DEFAULT_KM_INDEX,
 			alarm: DEFAULT_ALARM,
+			hideCrown: false,
+			setHideCrown: (hide) => {
+				set({ hideCrown: hide });
+			},
 			setKmIdx: (index) => {
 				set({ kmIdx: Math.max(0, Math.min(BUDDY_KMS.length - 1, index)) });
 			},
@@ -98,6 +106,7 @@ export const useBuddyStore = create<IBuddyState>()(
 					color: isColor(profile.color) ? profile.color : get().color,
 					lastFree: isColor(profile.lastFree) ? profile.lastFree : get().lastFree,
 					equipped: profile.equipped.filter(isAccessory),
+					hideCrown: profile.hideCrown ?? get().hideCrown,
 				});
 			},
 		}),
@@ -111,6 +120,7 @@ export const useBuddyStore = create<IBuddyState>()(
 				lastFree: s.lastFree,
 				kmIdx: s.kmIdx,
 				alarm: s.alarm,
+				hideCrown: s.hideCrown,
 			}),
 		},
 	),

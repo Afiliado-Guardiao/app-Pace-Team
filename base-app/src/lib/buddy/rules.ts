@@ -3,6 +3,7 @@
 import {
 	BUDDY_ACCESSORIES,
 	BUDDY_COLORS,
+	BUDDY_CROWN,
 	BUDDY_SICK_DAYS,
 	IBuddyAccessory,
 	IBuddyAccessoryId,
@@ -13,8 +14,11 @@ import {
 // O que vem do app: equipe, liderança e pódio no ranking semanal
 export interface IBuddyContext {
 	teamName: string;
+	// 1º do ranking da semana dentro da equipe (ganha a coroa)
 	isLeader: boolean;
 	rank: IBuddyRank;
+	// O líder escolheu esconder a coroa
+	hideCrown?: boolean;
 }
 
 const DAY_MS = 86_400_000;
@@ -47,16 +51,22 @@ export const requirementText = (acc: IBuddyAccessory, goals: number): string =>
 export const accessoryOf = (id: IBuddyAccessoryId): IBuddyAccessory | undefined =>
 	BUDDY_ACCESSORIES.find((a) => a.id === id);
 
-// Acessórios vestidos que continuam liberados (ex.: a coroa some se deixar de ser líder)
+// O 1º da equipe usa a coroa, a não ser que tenha escondido
+export const hasCrown = (ctx: IBuddyContext): boolean =>
+	ctx.isLeader && hasTeam(ctx) && !ctx.hideCrown;
+
+// Acessórios vestidos que continuam liberados, mais a coroa do líder por cima
 export const wornAccessories = (
 	equipped: readonly IBuddyAccessoryId[],
 	goals: number,
 	ctx: IBuddyContext,
-): IBuddyAccessoryId[] =>
-	equipped.filter((id) => {
+): IBuddyAccessoryId[] => {
+	const worn = equipped.filter((id) => {
 		const acc = accessoryOf(id);
 		return acc ? isUnlocked(acc, goals, ctx) : false;
 	});
+	return hasCrown(ctx) ? [...worn, BUDDY_CROWN] : worn;
+};
 
 // Data em que o Buddy fica doente (7 dias sem correr); null = nunca correu
 export const sickAt = (lastRunAt: number | null): number | null =>

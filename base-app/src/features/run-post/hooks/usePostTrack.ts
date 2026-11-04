@@ -27,6 +27,7 @@ export const usePostTrack = (): IPostTrack | undefined => {
 				name: myName || (teamRun?.name ?? ""),
 				photo: myPhoto ?? teamRun?.avatarUrl ?? null,
 				km: lastResult?.km ?? 0,
+				seconds: lastResult?.seconds ?? 0,
 				route,
 			},
 			teamRun,

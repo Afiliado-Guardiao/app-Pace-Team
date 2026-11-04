@@ -16,7 +16,7 @@ export const HOME_COPY = {
 	viradaSub: "Modo Virada · vs ",
 	viradaNoTeam: "Entre numa equipe para disputar",
 	viradaNoRival: "Sem rival na sua cidade ainda",
-	feedTitle: "Feed das equipes",
+	feedTitle: "Feed",
 	feedTag: "Exemplos fictícios",
 	feedEmpty: "Ainda não há corridas postadas. Depois de correr, poste a sua foto para a equipe.",
 	feedWith: " com ",

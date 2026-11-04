@@ -20,13 +20,15 @@ interface IHeadAccessoryProps {
 	pal: IBuddyPalette;
 	// Recém-vestido: cai em cima do Buddy
 	isNew: boolean;
+	// Coroa por cima de outro acessório de cabeça
+	crownLift?: number;
 }
 
 const DROP = anim("drop", "0.8s", { timing: EASE_OUT, delay: "0.35s", count: 1, fill: "both" });
 const LAYER: ViewStyle = { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 2 };
 
 // Acessório de cabeça/olhos desenhado sobre o corpo (coordenadas do design).
-export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew }) => {
+export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew, crownLift }) => {
 	const fill = pal.metal ? (pal.m?.[1] ?? pal.c[1]) : pal.c[1];
 	const parts: Record<IHeadAccessoryProps["id"], React.ReactNode> = {
 		faixa: <Faixa />,
@@ -34,7 +36,7 @@ export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew })
 		bone: <Bone />,
 		grau: <Grau />,
 		boneTras: <BoneTras fill={fill} />,
-		coroa: <Coroa />,
+		coroa: <Coroa lift={crownLift} />,
 		aureola: <Aureola />,
 	};
 	return (

@@ -4,6 +4,7 @@ import { AppState } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { DATA_KEYS } from "@/lib/data/keys";
+import { useRunReviewStore } from "@/lib/run/reviewStore";
 import { getBuddyProfile, goOffline, pingTeamOnline } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 
@@ -11,6 +12,7 @@ import { BUDDY_KEYS, buddyNative } from "./native";
 import { registerPushToken } from "./notifications";
 import { flushPendingRuns } from "./pendingRuns";
 import { useBuddyStore } from "./store";
+import { flushBuddyTimings } from "./timings";
 
 const ignore = (): undefined => undefined;
 // Com o app aberto, avisa de novo que está online a cada 1 min (a equipe vê
@@ -40,13 +42,19 @@ export const useBuddyAppEvents = (): void => {
 		let activeSince = Date.now();
 		const sync = async (): Promise<void> => {
 			adoptNativeKm();
-			if ((await flushPendingRuns()) > 0) {
-				await Promise.all(
-					[DATA_KEYS.myRuns, DATA_KEYS.myStats, DATA_KEYS.myTeam, DATA_KEYS.rankingAll].map(
-						(queryKey) => client.invalidateQueries({ queryKey }),
-					),
-				);
+			// Sempre busca as corridas de novo: a do Buddy já foi salva direto no
+			// servidor e o aviso não pode mostrar a lista velha (B33-5)
+			const review = useRunReviewStore.getState();
+			review.setSyncing(true);
+			try {
+				const flushed = await flushPendingRuns();
+				const keys: (readonly string[])[] = [DATA_KEYS.myRuns, DATA_KEYS.myStats];
+				if (flushed > 0) keys.push(DATA_KEYS.myTeam, DATA_KEYS.rankingAll);
+				await Promise.all(keys.map((queryKey) => client.invalidateQueries({ queryKey })));
+			} finally {
+				review.setSyncing(false);
 			}
+			flushBuddyTimings().catch(ignore);
 			const profile = await getBuddyProfile();
 			if (profile) useBuddyStore.getState().hydrate(profile);
 			await pingTeamOnline(false);

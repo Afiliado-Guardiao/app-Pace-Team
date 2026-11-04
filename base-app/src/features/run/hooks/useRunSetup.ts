@@ -18,6 +18,8 @@ import { ROUTES } from "@/constants/routes";
 
 import { RUN_TOASTS } from "../constants";
 
+import { useBuddyAutoStart } from "./useBuddyAutoStart";
+
 export type IGpsState = "searching" | "ready" | "denied";
 
 interface IUseRunSetupReturn {
@@ -94,6 +96,8 @@ export const useRunSetup = (): IUseRunSetupReturn => {
 				showToast(RUN_TOASTS.error);
 			});
 	}, [gps, start, router, showToast, mode]);
+	// O Buddy vivo apertou o INICIAR por você
+	useBuddyAutoStart(gps, handleStart);
 
 	return {
 		gps,

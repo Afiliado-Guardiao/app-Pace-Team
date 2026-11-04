@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image, Share } from "react-native";
 
 import { useRouter } from "expo-router";
@@ -12,7 +12,7 @@ import {
 } from "react-native-reanimated";
 
 import { useBuddyLive } from "@/lib/buddy";
-import { usePostActions } from "@/lib/data";
+import { fromStoredCrew, IRunCrewPin, usePostActions } from "@/lib/data";
 import { formatKm, IFeedPost } from "@/lib/pace";
 import { LEGAL_URLS } from "@/constants/legal";
 import { ROUTES } from "@/constants/routes";
@@ -29,6 +29,8 @@ interface IUseFeedPostReturn {
 	share: () => void;
 	// Perfil do autor (ou a equipe, nos posts da equipe)
 	openAuthor: () => void;
+	// Desenho do percurso com as fotos redondas (o mesmo da tela de postar)
+	track?: { route: readonly (readonly [number, number])[]; crew: IRunCrewPin[] };
 }
 
 const FALLBACK_RATIO = 4 / 5;
@@ -89,9 +91,21 @@ export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
 		};
 	});
 
+	// Posts antigos não guardaram as fotos: a do autor vai no fim do percurso
+	const track = useMemo(() => {
+		const route = post.art?.route;
+		if (!route) return undefined;
+		const stored = post.art?.crew ?? [];
+		const author: IRunCrewPin[] = post.avatarUrl
+			? [{ image: { uri: post.avatarUrl }, name: post.name, at: 1 }]
+			: [];
+		return { route, crew: stored.length > 0 ? fromStoredCrew(stored) : author };
+	}, [post.art, post.avatarUrl, post.name]);
+
 	return {
 		liked,
 		likes: baseLikes + (liked ? 1 : 0),
+		track,
 		aspectRatio,
 		heartStyle,
 		toggleLike,

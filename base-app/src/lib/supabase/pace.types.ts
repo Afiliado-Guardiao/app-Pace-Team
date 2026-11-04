@@ -101,8 +101,10 @@ export interface IFeedRow {
 	teamRank?: number | null;
 	// "personal" = no perfil do autor; "team" = post da equipe
 	scope?: "personal" | "team";
-	// Percurso real da corrida (cortado no início e no fim se o autor escolheu)
+	// Desenho do percurso (começa em [0, 0]; nunca coordenada de GPS)
 	route?: [number, number][];
+	// Fotos de quem correu junto, como na tela de postar
+	crew?: { photo: string | null; name: string; label?: string; at: number }[];
 	imagePath: string | null;
 	sample: number | null;
 	seconds: number;

@@ -5,7 +5,7 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 
 import { IPostArtLayers } from "@/components/shared/PostArt";
-import { useMyTeam, usePostActions } from "@/lib/data";
+import { routeShape, toStoredCrew, useMyTeam, usePostActions } from "@/lib/data";
 import { pickFromGallery } from "@/lib/media";
 import { useRunStore } from "@/lib/run";
 import { useStore } from "@/store";
@@ -95,9 +95,24 @@ export const useRunPost = () => {
 				done();
 				return;
 			}
-			publishMutation.mutate({ ...post, runId: savedRunId }, { onSuccess: done });
+			// O feed mostra o mesmo desenho e as mesmas fotos desta tela
+			const art = track
+				? { artRoute: routeShape(track.route), artCrew: toStoredCrew(track.crew) }
+				: {};
+			publishMutation.mutate({ ...post, ...art, runId: savedRunId }, { onSuccess: done });
 		},
-		[addMyPost, photo, run, layers, caption, router, publishMutation, savedRunId, setHasJustPosted],
+		[
+			addMyPost,
+			photo,
+			run,
+			layers,
+			caption,
+			router,
+			publishMutation,
+			savedRunId,
+			setHasJustPosted,
+			track,
+		],
 	);
 
 	return {

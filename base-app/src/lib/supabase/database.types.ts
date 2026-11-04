@@ -121,6 +121,8 @@ export interface Database {
 					km: number;
 					layers: unknown;
 					caption: string;
+					art_route: unknown;
+					art_crew: unknown;
 					created_at: string;
 				};
 				Insert: {
@@ -132,6 +134,8 @@ export interface Database {
 					layers?: unknown;
 					caption?: string;
 					scope?: "personal" | "team";
+					art_route?: [number, number][] | null;
+					art_crew?: { photo: string | null; name: string; label?: string; at: number }[] | null;
 				};
 				Update: Record<string, never>;
 				Relationships: [];
@@ -158,6 +162,7 @@ export interface Database {
 					equipped: string[];
 					alarm_time: string | null;
 					alarm_days: number[];
+					hide_crown: boolean;
 					updated_at: string;
 				};
 				Insert: {
@@ -167,6 +172,7 @@ export interface Database {
 					equipped?: string[];
 					alarm_time?: string | null;
 					alarm_days?: number[];
+					hide_crown?: boolean;
 				};
 				Update: {
 					color?: string;
@@ -174,7 +180,14 @@ export interface Database {
 					equipped?: string[];
 					alarm_time?: string | null;
 					alarm_days?: number[];
+					hide_crown?: boolean;
 				};
+				Relationships: [];
+			};
+			buddy_timings: {
+				Row: { id: number; user_id: string; events: unknown; created_at: string };
+				Insert: { events: { at: number; event: string }[] };
+				Update: Record<string, never>;
 				Relationships: [];
 			};
 		};
@@ -237,7 +250,10 @@ export interface Database {
 			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
 			get_team_runs: { Args: { p_limit?: number }; Returns: unknown };
 			get_team_run: { Args: { p_run_id: string }; Returns: unknown };
-			set_live_position: { Args: { p_lat: number; p_lng: number }; Returns: undefined };
+			set_live_position: {
+				Args: { p_lat: number; p_lng: number; p_meters?: number };
+				Returns: undefined;
+			};
 			clear_live_position: { Args: Record<string, never>; Returns: undefined };
 			go_offline: { Args: Record<string, never>; Returns: undefined };
 			get_team_live_positions: { Args: Record<string, never>; Returns: unknown };

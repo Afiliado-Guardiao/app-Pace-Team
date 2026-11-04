@@ -33,6 +33,8 @@ export interface IRunMapProps {
 	meImage?: ImageSourcePropType;
 	regions?: readonly IMapRegionBubble[];
 	friends?: readonly IMapFriend[];
+	// Corrida em grupo: por onde passou quem vai na frente (outra cor)
+	leaderTrail?: readonly ILatLng[];
 	interactive?: boolean;
 	// Corrida ao vivo: a câmera acompanha o atleta (em `me` ou na ponta da rota)
 	follow?: boolean;

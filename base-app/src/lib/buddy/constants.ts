@@ -31,10 +31,13 @@ export const BUDDY_ACCESSORIES: readonly IBuddyAccessory[] = [
 	{ id: "oculos", name: "Óculos", slot: "eyes", need: 8 },
 	{ id: "bone", name: "Boné", slot: "head", need: 15 },
 	{ id: "boneTras", name: "Boné p/ trás", slot: "head", need: 22 },
-	{ id: "coroa", name: "Coroa", slot: "head", leader: true },
 	{ id: "aureola", name: "Auréola", slot: "head", need: 30 },
 	{ id: "capa", name: "Capa", slot: "back", need: 50 },
 ];
+
+// Coroa: não é acessório de escolher. Vai sozinha para o 1º do ranking da
+// semana na equipe, por cima de qualquer acessório (o atleta pode esconder)
+export const BUDDY_CROWN: IBuddyAccessoryId = "coroa";
 
 // Ordem de desenho (o que fica por cima)
 export const BUDDY_ACC_ORDER: readonly IBuddyAccessoryId[] = [

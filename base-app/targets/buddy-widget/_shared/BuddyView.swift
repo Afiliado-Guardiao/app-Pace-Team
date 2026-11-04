@@ -130,7 +130,7 @@ private struct BuddyBody: View {
       BuddyEyes(pose: pose).buddyAt(0, 22, 88, 18)
       BuddyMouth(pose: pose)
       ForEach(BuddyAccessoryOrder.sorted(accessories.filter { $0 != "capa" }), id: \.self) { id in
-        BuddyHeadAccessory(id: id, pal: pal)
+        BuddyHeadAccessory(id: id, pal: pal, crownLift: BuddyAccessoryOrder.crownLift(accessories))
       }
     }
     .frame(width: 88, height: 70, alignment: .topLeading)

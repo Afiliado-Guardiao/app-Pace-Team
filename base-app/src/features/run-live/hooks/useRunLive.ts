@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 
 import { runPayload, useSaveRun, useTeamLive } from "@/lib/data";
-import { formatKm, ONLINE } from "@/lib/pace";
+import { formatDistance, formatKm, ONLINE } from "@/lib/pace";
 import { elapsedSeconds, stopTracking, useGpsStore, useRunStore } from "@/lib/run";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -52,10 +52,12 @@ export const useRunLive = () => {
 	const myPhoto = useStore((s) => s.user?.avatarUrl ?? null);
 
 	// Correndo com a equipe: a foto de cada colega anda no mapa, ao vivo
-	const liveMates = useTeamLive({
+	const live = useTeamLive({
 		isActive: mode === "team" && status !== "idle",
 		me,
+		meters,
 	});
+	const liveMates = live.mates;
 
 	// Na prévia por link, amigos de exemplo ao longo do mesmo trajeto (design)
 	const friends = useMemo(() => {
@@ -65,7 +67,7 @@ export const useRunLive = () => {
 				position: m.position,
 				image: m.avatarUrl ? { uri: m.avatarUrl } : undefined,
 				name: m.name,
-				label: m.name.split(" ")[0] ?? m.name,
+				label: `${m.name.split(" ")[0] ?? m.name} · ${formatDistance(m.meters / 1000)}`,
 			}));
 		}
 		if (mode !== "team" || route.length < 2) return [];
@@ -101,9 +103,11 @@ export const useRunLive = () => {
 		km,
 		route,
 		me,
-		// Correndo com a equipe, a sua foto anda no mapa como a dos colegas
-		meImage: mode === "team" && myPhoto ? { uri: myPhoto } : undefined,
+		// A sua foto redonda anda no mapa (sozinho ou com a equipe)
+		meImage: myPhoto ? { uri: myPhoto } : undefined,
 		friends,
+		// Rastro de quem vai na frente na corrida em grupo (outra cor)
+		leaderTrail: live.leaderTrail,
 		isConfirmOpen,
 		pause,
 		resume: () => {

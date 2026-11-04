@@ -37,18 +37,22 @@ struct BuddyPanelRunIntent: LiveActivityIntent {
   }
 
   func perform() async throws -> some IntentResult {
+    BuddyTimings.mark(withTeam ? "team" : "solo")
     let state = BuddyStore.state()
     if withTeam && state.hasTeam && BuddyPanelMode.current != .team {
       BuddyPanelMode.set(.team)
       BuddyPoke.show(.armsUp)
+      BuddyPanelRefresh.now("team.done")
       return .result()
     }
     guard BuddyRunTracker.hasAlwaysPermission else {
       BuddyPanelMode.set(.permission)
+      BuddyPanelRefresh.now("permission.done")
       return .result()
     }
     BuddyPanelMode.set(.choose)
     await BuddyRunTracker.shared.start(withTeam: withTeam && state.hasTeam)
+    BuddyPanelRefresh.now("run.done")
     return .result()
   }
 }
@@ -61,8 +65,10 @@ struct BuddyPanelFinishIntent: LiveActivityIntent {
   init() {}
 
   func perform() async throws -> some IntentResult {
+    BuddyTimings.mark("finish")
     await BuddyRunTracker.shared.finish(goalReached: false)
     BuddyPanelMode.set(.choose)
+    BuddyPanelRefresh.now("finish.done")
     return .result()
   }
 }

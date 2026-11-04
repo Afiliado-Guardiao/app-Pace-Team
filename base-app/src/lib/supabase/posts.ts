@@ -14,6 +14,10 @@ export interface IPublishPostPayload {
 	runId?: string | null;
 	// "personal" = no perfil; "team" = post da equipe (foto do grupo)
 	scope?: "personal" | "team";
+	// Desenho do percurso (sem GPS) e fotos de quem correu junto, iguais à
+	// tela de postar
+	artRoute?: [number, number][];
+	artCrew?: { photo: string | null; name: string; label?: string; at: number }[];
 }
 
 const uniqueName = (): string =>
@@ -51,6 +55,8 @@ export async function publishPost(payload: IPublishPostPayload): Promise<void> {
 		caption: payload.caption,
 		run_id: payload.runId ?? null,
 		scope: payload.scope ?? "personal",
+		art_route: payload.artRoute?.length ? payload.artRoute : null,
+		art_crew: payload.artCrew ?? null,
 	});
 	if (error) throw error;
 }

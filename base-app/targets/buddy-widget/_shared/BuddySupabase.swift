@@ -125,8 +125,10 @@ enum BuddySupabase {
   }
 
   // Correndo com a equipe: a posição ao vivo (os colegas veem a foto no mapa)
-  static func setLivePosition(lat: Double, lng: Double) async {
-    _ = await post("/rest/v1/rpc/set_live_position", json: ["p_lat": lat, "p_lng": lng])
+  // Também manda quanto já correu: quem vai na frente deixa o rastro
+  static func setLivePosition(lat: Double, lng: Double, meters: Double) async {
+    _ = await post(
+      "/rest/v1/rpc/set_live_position", json: ["p_lat": lat, "p_lng": lng, "p_meters": meters.rounded()])
   }
 
   // Terminou: ninguém mais vê onde o atleta está
@@ -150,10 +152,13 @@ enum BuddySupabase {
     guard let data = await post("/rest/v1/rpc/get_team_online", json: [String: Any]()),
           let list = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return nil }
     return list.map { item in
-      BuddyMate(
+      // A coroa do 1º da equipe vem à parte e vai por cima dos acessórios
+      let equipped = (item["equipped"] as? [String] ?? []).filter { $0 != "coroa" }
+      let crown = (item["crown"] as? Bool) == true ? ["coroa"] : []
+      return BuddyMate(
         name: item["name"] as? String ?? "",
         color: item["color"] as? String ?? "branco",
-        accessories: item["equipped"] as? [String] ?? [])
+        accessories: equipped + crown)
     }
   }
 

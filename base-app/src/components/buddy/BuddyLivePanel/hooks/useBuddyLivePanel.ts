@@ -19,8 +19,10 @@ import { useBuddyIdle } from "./useBuddyIdle";
 
 const BLINK_MS = 140;
 const BLINK_EVERY = { min: 2200, extra: 2200 } as const;
-// Tempo do gesto antes de sair do painel (correr, "Agora não")
+// Tempo do gesto antes de sair do painel ("Agora não")
 const LEAVE_MS = 650;
+// Correr: o gesto rápido antes de ele voar até o INICIAR
+const LAUNCH_MS = 320;
 const clamp = (n: number, limit: number): number => Math.max(-limit, Math.min(limit, n));
 
 // Buddy vivo por cima da tela (Toque Traseiro com o app aberto): olha para
@@ -95,11 +97,14 @@ export const useBuddyLivePanel = () => {
 		});
 	};
 
+	// Ele sai do painel, voa até o INICIAR e aperta (BuddyFlight)
 	const run = (withTeam: boolean): void => {
-		leave(withTeam ? "armsUp" : "salute", () => {
+		react(withTeam ? "armsUp" : "salute");
+		setTimeout(() => {
 			setMode(withTeam ? "team" : "free");
+			useBuddyLive.getState().launch(center.current);
 			router.navigate(ROUTES.RUN);
-		});
+		}, LAUNCH_MS);
 	};
 
 	return {

@@ -27,7 +27,7 @@ const shareLivePosition = (point: IRunPoint): void => {
 	if (run.mode !== "team" || run.status === "idle") return;
 	if (Date.now() - liveSentAt < LIVE_EVERY_MS) return;
 	liveSentAt = Date.now();
-	setLivePosition(point.lat, point.lng).catch(() => undefined);
+	setLivePosition(point.lat, point.lng, run.meters).catch(() => undefined);
 };
 
 // Tarefa registrada na abertura do app: recebe os pontos do GPS mesmo com a
@@ -40,14 +40,12 @@ if (Platform.OS !== "web") {
 		useRunStore.getState().addLocations(points);
 		const last = points.at(-1);
 		if (last) {
-			useGpsStore
-				.getState()
-				.setFix({
-					lat: last.lat,
-					lng: last.lng,
-					accuracy: Math.round(last.accuracy ?? 0),
-					t: last.t,
-				});
+			useGpsStore.getState().setFix({
+				lat: last.lat,
+				lng: last.lng,
+				accuracy: Math.round(last.accuracy ?? 0),
+				t: last.t,
+			});
 			shareLivePosition(last);
 		}
 		return Promise.resolve();

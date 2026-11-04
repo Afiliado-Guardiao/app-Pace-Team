@@ -8,6 +8,7 @@ import { ITheme, useTheme } from "@/theme";
 
 import { RUN_COPY } from "../../constants";
 import { useStartPulse } from "../../hooks/useStartPulse";
+import { useStartTarget } from "../../hooks/useStartTarget";
 
 interface IStartButtonProps {
 	enabled: boolean;
@@ -38,9 +39,12 @@ export const StartButton: React.FC<IStartButtonProps> = ({ enabled, onPress }) =
 	const { theme } = useTheme();
 	const styles = createStartButtonStyles(theme, enabled);
 	const pulse = useStartPulse();
+	const target = useStartTarget();
 
 	return (
 		<Pressable
+			ref={target.ref}
+			onLayout={target.onLayout}
 			onPress={onPress}
 			disabled={!enabled}
 			accessibilityRole="button"

@@ -15,6 +15,7 @@ export const useBuddyProfileSync = (): void => {
 	const lastFree = useBuddyStore((s) => s.lastFree);
 	const equipped = useBuddyStore((s) => s.equipped);
 	const alarm = useBuddyStore((s) => s.alarm);
+	const hideCrown = useBuddyStore((s) => s.hideCrown);
 	const isFirst = useRef(true);
 
 	useEffect(() => {
@@ -29,6 +30,7 @@ export const useBuddyProfileSync = (): void => {
 				color,
 				lastFree,
 				equipped,
+				hideCrown,
 				alarmTime: alarm.isOn ? `${pad(alarm.hour)}:${pad(alarm.minute)}` : null,
 				alarmDays: alarm.days,
 			}).catch(() => undefined);
@@ -36,5 +38,5 @@ export const useBuddyProfileSync = (): void => {
 		return () => {
 			clearTimeout(id);
 		};
-	}, [color, lastFree, equipped, alarm]);
+	}, [color, lastFree, equipped, alarm, hideCrown]);
 };

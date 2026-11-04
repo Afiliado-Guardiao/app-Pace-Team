@@ -99,6 +99,7 @@ export const createRunMapStyles = (theme: ITheme) => {
 			color: "#aab6c2",
 		} as TextStyle,
 		routeColor: colors.route,
+		leaderColor: colors.leaderTrail,
 		routeHalo: "rgba(253,90,12,.18)",
 		regionFill: "rgba(253,90,12,.14)",
 	};

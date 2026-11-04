@@ -39,6 +39,9 @@ export interface ILivePosition {
 	avatarPath: string | null;
 	lat: number;
 	lng: number;
+	// Quanto já correu (m) e, só de quem vai na frente, por onde passou
+	meters?: number;
+	trail?: [number, number][];
 	at: string;
 }
 
@@ -74,8 +77,12 @@ export async function pushTeamRun(runId: string): Promise<void> {
 }
 
 // Correndo com a equipe: manda a minha posição (os colegas veem no mapa)
-export async function setLivePosition(lat: number, lng: number): Promise<void> {
-	const { error } = await supabase.rpc("set_live_position", { p_lat: lat, p_lng: lng });
+export async function setLivePosition(lat: number, lng: number, meters: number): Promise<void> {
+	const { error } = await supabase.rpc("set_live_position", {
+		p_lat: lat,
+		p_lng: lng,
+		p_meters: Math.round(meters),
+	});
 	if (error) throw error;
 }
 
@@ -88,7 +95,10 @@ export async function clearLivePosition(): Promise<void> {
 export async function getTeamLivePositions(): Promise<ILivePosition[]> {
 	const { data, error } = await supabase.rpc("get_team_live_positions");
 	if (error) throw error;
-	return (data ?? []) as ILivePosition[];
+	return ((data ?? []) as ILivePosition[]).map((p) => ({
+		...p,
+		trail: Array.isArray(p.trail) ? p.trail.filter(isPoint) : [],
+	}));
 }
 
 // Perfil de outro atleta (feed, equipe). Perfil fechado vem sem números.

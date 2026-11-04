@@ -15,6 +15,11 @@ const EVENT_ACT: Record<IBuddyEvent, IBuddyAct> = {
 
 const TOUCH_EVERY_MS = 80;
 
+interface IPoint {
+	x: number;
+	y: number;
+}
+
 interface IBuddyLiveState {
 	// Último toque na tela (coordenadas da janela) e quando foi
 	touch: { x: number; y: number; t: number } | null;
@@ -24,6 +29,16 @@ interface IBuddyLiveState {
 	isPanelOpen: boolean;
 	openPanel: () => void;
 	closePanel: () => void;
+	// Correr pelo Buddy vivo: ele sai do painel (from) e voa até o INICIAR
+	flight: { from: IPoint } | null;
+	// Centro do botão INICIAR na tela (a tela Correr avisa onde ele está)
+	startTarget: IPoint | null;
+	// Cada número novo = o Buddy "apertou" o INICIAR
+	startSignal: number;
+	launch: (from: IPoint) => void;
+	setStartTarget: (target: IPoint) => void;
+	pressStart: () => void;
+	endFlight: () => void;
 	setTouch: (x: number, y: number) => void;
 	emit: (event: IBuddyEvent) => void;
 	takePendingAct: () => IBuddyAct | null;
@@ -38,6 +53,21 @@ export const useBuddyLive = create<IBuddyLiveState>()((set, get) => ({
 	},
 	closePanel: () => {
 		set({ isPanelOpen: false });
+	},
+	flight: null,
+	startTarget: null,
+	startSignal: 0,
+	launch: (from) => {
+		set({ isPanelOpen: false, flight: { from } });
+	},
+	setStartTarget: (target) => {
+		set({ startTarget: target });
+	},
+	pressStart: () => {
+		set({ startSignal: get().startSignal + 1 });
+	},
+	endFlight: () => {
+		set({ flight: null });
 	},
 	setTouch: (x, y) => {
 		// No máximo ~12 vezes por segundo (o olhar não precisa de mais)

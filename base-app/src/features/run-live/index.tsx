@@ -52,6 +52,7 @@ export const RunLiveScreen: React.FC = () => {
 				me={live.me}
 				meImage={live.meImage}
 				friends={live.friends}
+				leaderTrail={live.leaderTrail}
 				showMe
 				interactive={false}
 				follow

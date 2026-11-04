@@ -7,12 +7,14 @@ export interface IBuddyProfile {
 	color: string;
 	lastFree: string;
 	equipped: string[];
+	hideCrown: boolean;
 }
 
 export interface IBuddyProfileUpdate {
 	color: string;
 	lastFree: string;
 	equipped: string[];
+	hideCrown: boolean;
 	// "06:30" ou null (desligado)
 	alarmTime: string | null;
 	alarmDays: number[];
@@ -21,7 +23,7 @@ export interface IBuddyProfileUpdate {
 export async function getBuddyProfile(): Promise<IBuddyProfile | null> {
 	const { data, error } = await supabase
 		.from("buddy_profiles")
-		.select("goals, color, last_free, equipped")
+		.select("goals, color, last_free, equipped, hide_crown")
 		.maybeSingle();
 	if (error) throw error;
 	if (!data) return null;
@@ -30,6 +32,7 @@ export async function getBuddyProfile(): Promise<IBuddyProfile | null> {
 		color: data.color,
 		lastFree: data.last_free,
 		equipped: data.equipped,
+		hideCrown: data.hide_crown,
 	};
 }
 
@@ -38,6 +41,7 @@ export async function saveBuddyProfile(update: IBuddyProfileUpdate): Promise<voi
 		color: update.color,
 		last_free: update.lastFree,
 		equipped: update.equipped,
+		hide_crown: update.hideCrown,
 		alarm_time: update.alarmTime,
 		alarm_days: update.alarmDays,
 	});
@@ -69,6 +73,12 @@ export async function pingTeamOnline(notify = false): Promise<void> {
 
 // Saiu do app: some na hora da lista de online da equipe (quem está correndo
 // com a equipe continua aparecendo pela posição ao vivo)
+// Tempos do cartão do Buddy no iPhone (para medir a demora dos botões)
+export async function saveBuddyTimings(events: { at: number; event: string }[]): Promise<void> {
+	const { error } = await supabase.from("buddy_timings").insert({ events });
+	if (error) throw error;
+}
+
 export async function goOffline(): Promise<void> {
 	const { error } = await supabase.rpc("go_offline");
 	if (error) throw error;

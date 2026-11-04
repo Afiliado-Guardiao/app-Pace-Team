@@ -4,6 +4,12 @@ import SwiftUI
 
 enum BuddyAccessoryOrder {
   static let order = ["oculos", "grau", "faixa", "bone", "boneTras", "coroa", "aureola"]
+  private static let hats: Set<String> = ["bone", "boneTras", "faixa", "aureola"]
+
+  // A coroa (do 1º da equipe) fica por cima do boné, da faixa e da auréola
+  static func crownLift(_ accessories: [String]) -> CGFloat {
+    accessories.contains { hats.contains($0) } ? 14 : 0
+  }
   static func sorted(_ ids: [String]) -> [String] {
     ids.sorted { (order.firstIndex(of: $0) ?? 99) < (order.firstIndex(of: $1) ?? 99) }
   }
@@ -73,6 +79,8 @@ struct BuddySVGPath: Shape {
 struct BuddyHeadAccessory: View {
   let id: String
   let pal: BuddyPalette
+  // A coroa do líder sobe quando há boné, faixa ou auréola
+  var crownLift: CGFloat = 0
 
   var body: some View {
     ZStack(alignment: .topLeading) {
@@ -82,7 +90,7 @@ struct BuddyHeadAccessory: View {
       case "grau": BuddyReadingGlasses()
       case "bone": BuddyCap()
       case "boneTras": BuddyBackCap(fill: pal.metal?[1] ?? pal.body[1])
-      case "coroa": BuddyCrown()
+      case "coroa": BuddyCrown(lift: crownLift)
       case "aureola": BuddyHalo()
       default: EmptyView()
       }
@@ -203,14 +211,16 @@ private struct BuddyCrownShape: Shape {
 }
 
 private struct BuddyCrown: View {
+  var lift: CGFloat = 0
+
   var body: some View {
     ZStack(alignment: .topLeading) {
       BuddyCrownShape()
         .fill(LinearGradient(colors: [Color(hex: 0xFFE7A3), Color(hex: 0xFFC94D), Color(hex: 0xD9952B)], startPoint: .top, endPoint: .bottom))
-        .buddyAt(21, -28, 46, 30)
+        .buddyAt(21, -28 - lift, 46, 30)
       ForEach(0..<3, id: \.self) { i in
         Circle().fill(Color.buddyOrange).shadow(color: Color.buddyOrange, radius: 2)
-          .buddyAt(28 + CGFloat(i) * 13, -7, 6, 6)
+          .buddyAt(28 + CGFloat(i) * 13, -7 - lift, 6, 6)
       }
     }
   }
