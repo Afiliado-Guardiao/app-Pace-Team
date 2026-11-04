@@ -13,6 +13,8 @@ export interface ITeamMateRow {
 	distance: string;
 	time: string;
 	pace: string;
+	// Ainda correndo: números até agora
+	isLive: boolean;
 }
 
 interface IUseTeamRunSourceReturn {
@@ -25,7 +27,12 @@ interface IUseTeamRunSourceReturn {
 	isLoading: boolean;
 }
 
-type IPinSource = Pick<ITeamRunView, "name" | "isYou" | "km" | "seconds" | "avatarUrl" | "route">;
+type IPinSource = Pick<
+	ITeamRunView,
+	"name" | "isYou" | "km" | "seconds" | "avatarUrl" | "route"
+> & {
+	isLive?: boolean;
+};
 
 const YOU = "Você";
 const paceOf = (who: IPinSource): string => formatPace(who.km > 0 ? who.seconds / who.km : 0);
@@ -49,6 +56,7 @@ const rowOf = (who: IPinSource, i: number): ITeamMateRow => ({
 	distance: formatDistance(who.km),
 	time: formatDurationText(who.seconds),
 	pace: paceOf(who),
+	isLive: Boolean(who.isLive),
 });
 
 // Corrida da equipe: a do colega (aviso, Histórico) ou a minha com quem

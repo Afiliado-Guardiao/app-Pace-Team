@@ -17,12 +17,14 @@ export interface ITeamRunRow {
 	route: [number, number][];
 }
 
-// Quem correu junto no mesmo horário
+// Quem correu junto no mesmo horário (isLive = ainda está correndo: números
+// e percurso até agora)
 export interface ITeamRunMate {
 	userId: string;
 	name: string;
 	avatarPath: string | null;
 	isYou: boolean;
+	isLive?: boolean;
 	km: number;
 	seconds: number;
 	route: [number, number][];

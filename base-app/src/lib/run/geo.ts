@@ -8,6 +8,8 @@ export interface IRunPoint {
 	accuracy?: number;
 	// true = primeiro ponto depois de uma pausa (não soma distância até ele)
 	resume?: boolean;
+	// Incerteza da posição suavizada (m², smooth.ts)
+	variance?: number;
 }
 
 const EARTH_RADIUS_M = 6371000;

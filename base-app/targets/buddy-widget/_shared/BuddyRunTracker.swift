@@ -33,6 +33,10 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
   private let minStep: Double = 3
   // Passo maior que metade do erro do GPS (evita bicos andando devagar)
   private let accuracyStep: Double = 0.5
+  // Kalman: quanto a posição pode mudar por segundo (m²/s) e precisão mínima
+  private let processNoise: Double = 4
+  private let minAccuracy: Double = 3
+  private var variance: Double = 0
 
   private var manager: CLLocationManager?
   private var run: BuddyActiveRun?
@@ -102,10 +106,42 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
     activity = try? Activity.request(attributes: attributes, content: content, pushType: nil)
   }
 
+  // Suavização do GPS (filtro de Kalman simples, o mesmo do app em
+  // src/lib/run/smooth.ts): cada ponto puxa a posição só na proporção da
+  // confiança dele, e o sinal oscilando para os lados não vira zigue-zague
+  private func smoothed(_ raw: CLLocation) -> CLLocation {
+    let accuracy = max(minAccuracy, raw.horizontalAccuracy)
+    let r = accuracy * accuracy
+    guard let last else {
+      variance = r
+      return raw
+    }
+    let seconds = max(0, raw.timestamp.timeIntervalSince(last.timestamp))
+    let p = variance + processNoise * seconds
+    let k = p / (p + r)
+    let lat = last.coordinate.latitude + k * (raw.coordinate.latitude - last.coordinate.latitude)
+    let lng = last.coordinate.longitude + k * (raw.coordinate.longitude - last.coordinate.longitude)
+    return CLLocation(
+      coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lng), altitude: raw.altitude,
+      horizontalAccuracy: raw.horizontalAccuracy, verticalAccuracy: raw.verticalAccuracy, timestamp: raw.timestamp)
+  }
+
+  // Guarda o ponto aceito e atualiza a incerteza da posição (m²)
+  private func accept(_ location: CLLocation) {
+    let accuracy = max(minAccuracy, location.horizontalAccuracy)
+    if let last {
+      let seconds = max(0, location.timestamp.timeIntervalSince(last.timestamp))
+      let p = variance + processNoise * seconds
+      variance = (1 - p / (p + accuracy * accuracy)) * p
+    }
+    last = location
+  }
+
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     guard var current = run, !isFinishing else { return }
-    for location in locations {
-      guard location.horizontalAccuracy >= 0, location.horizontalAccuracy <= maxAccuracy else { continue }
+    for raw in locations {
+      guard raw.horizontalAccuracy >= 0, raw.horizontalAccuracy <= maxAccuracy else { continue }
+      let location = smoothed(raw)
       if let last {
         let meters = location.distance(from: last)
         let seconds = max(0.5, location.timestamp.timeIntervalSince(last.timestamp))
@@ -113,7 +149,7 @@ final class BuddyRunTracker: NSObject, CLLocationManagerDelegate {
         if meters < step || meters / seconds > maxSpeed { continue }
         current.meters += meters
       }
-      last = location
+      accept(location)
       current.route.append([location.coordinate.latitude, location.coordinate.longitude])
     }
     run = current

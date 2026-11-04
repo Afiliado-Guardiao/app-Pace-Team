@@ -21,7 +21,7 @@ enum BuddyPanelMode: String {
   }
 }
 
-// Correr sozinho / com a equipe (o 1º toque na equipe mostra quem está online)
+// Correr sozinho / com a equipe: um toque e a corrida começa
 @available(iOS 26.0, *)
 struct BuddyPanelRunIntent: LiveActivityIntent {
   static let title: LocalizedStringResource = "Correr com o Pace Buddy"
@@ -39,12 +39,9 @@ struct BuddyPanelRunIntent: LiveActivityIntent {
   func perform() async throws -> some IntentResult {
     BuddyTimings.mark(withTeam ? "team" : "solo")
     let state = BuddyStore.state()
-    if withTeam && state.hasTeam && BuddyPanelMode.current != .team {
-      BuddyPanelMode.set(.team)
-      BuddyPoke.show(.armsUp)
-      BuddyPanelRefresh.now("team.done")
-      return .result()
-    }
+    // Um toque já começa (antes o 1º toque na equipe só mostrava quem estava
+    // online, e ninguém tocava de novo). Quem está online aparece nos mini
+    // Buddies em cima do cartão.
     guard BuddyRunTracker.hasAlwaysPermission else {
       BuddyPanelMode.set(.permission)
       BuddyPanelRefresh.now("permission.done")
@@ -70,6 +67,21 @@ struct BuddyPanelFinishIntent: LiveActivityIntent {
     BuddyPanelMode.set(.choose)
     BuddyPanelRefresh.now("finish.done")
     return .result()
+  }
+}
+
+// Chamou o Buddy ou tocou no cartão: a equipe vê que ele está online (no
+// máximo 1 aviso por minuto; o push "fulano está online" tem limite de 2 h)
+enum BuddyPresencePing {
+  private static let key = "buddyPingAt"
+  private static let every: TimeInterval = 60
+
+  static func now() {
+    let at = Date().timeIntervalSince1970
+    let last = BuddyStore.defaults?.double(forKey: key) ?? 0
+    if at - last < every { return }
+    BuddyStore.defaults?.set(at, forKey: key)
+    Task.detached { await BuddySupabase.pingOnline() }
   }
 }
 

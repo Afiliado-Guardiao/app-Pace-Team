@@ -29,6 +29,8 @@ interface IRunner {
 	km: number;
 	// Tempo da corrida (para o ritmo de cada um no desenho)
 	seconds?: number;
+	// Ainda correndo (números até agora)
+	isLive?: boolean;
 	route: readonly IPoint[];
 }
 
@@ -42,6 +44,7 @@ const firstName = (name: string): string => name.trim().split(" ")[0] ?? name;
 const labelOf = (runner: IRunner): string => {
 	const base = `${firstName(runner.name)} · ${formatDistance(runner.km)}`;
 	const seconds = runner.seconds ?? 0;
+	if (runner.isLive) return `${base} · correndo`;
 	return runner.km > 0 && seconds > 0 ? `${base} · ${formatPace(seconds / runner.km)}` : base;
 };
 
@@ -72,6 +75,7 @@ export const buildRunCrew = (me: IRunner, teamRun: ITeamRunView | null): IRunCre
 			photo: m.avatarUrl,
 			km: m.km,
 			seconds: m.seconds,
+			isLive: m.isLive,
 			route: m.route,
 		})),
 	];

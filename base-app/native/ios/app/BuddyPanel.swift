@@ -34,12 +34,6 @@ struct BuddyPanelModel {
       return BuddySpeech(
         title: "Falta uma permissão",
         subtitle: "Abra o PACE TEAM › Seu Buddy e permita a localização \"Sempre\".", pose: .idle)
-    case .team where base.pose != .sick:
-      let count = online.count
-      let title = count == 0 ? "Ninguém online agora"
-        : count == 1 ? "1 companheiro online" : "\(count) companheiros online"
-      let subtitle = count == 0 ? "Toque de novo pra correr mesmo assim." : "Toque de novo pra sair correndo com eles."
-      return BuddySpeech(title: title, subtitle: subtitle, pose: .excited)
     default:
       return base
     }
@@ -75,6 +69,7 @@ enum BuddyPanelRefresh {
   static func now(_ event: String) {
     BuddyTimings.mark(event)
     BuddyPanelSnippetIntent.reload()
+    BuddyPresencePing.now()
   }
 }
 
@@ -106,6 +101,7 @@ struct CallBuddyIntent: AppIntent {
 
   func perform() async throws -> some IntentResult & ShowsSnippetIntent {
     BuddyTimings.mark("call")
+    BuddyPresencePing.now()
     // Com o app aberto na tela, quem aparece é o Buddy vivo do app (segue o
     // dedo, pisca, reage). O iOS sempre mostra o cartão dele, então ele fica
     // só com um recado curto.
@@ -267,10 +263,7 @@ struct BuddyPanelView: View {
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
         Button(intent: BuddyPanelRunIntent(withTeam: true)) {
-          BuddyChoiceTile(
-            icon: "person.3.fill",
-            label: model.mode == .team ? "Toque de novo\npra sair" : "Correr com\na equipe",
-            isActive: model.mode == .team)
+          BuddyChoiceTile(icon: "person.3.fill", label: "Correr com\na equipe", isActive: false)
         }
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)

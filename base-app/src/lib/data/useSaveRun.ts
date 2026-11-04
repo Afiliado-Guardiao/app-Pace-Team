@@ -34,14 +34,15 @@ export const useSaveRun = () => {
 	return useMutation({
 		mutationFn: (payload: ISaveRunPayload) =>
 			IS_PREVIEW ? previewSave(payload) : saveRun(payload),
-		onSuccess: (saved) => {
+		onSuccess: (saved, payload) => {
 			useRunStore
 				.getState()
 				.setLastSaved({ id: saved.id, status: saved.status, points: saved.points });
 			// Corrida do app já passou pelo resumo: não abre o aviso do Buddy
 			useRunReviewStore.getState().markReviewed(saved.id);
-			// Colegas recebem a notificação no celular (uma vez por corrida)
-			if (!IS_PREVIEW && saved.status === "valid") pushTeamRun(saved.id).catch(() => undefined);
+			// Corrida em grupo: os colegas recebem "fulano concluiu uma corrida"
+			// (validada ou não; o servidor descarta toque sem querer e repetição)
+			if (!IS_PREVIEW && payload.mode === "team") pushTeamRun(saved.id).catch(() => undefined);
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myStats });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myRuns });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.myTeam });

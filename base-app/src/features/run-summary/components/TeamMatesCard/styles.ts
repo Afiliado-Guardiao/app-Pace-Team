@@ -8,6 +8,8 @@ export interface ITeamMatesCardStyles {
 	divider: ViewStyle;
 	body: ViewStyle;
 	name: TextStyle;
+	nameRow: ViewStyle;
+	live: TextStyle;
 	numbers: ViewStyle;
 	number: TextStyle;
 	label: TextStyle;
@@ -32,6 +34,14 @@ export const createTeamMatesCardStyles = (theme: ITheme): ITeamMatesCardStyles =
 		divider: { borderTopWidth: 1, borderTopColor: colors.hairline },
 		body: { flex: 1, gap: spacing[1] },
 		name: { fontFamily: fonts.semibold, fontSize: sizes.sm, color: colors.textPrimary },
+		nameRow: { flexDirection: "row", alignItems: "center", gap: spacing[2] },
+		// Selo "correndo" de quem ainda não terminou
+		live: {
+			fontFamily: fonts.bold,
+			fontSize: sizes.label,
+			color: colors.route,
+			textTransform: "uppercase",
+		},
 		numbers: { flexDirection: "row", gap: spacing[3] },
 		number: {
 			fontFamily: fonts.bold,

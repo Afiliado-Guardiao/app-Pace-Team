@@ -8,6 +8,7 @@ import {
 	IconButton,
 	ScreenBackground,
 	ScreenScroll,
+	Toast,
 } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
@@ -19,6 +20,7 @@ import { WeekCard } from "./components/WeekCard";
 import { HOME_COPY } from "./constants";
 import { useHomeFeed } from "./hooks/useHomeFeed";
 import { useHomeScreen } from "./hooks/useHomeScreen";
+import { useNotificationsOff } from "./hooks/useNotificationsOff";
 import { usePostMenu } from "./hooks/usePostMenu";
 import { useWeekSummary } from "./hooks/useWeekSummary";
 
@@ -50,6 +52,7 @@ export const HomeScreen: React.FC = () => {
 	const feed = useHomeFeed();
 	const week = useWeekSummary();
 	const menu = usePostMenu();
+	const alerts = useNotificationsOff();
 	const styles = createHomeStyles(theme);
 
 	return (
@@ -82,6 +85,16 @@ export const HomeScreen: React.FC = () => {
 						testID="home-notifications"
 					/>
 				</View>
+				{alerts.isOff ? (
+					<Toast
+						tone="warning"
+						icon="bell-off"
+						title={HOME_COPY.notificationsOffTitle}
+						message={HOME_COPY.notificationsOffBody}
+						action={{ label: HOME_COPY.notificationsOffAction, onPress: alerts.openSettings }}
+						testID="home-notifications-off"
+					/>
+				) : null}
 				<WeekCard week={week} onOpenTeam={home.openTeam} />
 				<HomeStack onOpen={home.openStackCard} />
 				<FeedSection posts={feed.posts} onMore={menu.open} onLayout={feed.onFeedLayout} />

@@ -1,6 +1,9 @@
 export const HOME_COPY = {
 	greeting: "Bem-vindo de volta!",
 	notifications: "Notificações",
+	notificationsOffTitle: "Notificações desligadas",
+	notificationsOffBody: "Ligue para saber quando a sua equipe estiver online ou correndo.",
+	notificationsOffAction: "Ligar",
 	weekTitle: "Sua semana",
 	weekSubtitle: "Cada km ajuda o time.",
 	gaugeLabel: "km de 40",

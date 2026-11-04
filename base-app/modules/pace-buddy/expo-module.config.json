@@ -1,6 +1,7 @@
 {
   "platforms": ["apple"],
   "apple": {
-    "modules": ["PaceBuddyModule"]
+    "modules": ["PaceBuddyModule"],
+    "appDelegateSubscribers": ["PaceBuddyAppDelegate"]
   }
 }

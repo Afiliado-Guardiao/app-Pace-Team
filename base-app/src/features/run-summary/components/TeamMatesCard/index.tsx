@@ -25,7 +25,10 @@ export const TeamMatesCard: React.FC<ITeamMatesCardProps> = ({ people }) => {
 				<View key={p.key} style={[styles.row, i > 0 ? styles.divider : null]}>
 					<Avatar name={p.name} src={p.photo ?? undefined} size={40} ring={p.isYou} />
 					<View style={styles.body}>
-						<Text style={styles.name}>{p.name}</Text>
+						<View style={styles.nameRow}>
+							<Text style={styles.name}>{p.name}</Text>
+							{p.isLive ? <Text style={styles.live}>{RUN_SUMMARY_COPY.running}</Text> : null}
+						</View>
 						<View style={styles.numbers}>
 							<Text style={styles.number}>
 								{p.distance}

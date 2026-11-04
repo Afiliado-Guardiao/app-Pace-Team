@@ -124,16 +124,25 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   const tickets = await sendExpo(messages);
 
-  // 3. Tokens que nao existem mais saem da tabela.
+  // Registra o resultado de cada envio (push_log: ok ou o erro da Expo) e
+  // tira da tabela os tokens que a Expo diz não existirem mais.
+  const admin = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+  await admin.from("push_log").insert(ping.recipients.map((r, i) => ({
+    kind: "team_online",
+    from_user: ping.userId,
+    to_user: r.userId,
+    status: tickets[i]?.status ?? "error",
+    error: tickets[i]?.status === "ok" ? null : (tickets[i]?.details?.error ?? tickets[i]?.message ?? "no_ticket"),
+    ticket_id: tickets[i]?.id ?? null,
+  })));
   const dead = ping.recipients
     .filter((_, i) => tickets[i]?.details?.error === "DeviceNotRegistered")
     .map((r) => r.token);
   if (dead.length > 0) {
-    const admin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false, autoRefreshToken: false } },
-    );
     await admin.from("device_tokens").delete().in("token", dead);
   }
 

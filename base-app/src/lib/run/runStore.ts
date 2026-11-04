@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { distanceMeters, GPS_FILTER, IRunPoint, isValidStep } from "./geo";
+import { smoothPoint } from "./smooth";
 
 export type IRunStatus = "idle" | "running" | "paused";
 export type IRunMode = "free" | "dist" | "time" | "team";
@@ -125,12 +126,14 @@ export const useRunStore = create<IRunState>()(
 					const last = points.at(-1);
 					if ((raw.accuracy ?? 0) > GPS_FILTER.maxAccuracy) continue;
 					if (!last || last.t < (s.segmentStart ?? 0)) {
-						points.push({ ...raw, resume: points.length > 0 });
+						points.push({ ...smoothPoint(undefined, raw), resume: points.length > 0 });
 						continue;
 					}
-					if (!isValidStep(last, raw)) continue;
-					meters += distanceMeters(last, raw);
-					points.push(raw);
+					// Sem zigue-zague: o ponto é suavizado antes do filtro
+					const point = smoothPoint(last, raw);
+					if (!isValidStep(last, point)) continue;
+					meters += distanceMeters(last, point);
+					points.push(point);
 				}
 				set({ points, meters });
 			},
