@@ -4,6 +4,7 @@ import { rgba } from "./color";
 import { hash, pointAt, TRACK_PATH, TRACK_RECT } from "./geometry";
 import { ISceneKit } from "./types";
 
+const EDGE = 1.5;
 const FOG_BLOBS = 6;
 const FOG_LAP_S = 34;
 const FLASH_STEP_S = 0.12;
@@ -14,7 +15,8 @@ const openTrackLayer = (canvas: SkCanvas): void => {
 	"worklet";
 	canvas.saveLayer();
 	const r = TRACK_RECT;
-	canvas.clipRect(Skia.XYWHRect(r.x, r.y, r.w, r.h), 1, true);
+	// Recorte sem suavizar: com borda suavizada a máscara não apaga a beirada
+	canvas.clipRect(Skia.XYWHRect(r.x + EDGE, r.y + EDGE, r.w - EDGE * 2, r.h - EDGE * 2), 1, false);
 };
 
 // Recorta o que foi desenhado desde o saveLayer pelo formato da pista
