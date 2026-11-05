@@ -54,6 +54,38 @@ struct BuddyPanelRunIntent: LiveActivityIntent {
   }
 }
 
+// Pela voz ("E aí Siri, correr sozinho com o Bud"): começa direto e mostra o
+// cartão já com a corrida (ou o pedido de permissão, se faltar)
+@available(iOS 26.0, *)
+struct StartSoloRunIntent: LiveActivityIntent {
+  static let title: LocalizedStringResource = "Correr sozinho com o Bud"
+  static let description = IntentDescription("Começa uma corrida sozinho, sem abrir o app.")
+  static let openAppWhenRun = false
+
+  init() {}
+
+  func perform() async throws -> some IntentResult & ShowsSnippetIntent {
+    BuddyPresencePing.now()
+    _ = try await BuddyPanelRunIntent(withTeam: false).perform()
+    return .result(snippetIntent: BuddyPanelSnippetIntent())
+  }
+}
+
+@available(iOS 26.0, *)
+struct StartTeamRunIntent: LiveActivityIntent {
+  static let title: LocalizedStringResource = "Correr com a equipe"
+  static let description = IntentDescription("Começa uma corrida com a equipe, sem abrir o app.")
+  static let openAppWhenRun = false
+
+  init() {}
+
+  func perform() async throws -> some IntentResult & ShowsSnippetIntent {
+    BuddyPresencePing.now()
+    _ = try await BuddyPanelRunIntent(withTeam: true).perform()
+    return .result(snippetIntent: BuddyPanelSnippetIntent())
+  }
+}
+
 @available(iOS 26.0, *)
 struct BuddyPanelFinishIntent: LiveActivityIntent {
   static let title: LocalizedStringResource = "Encerrar a corrida do Pace Buddy"

@@ -1,0 +1,131 @@
+import React from "react";
+import { Pressable, Text, View } from "react-native";
+
+import { Canvas, Picture } from "@shopify/react-native-skia";
+
+import { CountUp, Icon } from "@/components/pace";
+import { useTheme } from "@/theme";
+
+import { HOME_COPY } from "../../constants";
+import { IWeekHero } from "../../hooks/useWeekHero";
+import { IWeekSummary } from "../../hooks/useWeekSummary";
+import { HeroPill } from "../HeroPill";
+import { InnerTile } from "../InnerTile";
+
+import { WEATHER_ICON_COLORS } from "./constants";
+import { useWeekHeroScene } from "./hooks/useWeekHeroScene";
+import { createWeekHeroStyles } from "./styles";
+
+interface IWeekHeroProps {
+	week: IWeekSummary;
+	hero: IWeekHero;
+	onOpenTeam: () => void;
+}
+
+const ICON_SIZE = 18;
+const COUNT_DELAY = 200;
+
+// "Sua semana" do Início: medidor de tracinhos, Buddy de pelúcia sentado na
+// pista com um corredor por colega online, clima lá fora e os dois cards.
+export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) => {
+	const { theme } = useTheme();
+	const view = useWeekHeroScene(hero, week);
+	const { layout, weather, online } = hero;
+	const styles = createWeekHeroStyles(theme, {
+		k: view.k,
+		ks: view.ks,
+		width: layout.width,
+		heroY: layout.heroY,
+		frameWidth: layout.frame.width,
+		frameHeight: layout.frame.height,
+	});
+	const weatherIcon = { name: weather.icon, color: WEATHER_ICON_COLORS[weather.weather.preset] };
+	const dotColor = theme.pace.colors.statusSuccess;
+	const isReady = layout.width > 0;
+
+	return (
+		<View style={styles.root} onLayout={layout.onHeroLayout} testID="week-hero">
+			<View style={styles.titleRow}>
+				<View style={styles.iconDot}>
+					<Icon name="activity" size={ICON_SIZE} />
+				</View>
+				<View style={styles.titleText}>
+					<Text style={styles.title} numberOfLines={1}>
+						{HOME_COPY.weekTitle}
+					</Text>
+					<Text style={styles.subtitle} numberOfLines={1}>
+						{HOME_COPY.weekSubtitle}
+					</Text>
+				</View>
+				<HeroPill
+					text={weather.temp}
+					icon={weatherIcon}
+					accessibilityLabel={weather.label}
+					onPress={weather.onPress}
+					onLongPress={weather.onLongPress}
+					testID="week-hero-weather"
+				/>
+			</View>
+			{weather.credit ? <Text style={styles.credit}>{weather.credit}</Text> : null}
+			<View style={styles.box}>
+				{isReady ? (
+					<Canvas style={styles.fill} pointerEvents="none">
+						<Picture picture={view.arc} />
+					</Canvas>
+				) : null}
+				<Text style={styles.number}>
+					<CountUp value={week.display} delay={COUNT_DELAY} />
+				</Text>
+				<Text style={styles.kmLabel}>{HOME_COPY.gaugeLabel}</Text>
+				{isReady ? (
+					<Canvas style={styles.scene} pointerEvents="none">
+						<Picture picture={view.scene} />
+					</Canvas>
+				) : null}
+				<View style={styles.online}>
+					<HeroPill
+						text={online.onlineText}
+						dotColor={dotColor}
+						accessibilityLabel={online.onlineText}
+						testID="week-hero-online"
+					/>
+				</View>
+				<Pressable
+					style={styles.buddyHit}
+					onPress={hero.onBuddyPress}
+					accessibilityRole="button"
+					accessibilityLabel="Pace Buddy"
+					testID="week-hero-buddy"
+				/>
+			</View>
+			<View style={styles.tiles}>
+				<View style={styles.tileHigh}>
+					<InnerTile
+						icon="zap"
+						lineA={HOME_COPY.pointsA}
+						lineB={HOME_COPY.pointsB}
+						value={week.points}
+						unit="pts"
+					/>
+				</View>
+				<View style={styles.tileLow}>
+					<InnerTile
+						icon="users"
+						lineA={week.teamFirst}
+						lineB={week.teamRest}
+						value={week.rank}
+						unit={HOME_COPY.teamUnit}
+						onPress={onOpenTeam}
+					/>
+				</View>
+			</View>
+			{isReady ? (
+				<View style={styles.front} pointerEvents="none">
+					<Canvas style={styles.frontCanvas}>
+						<Picture picture={view.front} />
+					</Canvas>
+				</View>
+			) : null}
+		</View>
+	);
+};

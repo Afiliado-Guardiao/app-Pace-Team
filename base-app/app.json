@@ -31,7 +31,19 @@
 				"NSSupportsLiveActivities": true,
 				"NSSupportsLiveActivitiesFrequentUpdates": true,
 				"NSAlarmKitUsageDescription": "O Pace Buddy usa o despertador para te acordar na hora da corrida que você marcou.",
-				"NSPhotoLibraryAddUsageDescription": "O PACE TEAM salva na sua galeria as imagens das corridas que você escolher guardar."
+				"NSPhotoLibraryAddUsageDescription": "O PACE TEAM salva na sua galeria as imagens das corridas que você escolher guardar.",
+				"CFBundleDevelopmentRegion": "pt-BR",
+				"INAlternativeAppNames": [
+					{ "INAlternativeAppName": "Bud", "INAlternativeAppNamePronunciationHint": "bâd" },
+					{ "INAlternativeAppName": "Buddy", "INAlternativeAppNamePronunciationHint": "bâdi" },
+					{ "INAlternativeAppName": "Badi" },
+					{ "INAlternativeAppName": "Bad" },
+					{ "INAlternativeAppName": "Pace", "INAlternativeAppNamePronunciationHint": "pêice" },
+					{
+						"INAlternativeAppName": "Pace Buddy",
+						"INAlternativeAppNamePronunciationHint": "pêice bâdi"
+					}
+				]
 			},
 			"entitlements": {
 				"com.apple.security.application-groups": ["group.com.paceteam.app"]

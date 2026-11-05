@@ -157,12 +157,43 @@ struct BuddyPanelDismissIntent: AppIntent {
 
 @available(iOS 26.0, *)
 struct BuddyShortcuts: AppShortcutsProvider {
+  // "E aí Siri, …": o nome do app pode ser falado como Bud (ou Buddy, Pace…),
+  // pelos nomes alternativos do Info.plist (INAlternativeAppNames)
   static var appShortcuts: [AppShortcut] {
     AppShortcut(
       intent: CallBuddyIntent(),
-      phrases: ["Chamar Pace Buddy no \(.applicationName)", "Pace Buddy no \(.applicationName)"],
-      shortTitle: "Chamar Pace Buddy",
+      phrases: [
+        "\(.applicationName), correr",
+        "Chama o \(.applicationName)",
+        "Chamar o \(.applicationName)",
+        "Bora, \(.applicationName)",
+        "Bora correr no \(.applicationName)",
+        "Correr com o \(.applicationName)",
+        "Chamar Pace Buddy no \(.applicationName)",
+        "Pace Buddy no \(.applicationName)",
+      ],
+      shortTitle: "Chamar o Bud",
       systemImageName: "figure.run"
+    )
+    AppShortcut(
+      intent: StartSoloRunIntent(),
+      phrases: [
+        "Correr sozinho com o \(.applicationName)",
+        "Correr solo com o \(.applicationName)",
+        "\(.applicationName), correr sozinho",
+      ],
+      shortTitle: "Correr sozinho",
+      systemImageName: "figure.run.circle"
+    )
+    AppShortcut(
+      intent: StartTeamRunIntent(),
+      phrases: [
+        "Correr com a equipe, \(.applicationName)",
+        "Correr com a equipe no \(.applicationName)",
+        "\(.applicationName), correr com a equipe",
+      ],
+      shortTitle: "Correr com a equipe",
+      systemImageName: "figure.2"
     )
   }
 }

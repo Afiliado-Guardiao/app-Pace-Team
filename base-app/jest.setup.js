@@ -102,3 +102,19 @@ jest.mock("expo-sharing", () => ({
 	isAvailableAsync: jest.fn(() => Promise.resolve(true)),
 	shareAsync: jest.fn(() => Promise.resolve()),
 }));
+
+// Skia (desenhos do Início): nos testes não há GPU; o Canvas vira uma View
+jest.mock("@shopify/react-native-skia", () => {
+	const React = require("react");
+	const { View } = require("react-native");
+	const stub = () => new Proxy(function () {}, { get: () => stub(), apply: () => stub() });
+	return {
+		Canvas: (props) => React.createElement(View, props),
+		Picture: () => null,
+		Skia: stub(),
+		useImage: () => null,
+		useFont: () => null,
+		BlendMode: {},
+		TileMode: {},
+	};
+});

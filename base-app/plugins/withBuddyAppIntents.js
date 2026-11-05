@@ -41,4 +41,22 @@ const withSourcesInAppTarget = (config) =>
 		return c;
 	});
 
-module.exports = (config) => withSourcesInAppTarget(withCopiedFiles(config));
+// As frases da Siri ("E aí Siri, chama o Bud") são escritas em português no
+// Swift. O iOS registra essas frases no idioma de desenvolvimento do projeto,
+// então ele precisa ser pt-BR (o padrão do Expo é en, e a Siri em português
+// não acharia as frases).
+const DEV_REGION = "pt-BR";
+
+const withPortugueseDevRegion = (config) =>
+	withXcodeProject(config, (c) => {
+		const project = c.modResults.getFirstProject().firstProject;
+		project.developmentRegion = DEV_REGION;
+		const regions = project.knownRegions ?? [];
+		if (!regions.includes(`"${DEV_REGION}"`) && !regions.includes(DEV_REGION)) {
+			project.knownRegions = [...regions, `"${DEV_REGION}"`];
+		}
+		return c;
+	});
+
+module.exports = (config) =>
+	withPortugueseDevRegion(withSourcesInAppTarget(withCopiedFiles(config)));

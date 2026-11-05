@@ -21,4 +21,5 @@ export const DATA_KEYS = {
 	notifications: ["pace", "notifications"] as const,
 	challenges: ["pace", "challenges"] as const,
 	teamAchievements: (id: string) => ["pace", "team-achievements", id] as const,
+	weather: ["pace", "weather"] as const,
 };

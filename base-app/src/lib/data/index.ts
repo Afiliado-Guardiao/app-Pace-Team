@@ -40,4 +40,5 @@ export { useTeamRunList } from "./useTeamRunList";
 export type { ITeamRunMember, ITeamRunsView } from "./useTeamRuns";
 export { useTeamRuns } from "./useTeamRuns";
 export { useVirada } from "./useVirada";
+export { useWeather } from "./useWeather";
 export type { IViradaContribution, IViradaRankRow, IViradaView } from "./viradaView";

@@ -14,19 +14,19 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { FeedSection } from "./components/FeedSection";
+import { HeroSky } from "./components/HeroSky";
 import { HomeStack } from "./components/HomeStack";
 import { PostMenuSheet } from "./components/PostMenuSheet";
-import { WeekCard } from "./components/WeekCard";
+import { WeekHero } from "./components/WeekHero";
 import { HOME_COPY } from "./constants";
 import { useHomeFeed } from "./hooks/useHomeFeed";
 import { useHomeScreen } from "./hooks/useHomeScreen";
 import { useNotificationsOff } from "./hooks/useNotificationsOff";
 import { usePostMenu } from "./hooks/usePostMenu";
+import { useWeekHero } from "./hooks/useWeekHero";
 import { useWeekSummary } from "./hooks/useWeekSummary";
 
 const AVATAR = 48;
-// Chão do Buddy corredor: no alto do card "Sua semana", por trás dele
-const RUNNER_FEET_Y = 157;
 
 const createHomeStyles = (theme: ITheme) => {
 	const { colors, spacing, typography } = theme.pace;
@@ -53,6 +53,7 @@ export const HomeScreen: React.FC = () => {
 	const week = useWeekSummary();
 	const menu = usePostMenu();
 	const alerts = useNotificationsOff();
+	const hero = useWeekHero({ myName: home.userName, hasToast: alerts.isOff });
 	const styles = createHomeStyles(theme);
 
 	return (
@@ -62,9 +63,14 @@ export const HomeScreen: React.FC = () => {
 				hasRail
 				scrollRef={feed.scrollRef}
 				testID="home-scroll"
-				backdrop={<BuddyRunner feetY={RUNNER_FEET_Y} />}
+				backdrop={
+					<>
+						<HeroSky hero={hero} />
+						<BuddyRunner feetY={hero.runnerFeetY} />
+					</>
+				}
 			>
-				<View style={styles.header}>
+				<View style={styles.header} onLayout={hero.layout.onHeaderLayout}>
 					<Pressable
 						onPress={home.openProfile}
 						accessibilityRole="button"
@@ -86,16 +92,18 @@ export const HomeScreen: React.FC = () => {
 					/>
 				</View>
 				{alerts.isOff ? (
-					<Toast
-						tone="warning"
-						icon="bell-off"
-						title={HOME_COPY.notificationsOffTitle}
-						message={HOME_COPY.notificationsOffBody}
-						action={{ label: HOME_COPY.notificationsOffAction, onPress: alerts.openSettings }}
-						testID="home-notifications-off"
-					/>
+					<View onLayout={hero.layout.onToastLayout}>
+						<Toast
+							tone="warning"
+							icon="bell-off"
+							title={HOME_COPY.notificationsOffTitle}
+							message={HOME_COPY.notificationsOffBody}
+							action={{ label: HOME_COPY.notificationsOffAction, onPress: alerts.openSettings }}
+							testID="home-notifications-off"
+						/>
+					</View>
 				) : null}
-				<WeekCard week={week} onOpenTeam={home.openTeam} />
+				<WeekHero week={week} hero={hero} onOpenTeam={home.openTeam} />
 				<HomeStack onOpen={home.openStackCard} />
 				<FeedSection posts={feed.posts} onMore={menu.open} onLayout={feed.onFeedLayout} />
 			</ScreenScroll>
