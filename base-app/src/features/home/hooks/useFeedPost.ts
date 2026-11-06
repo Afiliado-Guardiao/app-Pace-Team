@@ -91,13 +91,13 @@ export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
 		};
 	});
 
-	// Corrida em equipe: todos que correram, como o servidor tem agora (o
+	// Corrida em equipe: quem correu, como o servidor tem agora (o
 	// percurso de cada um e quem ainda corria já com os números finais).
 	// Posts antigos/solo: o desenho guardado; sem fotos guardadas, a do autor.
 	const track = useMemo(() => {
 		const route = post.art?.route;
 		const runners = post.art?.runners ?? [];
-		if (runners.length > 1) {
+		if (runners.length > 0) {
 			const owner = { name: post.name, photo: post.avatarUrl ?? null, route: route ?? [] };
 			return buildRunCrew(owner, runners);
 		}
