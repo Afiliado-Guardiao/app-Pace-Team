@@ -61,7 +61,6 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 					text={weather.temp}
 					icon={weatherIcon}
 					accessibilityLabel={weather.label}
-					onPress={weather.onPress}
 					onLongPress={weather.onLongPress}
 					testID="week-hero-weather"
 				/>

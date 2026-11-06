@@ -11,6 +11,8 @@ interface IUseRunMapOptions {
 	me?: ILatLng | null;
 	follow?: boolean;
 	recenter?: number;
+	// Outros pontos que precisam caber no enquadramento (percursos dos colegas)
+	extra?: readonly ILatLng[];
 }
 
 interface IUseRunMapReturn {
@@ -42,6 +44,7 @@ export const useRunMap = ({
 	me,
 	follow = false,
 	recenter,
+	extra,
 }: IUseRunMapOptions): IUseRunMapReturn => {
 	const ref = useRef<MapView | null>(null);
 	const hasCentered = useRef(false);
@@ -57,14 +60,24 @@ export const useRunMap = ({
 	const targetLat = target?.[0];
 	const targetLng = target?.[1];
 
+	const fitCoords = useMemo(
+		() => (extra && extra.length > 0 ? [...fullCoords, ...extra.map(toLatLng)] : fullCoords),
+		[fullCoords, extra],
+	);
+
 	const fit = useCallback(() => {
-		if (!follow && route.length > 1) {
-			ref.current?.fitToCoordinates(fullCoords, {
+		if (!follow && fitCoords.length > 1) {
+			ref.current?.fitToCoordinates(fitCoords, {
 				edgePadding: { top: EDGE, right: EDGE, bottom: EDGE, left: EDGE },
 				animated: false,
 			});
 		}
-	}, [follow, route.length, fullCoords]);
+	}, [follow, fitCoords]);
+
+	// Os percursos dos colegas chegam depois do mapa abrir: enquadra de novo
+	useEffect(() => {
+		fit();
+	}, [fit]);
 
 	// Correndo: a câmera vai junto a cada posição nova. Parado (preparar
 	// corrida): centraliza uma vez e deixa o atleta arrastar e dar zoom.

@@ -30,7 +30,9 @@ export const formatKm = (km: number, decimals = 2): string =>
 	km.toFixed(decimals).replace(".", ",");
 
 // 2140 → "2.140"
-export const formatPoints = (points: number): string => points.toLocaleString("pt-BR");
+// (à mão: o toLocaleString do iPhone nem sempre tem o português)
+export const formatPoints = (points: number): string =>
+	String(Math.round(points)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
 // km/h com uma casa: 11,7
 export const formatSpeed = (km: number, seconds: number): string =>
@@ -54,7 +56,9 @@ export const formatPaceClock = (secondsPerKm: number): string => {
 // Distância sem confusão: abaixo de 1 km em metros ("511 m"), depois em km
 // ("1,25 km") — "0,51 km" era lido como 51 km
 export const distanceParts = (km: number): { value: string; unit: string } =>
-	km < 1 ? { value: String(Math.round(km * 1000)), unit: "m" } : { value: formatKm(km), unit: "km" };
+	km < 1
+		? { value: String(Math.round(km * 1000)), unit: "m" }
+		: { value: formatKm(km), unit: "km" };
 
 // Tempo por extenso, para não parecer hora do relógio: 797 s → "13 min 17 s"
 // e 3900 s → "1 h 05 min" ("13:17" era lido como 13 h 17)

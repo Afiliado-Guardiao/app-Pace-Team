@@ -8,6 +8,7 @@ export interface IStoredCrewPin {
 	name: string;
 	label?: string;
 	at: number;
+	line?: number;
 }
 
 // O banco aceita até 600 pontos no desenho do post
@@ -40,6 +41,7 @@ export const toStoredCrew = (crew: readonly IRunCrewPin[]): IStoredCrewPin[] =>
 		name: pin.name,
 		...(pin.label ? { label: pin.label } : {}),
 		at: pin.at,
+		...(pin.line === undefined ? {} : { line: pin.line }),
 	}));
 
 export const fromStoredCrew = (crew: readonly IStoredCrewPin[]): IRunCrewPin[] =>
@@ -48,4 +50,5 @@ export const fromStoredCrew = (crew: readonly IStoredCrewPin[]): IRunCrewPin[] =
 		name: pin.name,
 		label: pin.label,
 		at: pin.at,
+		line: pin.line,
 	}));

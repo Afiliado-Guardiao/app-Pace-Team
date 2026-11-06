@@ -8,6 +8,7 @@ export * from "./profile";
 export * from "./progress";
 export * from "./progress.types";
 export * from "./referral";
+export * from "./runCrew";
 export * from "./runs";
 export * from "./teamLive";
 export * from "./teamLive.types";

@@ -250,6 +250,7 @@ export interface Database {
 			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
 			get_team_runs: { Args: { p_limit?: number }; Returns: unknown };
 			get_team_run: { Args: { p_run_id: string }; Returns: unknown };
+			get_run_crew: { Args: { p_run_id: string }; Returns: unknown };
 			set_live_position: {
 				Args: { p_lat: number; p_lng: number; p_meters?: number };
 				Returns: undefined;

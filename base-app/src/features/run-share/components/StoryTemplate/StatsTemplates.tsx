@@ -50,7 +50,7 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 				))}
 				<StoryRoute
 					box={CENTRO_BOX}
-					points={run.route}
+					lines={run.lines}
 					lineWidth={7}
 					hasGlow={false}
 					solid={theme.pace.colors.storyRouteSolid}
@@ -75,7 +75,7 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 						</StoryText>
 					</React.Fragment>
 				))}
-				<StoryRoute box={CLASSICO_BOX} points={run.route} lineWidth={13} />
+				<StoryRoute box={CLASSICO_BOX} lines={run.lines} lineWidth={13} />
 				<StoryCrew box={CLASSICO_BOX} run={run} />
 				{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1460} /> : null}
 				<StoryLogo x={CX - 200} y={1680} width={400} />
@@ -111,7 +111,7 @@ export const StatsTemplates: React.FC<IStatsTemplatesProps> = ({ id, run }) => {
 			<StoryText x={STORY.width - 90} y={240} size={36} align="right">
 				{runners}
 			</StoryText>
-			<StoryRoute box={EQUIPE_BOX} points={run.route} lineWidth={12} />
+			<StoryRoute box={EQUIPE_BOX} lines={run.lines} lineWidth={12} />
 			<StoryCrew box={EQUIPE_BOX} run={run} />
 			{run.team ? <StoryTeamPill team={run.team} cx={CX} y={1460} /> : null}
 			<StoryLogo x={CX - 200} y={1680} width={400} />

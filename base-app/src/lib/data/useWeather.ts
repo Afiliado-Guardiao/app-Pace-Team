@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { AppState } from "react-native";
+
 import * as Location from "expo-location";
 
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +11,8 @@ import { IS_PREVIEW } from "@/constants/preview";
 import { DATA_KEYS } from "./keys";
 
 const REFRESH_MS = 30 * 60_000;
+// Ao voltar para o app, busca de novo se a última leitura tem mais de 10 min
+const STALE_ON_RETURN_MS = 10 * 60_000;
 // Posição de até 3 h atrás serve para o tempo (não liga o GPS à toa)
 const LAST_FIX_MAX_AGE_MS = 3 * 60 * 60_000;
 
@@ -30,8 +35,8 @@ async function readWeather(): Promise<IWeatherReading | null> {
 	}
 }
 
-// Tempo lá fora pela posição do aparelho, a cada 30 min. Sem permissão ou
-// sem internet: dia ou noite pelo relógio.
+// Tempo lá fora pela posição do aparelho: a cada 30 min e ao voltar para o
+// app. Sem permissão ou sem internet: dia ou noite pelo relógio.
 export const useWeather = (): IWeather => {
 	const query = useQuery({
 		queryKey: DATA_KEYS.weather,
@@ -40,5 +45,16 @@ export const useWeather = (): IWeather => {
 		staleTime: REFRESH_MS,
 		refetchInterval: REFRESH_MS,
 	});
+	const { refetch, dataUpdatedAt } = query;
+
+	useEffect(() => {
+		const sub = AppState.addEventListener("change", (state) => {
+			if (state === "active" && Date.now() - dataUpdatedAt > STALE_ON_RETURN_MS) void refetch();
+		});
+		return () => {
+			sub.remove();
+		};
+	}, [refetch, dataUpdatedAt]);
+
 	return toWeather(query.data ?? null, new Date());
 };

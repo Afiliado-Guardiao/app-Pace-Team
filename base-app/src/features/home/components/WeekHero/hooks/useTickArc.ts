@@ -8,18 +8,28 @@ import {
 	useReducedMotion,
 	useSharedValue,
 	withDelay,
+	withSequence,
 	withTiming,
 } from "react-native-reanimated";
 
 import { tickArcPicture, TICKS } from "../scene/tickArc";
 
 const MS_PER_TICK = 45;
+const MIN_RISE_MS = 520;
+const SETTLE_MS = 520;
 const START_DELAY = 300;
+// Sobe além do nível e volta (como o medidor antigo, que passava e assentava)
+const OVERSHOOT_MIN = 2.5;
+const OVERSHOOT_RATIO = 0.22;
 
-// Acende os tracinhos um a um (45 ms cada) até km / meta
+const peakOf = (target: number): number =>
+	Math.min(TICKS, target + Math.max(OVERSHOOT_MIN, target * OVERSHOOT_RATIO));
+
+// Acende os tracinhos (45 ms cada) além de km / meta e assenta no nível certo.
+// Ao abrir sobe do zero; depois de uma corrida sobe do valor atual.
 export const useTickArc = (o: { km: number; goal: number; k: number }): SharedValue<SkPicture> => {
 	const { k } = o;
-	const target = Math.round(TICKS * Math.min(1, o.goal > 0 ? o.km / o.goal : 0));
+	const target = TICKS * Math.min(1, o.goal > 0 ? Math.max(0, o.km) / o.goal : 0);
 	const lit = useSharedValue(0);
 	const reduceMotion = useReducedMotion();
 
@@ -28,12 +38,16 @@ export const useTickArc = (o: { km: number; goal: number; k: number }): SharedVa
 			lit.value = target;
 			return;
 		}
-		const ticks = Math.abs(target - lit.value);
+		const peak = peakOf(target);
+		const rise = Math.max(MIN_RISE_MS, Math.abs(peak - lit.value) * MS_PER_TICK);
 		lit.value = withDelay(
 			START_DELAY,
-			withTiming(target, { duration: ticks * MS_PER_TICK, easing: Easing.linear }),
+			withSequence(
+				withTiming(peak, { duration: rise, easing: Easing.out(Easing.cubic) }),
+				withTiming(target, { duration: SETTLE_MS, easing: Easing.inOut(Easing.cubic) }),
+			),
 		);
 	}, [lit, target, reduceMotion]);
 
-	return useDerivedValue(() => tickArcPicture(k, Math.floor(lit.value + 0.0001)));
+	return useDerivedValue(() => tickArcPicture(k, lit.value));
 };

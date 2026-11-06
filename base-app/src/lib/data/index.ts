@@ -1,12 +1,14 @@
 // Dados do PACE TEAM (Supabase + React Query). Na prévia por link
 // (EXPO_PUBLIC_PREVIEW_MODE=1) os hooks devolvem os dados de exemplo.
+export type { IArtBox, IArtPoint, ICrewLine, IPinMetrics, IPlacedPin } from "./crewArt";
+export { fitCrewLines, layoutCrewPins, linePath, pinAnchors } from "./crewArt";
 export { DATA_KEYS } from "./keys";
 export type { ILastRunInput } from "./lastRun";
 export { setLastRun } from "./lastRun";
 export { runDate, runTitle, toRun } from "./mappers";
 export type { IStoredCrewPin } from "./postArt";
 export { fromStoredCrew, routeShape, toStoredCrew } from "./postArt";
-export type { IRunCrew, IRunCrewPin } from "./runCrew";
+export type { IRunCrew, IRunCrewPin, IRunOwner } from "./runCrew";
 export { buildRunCrew } from "./runCrew";
 export type { ITeamView } from "./teamView";
 export type { IAthleteView } from "./useAthleteProfile";
@@ -14,6 +16,7 @@ export { useAthleteProfile } from "./useAthleteProfile";
 export { useAthleteSearch } from "./useAthleteSearch";
 export { useDeleteRun } from "./useDeleteRun";
 export { useFeed } from "./useFeed";
+export { useLastRunCrew } from "./useLastRunCrew";
 export { useMyChallenges } from "./useMyChallenges";
 export { useMyInvites } from "./useMyInvites";
 export { useMyRuns } from "./useMyRuns";
@@ -25,6 +28,8 @@ export { usePostActions } from "./usePostActions";
 export { useRanking } from "./useRanking";
 export { useRemoveRun } from "./useRemoveRun";
 export { useRouteComparison } from "./useRouteComparison";
+export type { ICrewRunner } from "./useRunCrew";
+export { useRunCrew } from "./useRunCrew";
 export { runPayload, useSaveRun } from "./useSaveRun";
 export { useTeam } from "./useTeam";
 export type { ITeamAchievementView } from "./useTeamAchievements";

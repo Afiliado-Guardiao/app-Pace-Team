@@ -1,4 +1,4 @@
-import { IRunCrewPin } from "@/lib/data";
+import { ICrewLine, IRunCrewPin } from "@/lib/data";
 
 export type IStoryPoint = readonly [number, number];
 
@@ -25,6 +25,8 @@ export interface IStoryRun {
 	points: number;
 	// Percurso (lat, lng); com menos de 2 pontos o traçado não aparece
 	route: readonly IStoryPoint[];
+	// Percurso de cada um que correu (sozinho: só o seu), no mesmo desenho
+	lines: readonly ICrewLine[];
 	// null = atleta sem equipe (a pílula da equipe não aparece)
 	team: IStoryTeam | null;
 	// Quem correu junto (você e os colegas): foto, nome e km no traçado

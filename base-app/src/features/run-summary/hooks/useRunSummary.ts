@@ -155,6 +155,8 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		runTitle: source.startedAt ? `${runner}${runTitle(source.startedAt)}` : emptyTitle,
 		// Fotos de quem correu (no fim do percurso de cada um)
 		pins: team.pins,
+		// Percurso de cada colega que correu junto
+		trails: team.trails,
 		people: team.people,
 		// Corrida de outra pessoa não vai para o meu Compartilhar
 		canShare: !mate || mate.isYou,

@@ -79,7 +79,13 @@ export const RunSummaryScreen: React.FC<IRunSummaryScreenProps> = ({ variant }) 
 	return (
 		<View style={styles.root} onLayout={onLayout}>
 			<View style={styles.map} pointerEvents="none">
-				<RunMap route={run.route} progress={1} interactive={false} friends={run.pins} />
+				<RunMap
+					route={run.route}
+					progress={1}
+					interactive={false}
+					friends={run.pins}
+					trails={run.trails}
+				/>
 			</View>
 			<View style={styles.map} pointerEvents="none">
 				{size ? (

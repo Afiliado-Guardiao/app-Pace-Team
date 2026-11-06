@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { Image, Platform, View } from "react-native";
 
 import { useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
@@ -14,6 +14,21 @@ import { SHARE_BGS, SHARE_COPY, SHARE_TEMPLATES, STORY } from "../constants";
 import { useStoryRun } from "./useStoryRun";
 
 type IPanel = "templates" | "background";
+
+const PREFETCH_TIMEOUT_MS = 3000;
+
+// Foto da equipe e de quem correu: carregadas antes de gerar a imagem (sem
+// isso, uma foto que ainda vinha da internet saía em branco no PNG)
+const prefetchPhotos = async (uris: string[]): Promise<void> => {
+	const loads = Promise.all(uris.map((uri) => Image.prefetch(uri).catch(() => false)));
+	const timeout = new Promise((resolve) => setTimeout(resolve, PREFETCH_TIMEOUT_MS));
+	await Promise.race([loads, timeout]);
+};
+
+const remoteUri = (source: unknown): string | null =>
+	source && typeof source === "object" && "uri" in source && typeof source.uri === "string"
+		? source.uri
+		: null;
 
 // Compartilhar: escolhe modelo e fundo e gera o PNG 1080 × 1920 do story.
 export const useRunShare = () => {
@@ -36,6 +51,8 @@ export const useRunShare = () => {
 		}
 		setIsSharing(true);
 		try {
+			const photos = [run.team?.logoUrl ?? null, ...run.crew.map((p) => remoteUri(p.image))];
+			await prefetchPhotos(photos.filter((u): u is string => Boolean(u)));
 			const uri = await captureRef(canvasRef, {
 				format: "png",
 				width: STORY.width,
@@ -52,7 +69,7 @@ export const useRunShare = () => {
 		} finally {
 			setIsSharing(false);
 		}
-	}, [showToast]);
+	}, [showToast, run]);
 
 	return {
 		run,

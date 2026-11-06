@@ -12,7 +12,7 @@ import {
 } from "react-native-reanimated";
 
 import { useBuddyLive } from "@/lib/buddy";
-import { fromStoredCrew, IRunCrewPin, usePostActions } from "@/lib/data";
+import { buildRunCrew, fromStoredCrew, IRunCrewPin, usePostActions } from "@/lib/data";
 import { formatKm, IFeedPost } from "@/lib/pace";
 import { LEGAL_URLS } from "@/constants/legal";
 import { ROUTES } from "@/constants/routes";
@@ -91,9 +91,16 @@ export const useFeedPost = (post: IFeedPost): IUseFeedPostReturn => {
 		};
 	});
 
-	// Posts antigos não guardaram as fotos: a do autor vai no fim do percurso
+	// Corrida em equipe: todos que correram, como o servidor tem agora (o
+	// percurso de cada um e quem ainda corria já com os números finais).
+	// Posts antigos/solo: o desenho guardado; sem fotos guardadas, a do autor.
 	const track = useMemo(() => {
 		const route = post.art?.route;
+		const runners = post.art?.runners ?? [];
+		if (runners.length > 1) {
+			const owner = { name: post.name, photo: post.avatarUrl ?? null, route: route ?? [] };
+			return buildRunCrew(owner, runners);
+		}
 		if (!route) return undefined;
 		const stored = post.art?.crew ?? [];
 		const author: IRunCrewPin[] = post.avatarUrl

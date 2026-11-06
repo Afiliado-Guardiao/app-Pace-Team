@@ -5,10 +5,11 @@ import Svg, { Path } from "react-native-svg";
 
 import { GradientLayers, Logo, useLayoutSize } from "@/components/pace";
 import { useTheme } from "@/theme";
-import type { IRunCrewPin } from "@/lib/data";
+import type { ICrewLine, IRunCrewPin } from "@/lib/data";
 import { CREW, formatDistance, formatDurationText, formatPace, MY_TEAM } from "@/lib/pace";
 import { IS_PREVIEW } from "@/constants/preview";
 
+import { IPostCrewPath, postCrewArt } from "./crew";
 import { PostPin } from "./PostPin";
 import { PostTeamBadge } from "./PostTeamBadge";
 import { postTrack } from "./route";
@@ -37,8 +38,13 @@ interface IPostArtProps {
 	layers?: IPostArtLayers;
 	// null = atleta sem equipe (o selo da equipe não aparece)
 	team?: IPostArtTeam | null;
-	// Percurso real e fotos de quem correu junto (sem isso, o traçado do design)
-	track?: { route: readonly (readonly [number, number])[]; crew: IRunCrewPin[] };
+	// Percurso real e fotos de quem correu junto (sem isso, o traçado do design).
+	// Com `lines`: o percurso de cada um que correu, todos no mesmo desenho.
+	track?: {
+		route: readonly (readonly [number, number])[];
+		crew: IRunCrewPin[];
+		lines?: readonly ICrewLine[];
+	};
 	style?: StyleProp<ViewStyle>;
 }
 
@@ -69,6 +75,7 @@ interface IArtPin {
 	label?: string;
 	x: number;
 	y: number;
+	labelAbove?: boolean;
 }
 
 const placePins = (
@@ -103,11 +110,15 @@ export const PostArt: React.FC<IPostArtProps> = ({
 	const cqw = width / 100;
 	const styles = createPostArtStyles(theme, cqw);
 	const pace = `${formatPace(km > 0 ? seconds / km : 0)} min/km`;
-	const real = track ? postTrack(track.route) : null;
-	const routeD = real ? real.d : ROUTE_D;
-	const pins = track ? placePins(track.crew, real ? real.at : () => CENTER) : PINS;
+	const crewArt = track?.lines?.length
+		? postCrewArt({ lines: track.lines, crew: track.crew })
+		: null;
+	const real = track && !crewArt ? postTrack(track.route) : null;
+	const paths: IPostCrewPath[] = crewArt?.paths ?? [{ d: real ? real.d : ROUTE_D, isOwner: true }];
+	const legacyPins = track ? placePins(track.crew, real ? real.at : () => CENTER) : PINS;
+	const pins: IArtPin[] = crewArt?.pins ?? legacyPins;
 	// Corrida real sem percurso gravado: sem traçado (nada de desenho de exemplo)
-	const hasRoute = layers.route && (real !== null || !track);
+	const hasRoute = layers.route && (crewArt !== null || real !== null || !track);
 	const hasPins = layers.route && pins.length > 0;
 
 	return (
@@ -142,14 +153,21 @@ export const PostArt: React.FC<IPostArtProps> = ({
 					{hasRoute ? (
 						<View style={styles.fill} pointerEvents="none">
 							<Svg width="100%" height="100%" viewBox="0 0 100 140" preserveAspectRatio="none">
-								<Path
-									d={routeD}
-									fill="none"
-									stroke={theme.pace.colors.postRoute}
-									strokeWidth={0.75}
-									strokeLinecap="round"
-									strokeLinejoin="round"
-								/>
+								{paths.map((path, i) =>
+									path.d ? (
+										<Path
+											key={`route-${String(i)}`}
+											d={path.d}
+											fill="none"
+											stroke={
+												path.isOwner ? theme.pace.colors.postRoute : theme.pace.colors.crewRoute
+											}
+											strokeWidth={path.isOwner ? 0.75 : 0.6}
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										/>
+									) : null,
+								)}
 							</Svg>
 						</View>
 					) : null}
@@ -162,6 +180,7 @@ export const PostArt: React.FC<IPostArtProps> = ({
 									label={pin.label}
 									x={pin.x}
 									y={pin.y}
+									labelAbove={pin.labelAbove}
 									cqw={cqw}
 								/>
 							))

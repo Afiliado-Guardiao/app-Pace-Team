@@ -20,8 +20,10 @@ export interface ITeamMateRow {
 interface IUseTeamRunSourceReturn {
 	// Corrida aberta pelo aviso ou pelo Histórico › Equipe (null = não é)
 	run: ITeamRunView | null;
-	// Foto de cada um no fim do percurso dele (quem tem percurso e foto)
+	// Foto de cada um no fim do percurso dele (sem percurso: na largada)
 	pins: IMapFriend[];
+	// Percurso de cada colega (o mapa desenha em branco, além do seu)
+	trails: [number, number][][];
 	// Cada um que correu junto (vazio se correu sozinho)
 	people: ITeamMateRow[];
 	isLoading: boolean;
@@ -37,14 +39,19 @@ type IPinSource = Pick<
 const YOU = "Você";
 const paceOf = (who: IPinSource): string => formatPace(who.km > 0 ? who.seconds / who.km : 0);
 
-const pinOf = (who: IPinSource): IMapFriend | null => {
-	const end = who.route.at(-1);
-	if (!end || !who.avatarUrl) return null;
+// Todo mundo aparece: no fim do percurso dele, ou na largada de quem tem
+// percurso (andou pouco ou ficou sem GPS); sem foto, as iniciais
+const pinOf = (who: IPinSource, start: [number, number] | undefined): IMapFriend | null => {
+	const end = who.route.at(-1) ?? start;
+	if (!end) return null;
 	const name = who.isYou ? YOU : who.name;
+	const status = who.isLive ? "correndo" : paceOf(who);
 	return {
+		id: `${who.name}-${who.isYou ? "you" : "mate"}`,
 		position: end,
-		image: { uri: who.avatarUrl },
-		label: `${name} · ${formatDistance(who.km)} · ${paceOf(who)}`,
+		image: who.avatarUrl ? { uri: who.avatarUrl } : undefined,
+		name,
+		label: `${name} · ${formatDistance(who.km)} · ${status}`,
 	};
 };
 
@@ -65,12 +72,18 @@ export const useTeamRunSource = (id: string | undefined): IUseTeamRunSourceRetur
 	const { run, isLoading } = useTeamRun(id);
 	const pins = useMemo(() => {
 		if (!run) return [];
-		return [run, ...run.mates].map(pinOf).filter((p): p is IMapFriend => p !== null);
+		const all = [run, ...run.mates];
+		const start = all.find((w) => w.route.length > 0)?.route[0];
+		return all.map((w) => pinOf(w, start)).filter((p): p is IMapFriend => p !== null);
 	}, [run]);
+	const trails = useMemo(
+		() => (run ? run.mates.map((m) => m.route).filter((r) => r.length > 0) : []),
+		[run],
+	);
 	// Quem foi mais longe primeiro
 	const people = useMemo(() => {
 		if (!run || run.mates.length === 0) return [];
 		return [run, ...run.mates].sort((a, b) => b.km - a.km).map(rowOf);
 	}, [run]);
-	return { run, pins, people, isLoading };
+	return { run, pins, trails, people, isLoading };
 };

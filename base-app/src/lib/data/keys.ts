@@ -18,6 +18,8 @@ export const DATA_KEYS = {
 	teamRuns: ["pace", "team-live", "runs"] as const,
 	teamRun: (id: string) => ["pace", "team-live", "run", id] as const,
 	teamLivePositions: ["pace", "team-live", "positions"] as const,
+	// Quem correu junto numa corrida (some com os dados da equipe ao vivo)
+	runCrew: (id: string) => ["pace", "team-live", "crew", id] as const,
 	notifications: ["pace", "notifications"] as const,
 	challenges: ["pace", "challenges"] as const,
 	teamAchievements: (id: string) => ["pace", "team-achievements", id] as const,

@@ -12,6 +12,11 @@ interface IStoryPinProps {
 	// Ponta do alfinete no percurso
 	x: number;
 	y: number;
+	// Nome em cima da foto (quando embaixo cobriria outro)
+	labelAbove?: boolean;
+	// Ponto no percurso, quando a foto foi afastada para o lado
+	dotX?: number;
+	dotY?: number;
 	radius?: number;
 }
 
@@ -23,10 +28,17 @@ const DOT = 24;
 const DOT_BORDER = 4;
 const LABEL_W = 380;
 const LABEL_GAP = 10;
+const LABEL_H = 40;
 
 const createStoryPinStyles = (
 	theme: ITheme,
-	{ x, y, radius }: { x: number; y: number; radius: number },
+	{
+		x,
+		y,
+		radius,
+		labelAbove,
+		dot: [dotX, dotY],
+	}: { x: number; y: number; radius: number; labelAbove: boolean; dot: [number, number] },
 ) => {
 	const { colors } = theme.pace;
 	const top = y - radius * 2 - STEM;
@@ -65,8 +77,8 @@ const createStoryPinStyles = (
 		},
 		dot: {
 			position: "absolute" as const,
-			left: x - DOT / 2,
-			top: y - DOT / 2,
+			left: dotX - DOT / 2,
+			top: dotY - DOT / 2,
 			width: DOT,
 			height: DOT,
 			borderRadius: DOT / 2,
@@ -91,7 +103,7 @@ const createStoryPinStyles = (
 		label: {
 			position: "absolute" as const,
 			left: x - LABEL_W / 2,
-			top: y + DOT / 2 + LABEL_GAP,
+			top: labelAbove ? top - RING - LABEL_GAP - LABEL_H : y + DOT / 2 + LABEL_GAP,
 			width: LABEL_W,
 			textAlign: "center" as const,
 			fontFamily: theme.pace.typography.fonts.bold,
@@ -104,9 +116,20 @@ const createStoryPinStyles = (
 };
 
 // Alfinete com foto de quem correu junto, como o avatarPin do canvas.
-export const StoryPin: React.FC<IStoryPinProps> = ({ image, name, label, x, y, radius = 54 }) => {
+export const StoryPin: React.FC<IStoryPinProps> = ({
+	image,
+	name,
+	label,
+	x,
+	y,
+	labelAbove = false,
+	dotX,
+	dotY,
+	radius = 54,
+}) => {
 	const { theme } = useTheme();
-	const styles = createStoryPinStyles(theme, { x, y, radius });
+	const dot: [number, number] = [dotX ?? x, dotY ?? y];
+	const styles = createStoryPinStyles(theme, { x, y, radius, labelAbove, dot });
 
 	return (
 		<>

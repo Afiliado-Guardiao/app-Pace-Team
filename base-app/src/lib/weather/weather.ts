@@ -5,8 +5,14 @@ const COLD_C = 10;
 const SUN_FROM_C = 16;
 const SUN_SPAN_C = 22;
 const RAIN_FULL_MM = 8;
-// Sem número de chuva, o símbolo já diz o tamanho dela (mm/h)
-const MIN_MM = { light: 1.2, heavy: 5, thunder: 7 };
+// A previsão da cidade é de modelo: "pancada fraca possível" (0,1–0,4 mm)
+// não é chuva lá fora. Só chove na tela com chuva de verdade prevista.
+const RAIN_FROM_MM = 0.5;
+// Temporal: trovoada prevista com chuva, ou chuva forte
+const STORM_THUNDER_MM = 1;
+const STORM_MM = 4;
+// No temporal a chuva é forte (e tem relâmpago)
+const STORM_RAIN = 0.85;
 const DAY_FROM_H = 6;
 const DAY_TO_H = 18;
 
@@ -31,21 +37,23 @@ const isDayOf = (symbol: string, now: Date): boolean => {
 	return isDayByClock(now);
 };
 
-const rainMmOf = (reading: IWeatherReading): number => {
-	const { symbol, rainMm } = reading;
-	if (symbol.includes("thunder")) return Math.max(rainMm, MIN_MM.thunder);
-	if (/heavy(rain|sleet)/.test(symbol)) return Math.max(rainMm, MIN_MM.heavy);
-	if (/rain|sleet|drizzle/.test(symbol)) return Math.max(rainMm, MIN_MM.light);
-	return 0;
-};
+// Chuva na tela só pelo número previsto para a próxima hora (o símbolo
+// sozinho, como "lightrainshowers" com 0,1 mm, não conta)
+const rainMmOf = (reading: IWeatherReading): number =>
+	reading.rainMm >= RAIN_FROM_MM ? reading.rainMm : 0;
+
+const isStorm = (reading: IWeatherReading): boolean =>
+	(reading.symbol.includes("thunder") && reading.rainMm >= STORM_THUNDER_MM) ||
+	reading.rainMm >= STORM_MM;
 
 const presetOf = (o: {
 	symbol: string;
 	temp: number | null;
 	rain: number;
 	isDay: boolean;
+	storm: boolean;
 }): IWeatherPreset => {
-	if (o.symbol.includes("thunder") || o.rain > 0.8) return "storm";
+	if (o.storm) return "storm";
 	if (o.rain > 0) return "rain";
 	if (o.symbol.includes("snow") || (o.temp !== null && o.temp <= COLD_C)) return "cold";
 	if (!o.isDay) return "night";
@@ -62,11 +70,14 @@ export const toWeather = (reading: IWeatherReading | null, now: Date): IWeather 
 	}
 	const isDay = isDayOf(reading.symbol, now);
 	const rainMmH = rainMmOf(reading);
-	const rain = clamp01(rainMmH / RAIN_FULL_MM);
+	const storm = rainMmH > 0 && isStorm(reading);
+	const rain = storm
+		? Math.max(STORM_RAIN, clamp01(rainMmH / RAIN_FULL_MM))
+		: clamp01(rainMmH / RAIN_FULL_MM);
 	const temp = reading.temp;
 	const sun = sunOf({ isDay, temp, rain });
 	return {
-		preset: presetOf({ symbol: reading.symbol, temp, rain, isDay }),
+		preset: presetOf({ symbol: reading.symbol, temp, rain, isDay, storm }),
 		temp,
 		rainMmH,
 		isDay,

@@ -42,15 +42,17 @@ export const tickArcPicture = (k: number, lit: number): SkPicture => {
 		const y0 = (CENTER.y + sin * (OUTER_R - TICK_LEN)) * k;
 		const x1 = (CENTER.x + cos * OUTER_R) * k;
 		const y1 = (CENTER.y + sin * OUTER_R) * k;
-		if (i < lit) {
+		// Acende aos poucos: o último tracinho aceso pode estar pela metade
+		const on01 = Math.min(1, Math.max(0, lit - i));
+		canvas.drawLine(x0, y0, x1, y1, off);
+		if (on01 > 0.02) {
 			const color = tickColor(i);
 			glow.setColor(color);
-			glow.setAlphaf(0.55);
+			glow.setAlphaf(0.55 * on01);
 			canvas.drawLine(x0, y0, x1, y1, glow);
 			on.setColor(color);
+			on.setAlphaf(on01);
 			canvas.drawLine(x0, y0, x1, y1, on);
-		} else {
-			canvas.drawLine(x0, y0, x1, y1, off);
 		}
 	}
 	return recorder.finishRecordingAsPicture();

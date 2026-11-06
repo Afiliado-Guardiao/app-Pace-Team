@@ -75,6 +75,22 @@ export interface IFeedPostArt {
 	route?: readonly (readonly [number, number])[];
 	// Fotos redondas no percurso (foto, nome e "Nome · km · ritmo")
 	crew?: readonly { photo: string | null; name: string; label?: string; at: number }[];
+	// Corrida em equipe: todos que correram junto, atualizado pelo servidor
+	// (o percurso de cada um, quem ainda corre vira os números finais)
+	runners?: readonly IFeedCrewRunner[];
+}
+
+// Um de quem correu junto no post (mesmo formato do useRunCrew)
+export interface IFeedCrewRunner {
+	userId: string;
+	name: string;
+	photo: string | null;
+	isOwner: boolean;
+	isYou: boolean;
+	isLive: boolean;
+	km: number;
+	seconds: number;
+	shape: [number, number][];
 }
 
 export interface IFeedPost {

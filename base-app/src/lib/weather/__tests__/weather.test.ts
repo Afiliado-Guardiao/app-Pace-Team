@@ -18,13 +18,24 @@ describe("toWeather", () => {
 		expect(hot.sun).toBe(1);
 	});
 
-	it("chuva e temporal pela previsão", () => {
+	it("chuva e temporal pelos mm previstos", () => {
 		const rain = toWeather({ temp: 18, symbol: "rain", rainMm: 3.2 }, NOON);
 		expect(rain.preset).toBe("rain");
 		expect(rain.rain).toBeCloseTo(0.4, 2);
-		const storm = toWeather({ temp: 18, symbol: "heavyrainandthunder", rainMm: 0 }, NOON);
+		const storm = toWeather({ temp: 18, symbol: "heavyrainandthunder", rainMm: 2 }, NOON);
 		expect(storm.preset).toBe("storm");
 		expect(storm.rain).toBeGreaterThan(0.8);
+	});
+
+	it("pancada fraca possível não vira chuva na tela", () => {
+		const drizzle = toWeather({ temp: 24, symbol: "lightrainshowers_day", rainMm: 0.1 }, NOON);
+		expect(drizzle.preset).toBe("day");
+		expect(drizzle.rain).toBe(0);
+		const thunderNoRain = toWeather(
+			{ temp: 24, symbol: "rainshowersandthunder_day", rainMm: 0 },
+			NOON,
+		);
+		expect(thunderNoRain.preset).toBe("day");
 	});
 
 	it("frio e noite", () => {

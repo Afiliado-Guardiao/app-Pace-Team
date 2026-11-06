@@ -12,12 +12,14 @@ interface IPostPinProps {
 	// Posição da ponta do alfinete em % da arte
 	x: number;
 	y: number;
+	// Nome em cima da foto (quando embaixo cobriria outro)
+	labelAbove?: boolean;
 	cqw: number;
 }
 
 const createPostPinStyles = (
 	theme: ITheme,
-	{ x, y, cqw }: Pick<IPostPinProps, "x" | "y" | "cqw">,
+	{ x, y, cqw, labelAbove }: Pick<IPostPinProps, "x" | "y" | "cqw" | "labelAbove">,
 ) => {
 	const { colors } = theme.pace;
 	const size = 9 * cqw;
@@ -52,7 +54,7 @@ const createPostPinStyles = (
 		},
 		label: {
 			position: "absolute" as const,
-			top: size + arrowHeight + 0.6 * cqw,
+			top: labelAbove ? -4.4 * cqw : size + arrowHeight + 0.6 * cqw,
 			left: -10 * cqw,
 			right: -10 * cqw,
 			textAlign: "center" as const,
@@ -78,9 +80,9 @@ const createPostPinStyles = (
 };
 
 // Alfinete com a foto de quem correu junto, sobre o percurso da arte.
-export const PostPin: React.FC<IPostPinProps> = ({ image, name, label, x, y, cqw }) => {
+export const PostPin: React.FC<IPostPinProps> = ({ image, name, label, x, y, labelAbove, cqw }) => {
 	const { theme } = useTheme();
-	const styles = createPostPinStyles(theme, { x, y, cqw });
+	const styles = createPostPinStyles(theme, { x, y, cqw, labelAbove });
 
 	return (
 		<View style={styles.root} pointerEvents="none">

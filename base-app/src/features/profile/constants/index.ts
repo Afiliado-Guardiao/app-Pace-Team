@@ -101,6 +101,7 @@ export const DEFAULT_PRIVACY = {
 export const PRIVACY_SWITCHES = [
 	{ key: "showCity", label: "Mostrar minha cidade" },
 	{ key: "publicProfile", label: "Perfil visível fora da equipe" },
-	{ key: "shareRoutes", label: "Compartilhar rotas com a equipe" },
-	{ key: "hideRouteEnds", label: "Ocultar início e fim das rotas" },
 ] as const;
+// (Percursos: sempre aparecem para a equipe e só como desenho fora dela; as
+// chaves shareRoutes/hideRouteEnds ficam em DEFAULT_PRIVACY só por
+// compatibilidade com perfis antigos.)

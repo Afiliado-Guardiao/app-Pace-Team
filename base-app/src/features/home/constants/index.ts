@@ -10,7 +10,6 @@ export const HOME_COPY = {
 	onlineOnlyYou: "Só você online",
 	onlineAll: "Todos online",
 	onlineSuffix: "online",
-	weatherHint: "Toque para ver outros climas",
 	pointsA: "Seus",
 	pointsB: "pontos",
 	teamUnit: "/ cidade",

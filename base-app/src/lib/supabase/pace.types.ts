@@ -105,6 +105,9 @@ export interface IFeedRow {
 	route?: [number, number][];
 	// Fotos de quem correu junto, como na tela de postar
 	crew?: { photo: string | null; name: string; label?: string; at: number }[];
+	// Corrida em equipe: quem correu junto (get_run_crew), sempre atual
+	runId?: string | null;
+	runCrew?: unknown;
 	imagePath: string | null;
 	sample: number | null;
 	seconds: number;

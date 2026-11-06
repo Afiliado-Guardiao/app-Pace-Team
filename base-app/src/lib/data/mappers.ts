@@ -14,12 +14,15 @@ import {
 } from "@/lib/pace";
 import {
 	avatarUrlOf,
+	cleanCrew,
 	IFeedRow,
 	ISavedRun,
 	ITeamMemberStat,
 	ITeamRankingEntry,
 	postPhotoUrl,
 } from "@/lib/supabase";
+
+import { toCrewRunner } from "./useRunCrew";
 
 const NOON = 12;
 const EVENING = 18;
@@ -123,6 +126,7 @@ export const toFeedPost = (row: IFeedRow): IFeedPost => ({
 		layers: row.layers,
 		route: row.route ?? [],
 		crew: row.crew ?? [],
+		runners: cleanCrew(row.runCrew).map(toCrewRunner),
 	},
 	name: row.name || "Atleta",
 	avatarUrl: row.avatarPath ? avatarUrlOf(row.avatarPath) : null,

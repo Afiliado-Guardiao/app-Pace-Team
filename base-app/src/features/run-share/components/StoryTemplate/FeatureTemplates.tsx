@@ -8,6 +8,7 @@ import { distanceParts, formatKm, formatPace } from "@/lib/pace";
 import { IShareTemplateId, SHARE_COPY, STORY } from "../../constants";
 import { storyDuration } from "../../utils/storyRoute";
 
+import { StoryCrew } from "./StoryCrew";
 import { StoryLogo } from "./StoryLogo";
 import { StoryRoute } from "./StoryRoute";
 import { StoryTeamPill } from "./StoryTeamPill";
@@ -24,6 +25,8 @@ const BAR = { x: 190, w: 760, h: 20 } as const;
 // Cabem 5 integrantes entre o título e a pílula da equipe
 const MAX_MEMBERS = 5;
 const MIN_BAR_KM = 0.1;
+const DESTAQUE_BOX = { x: 300, y: 260, w: 480, h: 420 } as const;
+const MAPA_BOX = { x: 140, y: 420, w: 800, h: 820 } as const;
 
 // Modelos de destaque: km gigante, ranking de integrantes e minimalista.
 export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) => {
@@ -36,6 +39,8 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 	const time = storyDuration(run.seconds);
 	const medals = [colors.storyGold, colors.storySilver, colors.storyBronze];
 	const teamName = run.team?.name ?? SHARE_COPY.noTeam;
+	// Corrida em grupo: as fotos de todos aparecem também nestes modelos
+	const isTeamRun = run.lines.length > 1;
 	const ranked = [...run.members].sort((a, b) => b.km - a.km).slice(0, MAX_MEMBERS);
 	const maxKm = Math.max(ranked[0]?.km ?? 0, MIN_BAR_KM);
 
@@ -47,7 +52,8 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 		] as const;
 		return (
 			<>
-				<StoryRoute box={{ x: 300, y: 260, w: 480, h: 420 }} points={run.route} lineWidth={11} />
+				<StoryRoute box={DESTAQUE_BOX} lines={run.lines} lineWidth={11} />
+				{isTeamRun ? <StoryCrew box={DESTAQUE_BOX} run={run} radius={34} /> : null}
 				<StoryText x={CX} y={1040} size={280} weight={800} align="center" spacing={-6}>
 					{km}
 				</StoryText>
@@ -80,12 +86,7 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 					</React.Fragment>
 				))}
 				{run.team ? (
-					<StoryTeamPill
-						team={run.team}
-						cx={CX}
-						y={1450}
-						options={{ hasMark: true, gradient: "storyMarkNavy" }}
-					/>
+					<StoryTeamPill team={run.team} cx={CX} y={1450} options={{ gradient: "storyMarkNavy" }} />
 				) : null}
 				<StoryLogo x={CX - 200} y={1680} width={400} />
 			</>
@@ -169,7 +170,8 @@ export const FeatureTemplates: React.FC<IFeatureTemplatesProps> = ({ id, run }) 
 			{run.team ? (
 				<StoryTeamPill team={run.team} cx={CX} y={170} options={{ gradient: "storyMarkPeach" }} />
 			) : null}
-			<StoryRoute box={{ x: 140, y: 420, w: 800, h: 820 }} points={run.route} lineWidth={16} />
+			<StoryRoute box={MAPA_BOX} lines={run.lines} lineWidth={16} />
+			{isTeamRun ? <StoryCrew box={MAPA_BOX} run={run} radius={46} /> : null}
 			<StoryText
 				x={90}
 				y={1540}

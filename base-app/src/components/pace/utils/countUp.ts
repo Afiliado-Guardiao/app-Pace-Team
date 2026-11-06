@@ -38,11 +38,11 @@ export const parseCountUp = (value: string | number | null | undefined): ICountU
 export const formatCountUp = (current: number, parts: ICountUpParts): string => {
 	if (!parts.isNumeric) return parts.raw;
 
-	const shown = Math.max(0, current).toLocaleString("pt-BR", {
-		minimumFractionDigits: parts.decimals,
-		maximumFractionDigits: parts.decimals,
-		useGrouping: parts.grouping,
-	});
+	// Formata à mão (vírgula decimal, ponto de milhar): o iPhone nem sempre tem
+	// o português no toLocaleString e mostrava "1.5" em vez de "1,5"
+	const [int = "0", frac] = Math.max(0, current).toFixed(parts.decimals).split(".");
+	const grouped = parts.grouping ? int.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : int;
+	const shown = frac ? `${grouped},${frac}` : grouped;
 
 	return `${parts.prefix}${shown}${parts.suffix}`;
 };

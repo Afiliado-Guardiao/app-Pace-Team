@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 
 import MapView, { Circle, Marker, Polyline } from "react-native-maps";
@@ -22,6 +22,7 @@ export const RunMap: React.FC<IRunMapProps> = ({
 	regions,
 	friends,
 	leaderTrail,
+	trails,
 	interactive = true,
 	follow = false,
 	recenter,
@@ -29,7 +30,11 @@ export const RunMap: React.FC<IRunMapProps> = ({
 }) => {
 	const { theme } = useTheme();
 	const styles = createRunMapStyles(theme);
-	const map = useRunMap({ route, progress, me, follow, recenter });
+	const extra = useMemo(
+		() => [...(trails ?? []).flat(), ...(friends ?? []).map((f) => f.position)],
+		[trails, friends],
+	);
+	const map = useRunMap({ route, progress, me, follow, recenter, extra });
 
 	return (
 		<View style={[styles.map, style]} pointerEvents={interactive ? "auto" : "none"}>
@@ -49,6 +54,18 @@ export const RunMap: React.FC<IRunMapProps> = ({
 				rotateEnabled={false}
 				pitchEnabled={false}
 			>
+				{trails?.map((trail, i) =>
+					trail.length > 1 ? (
+						<Polyline
+							key={`trail-${String(i)}`}
+							coordinates={trail.map(([latitude, longitude]) => ({ latitude, longitude }))}
+							strokeColor={styles.crewColor}
+							strokeWidth={ROUTE_WIDTH - 1}
+							lineCap="round"
+							lineJoin="round"
+						/>
+					) : null,
+				)}
 				{leaderTrail && leaderTrail.length > 1 ? (
 					<Polyline
 						coordinates={leaderTrail.map(([latitude, longitude]) => ({ latitude, longitude }))}
