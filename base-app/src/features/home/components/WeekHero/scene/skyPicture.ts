@@ -93,12 +93,12 @@ export const skyPicture = (o: { frame: IHeroFrame; weather: IWeather }, t: numbe
 	const recorder = Skia.PictureRecorder();
 	const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, frame.width, frame.height));
 	canvas.saveLayer();
-	if (weather.preset === "night") drawStars(canvas, frame, t);
+	// À noite as estrelas ficam mesmo com chuva, frio ou névoa (junto com eles)
+	if (!weather.isDay) drawStars(canvas, frame, t);
 	if (weather.sun > 0) drawSun(canvas, { frame, sun: weather.sun }, t);
 	fadeLayerEdges(canvas, frame);
 	return recorder.finishRecordingAsPicture();
 };
 
 // O céu só se mexe com sol ou estrelas
-export const skyIsAnimated = (weather: IWeather): boolean =>
-	weather.preset === "night" || weather.sun > 0;
+export const skyIsAnimated = (weather: IWeather): boolean => !weather.isDay || weather.sun > 0;
