@@ -157,8 +157,8 @@ struct BuddyPanelDismissIntent: AppIntent {
 
 @available(iOS 26.0, *)
 struct BuddyShortcuts: AppShortcutsProvider {
-  // "E aí Siri, …": o nome do app pode ser falado como Bud (ou Buddy, Pace…),
-  // pelos nomes alternativos do Info.plist (INAlternativeAppNames)
+  // "E aí Siri, …": o nome do app pode ser falado como Bud (ou Buddy, Pace),
+  // pelos nomes alternativos do Info.plist (INAlternativeAppNames, máx. 3)
   static var appShortcuts: [AppShortcut] {
     AppShortcut(
       intent: CallBuddyIntent(),

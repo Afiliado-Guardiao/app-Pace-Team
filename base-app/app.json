@@ -36,13 +36,7 @@
 				"INAlternativeAppNames": [
 					{ "INAlternativeAppName": "Bud", "INAlternativeAppNamePronunciationHint": "bâd" },
 					{ "INAlternativeAppName": "Buddy", "INAlternativeAppNamePronunciationHint": "bâdi" },
-					{ "INAlternativeAppName": "Badi" },
-					{ "INAlternativeAppName": "Bad" },
-					{ "INAlternativeAppName": "Pace", "INAlternativeAppNamePronunciationHint": "pêice" },
-					{
-						"INAlternativeAppName": "Pace Buddy",
-						"INAlternativeAppNamePronunciationHint": "pêice bâdi"
-					}
+					{ "INAlternativeAppName": "Pace", "INAlternativeAppNamePronunciationHint": "pêice" }
 				]
 			},
 			"entitlements": {
