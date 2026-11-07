@@ -19,6 +19,7 @@ import {
 import { ITheme, useTheme } from "@/theme";
 import { formatPoints, PHOTOS } from "@/lib/pace";
 
+import { RankingMap } from "./components/RankingMap";
 import { RulesList } from "./components/RulesList";
 import { RANKING_COPY, RANKING_SCOPES } from "./constants";
 import { useRankingScreen } from "./hooks/useRankingScreen";
@@ -90,6 +91,45 @@ export const RankingScreen: React.FC = () => {
 	const ranking = useRankingScreen();
 	const styles = createRankingStyles(theme);
 
+	const rules = (
+		<Sheet
+			open={ranking.isRulesOpen}
+			title={RANKING_COPY.rulesTitle}
+			onClose={ranking.closeRules}
+			actions={
+				<Button fullWidth onPress={ranking.closeRules}>
+					{RANKING_COPY.rulesOk}
+				</Button>
+			}
+		>
+			<RulesList />
+		</Sheet>
+	);
+
+	if (ranking.view === "map") {
+		return (
+			<View style={styles.root}>
+				<RankingMap
+					teams={ranking.teams}
+					dataKey={ranking.dataKey}
+					week={ranking.week}
+					filters={{
+						scope: ranking.scope,
+						onScope: ranking.setScope,
+						categories: ranking.categories,
+						category: ranking.category,
+						onCategory: ranking.setCategory,
+						city: ranking.city,
+					}}
+					onList={ranking.toggleView}
+					onRules={ranking.openRules}
+					onOpenTeam={ranking.openTeam}
+				/>
+				{rules}
+			</View>
+		);
+	}
+
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.teamRunningSunset} />
@@ -105,6 +145,12 @@ export const RankingScreen: React.FC = () => {
 						</Text>
 						<Text style={styles.sub}>{ranking.week}</Text>
 					</View>
+					<IconButton
+						icon="map"
+						label="Ver no mapa"
+						onPress={ranking.toggleView}
+						testID="ranking-to-map"
+					/>
 					<IconButton
 						icon="info"
 						label={RANKING_COPY.rules}

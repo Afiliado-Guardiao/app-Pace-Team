@@ -86,6 +86,29 @@ const drawStars = (canvas: SkCanvas, frame: IHeroFrame, t: number): void => {
 	drawShootingStar(canvas, frame, t);
 };
 
+const CLOUDS = 5;
+const CLOUD_LAP_S = 80;
+
+// Nublado: nuvens macias passando devagar por cima do Buddy
+const drawClouds = (canvas: SkCanvas, frame: IHeroFrame, t: number): void => {
+	"worklet";
+	const paint = Skia.Paint();
+	paint.setMaskFilter(Skia.MaskFilter.MakeBlur(0, 14, true));
+	const span = frame.width + 320;
+	for (let i = 0; i < CLOUDS; i++) {
+		const speed = 1 + hash(i * 2.1) * 0.6;
+		const x = ((hash(i * 4.3) * span + (t / CLOUD_LAP_S) * span * speed) % span) - 160;
+		const y =
+			frame.sceneY - 60 + hash(i * 6.7) * Math.max(120, frame.sceneY * 0.55) - frame.sceneY * 0.35;
+		const r = 34 + hash(i * 8.9) * 26;
+		paint.setColor(rgba(220, 230, 242, 0.16 + hash(i * 1.3) * 0.08));
+		canvas.drawCircle(x, y, r, paint);
+		canvas.drawCircle(x + r * 0.9, y + r * 0.15, r * 0.8, paint);
+		canvas.drawCircle(x - r * 0.85, y + r * 0.2, r * 0.7, paint);
+		canvas.drawCircle(x + r * 0.2, y - r * 0.45, r * 0.75, paint);
+	}
+};
+
 // Céu atrás de todo o conteúdo: sol de dia, estrelas à noite
 export const skyPicture = (o: { frame: IHeroFrame; weather: IWeather }, t: number): SkPicture => {
 	"worklet";
@@ -96,9 +119,12 @@ export const skyPicture = (o: { frame: IHeroFrame; weather: IWeather }, t: numbe
 	// À noite as estrelas ficam mesmo com chuva, frio ou névoa (junto com eles)
 	if (!weather.isDay) drawStars(canvas, frame, t);
 	if (weather.sun > 0) drawSun(canvas, { frame, sun: weather.sun }, t);
+	if (weather.preset === "cloudy" || weather.preset === "rain" || weather.preset === "storm")
+		drawClouds(canvas, frame, t);
 	fadeLayerEdges(canvas, frame);
 	return recorder.finishRecordingAsPicture();
 };
 
 // O céu só se mexe com sol ou estrelas
-export const skyIsAnimated = (weather: IWeather): boolean => !weather.isDay || weather.sun > 0;
+export const skyIsAnimated = (weather: IWeather): boolean =>
+	!weather.isDay || weather.sun > 0 || ["cloudy", "rain", "storm"].includes(weather.preset);

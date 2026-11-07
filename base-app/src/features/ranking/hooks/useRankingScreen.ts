@@ -18,6 +18,9 @@ const SCOPE_KEYS: Record<string, IRankingScope> = {
 	País: "country",
 };
 const PODIUM_SIZE = 3;
+
+// Mapa ou lista: a escolha vale até fechar o app
+let sessionView: "map" | "list" = "map";
 const DAY_MS = 86_400_000;
 const HOUR_MS = 3_600_000;
 
@@ -41,6 +44,7 @@ export const useRankingScreen = () => {
 	const [scope, setScope] = useState<string>(RANKING_SCOPES[0]);
 	const [category, setCategory] = useState(String(team?.size ?? 5));
 	const [isRulesOpen, setIsRulesOpen] = useState(false);
+	const [view, setView] = useState(sessionView);
 	const isWorld = scope === WORLD_SCOPE;
 	const { teams, isLoading } = useRanking(Number(category), SCOPE_KEYS[scope] ?? "city");
 	const hasPodium = teams.length >= PODIUM_SIZE;
@@ -81,6 +85,14 @@ export const useRankingScreen = () => {
 	);
 
 	return {
+		view,
+		toggleView: () => {
+			const next = view === "map" ? "list" : "map";
+			sessionView = next;
+			setView(next);
+		},
+		teams,
+		dataKey: `${scope}-${category}-${String(teams.length)}`,
 		scope,
 		setScope,
 		categories,

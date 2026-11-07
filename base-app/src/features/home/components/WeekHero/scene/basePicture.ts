@@ -41,9 +41,9 @@ const drawTint = (canvas: SkCanvas, weather: IWeather): void => {
 				TileMode.Clamp,
 			),
 		);
-	} else if (preset === "rain" || preset === "storm") {
+	} else if (preset === "rain" || preset === "storm" || preset === "cloudy") {
 		paint.setBlendMode(BlendMode.Multiply);
-		paint.setColor(rgba(70, 85, 105, 0.2 + 0.2 * weather.rain));
+		paint.setColor(rgba(70, 85, 105, preset === "cloudy" ? 0.14 : 0.2 + 0.2 * weather.rain));
 	} else if (preset === "cold") {
 		paint.setBlendMode(BlendMode.Screen);
 		paint.setColor(Skia.Color("rgba(170,210,255,0.28)"));

@@ -9,6 +9,7 @@ import {
 	useTeam,
 	useTeamAchievements,
 } from "@/lib/data";
+import { usePrizeStore } from "@/lib/prizes";
 import { ROUTES } from "@/constants/routes";
 
 import { INVITE_LINK_BASE, TEAM_DETAILS_COPY } from "../constants";
@@ -17,6 +18,8 @@ interface IUseTeamDetailsReturn {
 	team: ITeamView | null;
 	isLoading: boolean;
 	achievements: ITeamAchievementView[];
+	// Conquista em tela cheia
+	openPrize: (a: ITeamAchievementView) => void;
 	// Só o capitão da equipe edita
 	canEdit: boolean;
 	goBack: () => void;
@@ -35,12 +38,16 @@ export const useTeamDetails = (): IUseTeamDetailsReturn => {
 	const other = useTeam(params.id, mine.team);
 	const { achievements } = useTeamAchievements(other.team?.id);
 	const team = other.team;
+	const open = usePrizeStore((st) => st.openPrize);
 
 	return {
 		team,
 		canEdit: Boolean(team?.isCaptain && team.isMine),
 		isLoading: params.id ? other.isLoading : mine.isLoading,
 		achievements,
+		openPrize: (a) => {
+			open(a.id, a.isUnlocked);
+		},
 		goBack: () => {
 			if (router.canGoBack()) router.back();
 			else router.navigate(ROUTES.TEAM);

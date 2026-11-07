@@ -2,7 +2,7 @@ export const CHALLENGES_COPY = {
 	title: "Desafios e conquistas",
 	individual: "Individuais",
 	team: "Equipe",
-	unlocked: "Desbloqueadas",
+	unlocked: "Medalhas",
 	health:
 		"Descanso também é treino. Sentiu dor ou cansaço fora do normal? Pause — nenhum desafio vale uma lesão.",
 	noMedals: "Conclua desafios para desbloquear suas primeiras medalhas.",

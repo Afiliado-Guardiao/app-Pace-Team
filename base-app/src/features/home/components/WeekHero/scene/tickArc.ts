@@ -19,7 +19,15 @@ const tickColor = (i: number) => {
 	return rgba(r, g, b, 1);
 };
 
-export const tickArcPicture = (k: number, lit: number): SkPicture => {
+// Brilho que corre pelos tracinhos acesos (shine 0..1 = do começo ao fim)
+const shineBoost = (i: number, lit: number, shine: number): number => {
+	"worklet";
+	if (shine <= 0 || shine >= 1) return 0;
+	const pos = shine * (lit + 3) - 1.5;
+	return Math.max(0, 1 - Math.abs(i - pos) / 1.6);
+};
+
+export const tickArcPicture = (k: number, lit: number, shine = 0): SkPicture => {
 	"worklet";
 	const recorder = Skia.PictureRecorder();
 	const canvas = recorder.beginRecording(Skia.XYWHRect(0, 0, 360 * k, 379 * k));
@@ -46,12 +54,14 @@ export const tickArcPicture = (k: number, lit: number): SkPicture => {
 		const on01 = Math.min(1, Math.max(0, lit - i));
 		canvas.drawLine(x0, y0, x1, y1, off);
 		if (on01 > 0.02) {
-			const color = tickColor(i);
-			glow.setColor(color);
-			glow.setAlphaf(0.55 * on01);
+			const boost = on01 >= 0.99 ? shineBoost(i, lit, shine) : 0;
+			const color = boost > 0 ? rgba(255, 255, 255, 1) : tickColor(i);
+			glow.setColor(boost > 0 ? rgba(255, 190, 140, 1) : color);
+			glow.setAlphaf(Math.min(1, 0.55 * on01 + 0.45 * boost));
+			glow.setStrokeWidth((5 + 4 * boost) * k);
 			canvas.drawLine(x0, y0, x1, y1, glow);
-			on.setColor(color);
-			on.setAlphaf(on01);
+			on.setColor(boost > 0 ? color : tickColor(i));
+			on.setAlphaf(boost > 0 ? 0.6 + 0.4 * boost : on01);
 			canvas.drawLine(x0, y0, x1, y1, on);
 		}
 	}

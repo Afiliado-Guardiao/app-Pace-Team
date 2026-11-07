@@ -1,5 +1,6 @@
 // Clima do Início (céu e pista mudam com o tempo lá fora)
-export type IWeatherPreset = "day" | "hot" | "cold" | "night" | "rain" | "storm";
+// cloudy = céu fechado / querendo chover: nuvens e uma gotinha de vez em quando
+export type IWeatherPreset = "day" | "hot" | "cold" | "night" | "rain" | "storm" | "cloudy";
 
 // O que a previsão (MET Norway) diz para a hora atual
 export interface IWeatherReading {

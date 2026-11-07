@@ -13,6 +13,7 @@ interface ITone {
 
 const TONES: Record<IWeatherPreset, ITone> = {
 	day: { brightness: 1.03, saturate: 1.05, hue: 0, sepia: 0 },
+	cloudy: { brightness: 0.88, saturate: 0.8, hue: 0, sepia: 0 },
 	hot: { brightness: 1.1, saturate: 1.2, hue: 0, sepia: 0.14 },
 	cold: { brightness: 0.94, saturate: 0.5, hue: -12, sepia: 0 },
 	night: { brightness: 0.74, saturate: 0.82, hue: -6, sepia: 0 },

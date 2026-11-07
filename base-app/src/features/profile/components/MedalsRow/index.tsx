@@ -1,13 +1,15 @@
 import React from "react";
 import { View } from "react-native";
 
-import { GlassSurface, Icon } from "@/components/pace";
+import { GlassSurface } from "@/components/pace";
+import { PrizeIcon } from "@/components/shared/PrizeIcon";
 import { ITheme, useTheme } from "@/theme";
+import { IPrizeId } from "@/lib/prizes";
 
 interface IMedalSlot {
-	key: string;
-	icon: string;
-	color: "rankGold" | "orange400" | "orange300" | "rankSilver" | "textDisabled";
+	id: IPrizeId;
+	isLocked: boolean;
+	onPress: () => void;
 }
 
 interface IMedalsRowProps {
@@ -15,6 +17,7 @@ interface IMedalsRowProps {
 }
 
 const SIZE = 56;
+const ART = 50;
 
 const createMedalsRowStyles = (theme: ITheme) => {
 	const { colors } = theme.pace;
@@ -27,17 +30,11 @@ const createMedalsRowStyles = (theme: ITheme) => {
 			justifyContent: "center" as const,
 		},
 		appearance: { fill: { color: colors.glass2 }, border: colors.glassBorder, rim: true },
-		colors: {
-			rankGold: colors.rankGold,
-			orange400: colors.orange[400],
-			orange300: colors.orange[300],
-			rankSilver: colors.rankSilver,
-			textDisabled: colors.textDisabled,
-		},
 	};
 };
 
-// Medalhas conquistadas e, com cadeado, as que ainda faltam.
+// Medalhas 3D: as conquistadas e, apagadas com cadeado, as que ainda faltam.
+// Tocar abre o prêmio em tela cheia.
 export const MedalsRow: React.FC<IMedalsRowProps> = ({ medals }) => {
 	const { theme } = useTheme();
 	const styles = createMedalsRowStyles(theme);
@@ -46,12 +43,12 @@ export const MedalsRow: React.FC<IMedalsRowProps> = ({ medals }) => {
 		<View style={styles.row}>
 			{medals.map((m) => (
 				<GlassSurface
-					key={m.key}
+					key={m.id}
 					appearance={styles.appearance}
 					radius={SIZE / 2}
 					style={styles.medal}
 				>
-					<Icon name={m.icon} size={22} color={styles.colors[m.color]} />
+					<PrizeIcon id={m.id} size={ART} isLocked={m.isLocked} onPress={m.onPress} />
 				</GlassSurface>
 			))}
 		</View>

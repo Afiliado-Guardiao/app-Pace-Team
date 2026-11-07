@@ -29,7 +29,7 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 	const user = useStore((state) => state.user);
 	const setHasSeenVirada = useStore((state) => state.setHasSeenVirada);
 	const { view: teamRuns } = useTeamRuns();
-	const { virada, hasTeam } = useVirada();
+	const { hasTeam } = useVirada();
 	const { unreadCount } = useNotificationFeed();
 
 	const openProfile = useCallback(() => {
@@ -41,7 +41,7 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 	const openTeam = useCallback(() => {
 		router.navigate(ROUTES.TEAM);
 	}, [router]);
-	// Sem equipe: aba Equipe. Sem rival: Ranking. Equipe sem corrida: Correr.
+	// Sem equipe: aba Equipe. Virada: sempre a tela da disputa. Equipe sem corrida: Correr.
 	const openStackCard = useCallback(
 		(id: IStackCardId) => {
 			if (!hasTeam && !teamRuns.hasTeam) {
@@ -50,7 +50,8 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 			}
 			if (id === "virada") {
 				setHasSeenVirada(true);
-				router.push(virada ? ROUTES.VIRADA : ROUTES.RANKING);
+				// Sempre o Modo Virada: sem rival, a tela mostra "Ainda sem rival"
+				router.push(ROUTES.VIRADA);
 				return;
 			}
 			if (!teamRuns.hasRuns) {
@@ -59,7 +60,7 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 			}
 			router.push({ pathname: ROUTES.RUN_DETAIL, params: { mode: "team" } });
 		},
-		[router, setHasSeenVirada, hasTeam, teamRuns.hasTeam, teamRuns.hasRuns, virada],
+		[router, setHasSeenVirada, hasTeam, teamRuns.hasTeam, teamRuns.hasRuns],
 	);
 
 	return {

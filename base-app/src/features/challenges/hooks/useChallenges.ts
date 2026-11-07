@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 
 import { useMyChallenges } from "@/lib/data";
 import { formatKm, formatPace, IMedal, MEDALS } from "@/lib/pace";
+import { usePrizeStore } from "@/lib/prizes";
 import { IMyChallenges } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
@@ -14,7 +15,6 @@ import {
 	CHALLENGES_TEAM,
 	IChallenge,
 	MONTHS,
-	UNLOCKED,
 } from "../constants";
 
 interface IUseChallengesReturn {
@@ -23,7 +23,9 @@ interface IUseChallengesReturn {
 	list: readonly IChallenge[];
 	// Aba Equipe sem equipe: aviso no lugar da lista
 	emptyNote: string | null;
-	unlocked: readonly Pick<IMedal, "icon" | "label" | "color">[];
+	// Todas as medalhas (conquistadas primeiro); tocar abre em tela cheia
+	medals: readonly { id: IMedal["id"]; label: string; isLocked: boolean; onPress: () => void }[];
+	hasMedals: boolean;
 	goBack: () => void;
 }
 
@@ -31,7 +33,6 @@ const WEEK_KM = 40;
 const WEEK_RUNS = 5;
 const STREAK = 8;
 // Cabem 3 medalhas lado a lado em "Desbloqueadas"
-const MAX_UNLOCKED = 3;
 
 const individual = (c: IMyChallenges): IChallenge[] => {
 	const record = c.previousBest5k;
@@ -109,12 +110,26 @@ export const useChallenges = (): IUseChallengesReturn => {
 		};
 	}, [challenges]);
 
-	const unlocked = useMemo(
+	const openPrize = usePrizeStore((st) => st.openPrize);
+	const medals = useMemo(
 		() =>
-			IS_PREVIEW
-				? UNLOCKED
-				: MEDALS.filter((m) => challenges.medals.includes(m.id)).slice(0, MAX_UNLOCKED),
-		[challenges.medals],
+			[...MEDALS]
+				.sort(
+					(a, b) =>
+						Number(challenges.medals.includes(b.id)) - Number(challenges.medals.includes(a.id)),
+				)
+				.map((m) => {
+					const isUnlocked = challenges.medals.includes(m.id);
+					return {
+						id: m.id,
+						label: m.label,
+						isLocked: !isUnlocked,
+						onPress: () => {
+							openPrize(m.id, isUnlocked);
+						},
+					};
+				}),
+		[challenges.medals, openPrize],
 	);
 
 	return {
@@ -122,7 +137,8 @@ export const useChallenges = (): IUseChallengesReturn => {
 		setTab,
 		list: tab === "ind" ? lists.ind : lists.team,
 		emptyNote: tab === "team" && lists.team.length === 0 ? CHALLENGE_COPY.noTeam : null,
-		unlocked,
+		medals,
+		hasMedals: challenges.medals.length > 0,
 		goBack: () => {
 			if (router.canGoBack()) router.back();
 			else router.navigate(ROUTES.HOME);

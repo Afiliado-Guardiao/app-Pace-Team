@@ -63,10 +63,10 @@
 			[
 				"expo-splash-screen",
 				{
-					"image": "./assets/brand/splash-photo.png",
+					"image": "./assets/brand/splash-navy.png",
 					"resizeMode": "cover",
 					"enableFullScreenImage_legacy": true,
-					"backgroundColor": "#041727"
+					"backgroundColor": "#0E2034"
 				}
 			],
 			"expo-video",

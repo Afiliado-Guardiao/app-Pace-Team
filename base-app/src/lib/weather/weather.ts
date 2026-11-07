@@ -55,6 +55,8 @@ const presetOf = (o: {
 }): IWeatherPreset => {
 	if (o.storm) return "storm";
 	if (o.rain > 0) return "rain";
+	// Nublado, neblina ou chuvinha prevista fraca demais: meio-termo seguro
+	if (/^(cloudy|fog)|rain|sleet|drizzle/.test(o.symbol)) return "cloudy";
 	if (o.symbol.includes("snow") || (o.temp !== null && o.temp <= COLD_C)) return "cold";
 	if (!o.isDay) return "night";
 	if (o.temp !== null && o.temp >= HOT_C) return "hot";
@@ -75,9 +77,11 @@ export const toWeather = (reading: IWeatherReading | null, now: Date): IWeather 
 		? Math.max(STORM_RAIN, clamp01(rainMmH / RAIN_FULL_MM))
 		: clamp01(rainMmH / RAIN_FULL_MM);
 	const temp = reading.temp;
-	const sun = sunOf({ isDay, temp, rain });
+	const preset = presetOf({ symbol: reading.symbol, temp, rain, isDay, storm });
+	// Céu fechado: sem sol
+	const sun = preset === "cloudy" ? 0 : sunOf({ isDay, temp, rain });
 	return {
-		preset: presetOf({ symbol: reading.symbol, temp, rain, isDay, storm }),
+		preset,
 		temp,
 		rainMmH,
 		isDay,
@@ -87,6 +91,7 @@ export const toWeather = (reading: IWeatherReading | null, now: Date): IWeather 
 };
 
 const LABELS: Record<IWeatherPreset, string> = {
+	cloudy: "Nublado",
 	day: "Ensolarado",
 	hot: "Calor",
 	cold: "Frio",
@@ -96,6 +101,7 @@ const LABELS: Record<IWeatherPreset, string> = {
 };
 
 const ICONS: Record<IWeatherPreset, string> = {
+	cloudy: "cloud",
 	day: "sun",
 	hot: "sun",
 	cold: "snowflake",
@@ -107,6 +113,28 @@ const ICONS: Record<IWeatherPreset, string> = {
 export const weatherLabel = (preset: IWeatherPreset): string => LABELS[preset];
 export const weatherIcon = (preset: IWeatherPreset): string => ICONS[preset];
 
+const STORM_RAIN_MIN = 0.85;
+const HOT_SUN_FROM = 16;
+
+// Resposta do servidor (radar + aeroporto) → clima da cena
+export const fromWeatherNow = (w: {
+	preset: IWeatherPreset;
+	temp: number | null;
+	rainMmH: number;
+	isDay: boolean;
+}): IWeather => {
+	const rainBase = clamp01(w.rainMmH / RAIN_FULL_MM);
+	const rain =
+		w.preset === "storm" ? Math.max(STORM_RAIN_MIN, rainBase) : w.preset === "rain" ? rainBase : 0;
+	const sunny = w.preset === "day" || w.preset === "hot";
+	const sun = sunny
+		? w.temp === null
+			? MILD_SUN
+			: clamp01((w.temp - HOT_SUN_FROM) / SUN_SPAN_C)
+		: 0;
+	return { preset: w.preset, temp: w.temp, rainMmH: w.rainMmH, isDay: w.isDay, sun, rain };
+};
+
 // Para testar todos os climas (toque longo no selo do clima)
 export const DEMO_WEATHERS: readonly IWeather[] = [
 	{ preset: "day", temp: 24, rainMmH: 0, isDay: true, sun: 0.36, rain: 0 },
@@ -115,4 +143,5 @@ export const DEMO_WEATHERS: readonly IWeather[] = [
 	{ preset: "night", temp: 17, rainMmH: 0, isDay: false, sun: 0, rain: 0 },
 	{ preset: "rain", temp: 16, rainMmH: 3.2, isDay: true, sun: 0, rain: 0.4 },
 	{ preset: "storm", temp: 14, rainMmH: 8, isDay: true, sun: 0, rain: 1 },
+	{ preset: "cloudy", temp: 21, rainMmH: 0, isDay: true, sun: 0, rain: 0 },
 ];

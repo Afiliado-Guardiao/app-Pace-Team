@@ -25,7 +25,9 @@ interface IUseScenePicturesReturn {
 export const useScenePictures = (o: IUseScenePicturesOptions): IUseScenePicturesReturn => {
 	const { kit, buddy, frame, jump } = o;
 	const sceneClock = o.clock;
-	const hasWeatherMotion = !!kit && (kit.weather.rain > 0 || kit.weather.preset === "cold");
+	const hasWeatherMotion =
+		!!kit &&
+		(kit.weather.rain > 0 || kit.weather.preset === "cold" || kit.weather.preset === "cloudy");
 	const frontClock = hasWeatherMotion ? o.clock : o.still;
 
 	const scene = useDerivedValue(() => (kit ? scenePicture(kit, sceneClock.value) : emptyPicture()));

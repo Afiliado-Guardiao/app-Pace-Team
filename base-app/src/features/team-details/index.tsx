@@ -126,7 +126,15 @@ export const TeamDetailsScreen: React.FC = () => {
 				<SectionHeader title={TEAM_DETAILS_COPY.achievements} />
 				<View style={styles.row}>
 					{achievements.map((a) => (
-						<AchievementTile key={a.label} icon={a.icon} label={a.label} isLocked={!a.isUnlocked} />
+						<AchievementTile
+							key={a.id}
+							id={a.id}
+							label={a.label}
+							isLocked={!a.isUnlocked}
+							onPress={() => {
+								details.openPrize(a);
+							}}
+						/>
 					))}
 				</View>
 				<SectionHeader

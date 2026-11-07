@@ -68,11 +68,8 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 		} as TextStyle,
 		box: { marginTop: HERO.titleGap, height: boxH } as ViewStyle,
 		fill: { position: "absolute", left: 0, top: 0, width: m.width, height: boxH } as ViewStyle,
+		numberBox: { position: "absolute", top: NUMBER_TOP * m.k, left: 0, right: 0 } as ViewStyle,
 		number: {
-			position: "absolute",
-			top: NUMBER_TOP * m.k,
-			left: 0,
-			right: 0,
 			textAlign: "center",
 			fontFamily: fonts.bold,
 			fontSize: NUMBER_SIZE * m.k,

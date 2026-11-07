@@ -5,12 +5,19 @@ import * as Location from "expo-location";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchMetWeather, IWeather, IWeatherReading, toWeather } from "@/lib/weather";
+import { getWeatherNow, IWeatherNow } from "@/lib/supabase";
+import {
+	fetchMetWeather,
+	fromWeatherNow,
+	IWeather,
+	IWeatherReading,
+	toWeather,
+} from "@/lib/weather";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { DATA_KEYS } from "./keys";
 
-const REFRESH_MS = 30 * 60_000;
+const REFRESH_MS = 10 * 60_000;
 // Ao voltar para o app, busca de novo se a última leitura tem mais de 10 min
 const STALE_ON_RETURN_MS = 10 * 60_000;
 // Posição de até 3 h atrás serve para o tempo (não liga o GPS à toa)
@@ -26,16 +33,29 @@ async function coarsePosition(): Promise<{ lat: number; lng: number } | null> {
 	return { lat: fix.coords.latitude, lng: fix.coords.longitude };
 }
 
-async function readWeather(): Promise<IWeatherReading | null> {
+type IRead = { now: IWeatherNow } | { met: IWeatherReading } | null;
+
+// 1º o nosso servidor (radar no ponto exato + aeroporto); sem ele, a
+// previsão da MET direto
+async function readWeather(): Promise<IRead> {
 	try {
 		const at = await coarsePosition();
-		return at ? await fetchMetWeather(at.lat, at.lng) : null;
+		if (!at) return null;
+		const now = await getWeatherNow(at.lat, at.lng).catch(() => null);
+		if (now) return { now };
+		const met = await fetchMetWeather(at.lat, at.lng);
+		return met ? { met } : null;
 	} catch {
 		return null;
 	}
 }
 
-// Tempo lá fora pela posição do aparelho: a cada 30 min e ao voltar para o
+const toView = (read: IRead): IWeather => {
+	if (read && "now" in read) return fromWeatherNow(read.now);
+	return toWeather(read?.met ?? null, new Date());
+};
+
+// Tempo lá fora pela posição do aparelho: a cada 10 min e ao voltar para o
 // app. Sem permissão ou sem internet: dia ou noite pelo relógio.
 export const useWeather = (): IWeather => {
 	const query = useQuery({
@@ -56,5 +76,5 @@ export const useWeather = (): IWeather => {
 		};
 	}, [refetch, dataUpdatedAt]);
 
-	return toWeather(query.data ?? null, new Date());
+	return toView(query.data ?? null);
 };

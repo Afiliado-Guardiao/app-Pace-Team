@@ -9,6 +9,7 @@ import { DATA_KEYS } from "./keys";
 interface IUseMyChallengesReturn {
 	challenges: IMyChallenges;
 	isLoading: boolean;
+	isLoaded: boolean;
 }
 
 const EMPTY: IMyChallenges = {
@@ -35,5 +36,5 @@ const fetchChallenges = async (): Promise<IMyChallenges> => (IS_PREVIEW ? DEMO :
 // Progresso dos desafios da semana/mês e medalhas conquistadas.
 export const useMyChallenges = (): IUseMyChallengesReturn => {
 	const query = useQuery({ queryKey: DATA_KEYS.challenges, queryFn: fetchChallenges });
-	return { challenges: query.data ?? EMPTY, isLoading: query.isLoading };
+	return { challenges: query.data ?? EMPTY, isLoading: query.isLoading, isLoaded: query.isSuccess };
 };

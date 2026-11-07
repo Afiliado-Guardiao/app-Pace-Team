@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 
 import { BuddyFlight, BuddyLivePanel } from "@/components/buddy";
+import { PrizeLayer } from "@/components/shared/PrizeLayer";
 import { useTheme } from "@/theme";
 import { useBuddyBridge, useBuddyPresence } from "@/lib/buddy";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
@@ -38,6 +39,7 @@ export default function AuthLayout() {
 			</Stack>
 			<BuddyLivePanel />
 			<BuddyFlight />
+			<PrizeLayer />
 		</>
 	);
 }

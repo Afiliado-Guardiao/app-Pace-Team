@@ -73,3 +73,44 @@ export const drawFog = (
 		canvas.drawCircle(x, y, (40 + hash(i * 9.2) * 40) * kit.k, paint);
 	}
 };
+
+const SPARSE_DROPS = 2;
+const SPARSE_EVERY_S = 14;
+const SPARSE_FALL_S = 0.9;
+
+// Nublado: "está querendo chover" — 1 ou 2 gotas a cada 10–20 s na pista
+export const drawSparseDrops = (
+	canvas: SkCanvas,
+	o: { kit: ISceneKit; frame: IHeroFrame },
+	t: number,
+): void => {
+	"worklet";
+	const { kit, frame } = o;
+	const drop = Skia.Paint();
+	drop.setStyle(1);
+	drop.setStrokeCap(1);
+	drop.setStrokeWidth(1.6);
+	drop.setColor(rgba(210, 226, 255, 0.75));
+	const splash = Skia.Paint();
+	splash.setStyle(1);
+	splash.setStrokeWidth(1);
+	for (let i = 0; i < SPARSE_DROPS; i++) {
+		const period = SPARSE_EVERY_S + hash(i * 3.7) * 6;
+		const run = (t + hash(i * 9.1) * period) / period;
+		const cycle = Math.floor(run);
+		const local = (run - cycle) * period;
+		if (local > SPARSE_FALL_S + 0.35) continue;
+		const p = pointAt(TRACK_PATH, hash(i * 5.3 + cycle * 0.37));
+		const tx = frame.sceneX + p.x * kit.ks;
+		const ty = frame.sceneY + p.y * kit.ks;
+		if (local <= SPARSE_FALL_S) {
+			const y = ty * (local / SPARSE_FALL_S);
+			canvas.drawLine(tx, y - 14, tx, y, drop);
+		} else {
+			const s = (local - SPARSE_FALL_S) / 0.35;
+			const rx = (2 + 5 * s) * kit.k;
+			splash.setColor(rgba(215, 230, 255, 0.6 * (1 - s)));
+			canvas.drawOval(Skia.XYWHRect(tx - rx, ty - rx * 0.38, rx * 2, rx * 0.76), splash);
+		}
+	}
+};

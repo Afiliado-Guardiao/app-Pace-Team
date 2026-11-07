@@ -50,6 +50,8 @@ export const useSaveRun = () => {
 			void client.invalidateQueries({ queryKey: DATA_KEYS.teamLiveAll });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.notifications });
 			void client.invalidateQueries({ queryKey: DATA_KEYS.challenges });
+			// Conquistas da equipe (o card "Nova conquista!" aparece se liberar)
+			void client.invalidateQueries({ queryKey: ["pace", "team-achievements"] });
 		},
 	});
 };

@@ -11,6 +11,7 @@ import {
 	SegmentedControl,
 	TopBar,
 } from "@/components/pace";
+import { PrizeIcon } from "@/components/shared/PrizeIcon";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
@@ -18,23 +19,15 @@ import { ChallengeCard } from "./components/ChallengeCard";
 import { CHALLENGE_TABS, CHALLENGES_COPY } from "./constants";
 import { useChallenges } from "./hooks/useChallenges";
 
-const BADGE = 46;
+const BADGE = 72;
 
 const createChallengesStyles = (theme: ITheme) => {
 	const { colors, spacing, typography } = theme.pace;
 	return {
 		root: { flex: 1 },
 		list: { gap: spacing.stackGap },
-		unlocked: { flexDirection: "row" as const, gap: 8 },
-		unlockedCard: { flex: 1, alignItems: "center" as const },
-		badge: {
-			width: BADGE,
-			height: BADGE,
-			borderRadius: BADGE / 2,
-			alignItems: "center" as const,
-			justifyContent: "center" as const,
-			backgroundColor: colors.glass2,
-		},
+		unlocked: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: 8 },
+		unlockedCard: { width: "31.5%" as const, alignItems: "center" as const },
 		badgeLabel: {
 			marginTop: 10,
 			textAlign: "center" as const,
@@ -91,16 +84,12 @@ export const ChallengesScreen: React.FC = () => {
 					{challenges.emptyNote ? <InfoNote icon="users">{challenges.emptyNote}</InfoNote> : null}
 				</View>
 				<SectionHeader title={CHALLENGES_COPY.unlocked} />
-				{challenges.unlocked.length ? null : (
-					<InfoNote icon="medal">{CHALLENGES_COPY.noMedals}</InfoNote>
-				)}
+				{challenges.hasMedals ? null : <InfoNote icon="medal">{CHALLENGES_COPY.noMedals}</InfoNote>}
 				<View style={styles.unlocked}>
-					{challenges.unlocked.map((u) => (
-						<GlassCard key={u.label} padding={14} radius={22} style={styles.unlockedCard}>
-							<View style={styles.badge}>
-								<Icon name={u.icon} size={22} color={styles.colors[u.color]} />
-							</View>
-							<Text style={styles.badgeLabel}>{u.label}</Text>
+					{challenges.medals.map((m) => (
+						<GlassCard key={m.id} padding={12} radius={22} style={styles.unlockedCard}>
+							<PrizeIcon id={m.id} size={BADGE} isLocked={m.isLocked} onPress={m.onPress} />
+							<Text style={styles.badgeLabel}>{m.label}</Text>
 						</GlassCard>
 					))}
 				</View>

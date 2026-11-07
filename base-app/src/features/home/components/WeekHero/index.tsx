@@ -2,9 +2,11 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { Canvas, Picture } from "@shopify/react-native-skia";
+import Animated from "react-native-reanimated";
 
 import { CountUp, Icon } from "@/components/pace";
 import { useTheme } from "@/theme";
+import { PRIZE_ART } from "@/lib/prizes";
 
 import { HOME_COPY } from "../../constants";
 import { IWeekHero } from "../../hooks/useWeekHero";
@@ -23,7 +25,9 @@ interface IWeekHeroProps {
 }
 
 const ICON_SIZE = 18;
-const COUNT_DELAY = 200;
+const COUNT_DELAY = 300;
+// Junto com o arco: sobe enquanto ele varre e assenta no valor
+const COUNT_MS = 1500;
 
 // "Sua semana" do Início: medidor de tracinhos, Buddy de pelúcia sentado na
 // pista com um corredor por colega online, clima lá fora e os dois cards.
@@ -72,9 +76,16 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 						<Picture picture={view.arc} />
 					</Canvas>
 				) : null}
-				<Text style={styles.number}>
-					<CountUp value={week.display} delay={COUNT_DELAY} />
-				</Text>
+				<Animated.View style={[styles.numberBox, view.numberStyle]} pointerEvents="none">
+					<Text style={styles.number}>
+						<CountUp
+							key={view.replay}
+							value={week.display}
+							duration={COUNT_MS}
+							delay={COUNT_DELAY}
+						/>
+					</Text>
+				</Animated.View>
 				<Text style={styles.kmLabel}>{HOME_COPY.gaugeLabel}</Text>
 				{isReady ? (
 					<Canvas style={styles.scene} pointerEvents="none">
@@ -110,6 +121,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 				<View style={styles.tileLow}>
 					<InnerTile
 						icon="users"
+						art={PRIZE_ART.badgeTeam}
 						lineA={week.teamFirst}
 						lineB={week.teamRest}
 						value={week.rank}

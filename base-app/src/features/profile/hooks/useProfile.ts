@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useFloatingToast } from "@/components/pace";
 import { useMyChallenges, useMyRuns, useMyStats, useMyTeam, useRemoveRun } from "@/lib/data";
 import { formatKm, formatPace, ME, MEDALS } from "@/lib/pace";
+import { usePrizeStore } from "@/lib/prizes";
 import { queryClient } from "@/lib/react-query";
 import { signOut } from "@/lib/supabase/auth";
 import { useStore } from "@/store";
@@ -16,7 +17,6 @@ import { NO_TEAM, PERIODS, PROFILE_COPY } from "../constants";
 const RECENT_RUNS = 2;
 // Cinco círculos: conquistadas primeiro, o resto com cadeado
 const MEDAL_SLOTS = 5;
-const LOCKED = { icon: "lock", color: "textDisabled" } as const;
 
 type IPeriod = (typeof PERIODS)[number];
 
@@ -32,14 +32,23 @@ export const useProfile = () => {
 	const { runs } = useMyRuns();
 	const { challenges } = useMyChallenges();
 	const { remove } = useRemoveRun();
-	const earned = MEDALS.filter((m) => challenges.medals.includes(m.id)).slice(0, MEDAL_SLOTS);
-	const medals = [
-		...earned.map((m) => ({ key: m.id, icon: m.icon, color: m.color })),
-		...Array.from({ length: MEDAL_SLOTS - earned.length }, (_, i) => ({
-			key: `locked-${String(i)}`,
-			...LOCKED,
-		})),
-	];
+	const openPrize = usePrizeStore((s) => s.openPrize);
+	// Conquistadas primeiro; depois as que faltam (apagadas, com cadeado)
+	const medals = [...MEDALS]
+		.sort(
+			(a, b) => Number(challenges.medals.includes(b.id)) - Number(challenges.medals.includes(a.id)),
+		)
+		.slice(0, MEDAL_SLOTS)
+		.map((m) => {
+			const isUnlocked = challenges.medals.includes(m.id);
+			return {
+				id: m.id,
+				isLocked: !isUnlocked,
+				onPress: () => {
+					openPrize(m.id, isUnlocked);
+				},
+			};
+		});
 	const me = team?.members.find((m) => m.you);
 
 	return {

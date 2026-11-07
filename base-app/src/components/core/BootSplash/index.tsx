@@ -1,36 +1,58 @@
 import React from "react";
-import { Image } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import Animated from "react-native-reanimated";
 
-import { Logo } from "@/components/pace";
 import { useTheme } from "@/theme";
 
-import splashPhoto from "../../../../assets/brand/splash-photo.jpg";
+import buddyWave from "../../../../assets/brand/splash/buddy-wave.png";
+import logoPace from "../../../../assets/brand/splash/logo-pace.png";
+import logoSymbol from "../../../../assets/brand/splash/logo-symbol.png";
+import logoTeam from "../../../../assets/brand/splash/logo-team.png";
+import splashNavy from "../../../../assets/brand/splash-navy.png";
 
 import { useBootSplash } from "./hooks/useBootSplash";
-import { createBootSplashStyles } from "./styles";
+import { createBootSplashStyles, SPLASH_COPY } from "./styles";
 
-const LOGO_HEIGHT = 74;
-
-// Foto dos corredores e logo por cima de tudo enquanto o app carrega.
+// Abertura: brilho laranja, o símbolo se encaixa, "PACE" surge da esquerda,
+// "TEAM" assenta e o Buddy espia pela lateral dizendo "Bora lá?".
 export const BootSplash: React.FC = () => {
 	const { theme } = useTheme();
-	const { isVisible, screenStyle, logoStyle, handleImageReady } = useBootSplash();
+	const { isVisible, styles: anim, skip } = useBootSplash();
 	const styles = createBootSplashStyles(theme);
 	if (!isVisible) return null;
 
 	return (
-		<Animated.View style={[styles.root, screenStyle]} testID="boot-splash">
-			<Image
-				source={splashPhoto}
-				style={styles.photo}
-				resizeMode="cover"
-				onLoad={handleImageReady}
-			/>
-			<Animated.View style={[styles.logo, logoStyle]}>
-				<Logo height={LOGO_HEIGHT} />
-			</Animated.View>
+		<Animated.View style={[styles.root, anim.screen]} testID="boot-splash">
+			<Pressable
+				style={styles.fill}
+				onPress={skip}
+				accessibilityLabel={SPLASH_COPY.skip}
+				testID="boot-splash-skip"
+			>
+				<Image source={splashNavy} style={styles.fill} resizeMode="cover" />
+				<Animated.View style={[styles.glow, anim.glow]} />
+				<Animated.View style={[styles.streak, anim.streak]} />
+				<Animated.View style={[styles.logo, anim.logo]}>
+					<Animated.Image
+						source={logoSymbol}
+						style={[styles.symbol, anim.symbol]}
+						resizeMode="contain"
+					/>
+					<Animated.View style={[styles.paceClip, anim.paceClip]}>
+						<Image source={logoPace} style={styles.pace} resizeMode="contain" />
+					</Animated.View>
+					<Animated.Image source={logoTeam} style={[styles.team, anim.team]} resizeMode="contain" />
+				</Animated.View>
+				<Animated.Text style={[styles.tag, anim.tag]}>{SPLASH_COPY.tag}</Animated.Text>
+				<Animated.View style={[styles.bubble, anim.bubble]}>
+					<Text style={styles.bubbleText}>{SPLASH_COPY.bubble}</Text>
+				</Animated.View>
+				<Animated.View style={[styles.buddy, anim.buddy]}>
+					<Image source={buddyWave} style={styles.buddyImage} resizeMode="contain" />
+				</Animated.View>
+				<View style={styles.fill} pointerEvents="none" />
+			</Pressable>
 		</Animated.View>
 	);
 };

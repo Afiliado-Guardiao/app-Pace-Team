@@ -1,9 +1,10 @@
-import { TextStyle, ViewStyle } from "react-native";
+import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 import { IGlassAppearance } from "@/components/pace";
 import { ITheme } from "@/theme";
 
 const ICON_DOT = 36;
+const ART = 44;
 const VALUE_SIZE = 24;
 
 export const createInnerTileStyles = (theme: ITheme) => {
@@ -20,6 +21,7 @@ export const createInnerTileStyles = (theme: ITheme) => {
 			innerShadow: shadows.innerHighlight,
 		} as IGlassAppearance,
 		header: { flexDirection: "row", alignItems: "center", gap: spacing[2.5] } as ViewStyle,
+		art: { width: ART, height: ART, flexShrink: 0 } as ImageStyle,
 		iconDot: {
 			width: ICON_DOT,
 			height: ICON_DOT,

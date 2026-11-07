@@ -1,17 +1,20 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 
-import { GlassSurface, Icon } from "@/components/pace";
+import { GlassSurface } from "@/components/pace";
+import { PrizeIcon } from "@/components/shared/PrizeIcon";
 import { ITheme, useTheme } from "@/theme";
+import { ITeamPrizeId } from "@/lib/prizes";
 
 interface IAchievementTileProps {
-	icon: string;
+	id: ITeamPrizeId;
 	label: string;
-	// Ainda não conquistada: ícone e rótulo apagados
+	// Ainda não conquistada: apagada, com o cadeado no canto
 	isLocked?: boolean;
+	onPress: () => void;
 }
 
-const DOT = 40;
+const ART = 54;
 
 const createAchievementTileStyles = (theme: ITheme) => {
 	const { blur, colors, typography } = theme.pace;
@@ -19,8 +22,8 @@ const createAchievementTileStyles = (theme: ITheme) => {
 		tile: {
 			flex: 1,
 			alignItems: "center" as const,
-			gap: 8,
-			paddingVertical: 14,
+			gap: 6,
+			paddingVertical: 12,
 			paddingHorizontal: 4,
 		},
 		appearance: {
@@ -29,42 +32,28 @@ const createAchievementTileStyles = (theme: ITheme) => {
 			border: colors.glassBorder,
 			rim: true,
 		},
-		dot: {
-			width: DOT,
-			height: DOT,
-			borderRadius: DOT / 2,
-			alignItems: "center" as const,
-			justifyContent: "center" as const,
-			backgroundColor: colors.accentSoft,
-		},
 		label: {
 			fontFamily: typography.fonts.semibold,
 			fontSize: typography.sizes.xs,
 			color: colors.textSecondary,
 		},
 		labelLocked: { color: colors.textDisabled },
-		dotLocked: { backgroundColor: colors.glass2 },
 	};
 };
 
-// Conquista da equipe: ícone laranja em círculo e rótulo curto.
+// Conquista da equipe: troféu/escudo 3D e rótulo curto. Tocar abre grande.
 export const AchievementTile: React.FC<IAchievementTileProps> = ({
-	icon,
+	id,
 	label,
 	isLocked = false,
+	onPress,
 }) => {
 	const { theme } = useTheme();
 	const styles = createAchievementTileStyles(theme);
 
 	return (
 		<GlassSurface appearance={styles.appearance} radius={20} style={styles.tile}>
-			<View style={[styles.dot, isLocked ? styles.dotLocked : null]}>
-				<Icon
-					name={icon}
-					size={19}
-					color={isLocked ? theme.pace.colors.textDisabled : theme.pace.colors.orange[400]}
-				/>
-			</View>
+			<PrizeIcon id={id} size={ART} isLocked={isLocked} onPress={onPress} />
 			<Text style={[styles.label, isLocked ? styles.labelLocked : null]}>{label}</Text>
 		</GlassSurface>
 	);
