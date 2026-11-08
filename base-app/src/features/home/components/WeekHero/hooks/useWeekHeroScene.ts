@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { AppState } from "react-native";
 
 import { useFocusEffect } from "expo-router";
 
@@ -31,10 +32,18 @@ interface IUseWeekHeroSceneReturn {
 export const useWeekHeroScene = (hero: IWeekHero, week: IWeekSummary): IUseWeekHeroSceneReturn => {
 	const { width, frame } = hero.layout;
 	const { k, ks } = heroScale(width);
+	// Repete a varredura ao entrar no Início e sempre que o app volta para a
+	// tela (desbloquear, voltar de outro app) com o Início aberto
 	const [replay, setReplay] = useState(0);
 	useFocusEffect(
 		useCallback(() => {
 			setReplay((n) => n + 1);
+			const sub = AppState.addEventListener("change", (state) => {
+				if (state === "active") setReplay((n) => n + 1);
+			});
+			return () => {
+				sub.remove();
+			};
 		}, []),
 	);
 	const { kit, buddy } = useHeroKit({

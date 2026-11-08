@@ -14,7 +14,7 @@ import splashNavy from "../../../../assets/brand/splash-navy.png";
 import { useBootSplash } from "./hooks/useBootSplash";
 import { createBootSplashStyles, SPLASH_COPY } from "./styles";
 
-// Abertura: brilho laranja, o símbolo se encaixa, "PACE" surge da esquerda,
+// Abertura: o símbolo se encaixa, "PACE" surge da esquerda,
 // "TEAM" assenta e o Buddy espia pela lateral dizendo "Bora lá?".
 export const BootSplash: React.FC = () => {
 	const { theme } = useTheme();
@@ -31,8 +31,6 @@ export const BootSplash: React.FC = () => {
 				testID="boot-splash-skip"
 			>
 				<Image source={splashNavy} style={styles.fill} resizeMode="cover" />
-				<Animated.View style={[styles.glow, anim.glow]} />
-				<Animated.View style={[styles.streak, anim.streak]} />
 				<Animated.View style={[styles.logo, anim.logo]}>
 					<Animated.Image
 						source={logoSymbol}

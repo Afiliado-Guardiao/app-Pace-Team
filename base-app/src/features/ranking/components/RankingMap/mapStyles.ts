@@ -7,17 +7,21 @@ import { IMapWorld } from "./geometry";
 // Cores da ilustração (chão da floresta embaixo e sombras do cabeçalho)
 export const MAP_COLORS = {
 	ground: "#22301E",
+	// Topo do céu da ilustração e o azul do app acima dele
+	skyTop: "rgb(66,113,156)",
+	skyNight: "rgb(14,32,52)",
 	groundClear: "rgba(34,48,30,0)",
-	headerShade: "rgba(10,16,26,0.92)",
+	headerShade: "rgba(10,16,26,0.72)",
 	headerClear: "rgba(10,16,26,0)",
 	bottomClear: "rgba(8,14,12,0)",
-	bottomShade: "rgba(8,14,12,0.85)",
+	bottomShade: "rgba(8,14,12,0.7)",
 	pill: "rgba(14,22,32,0.66)",
 } as const;
 
 const TRAIL_FADE = 160;
-const TOP_SHADE = 300;
-const BOTTOM_SHADE = 240;
+// Sombras leves só atrás do cabeçalho e do cartão: o cenário fica à vista
+const TOP_SHADE = 230;
+const BOTTOM_SHADE = 200;
 
 export const createRankingMapStyles = (
 	theme: ITheme,
@@ -32,7 +36,7 @@ export const createRankingMapStyles = (
 		trail: {
 			position: "absolute",
 			left: o.world.ox,
-			top: 0,
+			top: o.world.oy,
 			width: o.world.iw,
 			height: o.world.ih,
 		} as ImageStyle,
@@ -40,9 +44,10 @@ export const createRankingMapStyles = (
 			position: "absolute",
 			left: 0,
 			right: 0,
-			top: o.world.ih - TRAIL_FADE,
+			top: o.world.oy + o.world.ih - TRAIL_FADE,
 			height: TRAIL_FADE,
 		} as ViewStyle,
+		sky: { position: "absolute", left: 0, right: 0, top: 0, height: o.world.oy + 1 } as ViewStyle,
 		region: {
 			position: "absolute",
 			left: 16,

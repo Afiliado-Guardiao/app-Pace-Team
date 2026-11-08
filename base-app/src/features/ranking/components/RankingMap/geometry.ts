@@ -1,10 +1,12 @@
 // Mapa "Trilha até o Cume" (prompt do Claude Design): a ilustração vertical
-// (753 × 2089) com zoom 1,35, centralizada, e as equipes em cima da trilha
+// (753 × 2089) inteira na largura da tela, e as equipes em cima da trilha
 // principal — quanto melhor, mais alto. Nunca no caminho do portal de pedra
 // e nunca embaixo da barra lateral (x ≤ .64 da imagem).
 export const TRAIL = { w: 753, h: 2089 } as const;
-const ZOOM = 1.35;
+const ZOOM = 1;
 const EXTRA_BOTTOM = 240;
+// Céu a mais em cima: o cume (e a bandeira do 1º) fica abaixo do cabeçalho
+const TOP_PAD = 110;
 
 // Pés de cada colocação [fração x, y em px da imagem], medidos na trilha
 export const TRAIL_SPOTS: readonly (readonly [number, number])[] = [
@@ -39,6 +41,7 @@ export interface IMapWorld {
 	iw: number;
 	ih: number;
 	ox: number;
+	oy: number;
 	height: number;
 	toX: (fx: number) => number;
 	toY: (py: number) => number;
@@ -48,13 +51,15 @@ export const mapWorld = (width: number): IMapWorld => {
 	const iw = width * ZOOM;
 	const ih = (iw * TRAIL.h) / TRAIL.w;
 	const ox = (width - iw) / 2;
+	const oy = TOP_PAD;
 	return {
 		iw,
 		ih,
 		ox,
-		height: ih + EXTRA_BOTTOM,
+		oy,
+		height: oy + ih + EXTRA_BOTTOM,
 		toX: (fx) => ox + fx * iw,
-		toY: (py) => (py / TRAIL.h) * ih,
+		toY: (py) => oy + (py / TRAIL.h) * ih,
 	};
 };
 

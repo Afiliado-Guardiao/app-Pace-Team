@@ -57,6 +57,7 @@ export const RankingMap: React.FC<IRankingMapProps> = (props) => {
 				onScrollBeginDrag={map.scroll.stop}
 				testID="ranking-map"
 			>
+				<Fade from={MAP_COLORS.skyNight} to={MAP_COLORS.skyTop} style={styles.sky} />
 				<Image source={MAP_ART.trail} style={styles.trail} resizeMode="cover" />
 				<Fade from={MAP_COLORS.groundClear} to={MAP_COLORS.ground} style={styles.trailEnd} />
 				{REGIONS.map(([label, py]) => (

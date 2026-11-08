@@ -12,7 +12,6 @@ export const SPLASH_COPY = {
 
 // Logo de 280 × 77 (símbolo à esquerda; PACE e TEAM à direita), a 45% da altura
 const LOGO = { w: 280, h: 77 } as const;
-const GLOW = 520;
 
 export const createBootSplashStyles = (theme: ITheme) => {
 	const { colors, typography } = theme.pace;
@@ -35,28 +34,6 @@ export const createBootSplashStyles = (theme: ITheme) => {
 			width: "100%",
 			height: "100%",
 		} as ViewStyle & ImageStyle,
-		glow: {
-			position: "absolute",
-			left: "50%",
-			top: "45%",
-			width: GLOW,
-			height: GLOW,
-			marginLeft: -GLOW / 2,
-			marginTop: -GLOW / 2,
-			borderRadius: GLOW / 2,
-			backgroundColor: colors.accent,
-			opacity: 0.2,
-			boxShadow: `0 0 160px 90px ${colors.accent}`,
-		} as ViewStyle,
-		streak: {
-			position: "absolute",
-			left: "-40%",
-			top: "45%",
-			width: "180%",
-			height: 2,
-			backgroundColor: colors.orange[300],
-			transformOrigin: "left center",
-		} as ViewStyle,
 		logo: {
 			position: "absolute",
 			left: "50%",

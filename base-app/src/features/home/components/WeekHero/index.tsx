@@ -112,6 +112,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 				<View style={styles.tileHigh}>
 					<InnerTile
 						icon="zap"
+						art={PRIZE_ART.coinPoints}
 						lineA={HOME_COPY.pointsA}
 						lineB={HOME_COPY.pointsB}
 						value={week.points}
