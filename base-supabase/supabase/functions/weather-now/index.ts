@@ -175,7 +175,9 @@ function decide(o: { radar: IRadar | null; metar: IMetar | null; met: { symbol: 
 	const { radar, metar, met, temp, isDay } = o;
 	const near = metar && metar.distKm <= METAR_NEAR_KM ? metar : null;
 	const thunder = Boolean(near && /TS/.test(near.wx));
-	const metarRain = near ? /(RA|DZ|SH|TS)/.test(near.wx) && !/^RE/.test(near.wx) : false;
+	// Chuva agora no aeroporto (não "chuva recente" RE nem "nas proximidades" VC)
+	const metarRain = near ? /(RA|DZ|SH|TS)/.test(near.wx) && !/^(RE|VC)/.test(near.wx) : false;
+	const metarNearby = near ? /^(RE|VC)/.test(near.wx) : false;
 	if (radar) {
 		if (radar.here >= 4 || (radar.here >= 2 && thunder)) return { preset: "storm", rainMmH: RAIN_MM[4] };
 		if (radar.here > 0) return { preset: "rain", rainMmH: RAIN_MM[radar.here] };
@@ -184,6 +186,7 @@ function decide(o: { radar: IRadar | null; metar: IMetar | null; met: { symbol: 
 		if (thunder) return { preset: "storm", rainMmH: RAIN_MM[4] };
 		return { preset: "rain", rainMmH: /\+/.test(near.wx) ? RAIN_MM[3] : /-/.test(near.wx) ? RAIN_MM[1] : RAIN_MM[2] };
 	}
+	if (metarNearby) return { preset: "cloudy", rainMmH: 0 };
 	const cloudySky = near?.cloudy || /cloudy|fog|rain|sleet|snow/.test(met?.symbol ?? "") && !/partlycloudy/.test(met?.symbol ?? "");
 	if (cloudySky) return { preset: "cloudy", rainMmH: 0 };
 	if (temp !== null && temp <= 10) return { preset: "cold", rainMmH: 0 };
