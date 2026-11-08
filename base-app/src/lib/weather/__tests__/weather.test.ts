@@ -27,19 +27,20 @@ describe("toWeather", () => {
 		expect(storm.rain).toBeGreaterThan(0.8);
 	});
 
-	it("pancada fraca possível não vira chuva na tela", () => {
+	it("pancada fraca possível não vira chuva: fica nublado (meio-termo)", () => {
 		const drizzle = toWeather({ temp: 24, symbol: "lightrainshowers_day", rainMm: 0.1 }, NOON);
-		expect(drizzle.preset).toBe("day");
+		expect(drizzle.preset).toBe("cloudy");
+		expect(drizzle.sun).toBe(0);
 		expect(drizzle.rain).toBe(0);
 		const thunderNoRain = toWeather(
 			{ temp: 24, symbol: "rainshowersandthunder_day", rainMm: 0 },
 			NOON,
 		);
-		expect(thunderNoRain.preset).toBe("day");
+		expect(thunderNoRain.preset).toBe("cloudy");
 	});
 
 	it("frio e noite", () => {
-		expect(toWeather({ temp: 6, symbol: "cloudy", rainMm: 0 }, NOON).preset).toBe("cold");
+		expect(toWeather({ temp: 6, symbol: "clearsky_day", rainMm: 0 }, NOON).preset).toBe("cold");
 		expect(toWeather({ temp: 20, symbol: "clearsky_night", rainMm: 0 }, NOON).preset).toBe("night");
 	});
 });

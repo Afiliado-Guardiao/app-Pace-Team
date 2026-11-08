@@ -9,6 +9,13 @@ const { IOSConfig, withDangerousMod, withXcodeProject } = require("expo/config-p
 
 const SOURCE_DIR = path.join("native", "ios", "app");
 
+// Sons do cartão do Buddy (o cartão aparece / um botão o fecha)
+const SOUND_DIR = path.join(SOURCE_DIR, "sounds");
+const soundFiles = (projectRoot) => {
+	const dir = path.join(projectRoot, SOUND_DIR);
+	return fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".wav")) : [];
+};
+
 const swiftFiles = (projectRoot) =>
 	fs.readdirSync(path.join(projectRoot, SOURCE_DIR)).filter((f) => f.endsWith(".swift"));
 
@@ -24,6 +31,12 @@ const withCopiedFiles = (config) =>
 					path.join(platformProjectRoot, projectName, file),
 				);
 			}
+			for (const file of soundFiles(projectRoot)) {
+				fs.copyFileSync(
+					path.join(projectRoot, SOUND_DIR, file),
+					path.join(platformProjectRoot, projectName, file),
+				);
+			}
 			return c;
 		},
 	]);
@@ -36,6 +49,14 @@ const withSourcesInAppTarget = (config) =>
 				filepath: path.posix.join(projectName, file),
 				groupName: projectName,
 				project: c.modResults,
+			});
+		}
+		for (const file of soundFiles(c.modRequest.projectRoot)) {
+			IOSConfig.XcodeUtils.addResourceFileToGroup({
+				filepath: path.posix.join(projectName, file),
+				groupName: projectName,
+				project: c.modResults,
+				isBuildFile: true,
 			});
 		}
 		return c;

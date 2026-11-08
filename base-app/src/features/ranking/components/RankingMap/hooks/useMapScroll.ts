@@ -7,7 +7,7 @@ import Animated, {
 	useAnimatedReaction,
 	useAnimatedRef,
 	useReducedMotion,
-	useScrollViewOffset,
+	useScrollOffset,
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
@@ -20,7 +20,7 @@ const SELECT_MS = 650;
 // cancela o deslize em andamento.
 export const useMapScroll = (o: { maxY: number; viewport: number }) => {
 	const ref = useAnimatedRef<Animated.ScrollView>();
-	const offset = useScrollViewOffset(ref);
+	const offset = useScrollOffset(ref);
 	const driver = useSharedValue(-1);
 	const reduceMotion = useReducedMotion();
 	const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,7 +50,9 @@ export const useMapScroll = (o: { maxY: number; viewport: number }) => {
 
 	// Centraliza um ponto do mapa na tela
 	const centerOn = useCallback(
-		(y: number, duration = SELECT_MS) => { glide(y - o.viewport / 2, duration); },
+		(y: number, duration = SELECT_MS) => {
+			glide(y - o.viewport / 2, duration);
+		},
 		[glide, o.viewport],
 	);
 
@@ -60,7 +62,9 @@ export const useMapScroll = (o: { maxY: number; viewport: number }) => {
 			if (timer.current) clearTimeout(timer.current);
 			cancelAnimation(driver);
 			driver.value = 0;
-			timer.current = setTimeout(() => { centerOn(y, OPEN_MS); }, OPEN_DELAY);
+			timer.current = setTimeout(() => {
+				centerOn(y, OPEN_MS);
+			}, OPEN_DELAY);
 		},
 		[centerOn, driver],
 	);

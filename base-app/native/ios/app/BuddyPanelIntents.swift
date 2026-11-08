@@ -38,6 +38,7 @@ struct BuddyPanelRunIntent: LiveActivityIntent {
 
   func perform() async throws -> some IntentResult {
     BuddyTimings.mark(withTeam ? "team" : "solo")
+    BuddySound.close.play()
     let state = BuddyStore.state()
     // Um toque já começa (antes o 1º toque na equipe só mostrava quem estava
     // online, e ninguém tocava de novo). Quem está online aparece nos mini
@@ -95,6 +96,7 @@ struct BuddyPanelFinishIntent: LiveActivityIntent {
 
   func perform() async throws -> some IntentResult {
     BuddyTimings.mark("finish")
+    BuddySound.close.play()
     await BuddyRunTracker.shared.finish(goalReached: false)
     BuddyPanelMode.set(.choose)
     BuddyPanelRefresh.now("finish.done")

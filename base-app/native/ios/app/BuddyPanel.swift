@@ -110,6 +110,7 @@ struct CallBuddyIntent: AppIntent {
       BuddyPanelMode.set(.inApp)
     } else {
       BuddyPanelMode.set(.choose)
+      BuddySound.appear.play()
     }
     return .result(snippetIntent: BuddyPanelSnippetIntent())
   }
@@ -149,6 +150,7 @@ struct BuddyPanelDismissIntent: AppIntent {
 
   func perform() async throws -> some IntentResult {
     BuddyTimings.mark("bye")
+    BuddySound.close.play()
     BuddyPanelMode.set(.bye)
     BuddyPanelRefresh.now("bye.done")
     return .result()

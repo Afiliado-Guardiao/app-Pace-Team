@@ -22,7 +22,7 @@ export const Fade: React.FC<IFadeProps> = ({ from, to, style }) => {
 					<Stop offset="1" stopColor={to} />
 				</LinearGradient>
 			</Defs>
-			<Rect x="0" y="0" width="10" height="10" fill={`url(#${id})`} />
+			<Rect width="10" height="10" fill={`url(#${id})`} />
 		</Svg>
 	);
 };

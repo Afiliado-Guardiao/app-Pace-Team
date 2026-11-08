@@ -33,9 +33,9 @@ export const useRankingMap = (o: { teams: readonly IRankedTeam[]; dataKey: strin
 	const placed = useMemo<IPlacedTeam[]>(
 		() =>
 			o.teams.slice(0, TRAIL_SPOTS.length).map((team, i) => {
-				const [fx, py] = TRAIL_SPOTS[i] ?? MORE_SPOT;
+				const [fx, py] = TRAIL_SPOTS.at(i) ?? MORE_SPOT;
 				const y = world.toY(py);
-				const above = TRAIL_SPOTS[i - 1];
+				const above = i > 0 ? TRAIL_SPOTS.at(i - 1) : undefined;
 				return {
 					team,
 					rank: i + 1,
@@ -52,7 +52,7 @@ export const useRankingMap = (o: { teams: readonly IRankedTeam[]; dataKey: strin
 	// Abre no cume e desliza até a sua equipe (repete ao trocar escopo/categoria)
 	useEffect(() => {
 		setSelected(myIndex);
-		const mine = placed[myIndex];
+		const mine = placed.at(myIndex);
 		if (mine) scroll.openAt(mine.y);
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- só ao abrir/trocar os dados
 	}, [o.dataKey, placed.length]);
@@ -60,7 +60,7 @@ export const useRankingMap = (o: { teams: readonly IRankedTeam[]; dataKey: strin
 	const select = useCallback(
 		(i: number) => {
 			setSelected(i);
-			const p = placed[i];
+			const p = placed.at(i);
 			if (p) scroll.centerOn(p.y);
 		},
 		[placed, scroll],
@@ -73,7 +73,7 @@ export const useRankingMap = (o: { teams: readonly IRankedTeam[]; dataKey: strin
 		moreY: world.toY(MORE_SPOT[1]),
 		moreX: world.toX(MORE_SPOT[0]),
 		myIndex,
-		selected: placed[selected] ? selected : myIndex,
+		selected: placed.at(selected) ? selected : myIndex,
 		select,
 		goTop: () => {
 			select(0);
