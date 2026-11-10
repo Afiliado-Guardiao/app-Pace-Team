@@ -1,13 +1,14 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { Button, GlassCard, Icon } from "@/components/pace";
+import { AvatarStack, Button, GlassCard, Icon } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 
 import { SETUP_COPY as C } from "../../constants";
 
 interface IStepProProps {
 	teamName: string;
+	people: readonly { name: string; src?: string }[];
 	onPro: () => void;
 	onSkip: () => void;
 }
@@ -54,7 +55,14 @@ const createStepProStyles = (theme: ITheme) => {
 			fontSize: typography.sizes.sm,
 			color: colors.textSecondary,
 		},
+		priceLine: {
+			flexDirection: "row" as const,
+			alignItems: "center" as const,
+			justifyContent: "space-between" as const,
+		},
 		priceRow: { flexDirection: "row" as const, alignItems: "baseline" as const, gap: 4 },
+		factRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: 4 },
+		accent: colors.orange[400],
 		value: { fontFamily: typography.fonts.extrabold, fontSize: 30, color: colors.textPrimary },
 		per: {
 			fontFamily: typography.fonts.semibold,
@@ -74,7 +82,9 @@ const createStepProStyles = (theme: ITheme) => {
 			borderRadius: DOT / 2,
 			alignItems: "center" as const,
 			justifyContent: "center" as const,
-			backgroundColor: colors.accent,
+			backgroundColor: colors.glass2,
+			borderWidth: 1,
+			borderColor: colors.glassBorder,
 		},
 		bBody: { flex: 1 },
 		bTitle: {
@@ -107,7 +117,7 @@ const createStepProStyles = (theme: ITheme) => {
 
 // 07 · Team Pro para o capitão (pulado se a equipe já é PRO). A compra em si
 // acontece na tela PACE TEAM PRO, com os preços da Apple.
-export const StepPro: React.FC<IStepProProps> = ({ teamName, onPro, onSkip }) => {
+export const StepPro: React.FC<IStepProProps> = ({ teamName, people, onPro, onSkip }) => {
 	const { theme } = useTheme();
 	const styles = createStepProStyles(theme);
 
@@ -124,22 +134,31 @@ export const StepPro: React.FC<IStepProProps> = ({ teamName, onPro, onSkip }) =>
 			<GlassCard>
 				<View style={styles.price}>
 					<Text style={styles.team}>{teamName}</Text>
-					<View style={styles.priceRow}>
-						<Text style={styles.value} numberOfLines={1}>
-							{C.proPrice}
-						</Text>
-						<Text style={styles.per}>{C.proPer}</Text>
+					<View style={styles.priceLine}>
+						<View style={styles.priceRow}>
+							<Text style={styles.value} numberOfLines={1}>
+								{C.proPrice}
+							</Text>
+							<Text style={styles.per}>{C.proPer}</Text>
+						</View>
+						<AvatarStack people={people} max={3} size={30} extra={6} />
 					</View>
 					<View style={styles.facts}>
-						<Text style={styles.fact}>{C.proUpTo}</Text>
-						<Text style={styles.fact}>{C.proOne}</Text>
+						<View style={styles.factRow}>
+							<Icon name="users" size={14} color={styles.accent} />
+							<Text style={styles.fact}>{C.proUpTo}</Text>
+						</View>
+						<View style={styles.factRow}>
+							<Icon name="circle-check" size={14} color={styles.accent} />
+							<Text style={styles.fact}>{C.proOne}</Text>
+						</View>
 					</View>
 				</View>
 			</GlassCard>
 			{C.proBenefits.map((b) => (
 				<View key={b.title} style={styles.benefit}>
 					<View style={styles.dot}>
-						<Icon name={b.icon} size={18} color={styles.white} />
+						<Icon name={b.icon} size={18} />
 					</View>
 					<View style={styles.bBody}>
 						<Text style={styles.bTitle}>{b.title}</Text>

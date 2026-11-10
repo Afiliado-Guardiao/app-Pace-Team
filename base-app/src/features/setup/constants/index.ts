@@ -82,6 +82,15 @@ export const GOALS: readonly {
 	},
 ];
 
+// Texto do convite (o mesmo da tela Convidar)
+export const INVITE_SHARE = {
+	a: "Bora correr com a ",
+	b: " no PACE TEAM? No app, vá em Equipe > Entrar em uma equipe e use o código ",
+	link: "paceteam://invite/",
+	copied: "Copiado!",
+	sent: "Convite enviado",
+} as const;
+
 export const SETUP_COPY = {
 	back: "Voltar",
 	next: "Continuar",
@@ -127,9 +136,9 @@ export const SETUP_COPY = {
 	teamTitle: "Sua equipe começa com você.",
 	teamSub: "Convide seus amigos, monte seu time e suba no ranking juntos.",
 	teamCreate: "Criar minha equipe",
-	teamCreateSub: "Você vira o capitão",
+	teamCreateSub: "Você vira capitão e convida seus amigos.",
 	teamJoin: "Entrar em uma equipe",
-	teamJoinSub: "Com o código do convite",
+	teamJoinSub: "Com código, busca ou convite recebido.",
 	teamSolo: "Quero correr sozinho por enquanto",
 	teamCode: "Código da equipe",
 	teamCodeCta: "Entrar com ",
@@ -139,7 +148,16 @@ export const SETUP_COPY = {
 	// 06
 	invitesTitle: "Convide seus amigos para correr com você.",
 	invitesCaptain: "Capitão: ",
-	invitesOpen: "Convidar amigos",
+	invitesCopyLink: "Copiar link",
+	invitesWhats: "WhatsApp",
+	invitesSearch: "Buscar por nome ou @usuário",
+	invitesInvite: "Convidar",
+	invitesMembers: "Integrantes",
+	invitesSlots: " vagas",
+	invitesSlot: "Vaga disponível",
+	invitesStateCaptain: "Capitão",
+	invitesStateIn: "Entrou",
+	invitesStatePending: "Convite pendente",
 	invitesNote: "Com o Team Pro, até 10 integrantes. Não precisa preencher todas as vagas.",
 	invitesCta: "Concluir equipe",
 	invitesLater: "Convidar depois",

@@ -15,6 +15,7 @@ import { useWorn } from "../../hooks/useWorn";
 
 interface IMedalOverlayProps {
 	open: boolean;
+	teamName: string;
 	onDone: () => void;
 }
 
@@ -22,6 +23,9 @@ const MEDAL_H = 168;
 const MEDAL_W = MEDAL_H * (692 / 913);
 const BUDDY = 84 / BUDDY_W;
 const BAR_H = 10;
+// Raios dourados girando atrás da medalha (12 faixas)
+const RAYS = [0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165] as const;
+const RAY_H = 260;
 const JUMP: IBuddyPose = { act: "celebrate", phase: null, blink: false, gx: 0, gy: 0 };
 
 const createMedalOverlayStyles = (theme: ITheme) => {
@@ -34,20 +38,31 @@ const createMedalOverlayStyles = (theme: ITheme) => {
 			padding: spacing[5],
 		},
 		card: { alignItems: "center" as const, gap: spacing[3] },
+		stage: {
+			width: 240,
+			height: MEDAL_H + 10,
+			alignItems: "center" as const,
+			justifyContent: "center" as const,
+		},
 		rays: {
 			position: "absolute" as const,
-			top: 0,
-			width: 230,
-			height: 230,
-			borderRadius: 115,
-			backgroundColor: "rgba(255,201,77,.16)",
-			boxShadow: "0 0 60px 10px rgba(255,201,77,.35)",
+			width: RAY_H,
+			height: RAY_H,
+			alignItems: "center" as const,
+			justifyContent: "center" as const,
+		},
+		ray: {
+			position: "absolute" as const,
+			width: 10,
+			height: RAY_H,
+			borderRadius: 5,
+			backgroundColor: "rgba(255,201,77,.14)",
 		},
 		medal: { width: MEDAL_W, height: MEDAL_H },
 		buddy: {
 			position: "absolute" as const,
-			right: 0,
-			top: MEDAL_H - 60,
+			right: 18,
+			bottom: -6,
 			width: BUDDY_W * BUDDY,
 			height: BUDDY_H * BUDDY,
 		},
@@ -70,6 +85,12 @@ const createMedalOverlayStyles = (theme: ITheme) => {
 			textAlign: "center" as const,
 		},
 		level: { alignSelf: "stretch" as const, gap: 6 },
+		levelRow: { flexDirection: "row" as const, justifyContent: "space-between" as const },
+		levelUp: {
+			fontFamily: typography.fonts.bold,
+			fontSize: typography.sizes.xs,
+			color: colors.semantic.gold,
+		},
 		levelText: {
 			fontFamily: typography.fonts.bold,
 			fontSize: typography.sizes.xs,
@@ -87,7 +108,7 @@ const createMedalOverlayStyles = (theme: ITheme) => {
 
 // 06 · overlay da primeira medalha: confete, raios dourados, a medalha com
 // mola e a barra de nível da equipe subindo de 35% para 100%
-export const MedalOverlay: React.FC<IMedalOverlayProps> = ({ open, onDone }) => {
+export const MedalOverlay: React.FC<IMedalOverlayProps> = ({ open, teamName, onDone }) => {
 	const { theme } = useTheme();
 	const worn = useWorn();
 	const styles = createMedalOverlayStyles(theme);
@@ -99,20 +120,32 @@ export const MedalOverlay: React.FC<IMedalOverlayProps> = ({ open, onDone }) => 
 				<Confetti height={800} />
 				<GlassCard>
 					<View style={styles.card}>
-						<View style={styles.rays} />
-						<Animated.View style={anim.medal}>
-							<Image source={medal} style={styles.medal} resizeMode="contain" />
-						</Animated.View>
-						<View style={styles.buddy} pointerEvents="none">
-							<View style={styles.buddyInner}>
-								<BuddyFigure pose={JUMP} color="branco" accessories={worn} />
+						<View style={styles.stage}>
+							<Animated.View style={[styles.rays, anim.spin]} pointerEvents="none">
+								{RAYS.map((r) => (
+									<View
+										key={r}
+										style={[styles.ray, { transform: [{ rotate: `${String(r)}deg` }] }]}
+									/>
+								))}
+							</Animated.View>
+							<Animated.View style={anim.medal}>
+								<Image source={medal} style={styles.medal} resizeMode="contain" />
+							</Animated.View>
+							<View style={styles.buddy} pointerEvents="none">
+								<View style={styles.buddyInner}>
+									<BuddyFigure pose={JUMP} color="branco" accessories={worn} />
+								</View>
 							</View>
 						</View>
 						<Text style={styles.label}>{C.medalLabel}</Text>
 						<Text style={styles.title}>{C.medalTitle}</Text>
 						<Text style={styles.text}>{C.medalText}</Text>
 						<View style={styles.level}>
-							<Text style={styles.levelText}>{anim.levelText}</Text>
+							<View style={styles.levelRow}>
+								<Text style={styles.levelText}>{teamName}</Text>
+								<Text style={styles.levelUp}>{anim.levelText}</Text>
+							</View>
 							<View style={styles.track}>
 								<Animated.View style={[styles.fill, anim.bar]} />
 							</View>

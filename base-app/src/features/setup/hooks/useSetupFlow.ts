@@ -4,6 +4,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 
 import { useMyPro, useMyTeam } from "@/lib/data";
 import { useStore } from "@/store";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 import { ISetupStep, SETUP_KEYS, SETUP_STEPS } from "../constants";
@@ -49,7 +50,8 @@ export const useSetupFlow = (): IUseSetupFlowReturn => {
 	// Voltou da tela "Criar equipe" (ou "Convidar") já com equipe: segue
 	useFocusEffect(
 		useCallback(() => {
-			if (step === "team" && hasTeam) go("invites");
+			// (na prévia por link a equipe de exemplo já existe: fica na tela)
+			if (step === "team" && hasTeam && !IS_PREVIEW) go("invites");
 		}, [step, hasTeam, go]),
 	);
 

@@ -6,6 +6,7 @@ import {
 	useAnimatedStyle,
 	useSharedValue,
 	withDelay,
+	withRepeat,
 	withSpring,
 	withTiming,
 } from "react-native-reanimated";
@@ -20,6 +21,7 @@ const BAR_MS = 1100;
 export const useMedalOverlay = (open: boolean) => {
 	const pop = useSharedValue(0);
 	const bar = useSharedValue(START);
+	const spin = useSharedValue(0);
 	const [isUp, setIsUp] = useState(false);
 
 	useEffect(() => {
@@ -29,6 +31,8 @@ export const useMedalOverlay = (open: boolean) => {
 		setIsUp(false);
 		pop.value = withSpring(1, { damping: 9, stiffness: 160 });
 		bar.value = withDelay(500, withTiming(1, { duration: BAR_MS }));
+		spin.value = 0;
+		spin.value = withRepeat(withTiming(1, { duration: 12000 }), -1);
 		void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
 		const timer = setTimeout(() => {
 			setIsUp(true);
@@ -36,7 +40,7 @@ export const useMedalOverlay = (open: boolean) => {
 		return () => {
 			clearTimeout(timer);
 		};
-	}, [open, pop, bar]);
+	}, [open, pop, bar, spin]);
 
 	return {
 		levelText: isUp ? SETUP_COPY.medalLevelB : SETUP_COPY.medalLevelA,
@@ -47,6 +51,7 @@ export const useMedalOverlay = (open: boolean) => {
 				{ rotate: `${String((1 - pop.value) * -18)}deg` },
 			],
 		})),
+		spin: useAnimatedStyle(() => ({ transform: [{ rotate: `${String(spin.value * 360)}deg` }] })),
 		bar: useAnimatedStyle(() => ({
 			width: `${String(Math.round(bar.value * 100))}%` as `${number}%`,
 		})),

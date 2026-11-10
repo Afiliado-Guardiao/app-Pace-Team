@@ -6,6 +6,7 @@ import { ITheme, useTheme } from "@/theme";
 
 import { SETUP_COPY as C } from "../../constants";
 import { useStepTeam } from "../../hooks/useStepTeam";
+import { BuddyCrew } from "../BuddyCrew";
 
 interface IStepTeamProps {
 	team: ReturnType<typeof useStepTeam>;
@@ -83,6 +84,7 @@ export const StepTeam: React.FC<IStepTeamProps> = ({ team, onSolo }) => {
 				<Text style={styles.title}>{C.teamTitle}</Text>
 				<Text style={styles.sub}>{C.teamSub}</Text>
 			</View>
+			<BuddyCrew />
 			{team.invites.map((inv) => (
 				<GlassCard key={inv.id}>
 					<View style={styles.invite}>

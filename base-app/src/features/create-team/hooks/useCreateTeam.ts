@@ -68,7 +68,7 @@ export const useCreateTeam = () => {
 	};
 	const logo = useLogoPicker(() => {
 		warn(CREATE_TEAM_COPY.logoDenied);
-	});
+	}, params.edit !== "1");
 	const logoUri = logo.uri;
 	const fail = (error: unknown): void => {
 		showToast({ tone: "danger", title: CREATE_TEAM_COPY.title, message: teamErrorMessage(error) });
@@ -141,7 +141,6 @@ export const useCreateTeam = () => {
 		isSubmitting: create.isPending || update.isPending,
 		logoUri: logoUri ?? (isEdit ? (team?.logoUrl ?? null) : null),
 		logo,
-		pickLogo: logo.open,
 		submit,
 		goBack: () => {
 			if (router.canGoBack()) router.back();

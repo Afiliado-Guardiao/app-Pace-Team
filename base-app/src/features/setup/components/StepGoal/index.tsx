@@ -30,7 +30,8 @@ const createStepGoalStyles = (theme: ITheme) => {
 			color: colors.textPrimary,
 			textAlign: "center" as const,
 		},
-		stage: { alignItems: "center" as const, gap: spacing[2] },
+		stage: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing[3] },
+		bubble: { flex: 1, alignItems: "flex-start" as const },
 		buddy: { width: BUDDY_W * SCALE, height: BUDDY_H * SCALE },
 		buddyInner: {
 			position: "absolute" as const,
@@ -55,7 +56,24 @@ const createStepGoalStyles = (theme: ITheme) => {
 			backgroundColor: colors.accentSoft,
 		},
 		dotOn: { backgroundColor: colors.accent },
-		check: { position: "absolute" as const, top: 0, right: 0 },
+		check: {
+			position: "absolute" as const,
+			top: 0,
+			right: 0,
+			width: 22,
+			height: 22,
+			borderRadius: 11,
+			borderWidth: 1.5,
+			borderColor: colors.glassBorderStrong,
+			alignItems: "center" as const,
+			justifyContent: "center" as const,
+		},
+		checkOn: { backgroundColor: colors.onAccent, borderColor: colors.onAccent },
+		ring: {
+			borderRadius: 24,
+			boxShadow: "0 0 0 1.5px rgba(255,160,110,.85), 0 0 0 6px rgba(253,90,12,.22)",
+		},
+		ink: colors.textOnLight,
 		cardTitle: { fontFamily: typography.fonts.extrabold, fontSize: 15, color: colors.textPrimary },
 		cardSub: {
 			fontFamily: typography.fonts.medium,
@@ -78,11 +96,13 @@ export const StepGoal: React.FC<IStepGoalProps> = ({ goal, onPick, onDone }) => 
 		<View style={styles.root}>
 			<Text style={styles.title}>{C.goalTitle}</Text>
 			<View style={styles.stage}>
-				<BuddyBubble text={picked?.bubble ?? C.goalBubble} />
 				<View style={styles.buddy} pointerEvents="none" key={goal ?? "none"}>
 					<View style={styles.buddyInner}>
 						<BuddyFigure pose={picked ? JUMP : IDLE} color="branco" accessories={worn} />
 					</View>
+				</View>
+				<View style={styles.bubble}>
+					<BuddyBubble text={picked?.bubble ?? C.goalBubble} tail="left" />
 				</View>
 			</View>
 			<View style={styles.grid}>
@@ -91,7 +111,7 @@ export const StepGoal: React.FC<IStepGoalProps> = ({ goal, onPick, onDone }) => 
 					return (
 						<Pressable
 							key={g.id}
-							style={[styles.cell, isOn ? styles.cellOn : null]}
+							style={[styles.cell, isOn ? styles.cellOn : null, isOn ? styles.ring : null]}
 							onPress={() => {
 								onPick(g.id);
 							}}
@@ -104,11 +124,9 @@ export const StepGoal: React.FC<IStepGoalProps> = ({ goal, onPick, onDone }) => 
 									<View style={[styles.dot, isOn ? styles.dotOn : null]}>
 										<Icon name={g.icon} size={20} color={isOn ? styles.white : styles.accent} />
 									</View>
-									{isOn ? (
-										<View style={styles.check}>
-											<Icon name="circle-check" size={20} color={styles.white} />
-										</View>
-									) : null}
+									<View style={[styles.check, isOn ? styles.checkOn : null]}>
+										{isOn ? <Icon name="check" size={14} color={styles.ink} /> : null}
+									</View>
 									<Text style={styles.cardTitle}>{g.title}</Text>
 									<Text style={styles.cardSub}>{g.sub}</Text>
 								</View>

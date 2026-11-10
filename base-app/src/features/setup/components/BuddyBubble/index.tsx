@@ -16,7 +16,10 @@ const TAIL = 10;
 const createBuddyBubbleStyles = (theme: ITheme, tail: "bottom" | "left") => {
 	const { colors, typography } = theme.pace;
 	return {
-		root: { alignSelf: "center" as const, maxWidth: 260 },
+		root: {
+			alignSelf: tail === "left" ? ("flex-start" as const) : ("center" as const),
+			maxWidth: 260,
+		},
 		pill: {
 			paddingHorizontal: 14,
 			paddingVertical: 9,

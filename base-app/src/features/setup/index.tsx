@@ -40,10 +40,15 @@ export const SetupScreen: React.FC = () => {
 				{s.step === "goal" ? <StepGoal goal={s.goal} onPick={s.pickGoal} onDone={s.next} /> : null}
 				{s.step === "team" ? <StepTeam team={s.team} onSolo={s.solo} /> : null}
 				{s.step === "invites" ? (
-					<StepInvites team={s.myTeam} onInvite={s.openInvite} onFinish={s.finishTeam} />
+					<StepInvites team={s.myTeam} inv={s.inv} isPro={s.isPro} onFinish={s.finishTeam} />
 				) : null}
 				{s.step === "pro" ? (
-					<StepPro teamName={s.myTeam?.name ?? ""} onPro={s.openPro} onSkip={s.next} />
+					<StepPro
+						teamName={s.myTeam?.name ?? ""}
+						people={s.people}
+						onPro={s.openPro}
+						onSkip={s.next}
+					/>
 				) : null}
 				{s.step === "done" ? (
 					<StepDone
@@ -55,7 +60,7 @@ export const SetupScreen: React.FC = () => {
 					/>
 				) : null}
 			</ScreenScroll>
-			<MedalOverlay open={s.isMedalOpen} onDone={s.closeMedal} />
+			<MedalOverlay open={s.isMedalOpen} teamName={s.myTeam?.name ?? ""} onDone={s.closeMedal} />
 			<FloatingToast toast={s.toast} />
 		</View>
 	);

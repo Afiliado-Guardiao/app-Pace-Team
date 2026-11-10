@@ -1,11 +1,9 @@
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { View } from "react-native";
 
 import {
 	Button,
 	FloatingToast,
-	GlassSurface,
-	Icon,
 	Input,
 	Label,
 	ScreenBackground,
@@ -15,67 +13,17 @@ import {
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
-import { LogoSheet } from "./components/LogoSheet";
+import { EmblemPicker } from "./components/EmblemPicker";
 import { PlaceFields } from "./components/PlaceFields";
 import { SizeField } from "./components/SizeField";
 import { TeamPreviewCard } from "./components/TeamPreviewCard";
 import { CREATE_TEAM_COPY } from "./constants";
 import { useCreateTeam } from "./hooks/useCreateTeam";
 
-const LOGO = 84;
-
-const createCreateTeamStyles = (theme: ITheme) => {
-	const { blur, colors, typography } = theme.pace;
-	return {
-		root: { flex: 1 },
-		logoRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: 16 },
-		logo: {
-			width: LOGO,
-			height: LOGO,
-			alignItems: "center" as const,
-			justifyContent: "center" as const,
-			gap: 6,
-		},
-		logoImage: {
-			position: "absolute" as const,
-			top: 0,
-			left: 0,
-			width: LOGO,
-			height: LOGO,
-			borderRadius: 26,
-		},
-		logoAppearance: {
-			fill: { color: colors.glass1 },
-			blur: blur.intensity.glass,
-			border: null,
-			rim: true,
-		},
-		logoDash: {
-			position: "absolute" as const,
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0,
-			borderRadius: 26,
-			borderWidth: 1.5,
-			borderStyle: "dashed" as const,
-			borderColor: colors.glassBorderStrong,
-		},
-		logoText: {
-			fontFamily: typography.fonts.semibold,
-			fontSize: typography.sizes.micro,
-			color: colors.textSecondary,
-		},
-		logoHint: {
-			flex: 1,
-			fontFamily: typography.fonts.medium,
-			fontSize: typography.sizes.label,
-			lineHeight: typography.sizes.label * 1.45,
-			color: colors.textTertiary,
-		},
-		previewLabel: { marginTop: 6 },
-	};
-};
+const createCreateTeamStyles = (theme: ITheme) => ({
+	root: { flex: 1 },
+	previewLabel: { marginTop: theme.pace.spacing[1] },
+});
 
 // 10 Criar equipe: escudo, dados do time, categoria e prévia.
 export const CreateTeamScreen: React.FC = () => {
@@ -90,27 +38,7 @@ export const CreateTeamScreen: React.FC = () => {
 			<ScreenBackground photo={PHOTOS.citySkylineDusk} />
 			<ScreenScroll bottom={40}>
 				<TopBar title={title} onBack={form.goBack} />
-				<View style={styles.logoRow}>
-					<Pressable
-						onPress={form.pickLogo}
-						accessibilityRole="button"
-						accessibilityLabel={CREATE_TEAM_COPY.logo}
-						testID="create-team-logo"
-					>
-						<GlassSurface appearance={styles.logoAppearance} radius={26} style={styles.logo}>
-							{form.logoUri ? (
-								<Image source={{ uri: form.logoUri }} style={styles.logoImage} />
-							) : (
-								<>
-									<View style={styles.logoDash} pointerEvents="none" />
-									<Icon name="image-plus" size={24} color={theme.pace.colors.textSecondary} />
-									<Text style={styles.logoText}>{CREATE_TEAM_COPY.logo}</Text>
-								</>
-							)}
-						</GlassSurface>
-					</Pressable>
-					<Text style={styles.logoHint}>{CREATE_TEAM_COPY.logoHint}</Text>
-				</View>
+				<EmblemPicker logo={form.logo} uri={form.logoUri} />
 				<Input
 					label={CREATE_TEAM_COPY.name}
 					icon="flag"
@@ -146,7 +74,6 @@ export const CreateTeamScreen: React.FC = () => {
 					{submitLabel}
 				</Button>
 			</ScreenScroll>
-			<LogoSheet logo={form.logo} />
 			<FloatingToast toast={form.toast} />
 		</View>
 	);

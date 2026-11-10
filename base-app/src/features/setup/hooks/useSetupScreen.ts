@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { useFloatingToast } from "@/components/pace";
 import { useBuddyStore } from "@/lib/buddy/store";
-import { useMyTeam } from "@/lib/data";
+import { useMyPro, useMyTeam } from "@/lib/data";
 import { ME } from "@/lib/pace";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -21,6 +21,7 @@ import {
 } from "../constants";
 
 import { useSetupFlow } from "./useSetupFlow";
+import { useStepInvites } from "./useStepInvites";
 import { useStepTeam } from "./useStepTeam";
 
 const isGoal = (v: unknown): v is IGoalId => GOALS.some((g) => g.id === v);
@@ -31,6 +32,8 @@ export const useSetupScreen = () => {
 	const flow = useSetupFlow();
 	const { toast, showToast } = useFloatingToast();
 	const team = useStepTeam(showToast);
+	const inv = useStepInvites(showToast);
+	const { pro } = useMyPro();
 	const { team: myTeam } = useMyTeam();
 	const user = useStore((s) => s.user);
 	const savedGoal = useStore((s) => s.answers[SETUP_KEYS.goal]);
@@ -58,9 +61,12 @@ export const useSetupScreen = () => {
 		canBack: flow.step !== "acc" && flow.step !== "done",
 		toast,
 		team,
+		inv,
+		isPro: Boolean(pro?.teamPro),
 		myTeam,
 		goal,
 		chips,
+		people: (myTeam?.members ?? []).map((m) => ({ name: m.name, src: m.avatarUrl ?? undefined })),
 		name: user?.name ?? (IS_PREVIEW ? ME.name : ""),
 		handle: user?.handle ? `@${user.handle}` : IS_PREVIEW ? ME.handle : "",
 		isMedalOpen,
@@ -71,9 +77,6 @@ export const useSetupScreen = () => {
 		},
 		solo: () => {
 			flow.go("done");
-		},
-		openInvite: () => {
-			router.push(ROUTES.INVITE);
 		},
 		finishTeam: () => {
 			setIsMedalOpen(true);

@@ -84,7 +84,7 @@
 			[
 				"expo-camera",
 				{
-					"cameraPermission": "O PACE TEAM usa a câmera para você fotografar suas corridas e postar no feed da equipe.",
+					"cameraPermission": "Usamos a câmera para você tirar a foto da sua equipe e das suas corridas.",
 					"microphonePermission": false,
 					"recordAudioAndroid": false
 				}

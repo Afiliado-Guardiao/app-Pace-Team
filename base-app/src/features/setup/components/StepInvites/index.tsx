@@ -1,28 +1,37 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { Avatar, Badge, Button, GlassCard } from "@/components/pace";
+import { Avatar, Button, GlassCard, Icon } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { ITeamView } from "@/lib/data";
 
 import { SETUP_COPY as C } from "../../constants";
+import { useStepInvites } from "../../hooks/useStepInvites";
+import { InviteTools } from "../InviteTools";
 
 interface IStepInvitesProps {
 	team: ITeamView | null;
-	onInvite: () => void;
+	inv: ReturnType<typeof useStepInvites>;
+	isPro: boolean;
 	onFinish: () => void;
 }
 
+const MAX_EMPTY = 3;
+
 const createStepInvitesStyles = (theme: ITheme) => {
-	const { colors, spacing, typography } = theme.pace;
+	const { colors, spacing, typography, radii } = theme.pace;
+	const row = {
+		flexDirection: "row" as const,
+		alignItems: "center" as const,
+		gap: spacing[3],
+		paddingVertical: spacing[2],
+		paddingHorizontal: spacing[3],
+		borderRadius: radii.lg,
+		backgroundColor: colors.glass1,
+	};
 	return {
 		root: { gap: spacing[4] },
-		title: {
-			fontFamily: typography.fonts.extrabold,
-			fontSize: 26,
-			color: colors.textPrimary,
-			textAlign: "center" as const,
-		},
+		title: { fontFamily: typography.fonts.extrabold, fontSize: 26, color: colors.textPrimary },
 		card: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing[3] },
 		body: { flex: 1, gap: 2 },
 		name: {
@@ -35,34 +44,63 @@ const createStepInvitesStyles = (theme: ITheme) => {
 			fontSize: typography.sizes.xs,
 			color: colors.textSecondary,
 		},
-		count: {
+		count: { alignItems: "flex-end" as const },
+		countText: {
 			fontFamily: typography.fonts.extrabold,
 			fontSize: typography.sizes.lg,
 			color: colors.textPrimary,
 		},
-		members: { gap: spacing[2] },
-		member: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing[2] },
-		memberName: {
+		pro: {
+			fontFamily: typography.fonts.extrabold,
+			fontSize: 9,
+			letterSpacing: 1,
+			color: colors.orange[400],
+		},
+		head: { flexDirection: "row" as const, justifyContent: "space-between" as const },
+		label: {
+			fontFamily: typography.fonts.bold,
+			fontSize: typography.sizes.sm,
+			color: colors.textPrimary,
+		},
+		list: { gap: spacing[2] },
+		row,
+		empty: {
+			...row,
+			backgroundColor: "transparent",
+			borderWidth: 1,
+			borderStyle: "dashed" as const,
+			borderColor: colors.glassBorder,
+		},
+		rowName: {
 			flex: 1,
 			fontFamily: typography.fonts.bold,
 			fontSize: typography.sizes.sm,
 			color: colors.textPrimary,
 		},
-		note: {
-			fontFamily: typography.fonts.medium,
-			fontSize: typography.sizes.xs,
+		state: { flexDirection: "row" as const, alignItems: "center" as const, gap: 4 },
+		stateText: { fontFamily: typography.fonts.bold, fontSize: typography.sizes.xs },
+		muted: {
+			fontFamily: typography.fonts.semibold,
+			fontSize: typography.sizes.sm,
 			color: colors.textTertiary,
-			textAlign: "center" as const,
 		},
+		link: {
+			fontFamily: typography.fonts.semibold,
+			fontSize: typography.sizes.ui,
+			color: colors.textSecondary,
+			textAlign: "center" as const,
+			textDecorationLine: "underline" as const,
+		},
+		tones: { captain: colors.orange[400], in: colors.statusSuccess, pending: colors.semantic.gold },
 	};
 };
 
-// 06 · "Convide seus amigos": a equipe, quem já entrou e o atalho de convite
-export const StepInvites: React.FC<IStepInvitesProps> = ({ team, onInvite, onFinish }) => {
+// 06 · "Convide seus amigos": a equipe, atalhos, busca e quem já entrou
+export const StepInvites: React.FC<IStepInvitesProps> = ({ team, inv, isPro, onFinish }) => {
 	const { theme } = useTheme();
 	const styles = createStepInvitesStyles(theme);
 	const captain = team?.members.find((m) => m.role === "Capitão")?.name ?? "";
-	const count = `${String(team?.members.length ?? 1)}/${String(team?.size ?? 10)}`;
+	const empty = Array.from({ length: Math.min(MAX_EMPTY, inv.left) }, (_, i) => i);
 
 	return (
 		<View style={styles.root}>
@@ -74,33 +112,56 @@ export const StepInvites: React.FC<IStepInvitesProps> = ({ team, onInvite, onFin
 						<Text style={styles.name}>{team?.name}</Text>
 						<Text style={styles.sub}>{`${C.invitesCaptain}${captain}`}</Text>
 					</View>
-					<Text style={styles.count}>{count}</Text>
+					<View style={styles.count}>
+						<Text
+							style={styles.countText}
+						>{`${String(team?.members.length ?? 1)}/${String(team?.size ?? 10)}`}</Text>
+						{isPro ? <Text style={styles.pro}>TEAM PRO</Text> : null}
+					</View>
 				</View>
 			</GlassCard>
-			<GlassCard>
-				<View style={styles.members}>
-					{(team?.members ?? []).map((m) => (
-						<View key={m.name} style={styles.member}>
-							<Avatar name={m.name} size={32} />
-							<Text style={styles.memberName}>{m.name}</Text>
-							<Badge tone={m.role === "Capitão" ? "accent" : "success"}>
-								{m.role === "Capitão" ? "Capitão" : "Entrou"}
-							</Badge>
+			<InviteTools inv={inv} />
+			<View style={styles.head}>
+				<Text style={styles.label}>{C.invitesMembers}</Text>
+				<Text style={styles.sub}>{`${String(inv.left)}${C.invitesSlots}`}</Text>
+			</View>
+			<View style={styles.list}>
+				{(team?.members ?? []).map((m) => {
+					const isCaptain = m.role === "Capitão";
+					const tone = isCaptain ? styles.tones.captain : styles.tones.in;
+					return (
+						<View key={m.name} style={styles.row}>
+							<Avatar name={m.name} src={m.avatarUrl ?? undefined} size={32} />
+							<Text style={styles.rowName}>{m.name}</Text>
+							<View style={styles.state}>
+								<Icon name={isCaptain ? "crown" : "circle-check"} size={14} color={tone} />
+								<Text style={[styles.stateText, { color: tone }]}>
+									{isCaptain ? C.invitesStateCaptain : C.invitesStateIn}
+								</Text>
+							</View>
 						</View>
-					))}
-				</View>
-			</GlassCard>
-			<Button
-				size="lg"
-				fullWidth
-				variant="glass"
-				icon="user-plus"
-				onPress={onInvite}
-				testID="setup-invites-open"
-			>
-				{C.invitesOpen}
-			</Button>
-			<Text style={styles.note}>{C.invitesNote}</Text>
+					);
+				})}
+				{inv.pending.map((p) => (
+					<View key={p.id} style={styles.row}>
+						<Avatar name={p.name} size={32} />
+						<Text style={styles.rowName}>{p.name}</Text>
+						<View style={styles.state}>
+							<Icon name="clock" size={14} color={styles.tones.pending} />
+							<Text style={[styles.stateText, { color: styles.tones.pending }]}>
+								{C.invitesStatePending}
+							</Text>
+						</View>
+					</View>
+				))}
+				{empty.map((n) => (
+					<View key={n} style={styles.empty}>
+						<Icon name="plus" size={16} />
+						<Text style={styles.muted}>{C.invitesSlot}</Text>
+					</View>
+				))}
+			</View>
+			<Text style={styles.sub}>{C.invitesNote}</Text>
 			<Button
 				size="lg"
 				fullWidth
@@ -110,6 +171,14 @@ export const StepInvites: React.FC<IStepInvitesProps> = ({ team, onInvite, onFin
 			>
 				{C.invitesCta}
 			</Button>
+			<Text
+				style={styles.link}
+				onPress={onFinish}
+				accessibilityRole="link"
+				testID="setup-invites-later"
+			>
+				{C.invitesLater}
+			</Text>
 		</View>
 	);
 };
