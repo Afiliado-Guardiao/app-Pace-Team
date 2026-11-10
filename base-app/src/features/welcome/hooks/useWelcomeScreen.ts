@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { signInWithAppleNative } from "@/lib/auth/appleSignIn";
 import { GOOGLE_SIGN_IN_ENABLED } from "@/lib/auth/providers";
+import { useStore } from "@/store";
 import { openLegalPage } from "@/constants/legal";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
@@ -27,6 +28,14 @@ interface IUseWelcomeScreenReturn {
 	handleOpenCatalog: () => void;
 }
 
+// Conta criada agora (Apple pela primeira vez): vai para o onboarding
+const NEW_ACCOUNT_MS = 10 * 60_000;
+const afterSignIn = () => {
+	const { user, answers } = useStore.getState();
+	const isNew = user ? Date.now() - new Date(user.createdAt).getTime() < NEW_ACCOUNT_MS : false;
+	return isNew && answers.setupDone !== "1" ? ROUTES.SETUP : ROUTES.HOME;
+};
+
 // Boas-vindas: Apple (nativo + Supabase), Google (em breve) e e-mail.
 export const useWelcomeScreen = (): IUseWelcomeScreenReturn => {
 	const router = useRouter();
@@ -43,7 +52,7 @@ export const useWelcomeScreen = (): IUseWelcomeScreenReturn => {
 		setBusy("apple");
 		signInWithAppleNative()
 			.then((result) => {
-				if (result === "ok") router.replace(ROUTES.HOME);
+				if (result === "ok") router.replace(afterSignIn());
 				if (result === "unavailable") showToast(WELCOME_TOASTS.appleUnavailable);
 			})
 			.catch(() => {

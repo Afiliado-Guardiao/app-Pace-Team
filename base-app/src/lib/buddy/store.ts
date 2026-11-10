@@ -31,6 +31,9 @@ interface IBuddyState {
 	alarm: IBuddyAlarm;
 	// O 1º da equipe escondeu a coroa
 	hideCrown: boolean;
+	// Acessório de presente do onboarding (já vem liberado)
+	gift: IBuddyAccessoryId | null;
+	giveGift: (id: IBuddyAccessoryId) => void;
 	setHideCrown: (hide: boolean) => void;
 	setKmIdx: (index: number) => void;
 	setGoals: (goals: number) => void;
@@ -71,6 +74,11 @@ export const useBuddyStore = create<IBuddyState>()(
 			kmIdx: BUDDY_DEFAULT_KM_INDEX,
 			alarm: DEFAULT_ALARM,
 			hideCrown: false,
+			gift: null,
+			giveGift: (id) => {
+				const slot = slotOf(id);
+				set({ gift: id, equipped: [...get().equipped.filter((x) => slotOf(x) !== slot), id] });
+			},
 			setHideCrown: (hide) => {
 				set({ hideCrown: hide });
 			},
@@ -121,6 +129,7 @@ export const useBuddyStore = create<IBuddyState>()(
 				kmIdx: s.kmIdx,
 				alarm: s.alarm,
 				hideCrown: s.hideCrown,
+				gift: s.gift,
 			}),
 		},
 	),

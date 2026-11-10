@@ -33,6 +33,7 @@ export default function AuthLayout() {
 			>
 				<Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
 				<Stack.Screen name="run-live" options={{ gestureEnabled: false, animation: "fade" }} />
+				<Stack.Screen name="setup" options={{ gestureEnabled: false, animation: "fade" }} />
 			</Stack>
 			<BuddyLivePanel />
 			<BuddyFlight />

@@ -19,6 +19,8 @@ export interface IBuddyContext {
 	rank: IBuddyRank;
 	// O líder escolheu esconder a coroa
 	hideCrown?: boolean;
+	// Primeiro acessório, ganho de presente no onboarding (liberado sem metas)
+	gift?: IBuddyAccessoryId | null;
 }
 
 const DAY_MS = 86_400_000;
@@ -41,7 +43,7 @@ export const effectiveColor = (
 const hasTeam = (ctx: IBuddyContext): boolean => ctx.teamName.trim().length > 0;
 
 export const isUnlocked = (acc: IBuddyAccessory, goals: number, ctx: IBuddyContext): boolean =>
-	acc.leader ? ctx.isLeader && hasTeam(ctx) : goals >= (acc.need ?? 0);
+	acc.leader ? ctx.isLeader && hasTeam(ctx) : acc.id === ctx.gift || goals >= (acc.need ?? 0);
 
 export const requirementText = (acc: IBuddyAccessory, goals: number): string =>
 	acc.leader

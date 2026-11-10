@@ -10,6 +10,7 @@ import { useBuddyStore } from "./store";
 export const useBuddyContext = (): IBuddyContext => {
 	const { team } = useMyTeam();
 	const hideCrown = useBuddyStore((s) => s.hideCrown);
+	const gift = useBuddyStore((s) => s.gift);
 	const teamName = team?.name ?? "";
 	// Os integrantes já vêm do mais pontuado para o menos
 	const top = team?.members.at(0);
@@ -17,7 +18,7 @@ export const useBuddyContext = (): IBuddyContext => {
 	const rank = rankOfPosition(team?.position);
 
 	return useMemo(
-		() => ({ teamName, isLeader, rank, hideCrown }),
-		[teamName, isLeader, rank, hideCrown],
+		() => ({ teamName, isLeader, rank, hideCrown, gift }),
+		[teamName, isLeader, rank, hideCrown, gift],
 	);
 };

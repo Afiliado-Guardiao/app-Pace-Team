@@ -72,7 +72,7 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 			.then(() => (photoUri ? uploadAvatar(photoUri).catch(() => undefined) : undefined))
 			.then(() => {
 				setHasTeam(false);
-				router.replace(ROUTES.TEAM);
+				router.replace(ROUTES.SETUP);
 			})
 			.catch((error: unknown) => {
 				showToast({ ...SIGNUP_TOASTS.error, message: authErrorMessage(error) });
