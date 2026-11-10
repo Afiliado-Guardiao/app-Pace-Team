@@ -26,8 +26,28 @@ export async function getSubscriptionStatus(): Promise<ISubscriptionStatus> {
 	return Promise.resolve(UNLOCKED);
 }
 
+// Prévia web: os planos do Team Pro como aparecem na App Store do Brasil
+const PREVIEW_PLANS: IPlan[] = [
+	{
+		id: "$rc_monthly",
+		period: "monthly",
+		price: "R$ 39,90",
+		priceValue: 39.9,
+		perMonth: "R$ 39,90",
+		trial: null,
+	},
+	{
+		id: "$rc_annual",
+		period: "annual",
+		price: "R$ 399,90",
+		priceValue: 399.9,
+		perMonth: "R$ 33,33",
+		trial: null,
+	},
+];
+
 export async function getPlans(): Promise<IPlan[]> {
-	return Promise.resolve([]);
+	return Promise.resolve(PREVIEW_PLANS);
 }
 
 export async function purchasePlan(_planId: string): Promise<IPurchaseResult> {

@@ -8,6 +8,9 @@ import { IProFeatureInfo, IProFeatureKey, PRO_FEATURES } from "../constants";
 interface IUseProFeatureScreenReturn {
 	feature: IProFeatureInfo;
 	isPro: boolean;
+	// Já dá para abrir o recurso (liberado e pronto no app)
+	canOpen: boolean;
+	open: () => void;
 	goBack: () => void;
 	openPro: () => void;
 }
@@ -25,6 +28,10 @@ export const useProFeatureScreen = (): IUseProFeatureScreenReturn => {
 	return {
 		feature: PRO_FEATURES[key],
 		isPro,
+		canOpen: isPro && key === "analytics",
+		open: () => {
+			router.push(ROUTES.PRO_ANALYTICS);
+		},
 		goBack: () => {
 			if (router.canGoBack()) router.back();
 			else router.replace(ROUTES.HOME);

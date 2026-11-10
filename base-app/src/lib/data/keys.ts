@@ -3,6 +3,7 @@ export const DATA_KEYS = {
 	myTeam: ["pace", "my-team"] as const,
 	// Fica sob "my-team": entrar/sair/editar equipe também atualiza o Pro
 	myPro: ["pace", "my-team", "pro"] as const,
+	teamAnalytics: ["pace", "team-live", "analytics"] as const,
 	team: (id: string) => ["pace", "team", id] as const,
 	ranking: (size: number, scope: string) => ["pace", "ranking", size, scope] as const,
 	rankingAll: ["pace", "ranking"] as const,

@@ -58,4 +58,5 @@ export const PRO_FEATURE_COPY = {
 	unlocked: "LIBERADO PARA A SUA EQUIPE",
 	soon: "Este recurso chega numa próxima atualização do app. O Pro da sua equipe já está garantido.",
 	seePlan: "Ver o meu Team Pro",
+	openNow: "Abrir agora",
 } as const;

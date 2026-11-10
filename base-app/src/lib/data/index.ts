@@ -36,6 +36,7 @@ export { useTeam } from "./useTeam";
 export type { ITeamAchievementView } from "./useTeamAchievements";
 export { useTeamAchievements } from "./useTeamAchievements";
 export { teamErrorMessage, useTeamActions } from "./useTeamActions";
+export { useTeamAnalytics } from "./useTeamAnalytics";
 export type { ILiveMate } from "./useTeamLive";
 export { useTeamLive } from "./useTeamLive";
 export type { ITeamOnlineView } from "./useTeamOnline";

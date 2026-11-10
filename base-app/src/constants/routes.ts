@@ -32,6 +32,7 @@ export const ROUTES = {
 	// PACE TEAM PRO: o plano e a apresentação de cada recurso
 	PRO: "/(auth)/pro",
 	PRO_FEATURE: "/(auth)/pro-feature",
+	PRO_ANALYTICS: "/(auth)/pro-analytics",
 } as const;
 
 export type IRoute = (typeof ROUTES)[keyof typeof ROUTES];

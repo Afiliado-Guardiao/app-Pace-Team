@@ -86,7 +86,18 @@ export const ProFeatureScreen: React.FC = () => {
 					</View>
 				</GlassCard>
 				<Text style={styles.why}>{feature.why}</Text>
-				{isPro ? <Text style={styles.why}>{PRO_FEATURE_COPY.soon}</Text> : null}
+				{isPro && !screen.canOpen ? <Text style={styles.why}>{PRO_FEATURE_COPY.soon}</Text> : null}
+				{screen.canOpen ? (
+					<Button
+						size="lg"
+						fullWidth
+						icon="chart-column"
+						onPress={screen.open}
+						testID="pro-feature-open"
+					>
+						{PRO_FEATURE_COPY.openNow}
+					</Button>
+				) : null}
 				<Button
 					size="lg"
 					fullWidth

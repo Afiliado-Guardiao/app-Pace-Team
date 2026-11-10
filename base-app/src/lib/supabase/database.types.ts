@@ -2,6 +2,7 @@
 // Para um projeto real, regenere com: `supabase gen types typescript`.
 // Mantido enxuto: apenas o que o app consome (profiles, onboardings, RPCs).
 
+import { ITeamAnalytics } from "./analytics.types";
 import {
 	IAthleteResult,
 	IFeedRow,
@@ -248,6 +249,7 @@ export interface Database {
 			get_feed: { Args: { p_limit?: number }; Returns: IFeedRow[] };
 			get_virada: { Args: Record<string, never>; Returns: IVirada | null };
 			get_my_pro: { Args: Record<string, never>; Returns: IMyPro };
+			get_team_analytics: { Args: Record<string, never>; Returns: ITeamAnalytics | null };
 			link_my_pro_to_team: { Args: Record<string, never>; Returns: undefined };
 			transfer_captain: { Args: { p_user_id: string }; Returns: undefined };
 			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };

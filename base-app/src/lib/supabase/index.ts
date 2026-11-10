@@ -1,3 +1,5 @@
+export * from "./analytics";
+export * from "./analytics.types";
 export * from "./auth";
 export * from "./buddy";
 export { supabase } from "./client";
