@@ -1,17 +1,20 @@
 import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
+import { BUDDY_H, BUDDY_W } from "@/components/buddy";
 import { ITheme } from "@/theme";
 
-import { SPLASH_BUDDY } from "./hooks/useSplashTimeline";
+import { SPLASH_BUDDY_SCALE } from "./hooks/useSplashTimeline";
 
 export const SPLASH_COPY = {
 	tag: "CORRA COM A SUA EQUIPE",
-	bubble: "Bora lá?",
 	skip: "Pular abertura",
 } as const;
 
 // Logo de 280 × 77 (símbolo à esquerda; PACE e TEAM à direita), a 45% da altura
 const LOGO = { w: 280, h: 77 } as const;
+// Centro do símbolo (127 de largura) e altura dos pés do Bud na caixa dele
+const SYMBOL_CX = 63;
+const BUDDY_FEET = 104;
 
 export const createBootSplashStyles = (theme: ITheme) => {
 	const { colors, typography } = theme.pace;
@@ -79,32 +82,24 @@ export const createBootSplashStyles = (theme: ITheme) => {
 			letterSpacing: 3.8,
 			color: colors.textSecondary,
 		} as TextStyle,
-		bubble: {
-			position: "absolute",
-			right: 104,
-			bottom: 150,
-			paddingHorizontal: 14,
-			paddingVertical: 8,
-			borderTopLeftRadius: 16,
-			borderTopRightRadius: 16,
-			borderBottomLeftRadius: 16,
-			borderBottomRightRadius: 4,
-			backgroundColor: colors.ink.white,
-			transformOrigin: "right bottom",
-			boxShadow: "0 8px 20px rgba(0,0,0,.35)",
-		} as ViewStyle,
-		bubbleText: {
-			fontFamily: typography.fonts.extrabold,
-			fontSize: 15,
-			color: colors.navy[900],
-		} as TextStyle,
+		// Caixa do Bud (140 × 135 × 82%) com o corpo centrado no símbolo do logo
 		buddy: {
 			position: "absolute",
-			right: 0,
-			bottom: SPLASH_BUDDY.bottom,
-			width: SPLASH_BUDDY.width,
-			height: SPLASH_BUDDY.height,
+			left: "50%",
+			top: "45%",
+			width: BUDDY_W * SPLASH_BUDDY_SCALE,
+			height: BUDDY_H * SPLASH_BUDDY_SCALE,
+			marginLeft: -LOGO.w / 2 + SYMBOL_CX - (BUDDY_W * SPLASH_BUDDY_SCALE) / 2,
+			marginTop: -LOGO.h / 2 + LOGO.h - BUDDY_FEET * SPLASH_BUDDY_SCALE,
 		} as ViewStyle,
-		buddyImage: { width: "100%", height: "100%" } as ImageStyle,
+		buddyFigure: {
+			position: "absolute",
+			left: 0,
+			top: 0,
+			width: BUDDY_W,
+			height: BUDDY_H,
+			transform: [{ scale: SPLASH_BUDDY_SCALE }],
+			transformOrigin: "0% 0%",
+		} as ViewStyle,
 	};
 };

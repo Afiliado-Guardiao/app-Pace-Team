@@ -12,6 +12,7 @@ import {
 	ITeamDetails,
 	ITeamRankingEntry,
 } from "./pace.types";
+import { IMyPro } from "./pro.types";
 import { IMyChallenges, INotificationRow, ITeamAchievements } from "./progress.types";
 import { ITeamLastRuns, ITeamOnlineMate, IVirada } from "./teamLive.types";
 
@@ -246,6 +247,9 @@ export interface Database {
 			buddy_register_device: { Args: { p_token: string; p_platform?: string }; Returns: undefined };
 			get_feed: { Args: { p_limit?: number }; Returns: IFeedRow[] };
 			get_virada: { Args: Record<string, never>; Returns: IVirada | null };
+			get_my_pro: { Args: Record<string, never>; Returns: IMyPro };
+			link_my_pro_to_team: { Args: Record<string, never>; Returns: undefined };
+			transfer_captain: { Args: { p_user_id: string }; Returns: undefined };
 			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };
 			get_team_online: { Args: Record<string, never>; Returns: ITeamOnlineMate[] };
 			get_team_runs: { Args: { p_limit?: number }; Returns: unknown };

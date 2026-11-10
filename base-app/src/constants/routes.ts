@@ -29,7 +29,9 @@ export const ROUTES = {
 	HISTORY: "/(auth)/history",
 	CHALLENGES: "/(auth)/challenges",
 	BUDDY: "/(auth)/buddy",
-	PAYWALL: "/(auth)/paywall",
+	// PACE TEAM PRO: o plano e a apresentação de cada recurso
+	PRO: "/(auth)/pro",
+	PRO_FEATURE: "/(auth)/pro-feature",
 } as const;
 
 export type IRoute = (typeof ROUTES)[keyof typeof ROUTES];

@@ -19,6 +19,7 @@ export { useFeed } from "./useFeed";
 export { useLastRunCrew } from "./useLastRunCrew";
 export { useMyChallenges } from "./useMyChallenges";
 export { useMyInvites } from "./useMyInvites";
+export { useMyPro } from "./useMyPro";
 export { useMyRuns } from "./useMyRuns";
 export { DEMO_STATS, useMyStats } from "./useMyStats";
 export { useMyTeam } from "./useMyTeam";

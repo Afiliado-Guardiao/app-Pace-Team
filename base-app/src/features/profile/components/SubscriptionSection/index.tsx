@@ -25,35 +25,44 @@ const createSubscriptionSectionStyles = (theme: ITheme) => ({
 	},
 });
 
-// Assinatura dentro de Configurações: status, gerenciar/cancelar e restaurar.
+// PACE TEAM PRO dentro de Configurações: status da equipe, ver o plano,
+// gerenciar/cancelar (quem paga) e restaurar compras.
 export const SubscriptionSection: React.FC<ISubscriptionSectionProps> = ({ actions }) => {
 	const { theme } = useTheme();
 	const styles = createSubscriptionSectionStyles(theme);
 
-	if (!actions.isVisible) return null;
-
 	return (
 		<View style={styles.root}>
 			<Text style={styles.title}>{SUBSCRIPTION_COPY.title}</Text>
-			<Text style={styles.status}>{actions.statusText}</Text>
-			<Button
-				fullWidth
-				variant="glass"
-				icon="credit-card"
-				onPress={actions.manage}
-				testID="profile-manage-subscription"
-			>
-				{SUBSCRIPTION_COPY.manage}
+			<Text style={styles.status}>{actions.proText}</Text>
+			<Button fullWidth icon="crown" onPress={actions.openPro} testID="profile-open-pro">
+				{SUBSCRIPTION_COPY.openPro}
 			</Button>
-			<Button
-				fullWidth
-				variant="ghost"
-				disabled={actions.isBusy}
-				onPress={actions.restore}
-				testID="profile-restore-purchases"
-			>
-				{SUBSCRIPTION_COPY.restore}
-			</Button>
+			{actions.hasOwnSub ? (
+				<>
+					<Text style={styles.status}>{actions.statusText}</Text>
+					<Button
+						fullWidth
+						variant="glass"
+						icon="credit-card"
+						onPress={actions.manage}
+						testID="profile-manage-subscription"
+					>
+						{SUBSCRIPTION_COPY.manage}
+					</Button>
+				</>
+			) : null}
+			{actions.canManage ? (
+				<Button
+					fullWidth
+					variant="ghost"
+					disabled={actions.isBusy}
+					onPress={actions.restore}
+					testID="profile-restore-purchases"
+				>
+					{SUBSCRIPTION_COPY.restore}
+				</Button>
+			) : null}
 		</View>
 	);
 };

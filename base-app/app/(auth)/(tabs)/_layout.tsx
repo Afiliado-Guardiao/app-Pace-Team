@@ -3,10 +3,12 @@ import { GestureResponderEvent, View, ViewStyle } from "react-native";
 import { Tabs } from "expo-router";
 
 import { PaceTabRail } from "@/components/core/PaceTabRail";
+import { ProFab } from "@/components/core/ProFab";
 import { RunReviewPopup } from "@/features/run-review";
 import { useBuddyLive } from "@/lib/buddy/liveStore";
 
-// As 5 abas do PACE TEAM. A barra é o trilho de vidro vertical à direita.
+// As 5 abas do PACE TEAM. A barra é o trilho de vidro vertical à direita e,
+// abaixo dela, sozinho, o botão laranja do Buddy (PACE TEAM PRO).
 // Por cima delas, o aviso da corrida feita com o Buddy (quando houver).
 // Anota onde o dedo toca (sem pegar o toque): o Buddy das telas olha para lá
 const watchTouch = (event: GestureResponderEvent): boolean => {
@@ -40,6 +42,7 @@ export default function TabsLayout() {
 				<Tabs.Screen name="team" />
 				<Tabs.Screen name="profile" />
 			</Tabs>
+			<ProFab />
 			<RunReviewPopup />
 		</View>
 	);

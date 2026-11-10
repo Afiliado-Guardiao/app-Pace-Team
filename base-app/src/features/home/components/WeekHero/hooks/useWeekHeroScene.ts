@@ -1,10 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppState } from "react-native";
 
 import { useFocusEffect } from "expo-router";
 
 import { SkPicture } from "@shopify/react-native-skia";
 import { SharedValue, useAnimatedStyle } from "react-native-reanimated";
+
+import { useSplashDone } from "@/components/core/BootSplash/splashState";
 
 import { IWeekHero } from "../../../hooks/useWeekHero";
 import { IWeekSummary } from "../../../hooks/useWeekSummary";
@@ -32,9 +34,14 @@ interface IUseWeekHeroSceneReturn {
 export const useWeekHeroScene = (hero: IWeekHero, week: IWeekSummary): IUseWeekHeroSceneReturn => {
 	const { width, frame } = hero.layout;
 	const { k, ks } = heroScale(width);
-	// Repete a varredura ao entrar no Início e sempre que o app volta para a
+	// Repete a varredura ao entrar no Início, quando a abertura sai da frente
+	// (ao abrir o app ela cobria o Início) e sempre que o app volta para a
 	// tela (desbloquear, voltar de outro app) com o Início aberto
 	const [replay, setReplay] = useState(0);
+	const isSplashDone = useSplashDone();
+	useEffect(() => {
+		if (isSplashDone) setReplay((n) => n + 1);
+	}, [isSplashDone]);
 	useFocusEffect(
 		useCallback(() => {
 			setReplay((n) => n + 1);

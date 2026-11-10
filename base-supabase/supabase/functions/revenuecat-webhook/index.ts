@@ -2,8 +2,9 @@
 // Edge Function: revenuecat-webhook
 // -----------------------------------------------------------------------------
 // Recebe os webhooks do RevenueCat e mantém a tabela `subscriptions` + a flag
-// `profiles.is_premium` em dia. No app a fonte da verdade é o SDK do
-// RevenueCat; aqui fica a cópia para o servidor (relatórios e regras futuras).
+// `profiles.is_premium` em dia. Team Pro: a compra fica ligada à equipe do
+// capitão que pagou (`subscriptions.team_id`); `get_my_pro()` libera até 10
+// integrantes dela. Por isso esta cópia é a fonte da verdade do Pro no app.
 //
 // Segurança: o RevenueCat envia no header Authorization o valor configurado em
 // RevenueCat › Integrations › Webhooks › Authorization header. Ele precisa ser
@@ -77,6 +78,21 @@ function isPremium(event: RevenueCatEvent, status: string): boolean {
 	return event.expiration_at_ms > Date.now();
 }
 
+type IAdmin = ReturnType<typeof createClient>;
+
+// Equipe que a compra libera: a que quem paga capitaneia agora. Sem equipe
+// (ou não é capitão), fica solta até ele chamar link_my_pro_to_team no app.
+async function captainTeam(supabase: IAdmin, userId: string | null): Promise<string | null> {
+	if (!userId) return null;
+	const { data } = await supabase
+		.from("team_members")
+		.select("team_id")
+		.eq("user_id", userId)
+		.eq("role", "captain")
+		.maybeSingle();
+	return (data?.team_id as string | undefined) ?? null;
+}
+
 Deno.serve(async (req: Request): Promise<Response> => {
 	if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
@@ -119,9 +135,19 @@ Deno.serve(async (req: Request): Promise<Response> => {
 		const eventTime = new Date(event.event_timestamp_ms).toISOString();
 		const original = event.original_transaction_id ?? event.transaction_id ?? event.id;
 
-		// 4. Assinatura (uma linha por compra original)
+		// 4. Team Pro: a compra libera a equipe do capitão que pagou. Renovações
+		// mantêm a equipe já ligada (a assinatura nunca pula de equipe sozinha).
+		const { data: current } = await supabase
+			.from("subscriptions")
+			.select("team_id")
+			.eq("original_transaction_id", original)
+			.maybeSingle();
+		const teamId = (current?.team_id as string | null | undefined) ?? (await captainTeam(supabase, userId));
+
+		// 5. Assinatura (uma linha por compra original)
 		const { error: upsertError } = await supabase.from("subscriptions").upsert(
 			{
+				team_id: teamId,
 				user_id: userId,
 				anonymous_user_id: userId ? null : event.app_user_id,
 				product_id: event.product_id,
@@ -140,13 +166,13 @@ Deno.serve(async (req: Request): Promise<Response> => {
 		);
 		if (upsertError) return json({ error: "subscription_upsert_failed", detail: upsertError.message }, 500);
 
-		// 5. Flag no perfil
+		// 6. Flag no perfil (quem paga)
 		if (userId) {
 			await supabase.from("profiles").update({ is_premium: isPremium(event, status) }).eq("id", userId);
 		}
 	}
 
-	// 6. Evento processado
+	// 7. Evento processado
 	await supabase.from("webhook_events").insert({ event_id: event.id, event_type: event.type, payload });
 	return json({ received: true, eventId: event.id, deduplicated: false }, 200);
 });

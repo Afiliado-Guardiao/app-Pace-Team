@@ -1,4 +1,4 @@
-// Assinatura PACE TEAM (RevenueCat). Os dois planos liberam tudo.
+// PACE TEAM PRO (RevenueCat): mensal ou anual, pago pelo capitão para a equipe.
 
 export type IPlanPeriod = "monthly" | "annual";
 

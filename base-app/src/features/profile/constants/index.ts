@@ -21,7 +21,11 @@ export const PROFILE_COPY = {
 } as const;
 
 export const SUBSCRIPTION_COPY = {
-	title: "Assinatura PACE TEAM",
+	title: "PACE TEAM PRO",
+	teamPro: " é PRO",
+	overLimit: "Sua equipe é PRO, mas as 10 vagas estão ocupadas",
+	free: "Você está no Free. O app inteiro de corrida é grátis.",
+	openPro: "Ver o PACE TEAM PRO",
 	inactive: "Sem assinatura ativa",
 	renews: "Ativa · renova em ",
 	cancelled: "Cancelada · vale até ",

@@ -5,7 +5,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { useFloatingToast } from "@/components/pace";
 import { teamErrorMessage, useMyTeam, useTeamActions } from "@/lib/data";
-import { pickFromGallery } from "@/lib/media";
 import { COUNTRIES, countryOf, ME, placeOptions } from "@/lib/pace";
 import { uploadTeamLogo } from "@/lib/supabase";
 import { useStore } from "@/store";
@@ -14,6 +13,7 @@ import { ROUTES } from "@/constants/routes";
 
 import { CREATE_TEAM_COPY } from "../constants";
 
+import { useLogoPicker } from "./useLogoPicker";
 import { usePlaceField } from "./usePlaceField";
 import { useTeamSize } from "./useTeamSize";
 
@@ -49,7 +49,6 @@ export const useCreateTeam = () => {
 	const teamSize = useTeamSize();
 	// Sem nome no cadastro o campo começa vazio (o nome do design só na prévia)
 	const [captain, setCaptain] = useState(user?.name || (IS_PREVIEW ? ME.name : ""));
-	const [logoUri, setLogoUri] = useState<string | null>(null);
 	const hasFilled = useRef(false);
 
 	// Editar: começa com os dados atuais da equipe
@@ -67,6 +66,10 @@ export const useCreateTeam = () => {
 	const warn = (message: string): void => {
 		showToast({ tone: "warning", title: CREATE_TEAM_COPY.title, message });
 	};
+	const logo = useLogoPicker(() => {
+		warn(CREATE_TEAM_COPY.logoDenied);
+	});
+	const logoUri = logo.uri;
 	const fail = (error: unknown): void => {
 		showToast({ tone: "danger", title: CREATE_TEAM_COPY.title, message: teamErrorMessage(error) });
 	};
@@ -137,12 +140,8 @@ export const useCreateTeam = () => {
 		slots: Number(teamSize.size),
 		isSubmitting: create.isPending || update.isPending,
 		logoUri: logoUri ?? (isEdit ? (team?.logoUrl ?? null) : null),
-		pickLogo: () => {
-			void pickFromGallery({ isSquare: true }).then((result) => {
-				if (result.status === "picked") setLogoUri(result.uri);
-				if (result.status === "denied") warn(CREATE_TEAM_COPY.logoDenied);
-			});
-		},
+		logo,
+		pickLogo: logo.open,
 		submit,
 		goBack: () => {
 			if (router.canGoBack()) router.back();

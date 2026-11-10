@@ -4,6 +4,8 @@ export { supabase } from "./client";
 export * from "./onboarding";
 export * from "./pace.types";
 export * from "./posts";
+export * from "./pro";
+export * from "./pro.types";
 export * from "./profile";
 export * from "./progress";
 export * from "./progress.types";

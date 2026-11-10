@@ -5,7 +5,7 @@ import { Badge, GlassSurface } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { IPlan } from "@/lib/purchases";
 
-import { PAYWALL_COPY } from "../../constants";
+import { PRO_COPY } from "../../constants";
 
 interface IPlanCardProps {
 	plan: IPlan;
@@ -70,8 +70,8 @@ export const PlanCard: React.FC<IPlanCardProps> = ({ plan, isSelected, savings, 
 	const { theme } = useTheme();
 	const styles = createPlanCardStyles(theme, isSelected);
 	const isAnnual = plan.period === "annual";
-	const sub = isAnnual ? `${plan.perMonth}${PAYWALL_COPY.annualEquivalent}` : null;
-	const trial = plan.trial ? `${plan.trial}${PAYWALL_COPY.trialSuffix}` : null;
+	const sub = isAnnual ? `${plan.perMonth}${PRO_COPY.annualEquivalent}` : null;
+	const trial = plan.trial ? `${plan.trial}${PRO_COPY.trialSuffix}` : null;
 
 	return (
 		<Pressable
@@ -80,18 +80,16 @@ export const PlanCard: React.FC<IPlanCardProps> = ({ plan, isSelected, savings, 
 			}}
 			accessibilityRole="radio"
 			accessibilityState={{ selected: isSelected }}
-			accessibilityLabel={`${isAnnual ? PAYWALL_COPY.annual : PAYWALL_COPY.monthly} ${plan.price}`}
+			accessibilityLabel={`${isAnnual ? PRO_COPY.annual : PRO_COPY.monthly} ${plan.price}`}
 			testID={`paywall-plan-${plan.period}`}
 		>
 			<GlassSurface appearance={styles.appearance} radius={styles.radius} style={styles.card}>
 				<View style={styles.radio} />
 				<View style={styles.body}>
 					<View style={styles.titleRow}>
-						<Text style={styles.title}>
-							{isAnnual ? PAYWALL_COPY.annual : PAYWALL_COPY.monthly}
-						</Text>
+						<Text style={styles.title}>{isAnnual ? PRO_COPY.annual : PRO_COPY.monthly}</Text>
 						{isAnnual && savings ? (
-							<Badge tone="accent">{`${PAYWALL_COPY.save}${savings}`}</Badge>
+							<Badge tone="accent">{`${PRO_COPY.save}${savings}`}</Badge>
 						) : null}
 					</View>
 					{(sub ?? trial) ? (
@@ -100,7 +98,7 @@ export const PlanCard: React.FC<IPlanCardProps> = ({ plan, isSelected, savings, 
 				</View>
 				<Text style={styles.price}>
 					{plan.price}
-					<Text style={styles.unit}>{isAnnual ? PAYWALL_COPY.perYear : PAYWALL_COPY.perMonth}</Text>
+					<Text style={styles.unit}>{isAnnual ? PRO_COPY.perYear : PRO_COPY.perMonth}</Text>
 				</Text>
 			</GlassSurface>
 		</Pressable>
