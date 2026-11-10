@@ -1,6 +1,8 @@
 export const ROUTES = {
 	// Entrada (sem login)
 	SPLASH: "/(non-auth)/splash",
+	// 01 · celular de vitrine mostrando o app (antes da apresentação)
+	SHOWCASE: "/(non-auth)/showcase",
 	ONBOARDING: "/(non-auth)/onboarding",
 	WELCOME: "/(non-auth)/welcome",
 	LOGIN: "/(non-auth)/login",

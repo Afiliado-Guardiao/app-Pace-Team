@@ -1,9 +1,19 @@
 import { IBuddyAccessoryId } from "@/lib/buddy/constants";
 
 // Etapas do onboarding depois de criar a conta (telas 03 a 08 do Cloud Design)
-export type ISetupStep = "acc" | "call" | "care" | "goal" | "team" | "invites" | "pro" | "done";
+export type ISetupStep =
+	| "profile"
+	| "acc"
+	| "call"
+	| "care"
+	| "goal"
+	| "team"
+	| "invites"
+	| "pro"
+	| "done";
 
 export const SETUP_STEPS: readonly ISetupStep[] = [
+	"profile",
 	"acc",
 	"call",
 	"care",
@@ -18,6 +28,7 @@ export const SETUP_STEPS: readonly ISetupStep[] = [
 // 06 convites · 07 Team Pro · 08 conclusão): qual segmento cada etapa acende
 export const SEGMENTS = 7;
 export const SEGMENT_OF: Record<ISetupStep, number> = {
+	profile: 1,
 	acc: 2,
 	call: 2,
 	care: 2,
@@ -29,7 +40,16 @@ export const SEGMENT_OF: Record<ISetupStep, number> = {
 };
 
 // Guarda o progresso no aparelho (fechou o app, volta na mesma etapa)
-export const SETUP_KEYS = { step: "setupStep", goal: "setupGoal", done: "setupDone" } as const;
+export const SETUP_KEYS = {
+	step: "setupStep",
+	goal: "setupGoal",
+	done: "setupDone",
+	// "1" = escolheu correr sozinho por enquanto
+	solo: "setupSolo",
+	// Prévia por link: nome e tamanho da equipe criada (não vai ao servidor)
+	teamName: "setupTeamName",
+	teamSize: "setupTeamSize",
+} as const;
 
 // 3a · os 8 acessórios da grade 4×2 (a coroa é só do líder)
 export const SETUP_ACCESSORIES: readonly { id: IBuddyAccessoryId; name: string }[] = [
@@ -94,6 +114,21 @@ export const INVITE_SHARE = {
 export const SETUP_COPY = {
 	back: "Voltar",
 	next: "Continuar",
+	// 02
+	profileBubble: "Oi! Como posso te chamar?",
+	profileTitle: "Crie sua conta",
+	profileSub: "Rapidinho. Só o essencial.",
+	profileSection: "SEU PERFIL",
+	profileName: "Nome ou apelido",
+	profileNameHint: "Seu nome",
+	profileHandle: "Nome de usuário",
+	profileFree: " está disponível",
+	profileUsed: " já está em uso",
+	profileTaken: "Esse nome de usuário já está em uso. Tente outro.",
+	profileLegalA: "Ao continuar, você aceita os ",
+	profileTerms: "Termos",
+	profileLegalB: " e a ",
+	profilePrivacy: "Política de Privacidade",
 	// 3a
 	accTitle: "Agora somos parceiros!",
 	accSub: "Você acaba de ganhar seu primeiro acessório.",

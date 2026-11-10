@@ -29,7 +29,7 @@ export const useSetupFlow = (): IUseSetupFlowReturn => {
 	const setAnswer = useStore((s) => s.setAnswer);
 	const { team } = useMyTeam();
 	const { pro } = useMyPro();
-	const step: ISetupStep = isStep(saved) ? saved : "acc";
+	const step: ISetupStep = isStep(saved) ? saved : "profile";
 	const hasTeam = Boolean(team);
 
 	const go = useCallback(

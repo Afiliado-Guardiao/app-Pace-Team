@@ -2,7 +2,8 @@ import { Stack } from "expo-router";
 
 import { useTheme } from "@/theme";
 
-// Entrada: abertura → apresentação → boas-vindas → login / cadastro.
+// Entrada: abertura → vitrine (o app no celular) → apresentação → boas-vindas
+// (Apple ou e-mail) → cadastro. Depois da conta, o onboarding (/setup).
 export default function NonAuthLayout() {
 	const { theme } = useTheme();
 
@@ -16,6 +17,7 @@ export default function NonAuthLayout() {
 			}}
 		>
 			<Stack.Screen name="splash" options={{ gestureEnabled: false }} />
+			<Stack.Screen name="showcase" options={{ gestureEnabled: false }} />
 			<Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
 			<Stack.Screen name="welcome" options={{ gestureEnabled: false }} />
 			<Stack.Screen name="login" />

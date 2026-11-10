@@ -29,7 +29,8 @@ const deviceCountry = (): string => {
 // cidade/região (com "Outra" para digitar), categoria e prévia do cartão.
 export const useCreateTeam = () => {
 	const router = useRouter();
-	const params = useLocalSearchParams<{ edit?: string }>();
+	const params = useLocalSearchParams<{ edit?: string; from?: string }>();
+	const setAnswer = useStore((s) => s.setAnswer);
 	const user = useStore((s) => s.user);
 	const { team } = useMyTeam();
 	const isEdit = params.edit === "1" && Boolean(team);
@@ -110,6 +111,15 @@ export const useCreateTeam = () => {
 		create.mutate(form, {
 			onSuccess: (id) => {
 				finish(id, () => {
+					// Veio do onboarding: volta para ele, já na tela de convites
+					if (params.from === "setup") {
+						setAnswer("setupStep", "invites");
+						setAnswer("setupSolo", "");
+						setAnswer("setupTeamName", form.name);
+						setAnswer("setupTeamSize", String(form.size));
+						router.back();
+						return;
+					}
 					router.replace(ROUTES.INVITE);
 				});
 			},

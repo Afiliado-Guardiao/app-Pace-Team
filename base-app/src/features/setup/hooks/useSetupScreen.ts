@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { useFloatingToast } from "@/components/pace";
 import { useBuddyStore } from "@/lib/buddy/store";
-import { useMyPro, useMyTeam } from "@/lib/data";
+import { useMyPro } from "@/lib/data";
 import { ME } from "@/lib/pace";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -21,7 +21,9 @@ import {
 } from "../constants";
 
 import { useSetupFlow } from "./useSetupFlow";
+import { useSetupTeam } from "./useSetupTeam";
 import { useStepInvites } from "./useStepInvites";
+import { useStepProfile } from "./useStepProfile";
 import { useStepTeam } from "./useStepTeam";
 
 const isGoal = (v: unknown): v is IGoalId => GOALS.some((g) => g.id === v);
@@ -32,9 +34,10 @@ export const useSetupScreen = () => {
 	const flow = useSetupFlow();
 	const { toast, showToast } = useFloatingToast();
 	const team = useStepTeam(showToast);
-	const inv = useStepInvites(showToast);
+	const myTeam = useSetupTeam();
+	const profile = useStepProfile(flow.next, showToast);
+	const inv = useStepInvites(myTeam, showToast);
 	const { pro } = useMyPro();
-	const { team: myTeam } = useMyTeam();
 	const user = useStore((s) => s.user);
 	const savedGoal = useStore((s) => s.answers[SETUP_KEYS.goal]);
 	const setAnswer = useStore((s) => s.setAnswer);
@@ -58,10 +61,11 @@ export const useSetupScreen = () => {
 	return {
 		step: flow.step,
 		segment: SEGMENT_OF[flow.step],
-		canBack: flow.step !== "acc" && flow.step !== "done",
+		canBack: flow.step !== "profile" && flow.step !== "done",
 		toast,
 		team,
 		inv,
+		profile,
 		isPro: Boolean(pro?.teamPro),
 		myTeam,
 		goal,
@@ -76,6 +80,7 @@ export const useSetupScreen = () => {
 			setAnswer(SETUP_KEYS.goal, g);
 		},
 		solo: () => {
+			setAnswer(SETUP_KEYS.solo, "1");
 			flow.go("done");
 		},
 		finishTeam: () => {

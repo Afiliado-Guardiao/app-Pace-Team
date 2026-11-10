@@ -1,6 +1,8 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
+import Animated, { ZoomIn } from "react-native-reanimated";
+
 import { BUDDY_H, BUDDY_W, BuddyFigure, IBuddyPose } from "@/components/buddy";
 import { Button, GlassCard, Icon, SegmentedControl } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
@@ -38,7 +40,7 @@ const createStepCallStyles = (theme: ITheme) => {
 			gap: spacing[5],
 			minHeight: 190,
 		},
-		buddyCol: { alignItems: "center" as const, gap: spacing[2] },
+		buddyCol: { alignItems: "center" as const, gap: spacing[2], minWidth: 130 },
 		buddy: { width: BUDDY_W * SCALE, height: BUDDY_H * SCALE },
 		buddyInner: {
 			position: "absolute" as const,
@@ -134,14 +136,18 @@ export const StepCall: React.FC<IStepCallProps> = ({ onDone }) => {
 						<Icon name="mic" size={34} color={styles.accent} />
 					</View>
 				)}
-				<View style={styles.buddyCol}>
-					<BuddyBubble text={call.bubble} />
-					<View style={styles.buddy} pointerEvents="none">
-						<View style={styles.buddyInner}>
-							<BuddyFigure pose={WAVE} color="branco" accessories={worn} />
+				{call.isBuddyIn ? (
+					<Animated.View entering={ZoomIn.springify().damping(12)} style={styles.buddyCol}>
+						<BuddyBubble text={call.bubble} />
+						<View style={styles.buddy} pointerEvents="none">
+							<View style={styles.buddyInner}>
+								<BuddyFigure pose={WAVE} color="branco" accessories={worn} />
+							</View>
 						</View>
-					</View>
-				</View>
+					</Animated.View>
+				) : (
+					<View style={styles.buddyCol} />
+				)}
 			</View>
 			{isTap ? (
 				<View>

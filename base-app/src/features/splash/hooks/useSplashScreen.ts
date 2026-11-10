@@ -41,7 +41,7 @@ export const useSplashScreen = (): IUseSplashScreenReturn => {
 	const handleSkip = useCallback(() => {
 		if (done.current) return;
 		done.current = true;
-		router.replace(ROUTES.ONBOARDING);
+		router.replace(ROUTES.SHOWCASE);
 	}, [router]);
 
 	const start = useCallback(() => {

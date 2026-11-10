@@ -14,6 +14,7 @@ import { StepDone } from "./components/StepDone";
 import { StepGoal } from "./components/StepGoal";
 import { StepInvites } from "./components/StepInvites";
 import { StepPro } from "./components/StepPro";
+import { StepProfile } from "./components/StepProfile";
 import { StepTeam } from "./components/StepTeam";
 import { useSetupScreen } from "./hooks/useSetupScreen";
 
@@ -34,6 +35,7 @@ export const SetupScreen: React.FC = () => {
 			<ScreenBackground photo={PHOTOS.teamRunningSunset} />
 			<ScreenScroll contentStyle={styles.content} key={s.step}>
 				<SetupProgress current={s.segment} onBack={s.canBack ? s.back : undefined} />
+				{s.step === "profile" ? <StepProfile profile={s.profile} /> : null}
 				{s.step === "acc" ? <StepAcc onDone={s.next} /> : null}
 				{s.step === "call" ? <StepCall onDone={s.next} /> : null}
 				{s.step === "care" ? <StepCare onDone={s.next} /> : null}

@@ -4,8 +4,8 @@ import { Linking } from "react-native";
 import * as Clipboard from "expo-clipboard";
 
 import { IFloatingToastData } from "@/components/pace";
-import { teamErrorMessage, useAthleteSearch, useMyTeam, useTeamActions } from "@/lib/data";
-import { IAthleteResult } from "@/lib/supabase";
+import { ITeamView, teamErrorMessage, useAthleteSearch, useTeamActions } from "@/lib/data";
+import { IAthleteResult, ITeamInviteRow } from "@/lib/supabase";
 
 import { INVITE_SHARE } from "../constants";
 
@@ -15,12 +15,20 @@ const MAX_SUGGESTIONS = 3;
 
 // 06 · convites dentro do onboarding: código, link, WhatsApp, busca de
 // atletas (3 sugestões) e a lista de quem entrou ou foi convidado
-export const useStepInvites = (showToast: (t: IFloatingToastData) => void) => {
-	const { team } = useMyTeam();
+export const useStepInvites = (
+	team: ITeamView | null,
+	showToast: (t: IFloatingToastData) => void,
+) => {
+	// Convidados nesta tela (aparecem na hora, antes do servidor responder)
+	const [sent, setSent] = useState<ITeamInviteRow[]>([]);
 	const { invite } = useTeamActions();
 	const [query, setQuery] = useState("");
 	const { athletes } = useAthleteSearch(query);
-	const invites = useMemo(() => team?.invites ?? [], [team?.invites]);
+	const invites = useMemo(() => {
+		const server = team?.invites ?? [];
+		const extra = sent.filter((x) => !server.some((i) => i.name === x.name));
+		return [...server, ...extra];
+	}, [team?.invites, sent]);
 	const pending = invites.filter((i) => i.status === "pending");
 	const used = (team?.members.length ?? 0) + pending.length;
 	const left = Math.max(0, (team?.size ?? 10) - used);
@@ -69,6 +77,7 @@ export const useStepInvites = (showToast: (t: IFloatingToastData) => void) => {
 			if (left <= 0) return;
 			invite.mutate(athlete.id, {
 				onSuccess: () => {
+					setSent((list) => [...list, { id: athlete.id, name: athlete.name, status: "pending" }]);
 					showToast({ tone: "success", title: INVITE_SHARE.sent, message: athlete.name });
 				},
 				onError: (error) => {
