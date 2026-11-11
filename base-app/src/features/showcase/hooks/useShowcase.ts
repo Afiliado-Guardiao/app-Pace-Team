@@ -4,6 +4,8 @@ import { useWindowDimensions } from "react-native";
 import { useRouter } from "expo-router";
 
 import { IBuddyPose } from "@/components/buddy";
+import { useStore } from "@/store";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 import { COLLAGE_H } from "../constants";
@@ -55,6 +57,15 @@ export const useShowcase = () => {
 		collageH: COLLAGE_H * k,
 		pose: { ...(isWaving ? WAVE : IDLE), blink: isBlink },
 		start: () => {
+			// Prévia por link: cada visita refaz o onboarding desde o começo
+			if (IS_PREVIEW) {
+				const { setAnswer } = useStore.getState();
+				["setupSolo", "setupTeamName", "setupWantsPro", "setupDone"].forEach((key) => {
+					setAnswer(key, "");
+				});
+				router.replace({ pathname: ROUTES.SETUP, params: { step: "profile" } });
+				return;
+			}
 			router.replace(ROUTES.SETUP);
 		},
 		login: () => {
