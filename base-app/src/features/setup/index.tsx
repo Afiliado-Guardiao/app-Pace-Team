@@ -45,12 +45,7 @@ export const SetupScreen: React.FC = () => {
 					<StepInvites team={s.myTeam} inv={s.inv} isPro={s.isPro} onFinish={s.finishTeam} />
 				) : null}
 				{s.step === "pro" ? (
-					<StepPro
-						teamName={s.myTeam?.name ?? ""}
-						people={s.people}
-						onPro={s.openPro}
-						onSkip={s.next}
-					/>
+					<StepPro teamName={s.myTeam?.name ?? ""} onPro={s.openPro} onSkip={s.next} />
 				) : null}
 				{s.step === "done" ? (
 					<StepDone

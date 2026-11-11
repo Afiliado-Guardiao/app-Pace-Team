@@ -16,6 +16,8 @@ export const useSetupTeam = (): ITeamView | null => {
 	const { team } = useMyTeam();
 	const isSolo = useStore((s) => s.answers[SETUP_KEYS.solo]) === "1";
 	const draft = useStore((s) => s.answers[SETUP_KEYS.teamName]);
+	// Capitão com o nome digitado no 02 (não o atleta de exemplo)
+	const captain = useStore((s) => s.answers[SETUP_KEYS.name]) || ME.name;
 	const size = Number(useStore((s) => s.answers[SETUP_KEYS.teamSize]) ?? DEFAULT_SIZE);
 
 	return useMemo(() => {
@@ -28,7 +30,7 @@ export const useSetupTeam = (): ITeamView | null => {
 			logoUrl: null,
 			inviteCode: "PACE7K2Q",
 			invites: [],
-			members: [{ name: ME.name, role: "Capitão", km: 0, pts: 0, you: true }],
+			members: [{ name: captain, role: "Capitão", km: 0, pts: 0, you: true }],
 		};
-	}, [isSolo, draft, size, team]);
+	}, [isSolo, draft, size, team, captain]);
 };

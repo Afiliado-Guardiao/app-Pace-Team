@@ -1,19 +1,23 @@
 import React from "react";
 import { Text, View } from "react-native";
+import { Image } from "react-native";
 
-import { AvatarStack, Button, GlassCard, Icon } from "@/components/pace";
+import { Button, GlassCard, Icon } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
+import { CREW } from "@/lib/pace";
 
 import { SETUP_COPY as C } from "../../constants";
 
 interface IStepProProps {
 	teamName: string;
-	people: readonly { name: string; src?: string }[];
 	onPro: () => void;
 	onSkip: () => void;
 }
 
 const DOT = 40;
+const FACE = 30;
+// Fileira de rostos de corredores ("a sua equipe inteira")
+const FACES = CREW.slice(0, 5);
 
 const createStepProStyles = (theme: ITheme) => {
 	const { colors, spacing, typography, radii } = theme.pace;
@@ -61,6 +65,15 @@ const createStepProStyles = (theme: ITheme) => {
 			justifyContent: "space-between" as const,
 		},
 		priceRow: { flexDirection: "row" as const, alignItems: "baseline" as const, gap: 4 },
+		faces: { flexDirection: "row" as const },
+		face: {
+			width: FACE,
+			height: FACE,
+			borderRadius: FACE / 2,
+			borderWidth: 2,
+			borderColor: colors.bgApp,
+		},
+		faceOver: { marginLeft: -FACE * 0.38 },
 		factRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: 4 },
 		accent: colors.orange[400],
 		value: { fontFamily: typography.fonts.extrabold, fontSize: 30, color: colors.textPrimary },
@@ -117,7 +130,7 @@ const createStepProStyles = (theme: ITheme) => {
 
 // 07 · Team Pro para o capitão (pulado se a equipe já é PRO). A compra em si
 // acontece na tela PACE TEAM PRO, com os preços da Apple.
-export const StepPro: React.FC<IStepProProps> = ({ teamName, people, onPro, onSkip }) => {
+export const StepPro: React.FC<IStepProProps> = ({ teamName, onPro, onSkip }) => {
 	const { theme } = useTheme();
 	const styles = createStepProStyles(theme);
 
@@ -141,7 +154,15 @@ export const StepPro: React.FC<IStepProProps> = ({ teamName, people, onPro, onSk
 							</Text>
 							<Text style={styles.per}>{C.proPer}</Text>
 						</View>
-						<AvatarStack people={people} max={3} size={30} extra={6} />
+						<View style={styles.faces}>
+							{FACES.map((face, i) => (
+								<Image
+									key={i}
+									source={face}
+									style={[styles.face, i > 0 ? styles.faceOver : null]}
+								/>
+							))}
+						</View>
 					</View>
 					<View style={styles.facts}>
 						<View style={styles.factRow}>

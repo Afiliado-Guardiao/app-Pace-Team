@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { IFloatingToastData } from "@/components/pace";
 import { teamErrorMessage, useMyInvites, useTeamActions } from "@/lib/data";
 import { IMyInvite } from "@/lib/supabase";
+import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 interface IUseStepTeamReturn {
@@ -38,7 +39,8 @@ export const useStepTeam = (showToast: (t: IFloatingToastData) => void): IUseSte
 	return {
 		mode,
 		code,
-		invites,
+		// Na prévia por link não há convite de verdade: nada de exemplo aqui
+		invites: IS_PREVIEW ? [] : invites,
 		isBusy: joinByCode.isPending || respond.isPending,
 		setCode: (value) => {
 			setCodeState(

@@ -76,7 +76,6 @@ export const useSetupScreen = () => {
 		myTeam,
 		goal,
 		chips,
-		people: (myTeam?.members ?? []).map((m) => ({ name: m.name, src: m.avatarUrl ?? undefined })),
 		name: savedName ?? user?.name ?? (IS_PREVIEW ? ME.name : ""),
 		handle: handleOf(savedHandle ?? user?.handle),
 		isMedalOpen,
