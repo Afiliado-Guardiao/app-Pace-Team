@@ -92,40 +92,30 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 	const preview = withStudio(base, draft);
 	const look = (next: IBuddyStudio) => withStudio(base, next);
 
-	const item = (
-		id: string,
+	// Um item por vez: a miniatura mostra só ele; tocar escolhe só ele
+	// (tocar de novo no escolhido volta ao visual de sempre)
+	const item = <K extends keyof IBuddyStudio>(
+		key: K,
+		value: NonNullable<IBuddyStudio[K]>,
 		name: string,
-		next: IBuddyStudio,
-		isSelected: boolean,
-	): IStudioItem => ({
-		id,
-		name,
-		isSelected,
-		...look(next),
-		pick: () => {
-			setDraft(next);
-		},
-	});
-
-	const toggle = <K extends keyof IBuddyStudio>(key: K, value: IBuddyStudio[K]): IBuddyStudio => ({
-		...draft,
-		[key]: draft[key] === value ? null : value,
-	});
+	): IStudioItem => {
+		const only: IBuddyStudio = { ...EMPTY_STUDIO, [key]: value };
+		const isSelected = draft[key] === value;
+		return {
+			id: value,
+			name,
+			isSelected,
+			...look(only),
+			pick: () => {
+				setDraft(isSelected ? EMPTY_STUDIO : only);
+			},
+		};
+	};
 
 	const byTab: Record<IStudioTab, () => IStudioItem[]> = {
-		cores: () =>
-			BUDDY_PRO_COLORS.map((c) =>
-				item(c, BUDDY_COLORS[c].name, toggle("color", c), draft.color === c),
-			),
-		acessorios: () =>
-			BUDDY_PRO_ACCESSORIES.map((a) => {
-				const key = a.slot;
-				return item(a.id, a.name, toggle(key, a.id), draft[key] === a.id);
-			}),
-		efeitos: () =>
-			BUDDY_PRO_EFFECTS.map((e) =>
-				item(e.id, e.name, toggle("effect", e.id), draft.effect === e.id),
-			),
+		cores: () => BUDDY_PRO_COLORS.map((c) => item("color", c, BUDDY_COLORS[c].name)),
+		acessorios: () => BUDDY_PRO_ACCESSORIES.map((a) => item(a.slot, a.id, a.name)),
+		efeitos: () => BUDDY_PRO_EFFECTS.map((e) => item("effect", e.id, e.name)),
 	};
 
 	return {
