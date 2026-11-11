@@ -22,7 +22,7 @@ import { Ninja } from "./Ninja";
 import { Raio } from "./Raio";
 import { Robo } from "./Robo";
 import { Samurai } from "./Samurai";
-import { STUDIO_ART } from "./studioArt";
+import { STUDIO_ART, STUDIO_BACK_ART } from "./studioArt";
 import { Vampiro } from "./Vampiro";
 import { Viseira } from "./Viseira";
 
@@ -81,7 +81,15 @@ export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew, c
 		astronauta: null,
 		gato: null,
 		oni: null,
+		palha: null,
+		kitsune: null,
+		ondas: null,
+		tribal: null,
+		hyottoko: null,
+		sorriso: null,
 	};
+	// Fone e orelhas de gato vão atrás da cabeça (BackAccessory)
+	if (STUDIO_BACK_ART[id]) return null;
 	return (
 		<Animated.View style={[LAYER, isNew ? DROP : null]} pointerEvents="none">
 			{STUDIO_ART[id] ? <ArtAccessory art={STUDIO_ART[id]} /> : parts[id]}

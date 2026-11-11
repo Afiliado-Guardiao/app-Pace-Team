@@ -5,6 +5,7 @@ import Animated from "react-native-reanimated";
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop } from "react-native-svg";
 
 import { useSvgId } from "@/components/pace";
+import { IBuddyAccessoryId } from "@/lib/buddy/constants";
 
 import { anim } from "../../animations";
 
@@ -13,7 +14,7 @@ import { roundRect } from "./faceSvg";
 import { STUDIO_BACK_ART } from "./studioArt";
 
 interface IBackAccessoryProps {
-	id: "paraquedas" | "espadas";
+	id: IBuddyAccessoryId;
 	isMini: boolean;
 }
 
@@ -112,6 +113,7 @@ export const BackAccessory: React.FC<IBackAccessoryProps> = ({ id, isMini }) => 
 			</Animated.View>
 		);
 	}
+	if (id !== "paraquedas" && id !== "espadas") return null;
 	return (
 		<Animated.View style={[BOX, sway]} pointerEvents="none">
 			{id === "paraquedas" ? <Paraquedas /> : <Espadas />}

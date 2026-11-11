@@ -11,6 +11,7 @@ import { paletteOf } from "../palette";
 
 import { BackAccessory } from "./accessories/BackAccessory";
 import { Cape } from "./accessories/Cape";
+import { STUDIO_BACK_ART } from "./accessories/studioArt";
 import { Body } from "./Body";
 import { Effects } from "./Effects";
 import { StudioEffect } from "./effects/StudioEffect";
@@ -31,6 +32,10 @@ interface IBuddyFigureProps {
 	// Efeito do Buddy Studio (Team Pro)
 	effect?: IBuddyEffectId | null;
 }
+
+// Desenhado atrás do corpo: paraquedas, espadas e itens 3D que abraçam a cabeça
+const isBehind = (id: IBuddyAccessoryId): boolean =>
+	id === "paraquedas" || id === "espadas" || Boolean(STUDIO_BACK_ART[id]);
 
 export const BUDDY_W = 140;
 export const BUDDY_H = 135;
@@ -118,10 +123,9 @@ export const BuddyFigure: React.FC<IBuddyFigureProps> = ({
 						/>
 					) : null}
 					{effect && !isMini && effect === "aura" ? <StudioEffect effect="aura" /> : null}
-					{accessories.includes("espadas") ? <BackAccessory id="espadas" isMini={isMini} /> : null}
-					{accessories.includes("paraquedas") ? (
-						<BackAccessory id="paraquedas" isMini={isMini} />
-					) : null}
+					{accessories.filter(isBehind).map((id) => (
+						<BackAccessory key={id} id={id} isMini={isMini} />
+					))}
 					{hasCape ? <Cape isNew={!isMini && dropId === "capa"} isMini={isMini} /> : null}
 					{isMini ? null : <RunRing phase={pose.phase} />}
 					<Body pose={pose} pal={pal} accessories={accessories} dropId={dropId} isMini={isMini} />

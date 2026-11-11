@@ -32,7 +32,13 @@ export type IBuddyAccessoryId =
 	| "viking"
 	| "astronauta"
 	| "gato"
-	| "oni";
+	| "oni"
+	| "palha"
+	| "kitsune"
+	| "ondas"
+	| "tribal"
+	| "hyottoko"
+	| "sorriso";
 
 // Acessórios de costas (desenhados atrás do corpo)
 export const BUDDY_BACK_ACCESSORIES = ["capa", "paraquedas", "espadas"] as const;
@@ -86,7 +92,13 @@ export const BUDDY_ACC_ORDER: readonly IBuddyAccessoryId[] = [
 	"viking",
 	"gato",
 	"oni",
+	"kitsune",
+	"ondas",
+	"tribal",
+	"hyottoko",
+	"palha",
 	"vampiro",
+	"sorriso",
 	"coroa",
 	"aureola",
 ];
@@ -102,8 +114,12 @@ export const BUDDY_PRO_ACCESSORIES: readonly IBuddyAccessory[] = [
 	{ id: "viking", name: "Viking", slot: "head", pro: true },
 	{ id: "astronauta", name: "Astronauta", slot: "head", pro: true },
 	{ id: "robo", name: "Robô", slot: "head", pro: true },
-	{ id: "ninja", name: "Ninja", slot: "head", pro: true },
 	{ id: "gato", name: "Orelhas de gato", slot: "head", pro: true },
+	{ id: "palha", name: "Chapéu de palha", slot: "head", pro: true },
+	{ id: "kitsune", name: "Máscara kitsune", slot: "eyes", pro: true },
+	{ id: "hyottoko", name: "Hyottoko", slot: "eyes", pro: true },
+	{ id: "ondas", name: "Máscara das ondas", slot: "eyes", pro: true },
+	{ id: "tribal", name: "Caveira tribal", slot: "eyes", pro: true },
 	{ id: "oni", name: "Máscara oni", slot: "eyes", pro: true },
 	{ id: "narigao", name: "Óculos de nariz", slot: "eyes", pro: true },
 	{ id: "heroi", name: "Herói-teia", slot: "eyes", pro: true },
@@ -111,6 +127,7 @@ export const BUDDY_PRO_ACCESSORIES: readonly IBuddyAccessory[] = [
 	{ id: "paraquedas", name: "Paraquedas", slot: "back", pro: true },
 	{ id: "espadas", name: "Espadas", slot: "back", pro: true },
 	{ id: "vampiro", name: "Dentes de vampiro", slot: "mouth", pro: true },
+	{ id: "sorriso", name: "Máscara sorriso", slot: "mouth", pro: true },
 ];
 
 export type IBuddyColorId =

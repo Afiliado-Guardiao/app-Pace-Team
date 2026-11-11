@@ -11,7 +11,7 @@ interface IArtAccessoryProps {
 export const ArtAccessory: React.FC<IArtAccessoryProps> = ({ art }) => (
 	<Image
 		source={art.source}
-		resizeMode="contain"
+		resizeMode={art.isStretch ? "stretch" : "contain"}
 		style={{
 			position: "absolute",
 			left: art.left,
