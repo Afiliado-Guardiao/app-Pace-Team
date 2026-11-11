@@ -7,6 +7,7 @@ import { IBuddyAccessoryId, IBuddyBackAccessoryId, IBuddyPalette } from "@/lib/b
 
 import { anim, EASE_OUT } from "../../animations";
 
+import { ArtAccessory } from "./ArtAccessory";
 import { Aureola } from "./Aureola";
 import { Bone } from "./Bone";
 import { BoneTras } from "./BoneTras";
@@ -21,6 +22,7 @@ import { Ninja } from "./Ninja";
 import { Raio } from "./Raio";
 import { Robo } from "./Robo";
 import { Samurai } from "./Samurai";
+import { STUDIO_ART } from "./studioArt";
 import { Vampiro } from "./Vampiro";
 import { Viseira } from "./Viseira";
 
@@ -76,7 +78,7 @@ export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew, c
 	};
 	return (
 		<Animated.View style={[LAYER, isNew ? DROP : null]} pointerEvents="none">
-			{parts[id]}
+			{STUDIO_ART[id] ? <ArtAccessory art={STUDIO_ART[id]} /> : parts[id]}
 		</Animated.View>
 	);
 };
