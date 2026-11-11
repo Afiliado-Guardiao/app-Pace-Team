@@ -5,6 +5,7 @@ import {
 	Avatar,
 	Badge,
 	Button,
+	FloatingToast,
 	GlassCard,
 	ProgressBar,
 	ScreenBackground,
@@ -17,9 +18,11 @@ import { ITheme, useTheme } from "@/theme";
 import { formatKm, formatPoints, PHOTOS } from "@/lib/pace";
 
 import { AchievementTile } from "./components/AchievementTile";
+import { CaptainSheet } from "./components/CaptainSheet";
 import { MemberLine } from "./components/MemberLine";
 import { WeeklyCard } from "./components/WeeklyCard";
 import { TEAM_DETAILS_COPY, WEEKLY_KM_PER_MEMBER } from "./constants";
+import { useCaptainTransfer } from "./hooks/useCaptainTransfer";
 import { useTeamDetails } from "./hooks/useTeamDetails";
 
 const createTeamDetailsStyles = (theme: ITheme) => {
@@ -44,6 +47,8 @@ const createTeamDetailsStyles = (theme: ITheme) => {
 			color: colors.textSecondary,
 		},
 		row: { flexDirection: "row" as const, gap: spacing[2] },
+		captainActions: { flexDirection: "row" as const, gap: spacing[2] },
+		captainAction: { flex: 1 },
 		cell: { flex: 1 },
 		members: { gap: spacing[2] },
 	};
@@ -53,6 +58,7 @@ const createTeamDetailsStyles = (theme: ITheme) => {
 export const TeamDetailsScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const details = useTeamDetails();
+	const captain = useCaptainTransfer(details.canEdit ? details.team : null);
 	const { team, isLoading, achievements, goBack, openInvite } = details;
 	const styles = createTeamDetailsStyles(theme);
 	const goal = (team?.size ?? 0) * WEEKLY_KM_PER_MEMBER;
@@ -89,15 +95,28 @@ export const TeamDetailsScreen: React.FC = () => {
 				) : null}
 				{team ? <Text style={styles.about}>{team.description || team.place}</Text> : null}
 				{details.canEdit ? (
-					<Button
-						variant="glass"
-						size="sm"
-						icon="pencil"
-						onPress={details.openEdit}
-						testID="team-details-edit"
-					>
-						{TEAM_DETAILS_COPY.edit}
-					</Button>
+					<View style={styles.captainActions}>
+						<Button
+							variant="glass"
+							size="sm"
+							icon="pencil"
+							style={styles.captainAction}
+							onPress={details.openEdit}
+							testID="team-details-edit"
+						>
+							{TEAM_DETAILS_COPY.edit}
+						</Button>
+						<Button
+							variant="glass"
+							size="sm"
+							icon="crown"
+							style={styles.captainAction}
+							onPress={captain.open}
+							testID="team-details-captain"
+						>
+							{TEAM_DETAILS_COPY.captainPass}
+						</Button>
+					</View>
 				) : null}
 				{team ? (
 					<View style={styles.row}>
@@ -163,6 +182,8 @@ export const TeamDetailsScreen: React.FC = () => {
 					/>
 				</GlassCard>
 			</ScreenScroll>
+			<CaptainSheet captain={captain} />
+			<FloatingToast toast={captain.toast} />
 		</View>
 	);
 };

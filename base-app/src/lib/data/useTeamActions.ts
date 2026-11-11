@@ -6,6 +6,7 @@ import {
 	joinTeamByCode,
 	leaveTeam,
 	respondInvite,
+	transferCaptain,
 	updateTeam,
 } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -34,13 +35,15 @@ export const useTeamActions = () => {
 	const joinByCode = useMutation({ mutationFn: live(joinTeamByCode), onSuccess: refresh });
 	const leave = useMutation({ mutationFn: live(leaveTeam), onSuccess: refresh });
 	const invite = useMutation({ mutationFn: live(inviteToTeam), onSuccess: refresh });
+	// Capitão passa a faixa para outro integrante (o Pro da equipe segue igual)
+	const transfer = useMutation({ mutationFn: live(transferCaptain), onSuccess: refresh });
 	const respond = useMutation({
 		mutationFn: (params: { inviteId: string; accept: boolean }) =>
 			live(respondInvite)(params.inviteId, params.accept),
 		onSuccess: refresh,
 	});
 
-	return { create, update, joinByCode, leave, invite, respond };
+	return { create, update, joinByCode, leave, invite, respond, transfer };
 };
 
 // Mensagem amigável para os erros das funções de equipe.
@@ -52,6 +55,7 @@ export const teamErrorMessage = (error: unknown): string => {
 	if (text.includes("invite_not_found")) return "Esse convite não está mais disponível.";
 	if (text.includes("no_team")) return "Crie ou entre em uma equipe para convidar.";
 	if (text.includes("not_captain")) return "Só o capitão pode editar a equipe.";
+	if (text.includes("not_member")) return "Essa pessoa não está mais na equipe.";
 	if (text.includes("team_too_small"))
 		return "A equipe já tem mais integrantes que essa categoria. Escolha uma maior.";
 	return "Não deu certo agora. Verifique a conexão e tente de novo.";

@@ -18,7 +18,7 @@
 // Secret: supabase secrets set REVENUECAT_WEBHOOK_AUTH=<valor>
 // =============================================================================
 
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 interface RevenueCatEvent {
 	id: string;
@@ -33,6 +33,9 @@ interface RevenueCatEvent {
 	original_transaction_id?: string;
 	transaction_id?: string;
 	expiration_at_ms?: number | null;
+	// TRANSFER: a compra passou de uma conta para outra ("Restaurar compras")
+	transferred_from?: string[];
+	transferred_to?: string[];
 }
 
 interface RevenueCatPayload {
@@ -40,7 +43,8 @@ interface RevenueCatPayload {
 	event?: RevenueCatEvent;
 }
 
-// Status gravado por tipo de evento. TRANSFER, TEST e outros só confirmam.
+// Status gravado por tipo de evento. TRANSFER move a assinatura de conta
+// (handleTransfer); TEST e outros só confirmam.
 const STATUS_BY_EVENT: Record<string, string> = {
 	INITIAL_PURCHASE: "active",
 	RENEWAL: "active",
@@ -78,7 +82,8 @@ function isPremium(event: RevenueCatEvent, status: string): boolean {
 	return event.expiration_at_ms > Date.now();
 }
 
-type IAdmin = ReturnType<typeof createClient>;
+// deno-lint-ignore no-explicit-any
+type IAdmin = SupabaseClient<any, "public", "public">;
 
 // Equipe que a compra libera: a que quem paga capitaneia agora. Sem equipe
 // (ou não é capitão), fica solta até ele chamar link_my_pro_to_team no app.
@@ -91,6 +96,61 @@ async function captainTeam(supabase: IAdmin, userId: string | null): Promise<str
 		.eq("role", "captain")
 		.maybeSingle();
 	return (data?.team_id as string | undefined) ?? null;
+}
+
+// Primeiro id da lista que é um perfil do PACE TEAM
+async function profileIn(supabase: IAdmin, ids: string[] | undefined): Promise<string | null> {
+	for (const id of ids ?? []) {
+		if (!isUuid(id)) continue;
+		const { data } = await supabase.from("profiles").select("id").eq("id", id).maybeSingle();
+		if (data) return data.id as string;
+	}
+	return null;
+}
+
+interface ISubRow {
+	id: string;
+	team_id: string | null;
+	status: string;
+	expires_at: string | null;
+}
+
+const isActiveRow = (r: ISubRow): boolean =>
+	r.status !== "expired" &&
+	r.status !== "paused" &&
+	(!r.expires_at || new Date(r.expires_at).getTime() > Date.now());
+
+// "Restaurar compras" em outra conta: a assinatura (e o Team Pro) vai junto.
+// Se a conta nova capitaneia uma equipe, o Pro passa para ela; senão a equipe
+// que já tinha o Pro continua com ele (uma assinatura nunca libera duas).
+async function handleTransfer(supabase: IAdmin, event: RevenueCatEvent): Promise<void> {
+	const to = await profileIn(supabase, event.transferred_to);
+	if (!to) return;
+	const from = await profileIn(supabase, event.transferred_from);
+	const anonymous = (event.transferred_from ?? []).filter((id) => !isUuid(id));
+	const query = supabase.from("subscriptions").select("id, team_id, status, expires_at");
+	const { data } = from
+		? await query.eq("user_id", from)
+		: await query.in("anonymous_user_id", anonymous.length > 0 ? anonymous : ["-"]);
+	const rows = (data ?? []) as ISubRow[];
+	if (rows.length === 0) return;
+	const team = await captainTeam(supabase, to);
+	for (const row of rows) {
+		await supabase
+			.from("subscriptions")
+			.update({
+				user_id: to,
+				anonymous_user_id: null,
+				team_id: team ?? row.team_id,
+				team_until: null,
+				updated_at: new Date().toISOString(),
+			})
+			.eq("id", row.id);
+	}
+	if (from) await supabase.from("profiles").update({ is_premium: false }).eq("id", from);
+	if (rows.some(isActiveRow)) {
+		await supabase.from("profiles").update({ is_premium: true }).eq("id", to);
+	}
 }
 
 Deno.serve(async (req: Request): Promise<Response> => {
@@ -122,6 +182,9 @@ Deno.serve(async (req: Request): Promise<Response> => {
 		.eq("event_id", event.id)
 		.maybeSingle();
 	if (existing) return json({ received: true, eventId: event.id, deduplicated: true }, 200);
+
+	// 3. Restaurou em outra conta: a assinatura muda de dono
+	if (event.type === "TRANSFER") await handleTransfer(supabase, event);
 
 	const status = STATUS_BY_EVENT[event.type];
 	if (status) {
