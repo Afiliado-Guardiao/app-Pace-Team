@@ -75,6 +75,12 @@ export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew, c
 		raio: <Raio />,
 		ninja: <Ninja />,
 		vampiro: <Vampiro />,
+		// Só imagem 3D (sem desenho em vetor)
+		mago: null,
+		viking: null,
+		astronauta: null,
+		gato: null,
+		oni: null,
 	};
 	return (
 		<Animated.View style={[LAYER, isNew ? DROP : null]} pointerEvents="none">

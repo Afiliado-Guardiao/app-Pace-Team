@@ -27,7 +27,12 @@ export type IBuddyAccessoryId =
 	| "ninja"
 	| "paraquedas"
 	| "espadas"
-	| "vampiro";
+	| "vampiro"
+	| "mago"
+	| "viking"
+	| "astronauta"
+	| "gato"
+	| "oni";
 
 // Acessórios de costas (desenhados atrás do corpo)
 export const BUDDY_BACK_ACCESSORIES = ["capa", "paraquedas", "espadas"] as const;
@@ -76,6 +81,11 @@ export const BUDDY_ACC_ORDER: readonly IBuddyAccessoryId[] = [
 	"raio",
 	"narigao",
 	"robo",
+	"astronauta",
+	"mago",
+	"viking",
+	"gato",
+	"oni",
 	"vampiro",
 	"coroa",
 	"aureola",
@@ -87,12 +97,17 @@ export const BUDDY_PRO_ACCESSORIES: readonly IBuddyAccessory[] = [
 	{ id: "viseira", name: "Viseira", slot: "head", pro: true },
 	{ id: "faixaNeon", name: "Faixa neon", slot: "head", pro: true },
 	{ id: "espelhado", name: "Óculos espelhado", slot: "eyes", pro: true },
+	{ id: "mago", name: "Mago", slot: "head", pro: true },
+	{ id: "samurai", name: "Samurai", slot: "head", pro: true },
+	{ id: "viking", name: "Viking", slot: "head", pro: true },
+	{ id: "astronauta", name: "Astronauta", slot: "head", pro: true },
+	{ id: "robo", name: "Robô", slot: "head", pro: true },
+	{ id: "ninja", name: "Ninja", slot: "head", pro: true },
+	{ id: "gato", name: "Orelhas de gato", slot: "head", pro: true },
+	{ id: "oni", name: "Máscara oni", slot: "eyes", pro: true },
 	{ id: "narigao", name: "Óculos de nariz", slot: "eyes", pro: true },
-	{ id: "samurai", name: "Samurai", slot: "eyes", pro: true },
 	{ id: "heroi", name: "Herói-teia", slot: "eyes", pro: true },
-	{ id: "robo", name: "Robô", slot: "eyes", pro: true },
 	{ id: "raio", name: "Máscara do raio", slot: "eyes", pro: true },
-	{ id: "ninja", name: "Ninja", slot: "eyes", pro: true },
 	{ id: "paraquedas", name: "Paraquedas", slot: "back", pro: true },
 	{ id: "espadas", name: "Espadas", slot: "back", pro: true },
 	{ id: "vampiro", name: "Dentes de vampiro", slot: "mouth", pro: true },

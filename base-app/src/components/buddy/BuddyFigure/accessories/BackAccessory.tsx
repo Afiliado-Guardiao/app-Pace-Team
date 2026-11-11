@@ -8,7 +8,9 @@ import { useSvgId } from "@/components/pace";
 
 import { anim } from "../../animations";
 
+import { ArtAccessory } from "./ArtAccessory";
 import { roundRect } from "./faceSvg";
+import { STUDIO_BACK_ART } from "./studioArt";
 
 interface IBackAccessoryProps {
 	id: "paraquedas" | "espadas";
@@ -88,12 +90,31 @@ const Espadas: React.FC = () => {
 	);
 };
 
-// Acessórios de costas do Buddy Studio (atrás do corpo, como a capa)
-export const BackAccessory: React.FC<IBackAccessoryProps> = ({ id, isMini }) => (
-	<Animated.View
-		style={[BOX, isMini || id !== "paraquedas" ? null : anim("q", "2.6s")]}
-		pointerEvents="none"
-	>
-		{id === "paraquedas" ? <Paraquedas /> : <Espadas />}
-	</Animated.View>
-);
+const FIGURE: ViewStyle = {
+	position: "absolute",
+	left: 0,
+	top: 0,
+	width: 140,
+	height: 135,
+	zIndex: 1,
+	transformOrigin: "50% 70%",
+};
+
+// Acessórios de costas do Buddy Studio (atrás do corpo, como a capa).
+// Com imagem 3D, ela vale; senão, o desenho em vetor.
+export const BackAccessory: React.FC<IBackAccessoryProps> = ({ id, isMini }) => {
+	const art = STUDIO_BACK_ART[id];
+	const sway = isMini || id !== "paraquedas" ? null : anim("q", "2.6s");
+	if (art) {
+		return (
+			<Animated.View style={[FIGURE, sway]} pointerEvents="none">
+				<ArtAccessory art={art} />
+			</Animated.View>
+		);
+	}
+	return (
+		<Animated.View style={[BOX, sway]} pointerEvents="none">
+			{id === "paraquedas" ? <Paraquedas /> : <Espadas />}
+		</Animated.View>
+	);
+};
