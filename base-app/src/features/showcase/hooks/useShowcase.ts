@@ -1,67 +1,59 @@
 import { useEffect, useState } from "react";
+import { useWindowDimensions } from "react-native";
 
 import { useRouter } from "expo-router";
 
-import {
-	Easing,
-	useAnimatedStyle,
-	useReducedMotion,
-	useSharedValue,
-	withDelay,
-	withRepeat,
-	withSequence,
-	withTiming,
-} from "react-native-reanimated";
-
+import { IBuddyPose } from "@/components/buddy";
 import { ROUTES } from "@/constants/routes";
 
-import { SCENES } from "../constants";
+import { COLLAGE_H } from "../constants";
 
-const RISE_MS = 750;
-const FLOAT_MS = 3000;
+const IDLE: IBuddyPose = { act: "idle", phase: null, blink: false, gx: 0, gy: 0 };
+const WAVE: IBuddyPose = { ...IDLE, act: "wave" };
+const WAVE_MS = 1800;
+const REST_MS = 3200;
+const BLINK_MS = 140;
+const BLINK_EVERY = 3100;
 
-// 01 · vitrine: o celular sobe na hora (já com a tela pronta) e flutua; as
-// cenas trocam sozinhas, cada uma no seu tempo, em loop
+// 01 · boas-vindas do onboarding: colagem de fotos, o Buddy acenando e
+// piscando, "Cada corrida. Cada km. Juntos." e Começar
 export const useShowcase = () => {
 	const router = useRouter();
-	const isReduced = useReducedMotion();
-	const [index, setIndex] = useState(0);
-	const rise = useSharedValue(isReduced ? 1 : 0);
-	const float = useSharedValue(0);
-	const scene = SCENES[index % SCENES.length];
+	const { width } = useWindowDimensions();
+	const [isWaving, setIsWaving] = useState(true);
+	const [isBlink, setIsBlink] = useState(false);
 
 	useEffect(() => {
-		if (isReduced) return;
-		rise.value = withTiming(1, { duration: RISE_MS, easing: Easing.out(Easing.cubic) });
-		float.value = withDelay(
-			RISE_MS,
-			withRepeat(
-				withSequence(withTiming(1, { duration: FLOAT_MS }), withTiming(0, { duration: FLOAT_MS })),
-				-1,
-			),
-		);
-	}, [isReduced, rise, float]);
-
-	useEffect(() => {
-		if (isReduced) return undefined;
-		const timer = setTimeout(() => {
-			setIndex((n) => (n + 1) % SCENES.length);
-		}, scene.ms);
-		return () => {
-			clearTimeout(timer);
+		let wave: ReturnType<typeof setTimeout>;
+		const cycle = (on: boolean) => {
+			setIsWaving(on);
+			wave = setTimeout(
+				() => {
+					cycle(!on);
+				},
+				on ? WAVE_MS : REST_MS,
+			);
 		};
-	}, [index, isReduced, scene.ms]);
+		cycle(true);
+		const blink = setInterval(() => {
+			setIsBlink(true);
+			setTimeout(() => {
+				setIsBlink(false);
+			}, BLINK_MS);
+		}, BLINK_EVERY);
+		return () => {
+			clearTimeout(wave);
+			clearInterval(blink);
+		};
+	}, []);
+
+	// A colagem foi desenhada para 390 de largura; escala para a tela
+	const k = Math.min(1.15, width / 390);
 
 	return {
-		scene,
-		index,
-		phone: useAnimatedStyle(() => ({
-			transform: [
-				{ translateY: (1 - rise.value) * 240 + float.value * -10 },
-				{ rotate: `${String(-10 + 7 * rise.value)}deg` },
-				{ scale: 0.9 + 0.1 * rise.value },
-			],
-		})),
+		k,
+		collageH: COLLAGE_H * k,
+		pose: { ...(isWaving ? WAVE : IDLE), blink: isBlink },
 		start: () => {
 			router.replace(ROUTES.SETUP);
 		},

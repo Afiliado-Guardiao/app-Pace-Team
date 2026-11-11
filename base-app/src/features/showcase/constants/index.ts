@@ -1,126 +1,37 @@
 import { ImageSourcePropType } from "react-native";
 
-import challenges from "../../../../assets/prizes/constancia.png";
-import teamPrize from "../../../../assets/prizes/team_record.png";
-import virada from "../../../../assets/prizes/team_streak.png";
-import shotChallenges from "../../../../assets/showcase/challenges.jpg";
-import shotFeed from "../../../../assets/showcase/feed.jpg";
-import shotHome from "../../../../assets/showcase/home.jpg";
-import shotMap from "../../../../assets/showcase/map.jpg";
-import shotRanking from "../../../../assets/showcase/ranking.jpg";
-import shotShare from "../../../../assets/showcase/share.jpg";
-import shotTeam from "../../../../assets/showcase/team.jpg";
-import shotVirada from "../../../../assets/showcase/virada.jpg";
+import { CREW, PHOTOS } from "@/lib/pace";
 
-export interface IShowcaseBadge {
-	art: ImageSourcePropType;
-	label: string;
-	title: string;
-	tone: "gold" | "green";
+export interface ICollagePhoto {
+	source: ImageSourcePropType;
+	// Posição e tamanho na colagem (referência: tela de 390 de largura)
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+	rotate: number;
+	// Foto oval (como na referência) ou cartão de cantos arredondados
+	isOval?: boolean;
 }
 
-export interface IShowcaseScene {
-	id: string;
-	// Tela real do app (null = a cena animada "Chame o Buddy")
-	image: ImageSourcePropType | null;
-	ms: number;
-	icon: string;
-	title: string;
-	sub: string;
-	badge?: IShowcaseBadge;
-}
-
-// As 9 cenas do celular de vitrine (tempos do Cloud Design)
-export const SCENES: readonly IShowcaseScene[] = [
-	{
-		id: "home",
-		image: shotHome,
-		ms: 2300,
-		icon: "cloud-rain",
-		title: "Clima ao vivo na pista",
-		sub: "Sua equipe correndo agora",
-	},
-	{
-		id: "buddy",
-		image: null,
-		ms: 5600,
-		icon: "hand",
-		title: "Chame o Buddy",
-		sub: "2 toques atrás do celular",
-	},
-	{
-		id: "ranking",
-		image: shotRanking,
-		ms: 2300,
-		icon: "mountain",
-		title: "Ranking até o cume",
-		sub: "Suba com sua equipe",
-	},
-	{
-		id: "challenges",
-		image: shotChallenges,
-		ms: 2300,
-		icon: "medal",
-		title: "Ganhe medalhas",
-		sub: "Desafios e conquistas",
-		badge: { art: challenges, label: "MEDALHA CONQUISTADA", title: "Semana de fogo", tone: "gold" },
-	},
-	{
-		id: "team",
-		image: shotTeam,
-		ms: 2300,
-		icon: "trophy",
-		title: "Ouro, prata e bronze",
-		sub: "Disputa dentro da equipe",
-		badge: { art: teamPrize, label: "1º DA EQUIPE", title: "Melhor pace da semana", tone: "gold" },
-	},
-	{
-		id: "virada",
-		image: shotVirada,
-		ms: 2300,
-		icon: "zap",
-		title: "Modo Virada",
-		sub: "Ultrapasse a equipe rival",
-		badge: { art: virada, label: "VIRADA CONCLUÍDA", title: "Pace Sharks em 3º", tone: "green" },
-	},
-	{
-		id: "share",
-		image: shotShare,
-		ms: 3800,
-		icon: "share-2",
-		title: "Compartilhe sua corrida",
-		sub: "Layouts sem fundo para seus stories",
-	},
-	{
-		id: "feed",
-		image: shotFeed,
-		ms: 4200,
-		icon: "images",
-		title: "Poste com seus amigos",
-		sub: "Fotos da equipe no feed",
-	},
-	{
-		id: "map",
-		image: shotMap,
-		ms: 2300,
-		icon: "map",
-		title: "Corridas no mapa",
-		sub: "Rotas e percursos salvos",
-	},
+// Colagem do topo: fotos de corrida e de equipe com moldura branca
+export const COLLAGE: readonly ICollagePhoto[] = [
+	{ source: PHOTOS.runnerCitySunset, x: 14, y: 54, w: 150, h: 178, rotate: -7, isOval: true },
+	{ source: PHOTOS.teamTrack, x: 146, y: 18, w: 156, h: 112, rotate: 5 },
+	{ source: PHOTOS.teamRunningSunset, x: 236, y: 64, w: 142, h: 180, rotate: 7, isOval: true },
+	{ source: PHOTOS.runnerMountain, x: 28, y: 236, w: 150, h: 112, rotate: -4 },
+	{ source: PHOTOS.onbCrewGoggles, x: 140, y: 140, w: 116, h: 140, rotate: -2 },
+	{ source: CREW[4] ?? PHOTOS.teamTrack, x: 222, y: 250, w: 150, h: 108, rotate: 5 },
 ];
 
+// Altura da colagem na referência de 390 de largura
+export const COLLAGE_H = 370;
+
 export const SHOWCASE_COPY = {
-	lineA: "CORRA JUNTO.",
-	lineB: "SUBA NO RANKING.",
-	sub: "Transforme suas corridas em desafios, conquistas e competição com amigos.",
-	cta: "COMEÇAR",
-	login: "Já tenho uma conta",
-	lockTime: "9:41",
-	lockDate: "Sábado, 9 de novembro",
-	cardTitle: "Bora correr?",
-	cardSub: "Chama a galera e escolhe os km.",
-	cardSolo: "Correr sozinho",
-	cardTeam: "Correr com a equipe",
-	cardGoal: "META  ‹ 5 km ›",
-	cardLater: "Agora não",
+	name: "Bud",
+	lineA: "Cada corrida.",
+	lineB: "Cada km.",
+	lineC: "Juntos.",
+	cta: "Começar",
+	login: "Já tenho conta",
 } as const;

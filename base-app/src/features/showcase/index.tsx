@@ -1,109 +1,90 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
-import Animated from "react-native-reanimated";
+import Animated, { FadeInUp } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Button, Logo, ScreenBackground, ScreenScroll } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
-import { PHOTOS } from "@/lib/pace";
 
-import { SceneTag } from "./components/SceneTag";
-import { ShowcasePhone } from "./components/ShowcasePhone";
-import { SHOWCASE_COPY as C } from "./constants";
+import { BuddyHero } from "./components/BuddyHero";
+import { CollagePhoto } from "./components/CollagePhoto";
+import { COLLAGE, SHOWCASE_COPY as C } from "./constants";
 import { useShowcase } from "./hooks/useShowcase";
 
-const GLOW = 300;
-
-const createShowcaseStyles = (theme: ITheme) => {
-	const { colors, spacing, typography } = theme.pace;
+const createShowcaseStyles = (theme: ITheme, collageH: number) => {
+	const { colors, spacing, typography, radii } = theme.pace;
 	return {
-		root: { flex: 1 },
-		content: { alignItems: "center" as const, gap: spacing[4], paddingTop: spacing[2] },
-		stage: { alignItems: "center" as const, justifyContent: "center" as const },
-		glow: {
-			position: "absolute" as const,
-			width: GLOW,
-			height: GLOW,
-			borderRadius: GLOW / 2,
-			backgroundColor: "rgba(253,90,12,.22)",
-			boxShadow: "0 0 90px 30px rgba(253,90,12,.30)",
+		root: { flex: 1, backgroundColor: colors.bgSunken },
+		safe: { flex: 1, justifyContent: "space-between" as const, paddingBottom: spacing[4] },
+		collage: { height: collageH, marginTop: spacing[2] },
+		words: { alignItems: "center" as const },
+		soft: {
+			fontFamily: typography.fonts.bold,
+			fontSize: 30,
+			lineHeight: 36,
+			color: colors.textTertiary,
 		},
-		tag: { alignSelf: "stretch" as const },
-		lineA: {
+		strong: {
 			fontFamily: typography.fonts.extrabold,
-			fontSize: 32,
+			fontSize: 30,
+			lineHeight: 36,
 			color: colors.textPrimary,
-			textAlign: "center" as const,
 		},
-		lineB: {
-			fontFamily: typography.fonts.extrabold,
-			fontSize: 32,
-			color: colors.orange[400],
-			textAlign: "center" as const,
-			marginTop: -6,
+		bottom: { paddingHorizontal: spacing[5], gap: spacing[4], alignItems: "center" as const },
+		cta: {
+			alignSelf: "stretch" as const,
+			height: 60,
+			borderRadius: radii.pill,
+			alignItems: "center" as const,
+			justifyContent: "center" as const,
+			backgroundColor: colors.textPrimary,
 		},
-		sub: {
-			fontFamily: typography.fonts.medium,
-			fontSize: typography.sizes.ui,
-			lineHeight: 21,
-			color: colors.textSecondary,
-			textAlign: "center" as const,
-		},
-		cta: { alignSelf: "stretch" as const },
-		link: {
-			fontFamily: typography.fonts.semibold,
-			fontSize: typography.sizes.ui,
-			color: colors.textSecondary,
-			textDecorationLine: "underline" as const,
-		},
+		ctaText: { fontFamily: typography.fonts.bold, fontSize: 17, color: colors.textOnLight },
+		login: { fontFamily: typography.fonts.semibold, fontSize: 15, color: colors.textPrimary },
 	};
 };
 
-// 01 · Welcome: o celular de vitrine mostra o app de verdade, cena por cena
+// 01 · boas-vindas do onboarding: colagem de fotos de corrida e de equipe,
+// o Buddy acenando e "Cada corrida. Cada km. Juntos."
 export const ShowcaseScreen: React.FC = () => {
 	const { theme } = useTheme();
-	const styles = createShowcaseStyles(theme);
 	const show = useShowcase();
+	const styles = createShowcaseStyles(theme, show.collageH);
 
 	return (
 		<View style={styles.root}>
-			<ScreenBackground photo={PHOTOS.blueMist} />
-			<ScreenScroll contentStyle={styles.content}>
-				<Logo variant="white" height={26} />
-				<View style={styles.stage}>
-					<View style={styles.glow} />
-					<Animated.View style={show.phone}>
-						<ShowcasePhone scene={show.scene} />
-					</Animated.View>
+			<SafeAreaView style={styles.safe}>
+				<View style={styles.collage}>
+					{COLLAGE.map((photo, i) => (
+						<CollagePhoto key={i} photo={photo} index={i} k={show.k} />
+					))}
 				</View>
-				<View style={styles.tag}>
-					<SceneTag scene={show.scene} index={show.index} />
-				</View>
-				<View>
-					<Text style={styles.lineA}>{C.lineA}</Text>
-					<Text style={styles.lineB}>{C.lineB}</Text>
-				</View>
-				<Text style={styles.sub}>{C.sub}</Text>
-				<View style={styles.cta}>
-					<Button
-						size="lg"
-						fullWidth
-						iconRight="chevron-right"
+				<BuddyHero pose={show.pose} k={show.k} />
+				<Animated.View entering={FadeInUp.delay(1000).duration(600)} style={styles.words}>
+					<Text style={styles.soft}>{C.lineA}</Text>
+					<Text style={styles.soft}>{C.lineB}</Text>
+					<Text style={styles.strong}>{C.lineC}</Text>
+				</Animated.View>
+				<Animated.View entering={FadeInUp.delay(1300).duration(600)} style={styles.bottom}>
+					<Pressable
+						style={({ pressed }) => [styles.cta, pressed ? { opacity: 0.85 } : null]}
 						onPress={show.start}
+						accessibilityRole="button"
+						accessibilityLabel={C.cta}
 						testID="showcase-start"
 					>
-						{C.cta}
-					</Button>
-				</View>
-				<Text
-					style={styles.link}
-					onPress={show.login}
-					accessibilityRole="link"
-					testID="showcase-login"
-				>
-					{C.login}
-				</Text>
-			</ScreenScroll>
+						<Text style={styles.ctaText}>{C.cta}</Text>
+					</Pressable>
+					<Text
+						style={styles.login}
+						onPress={show.login}
+						accessibilityRole="link"
+						testID="showcase-login"
+					>
+						{C.login}
+					</Text>
+				</Animated.View>
+			</SafeAreaView>
 		</View>
 	);
 };
