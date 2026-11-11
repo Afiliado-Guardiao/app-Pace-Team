@@ -9,6 +9,7 @@ import { IBuddyAccessoryId, IBuddyColorId, IBuddyEffectId } from "@/lib/buddy/co
 import { anim, EASE_SPRING } from "../animations";
 import { paletteOf } from "../palette";
 
+import { BackAccessory } from "./accessories/BackAccessory";
 import { Cape } from "./accessories/Cape";
 import { Body } from "./Body";
 import { Effects } from "./Effects";
@@ -117,6 +118,10 @@ export const BuddyFigure: React.FC<IBuddyFigureProps> = ({
 						/>
 					) : null}
 					{effect && !isMini && effect === "aura" ? <StudioEffect effect="aura" /> : null}
+					{accessories.includes("espadas") ? <BackAccessory id="espadas" isMini={isMini} /> : null}
+					{accessories.includes("paraquedas") ? (
+						<BackAccessory id="paraquedas" isMini={isMini} />
+					) : null}
 					{hasCape ? <Cape isNew={!isMini && dropId === "capa"} isMini={isMini} /> : null}
 					{isMini ? null : <RunRing phase={pose.phase} />}
 					<Body pose={pose} pal={pal} accessories={accessories} dropId={dropId} isMini={isMini} />

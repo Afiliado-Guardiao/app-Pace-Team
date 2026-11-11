@@ -25,10 +25,19 @@ export interface IBuddyStudio {
 	color: IBuddyColorId | null;
 	head: IBuddyAccessoryId | null;
 	eyes: IBuddyAccessoryId | null;
+	back: IBuddyAccessoryId | null;
+	mouth: IBuddyAccessoryId | null;
 	effect: IBuddyEffectId | null;
 }
 
-export const EMPTY_STUDIO: IBuddyStudio = { color: null, head: null, eyes: null, effect: null };
+export const EMPTY_STUDIO: IBuddyStudio = {
+	color: null,
+	head: null,
+	eyes: null,
+	back: null,
+	mouth: null,
+	effect: null,
+};
 
 interface IBuddyState {
 	// Metas cumpridas com o Buddy (liberam acessórios)

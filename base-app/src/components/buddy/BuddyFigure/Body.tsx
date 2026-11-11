@@ -4,7 +4,13 @@ import { View, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { GradientLayers } from "@/components/pace";
-import { BUDDY_ACC_ORDER, IBuddyAccessoryId, IBuddyPalette } from "@/lib/buddy/constants";
+import {
+	BUDDY_ACC_ORDER,
+	BUDDY_BACK_ACCESSORIES,
+	IBuddyAccessoryId,
+	IBuddyBackAccessoryId,
+	IBuddyPalette,
+} from "@/lib/buddy/constants";
 
 import { anim, EASE_SPRING } from "../animations";
 import { bodyInsetShadow, bodyLayers, bodyOuterShadow, chromeLayers } from "../palette";
@@ -65,7 +71,10 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 	const isSleep = isSleepAct(pose.act);
 	const isSick = pose.act === "sick";
 	const heads = accessories
-		.filter((x): x is Exclude<IBuddyAccessoryId, "capa"> => x !== "capa")
+		.filter(
+			(x): x is Exclude<IBuddyAccessoryId, IBuddyBackAccessoryId> =>
+				!(BUDDY_BACK_ACCESSORIES as readonly string[]).includes(x),
+		)
 		.sort((a, b) => BUDDY_ACC_ORDER.indexOf(a) - BUDDY_ACC_ORDER.indexOf(b));
 	// A coroa do líder sobe quando há boné, faixa ou auréola
 	const crownLift = heads.some((x) => HATS.includes(x)) ? CROWN_LIFT : 0;

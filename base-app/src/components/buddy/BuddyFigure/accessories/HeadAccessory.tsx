@@ -3,7 +3,7 @@ import { ViewStyle } from "react-native";
 
 import Animated from "react-native-reanimated";
 
-import { IBuddyAccessoryId, IBuddyPalette } from "@/lib/buddy/constants";
+import { IBuddyAccessoryId, IBuddyBackAccessoryId, IBuddyPalette } from "@/lib/buddy/constants";
 
 import { anim, EASE_OUT } from "../../animations";
 
@@ -15,10 +15,17 @@ import { Faixa } from "./Faixa";
 import { Fone } from "./Fone";
 import { Glasses } from "./Glasses";
 import { Grau } from "./Grau";
+import { Heroi } from "./Heroi";
+import { Narigao } from "./Narigao";
+import { Ninja } from "./Ninja";
+import { Raio } from "./Raio";
+import { Robo } from "./Robo";
+import { Samurai } from "./Samurai";
+import { Vampiro } from "./Vampiro";
 import { Viseira } from "./Viseira";
 
 interface IHeadAccessoryProps {
-	id: Exclude<IBuddyAccessoryId, "capa">;
+	id: Exclude<IBuddyAccessoryId, IBuddyBackAccessoryId>;
 	pal: IBuddyPalette;
 	// Recém-vestido: cai em cima do Buddy
 	isNew: boolean;
@@ -59,6 +66,13 @@ export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew, c
 		viseira: <Viseira />,
 		faixaNeon: <Faixa layers={NEON_LAYERS} tails={NEON_TAILS} glow="rgba(180,76,255,.7)" />,
 		espelhado: <Glasses lens={MIRROR} rim="#BFE9FF" />,
+		narigao: <Narigao />,
+		samurai: <Samurai />,
+		heroi: <Heroi />,
+		robo: <Robo />,
+		raio: <Raio />,
+		ninja: <Ninja />,
+		vampiro: <Vampiro />,
 	};
 	return (
 		<Animated.View style={[LAYER, isNew ? DROP : null]} pointerEvents="none">

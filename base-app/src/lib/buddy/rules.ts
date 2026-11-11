@@ -83,6 +83,8 @@ export interface IBuddyStudioPick {
 	color: IBuddyColorId | null;
 	head: IBuddyAccessoryId | null;
 	eyes: IBuddyAccessoryId | null;
+	back?: IBuddyAccessoryId | null;
+	mouth?: IBuddyAccessoryId | null;
 	effect: IBuddyEffectId | null;
 }
 
@@ -93,7 +95,9 @@ export const withStudio = (
 	look: { color: IBuddyColorId; accessories: IBuddyAccessoryId[] },
 	studio: IBuddyStudioPick,
 ): { color: IBuddyColorId; accessories: IBuddyAccessoryId[]; effect: IBuddyEffectId | null } => {
-	const picks = [studio.head, studio.eyes].filter((x): x is IBuddyAccessoryId => x !== null);
+	const picks = [studio.head, studio.eyes, studio.back ?? null, studio.mouth ?? null].filter(
+		(x): x is IBuddyAccessoryId => x !== null,
+	);
 	const taken = new Set(picks.map(slotOfAny));
 	const kept = look.accessories.filter((id) => id === BUDDY_CROWN || !taken.has(slotOfAny(id)));
 	return {

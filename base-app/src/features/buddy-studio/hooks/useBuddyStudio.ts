@@ -56,7 +56,12 @@ interface IUseBuddyStudioReturn {
 }
 
 const same = (a: IBuddyStudio, b: IBuddyStudio): boolean =>
-	a.color === b.color && a.head === b.head && a.eyes === b.eyes && a.effect === b.effect;
+	a.color === b.color &&
+	a.head === b.head &&
+	a.eyes === b.eyes &&
+	a.back === b.back &&
+	a.mouth === b.mouth &&
+	a.effect === b.effect;
 
 // PACE BUDDY STUDIO: experimenta cores, acessórios e efeitos Premium no Buddy
 // e aplica (só com o Team Pro). O que foi conquistado correndo não muda.
@@ -69,7 +74,8 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 	const lastFree = useBuddyStore((s) => s.lastFree);
 	const equipped = useBuddyStore((s) => s.equipped);
 	const goals = useBuddyStore((s) => s.goals);
-	const saved = useBuddyStore((s) => s.studio);
+	const stored = useBuddyStore((s) => s.studio);
+	const saved: IBuddyStudio = { ...EMPTY_STUDIO, ...stored };
 	const setStudio = useBuddyStore((s) => s.setStudio);
 	const [tab, setTabState] = useState<IStudioTab>("cores");
 	const [draft, setDraft] = useState<IBuddyStudio>(saved);
@@ -113,7 +119,7 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 			),
 		acessorios: () =>
 			BUDDY_PRO_ACCESSORIES.map((a) => {
-				const key = a.slot === "eyes" ? "eyes" : "head";
+				const key = a.slot;
 				return item(a.id, a.name, toggle(key, a.id), draft[key] === a.id);
 			}),
 		efeitos: () =>

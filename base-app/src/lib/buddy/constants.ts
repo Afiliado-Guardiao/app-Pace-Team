@@ -18,8 +18,21 @@ export type IBuddyAccessoryId =
 	| "fone"
 	| "viseira"
 	| "faixaNeon"
-	| "espelhado";
-export type IBuddySlot = "head" | "eyes" | "back";
+	| "espelhado"
+	| "narigao"
+	| "samurai"
+	| "heroi"
+	| "robo"
+	| "raio"
+	| "ninja"
+	| "paraquedas"
+	| "espadas"
+	| "vampiro";
+
+// Acessórios de costas (desenhados atrás do corpo)
+export const BUDDY_BACK_ACCESSORIES = ["capa", "paraquedas", "espadas"] as const;
+export type IBuddyBackAccessoryId = (typeof BUDDY_BACK_ACCESSORIES)[number];
+export type IBuddySlot = "head" | "eyes" | "back" | "mouth";
 
 export interface IBuddyAccessory {
 	id: IBuddyAccessoryId;
@@ -57,6 +70,13 @@ export const BUDDY_ACC_ORDER: readonly IBuddyAccessoryId[] = [
 	"boneTras",
 	"viseira",
 	"fone",
+	"ninja",
+	"samurai",
+	"heroi",
+	"raio",
+	"narigao",
+	"robo",
+	"vampiro",
 	"coroa",
 	"aureola",
 ];
@@ -67,6 +87,15 @@ export const BUDDY_PRO_ACCESSORIES: readonly IBuddyAccessory[] = [
 	{ id: "viseira", name: "Viseira", slot: "head", pro: true },
 	{ id: "faixaNeon", name: "Faixa neon", slot: "head", pro: true },
 	{ id: "espelhado", name: "Óculos espelhado", slot: "eyes", pro: true },
+	{ id: "narigao", name: "Óculos de nariz", slot: "eyes", pro: true },
+	{ id: "samurai", name: "Samurai", slot: "eyes", pro: true },
+	{ id: "heroi", name: "Herói-teia", slot: "eyes", pro: true },
+	{ id: "robo", name: "Robô", slot: "eyes", pro: true },
+	{ id: "raio", name: "Máscara do raio", slot: "eyes", pro: true },
+	{ id: "ninja", name: "Ninja", slot: "eyes", pro: true },
+	{ id: "paraquedas", name: "Paraquedas", slot: "back", pro: true },
+	{ id: "espadas", name: "Espadas", slot: "back", pro: true },
+	{ id: "vampiro", name: "Dentes de vampiro", slot: "mouth", pro: true },
 ];
 
 export type IBuddyColorId =
@@ -207,9 +236,24 @@ export const BUDDY_PRO_COLORS: readonly IBuddyColorId[] = [
 ];
 
 // Efeitos do Buddy Studio em volta do Buddy
-export type IBuddyEffectId = "faiscas" | "estrelas" | "aura";
+export type IBuddyEffectId =
+	| "tontura"
+	| "coracoes"
+	| "notas"
+	| "fogo"
+	| "chuva"
+	| "raios"
+	| "faiscas"
+	| "estrelas"
+	| "aura";
 
 export const BUDDY_PRO_EFFECTS: readonly { id: IBuddyEffectId; name: string }[] = [
+	{ id: "tontura", name: "Tontura" },
+	{ id: "coracoes", name: "Corações" },
+	{ id: "notas", name: "Notas musicais" },
+	{ id: "fogo", name: "Fogo nos pés" },
+	{ id: "chuva", name: "Nuvem de chuva" },
+	{ id: "raios", name: "Raios" },
 	{ id: "faiscas", name: "Faíscas" },
 	{ id: "estrelas", name: "Estrelas" },
 	{ id: "aura", name: "Aura" },

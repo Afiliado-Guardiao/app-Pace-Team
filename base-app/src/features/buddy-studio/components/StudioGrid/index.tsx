@@ -13,6 +13,12 @@ interface IStudioGridProps {
 }
 
 const EFFECT_ICON: Record<string, string> = {
+	tontura: "orbit",
+	coracoes: "heart",
+	notas: "headphones",
+	fogo: "flame",
+	chuva: "cloud-rain",
+	raios: "zap",
 	faiscas: "sparkles",
 	estrelas: "star",
 	aura: "sun",

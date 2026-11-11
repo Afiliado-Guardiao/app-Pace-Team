@@ -193,6 +193,30 @@ export const KF: Record<string, IKeyframes> = {
 		"25%": { opacity: 1, transform: [{ translateY: 0 }, { scale: 1.1 }] },
 		"100%": { opacity: 0, transform: [{ translateY: -22 }, { scale: 1 }] },
 	},
+	// Buddy Studio: corações e notas subindo, fogo, chuva e raios
+	rise: {
+		"0%": { opacity: 0, transform: [{ translateY: 8 }, { translateX: 0 }, { scale: 0.6 }] },
+		"25%": { opacity: 1, transform: [{ translateY: 0 }, { translateX: 2 }, { scale: 1 }] },
+		"100%": { opacity: 0, transform: [{ translateY: -34 }, { translateX: -3 }, { scale: 0.9 }] },
+	},
+	flick: {
+		"0%": { opacity: 0.85, transform: [{ scaleY: 0.82 }, { scaleX: 1.05 }] },
+		"50%": { opacity: 1, transform: [{ scaleY: 1.18 }, { scaleX: 0.92 }] },
+		"100%": { opacity: 0.85, transform: [{ scaleY: 0.82 }, { scaleX: 1.05 }] },
+	},
+	rain: {
+		"0%": { opacity: 0, transform: [{ translateY: 0 }] },
+		"15%": { opacity: 1, transform: [{ translateY: 3 }] },
+		"100%": { opacity: 0, transform: [{ translateY: 30 }] },
+	},
+	zap: {
+		"0%": { opacity: 0, transform: [{ scale: 0.7 }] },
+		"10%": { opacity: 1, transform: [{ scale: 1.1 }] },
+		"22%": { opacity: 0.2, transform: [{ scale: 1 }] },
+		"30%": { opacity: 1, transform: [{ scale: 1 }] },
+		"45%": { opacity: 0, transform: [{ scale: 0.9 }] },
+		"100%": { opacity: 0, transform: [{ scale: 0.9 }] },
+	},
 	leg: {
 		"0%": { transform: [{ rotate: "-38deg" }] },
 		"50%": { transform: [{ rotate: "38deg" }] },
