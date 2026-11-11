@@ -13,8 +13,19 @@ const SVG_STYLE = {
 	filter: "drop-shadow(0 4px 5px rgba(0,0,0,.45))",
 } as const;
 
+const ORANGE_LENS = ["#FFD27A", "#FD7A1E", "#E84A00", "#8A2400"] as const;
+
+interface IGlassesProps {
+	// Lente espelhada do Buddy Studio
+	lens?: readonly [string, string, string, string];
+	rim?: string;
+}
+
 // Óculos esportivos laranja do Buddy (o mesmo desenho SVG do design).
-export const Glasses: React.FC = () => {
+export const Glasses: React.FC<IGlassesProps> = ({
+	lens: colors = ORANGE_LENS,
+	rim = "#FF8A6A",
+}) => {
 	const lens = useSvgId("pb-lens");
 	const shine = useSvgId("pb-shine");
 
@@ -22,10 +33,10 @@ export const Glasses: React.FC = () => {
 		<Svg viewBox="0 0 100 32" width={104} height={33} style={SVG_STYLE}>
 			<Defs>
 				<LinearGradient id={lens} x1="0" y1="0" x2="0" y2="1">
-					<Stop offset="0" stopColor="#FFD27A" />
-					<Stop offset="0.35" stopColor="#FD7A1E" />
-					<Stop offset="0.7" stopColor="#E84A00" />
-					<Stop offset="1" stopColor="#8A2400" />
+					<Stop offset="0" stopColor={colors[0]} />
+					<Stop offset="0.35" stopColor={colors[1]} />
+					<Stop offset="0.7" stopColor={colors[2]} />
+					<Stop offset="1" stopColor={colors[3]} />
 				</LinearGradient>
 				<LinearGradient id={shine} x1="0" y1="0" x2="1" y2="0">
 					<Stop offset="0" stopColor="#fff" stopOpacity={0} />
@@ -38,7 +49,7 @@ export const Glasses: React.FC = () => {
 			<Path
 				d="M5 6 Q50 1 95 6 L96 12 Q95 24 84 27 Q70 29 60 26 Q55 17 50 16 Q45 17 40 26 Q30 29 16 27 Q5 24 4 12 Z"
 				fill={`url(#${lens})`}
-				stroke="#FF8A6A"
+				stroke={rim}
 				strokeWidth={0.8}
 				strokeOpacity={0.9}
 			/>

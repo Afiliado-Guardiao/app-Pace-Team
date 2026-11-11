@@ -13,7 +13,12 @@ export type IBuddyAccessoryId =
 	| "boneTras"
 	| "coroa"
 	| "aureola"
-	| "capa";
+	| "capa"
+	// PACE BUDDY STUDIO (Team Pro): só estilo, sem vantagem
+	| "fone"
+	| "viseira"
+	| "faixaNeon"
+	| "espelhado";
 export type IBuddySlot = "head" | "eyes" | "back";
 
 export interface IBuddyAccessory {
@@ -23,6 +28,8 @@ export interface IBuddyAccessory {
 	// Metas cumpridas para liberar (ou só para o líder da equipe)
 	need?: number;
 	leader?: boolean;
+	// Item do Buddy Studio (Team Pro)
+	pro?: boolean;
 }
 
 export const BUDDY_ACCESSORIES: readonly IBuddyAccessory[] = [
@@ -42,12 +49,24 @@ export const BUDDY_CROWN: IBuddyAccessoryId = "coroa";
 // Ordem de desenho (o que fica por cima)
 export const BUDDY_ACC_ORDER: readonly IBuddyAccessoryId[] = [
 	"oculos",
+	"espelhado",
 	"grau",
 	"faixa",
+	"faixaNeon",
 	"bone",
 	"boneTras",
+	"viseira",
+	"fone",
 	"coroa",
 	"aureola",
+];
+
+// Acessórios do Buddy Studio: só para quem tem o Team Pro
+export const BUDDY_PRO_ACCESSORIES: readonly IBuddyAccessory[] = [
+	{ id: "fone", name: "Fone", slot: "head", pro: true },
+	{ id: "viseira", name: "Viseira", slot: "head", pro: true },
+	{ id: "faixaNeon", name: "Faixa neon", slot: "head", pro: true },
+	{ id: "espelhado", name: "Óculos espelhado", slot: "eyes", pro: true },
 ];
 
 export type IBuddyColorId =
@@ -58,7 +77,14 @@ export type IBuddyColorId =
 	| "amarelo"
 	| "bronze"
 	| "prata"
-	| "ouro";
+	| "ouro"
+	// Cores do Buddy Studio (Team Pro)
+	| "neon"
+	| "galaxia"
+	| "oceano"
+	| "coral"
+	| "grafite"
+	| "lava";
 
 export interface IBuddyPalette {
 	name: string;
@@ -72,6 +98,8 @@ export interface IBuddyPalette {
 	m?: readonly [string, string, string, string, string, string];
 	glow?: string;
 	ink?: string;
+	// Cor do Buddy Studio (Team Pro)
+	pro?: boolean;
 }
 
 export const BUDDY_COLORS: Record<IBuddyColorId, IBuddyPalette> = {
@@ -131,7 +159,61 @@ export const BUDDY_COLORS: Record<IBuddyColorId, IBuddyPalette> = {
 		glow: "rgba(255,201,77,.75)",
 		ink: "#FFD45C",
 	},
+	neon: {
+		name: "Neon",
+		pro: true,
+		c: ["#FFC2E8", "#FF6FC4", "#F23B9E", "#B8167A"],
+		sh: "rgba(150,10,100,.4)",
+	},
+	galaxia: {
+		name: "Galáxia",
+		pro: true,
+		c: ["#C9B8FF", "#7B5CF0", "#3F2AA8", "#1B1260"],
+		sh: "rgba(20,10,80,.55)",
+	},
+	oceano: {
+		name: "Oceano",
+		pro: true,
+		c: ["#B5FFF4", "#4FE0D2", "#16A8B8", "#0B6A86"],
+		sh: "rgba(5,70,90,.45)",
+	},
+	coral: {
+		name: "Coral",
+		pro: true,
+		c: ["#FFD9CC", "#FF9E80", "#FF6A4D", "#D9412B"],
+		sh: "rgba(160,40,20,.4)",
+	},
+	grafite: {
+		name: "Grafite",
+		pro: true,
+		c: ["#9AA6B4", "#5C6876", "#353F4B", "#1A2129"],
+		sh: "rgba(0,0,0,.55)",
+	},
+	lava: {
+		name: "Lava",
+		pro: true,
+		c: ["#FFE08A", "#FF9A2E", "#F0461E", "#8F1306"],
+		sh: "rgba(120,20,0,.5)",
+	},
 };
+
+export const BUDDY_PRO_COLORS: readonly IBuddyColorId[] = [
+	"neon",
+	"galaxia",
+	"oceano",
+	"coral",
+	"grafite",
+	"lava",
+];
+
+// Efeitos do Buddy Studio em volta do Buddy
+export type IBuddyEffectId = "faiscas" | "estrelas" | "aura";
+
+export const BUDDY_PRO_EFFECTS: readonly { id: IBuddyEffectId; name: string }[] = [
+	{ id: "faiscas", name: "Faíscas" },
+	{ id: "estrelas", name: "Estrelas" },
+	{ id: "aura", name: "Aura" },
+];
 
 export const BUDDY_FREE_COLORS: readonly IBuddyColorId[] = [
 	"branco",

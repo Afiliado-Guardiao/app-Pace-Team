@@ -4,7 +4,7 @@ import { View, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { GradientLayers } from "@/components/pace";
-import { IBuddyAccessoryId, IBuddyColorId } from "@/lib/buddy/constants";
+import { IBuddyAccessoryId, IBuddyColorId, IBuddyEffectId } from "@/lib/buddy/constants";
 
 import { anim, EASE_SPRING } from "../animations";
 import { paletteOf } from "../palette";
@@ -12,6 +12,7 @@ import { paletteOf } from "../palette";
 import { Cape } from "./accessories/Cape";
 import { Body } from "./Body";
 import { Effects } from "./Effects";
+import { StudioEffect } from "./effects/StudioEffect";
 import { Hand } from "./Hand";
 import { groupAnimation, groupTransform, IBuddyPose, isRingPhase } from "./pose";
 import { RunRing } from "./RunRing";
@@ -26,6 +27,8 @@ interface IBuddyFigureProps {
 	dropId?: IBuddyAccessoryId | null;
 	// Miniatura das listas (sem animações contínuas)
 	isMini?: boolean;
+	// Efeito do Buddy Studio (Team Pro)
+	effect?: IBuddyEffectId | null;
 }
 
 export const BUDDY_W = 140;
@@ -54,6 +57,7 @@ export const BuddyFigure: React.FC<IBuddyFigureProps> = ({
 	accessories,
 	dropId = null,
 	isMini = false,
+	effect = null,
 }) => {
 	const pal = paletteOf(color);
 	const isRing = isRingPhase(pose.phase);
@@ -112,12 +116,14 @@ export const BuddyFigure: React.FC<IBuddyFigureProps> = ({
 							]}
 						/>
 					) : null}
+					{effect && !isMini && effect === "aura" ? <StudioEffect effect="aura" /> : null}
 					{hasCape ? <Cape isNew={!isMini && dropId === "capa"} isMini={isMini} /> : null}
 					{isMini ? null : <RunRing phase={pose.phase} />}
 					<Body pose={pose} pal={pal} accessories={accessories} dropId={dropId} isMini={isMini} />
 					<Hand pose={pose} pal={pal} index={0} isMini={isMini} />
 					<Hand pose={pose} pal={pal} index={1} isMini={isMini} />
 					{isMini ? null : <Effects pose={pose} pal={pal} />}
+					{effect && !isMini && effect !== "aura" ? <StudioEffect effect={effect} /> : null}
 				</Animated.View>
 			</Animated.View>
 		</View>

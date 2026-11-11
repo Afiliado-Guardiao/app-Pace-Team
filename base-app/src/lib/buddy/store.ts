@@ -9,6 +9,7 @@ import {
 	BUDDY_KMS,
 	IBuddyAccessoryId,
 	IBuddyColorId,
+	IBuddyEffectId,
 } from "./constants";
 
 // Despertador de corrida (dias: 0 = domingo … 6 = sábado)
@@ -18,6 +19,16 @@ export interface IBuddyAlarm {
 	minute: number;
 	days: number[];
 }
+
+// Visual escolhido no Buddy Studio (só aparece enquanto a equipe tem o Pro)
+export interface IBuddyStudio {
+	color: IBuddyColorId | null;
+	head: IBuddyAccessoryId | null;
+	eyes: IBuddyAccessoryId | null;
+	effect: IBuddyEffectId | null;
+}
+
+export const EMPTY_STUDIO: IBuddyStudio = { color: null, head: null, eyes: null, effect: null };
 
 interface IBuddyState {
 	// Metas cumpridas com o Buddy (liberam acessórios)
@@ -33,6 +44,8 @@ interface IBuddyState {
 	hideCrown: boolean;
 	// Acessório de presente do onboarding (já vem liberado)
 	gift: IBuddyAccessoryId | null;
+	studio: IBuddyStudio;
+	setStudio: (studio: IBuddyStudio) => void;
 	giveGift: (id: IBuddyAccessoryId) => void;
 	setHideCrown: (hide: boolean) => void;
 	setKmIdx: (index: number) => void;
@@ -58,7 +71,8 @@ export const DEFAULT_ALARM: IBuddyAlarm = {
 };
 
 const slotOf = (id: IBuddyAccessoryId) => BUDDY_ACCESSORIES.find((a) => a.id === id)?.slot;
-const isColor = (c: string): c is IBuddyColorId => c in BUDDY_COLORS;
+const isColor = (c: string): c is IBuddyColorId =>
+	c in BUDDY_COLORS && !BUDDY_COLORS[c as IBuddyColorId].pro;
 const isAccessory = (id: string): id is IBuddyAccessoryId =>
 	BUDDY_ACCESSORIES.some((a) => a.id === id);
 
@@ -75,6 +89,10 @@ export const useBuddyStore = create<IBuddyState>()(
 			alarm: DEFAULT_ALARM,
 			hideCrown: false,
 			gift: null,
+			studio: EMPTY_STUDIO,
+			setStudio: (studio) => {
+				set({ studio });
+			},
 			giveGift: (id) => {
 				const slot = slotOf(id);
 				set({ gift: id, equipped: [...get().equipped.filter((x) => slotOf(x) !== slot), id] });
@@ -130,6 +148,7 @@ export const useBuddyStore = create<IBuddyState>()(
 				alarm: s.alarm,
 				hideCrown: s.hideCrown,
 				gift: s.gift,
+				studio: s.studio,
 			}),
 		},
 	),

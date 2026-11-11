@@ -66,6 +66,7 @@ export const useProFab = (): IUseProFabReturn => {
 			// Recurso pronto e liberado abre direto; senão, a apresentação
 			if (isPro && id === "analytics") router.push(ROUTES.PRO_ANALYTICS);
 			else if (isPro && id === "ai") router.push(ROUTES.PACE_AI);
+			else if (isPro && id === "studio") router.push(ROUTES.BUDDY_STUDIO);
 			else router.push({ pathname: ROUTES.PRO_FEATURE, params: { id } });
 		},
 		backdropStyle: useAnimatedStyle(() => ({ opacity: Math.min(1, t.value) })),

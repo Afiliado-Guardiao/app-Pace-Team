@@ -88,7 +88,12 @@ export const RouteCompareCard: React.FC<IRouteCompareCardProps> = ({
 			<View style={styles.row}>
 				<View style={styles.buddy} pointerEvents="none">
 					<View style={styles.figure}>
-						<BuddyFigure pose={pose} color={look.color} accessories={look.accessories} />
+						<BuddyFigure
+							pose={pose}
+							color={look.color}
+							accessories={look.accessories}
+							effect={look.effect}
+						/>
 					</View>
 				</View>
 				<View style={styles.body}>

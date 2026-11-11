@@ -65,6 +65,7 @@ export const AiHello: React.FC<IAiHelloProps> = ({ text, isThinking }) => {
 						pose={isThinking ? THINK : WAVE}
 						color={look.color}
 						accessories={look.accessories}
+						effect={look.effect}
 					/>
 				</View>
 			</View>

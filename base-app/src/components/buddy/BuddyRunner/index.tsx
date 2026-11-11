@@ -51,6 +51,7 @@ export const BuddyRunner: React.FC<IBuddyRunnerProps> = ({
 							pose={runner.pose}
 							color={runner.look.color}
 							accessories={runner.look.accessories}
+							effect={runner.look.effect}
 						/>
 					</View>
 				</Pressable>

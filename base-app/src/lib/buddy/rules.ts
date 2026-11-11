@@ -4,11 +4,14 @@ import {
 	BUDDY_ACCESSORIES,
 	BUDDY_COLORS,
 	BUDDY_CROWN,
+	BUDDY_PRO_ACCESSORIES,
 	BUDDY_SICK_DAYS,
 	IBuddyAccessory,
 	IBuddyAccessoryId,
 	IBuddyColorId,
+	IBuddyEffectId,
 	IBuddyRank,
+	IBuddySlot,
 } from "./constants";
 
 // O que vem do app: equipe, liderança e pódio no ranking semanal
@@ -73,3 +76,29 @@ export const wornAccessories = (
 // Data em que o Buddy fica doente (7 dias sem correr); null = nunca correu
 export const sickAt = (lastRunAt: number | null): number | null =>
 	lastRunAt === null ? null : lastRunAt + BUDDY_SICK_DAYS * DAY_MS;
+
+// Buddy Studio por cima do visual conquistado: troca a cor e o acessório do
+// mesmo lugar (cabeça/olhos). A coroa do líder continua por cima.
+export interface IBuddyStudioPick {
+	color: IBuddyColorId | null;
+	head: IBuddyAccessoryId | null;
+	eyes: IBuddyAccessoryId | null;
+	effect: IBuddyEffectId | null;
+}
+
+const slotOfAny = (id: IBuddyAccessoryId): IBuddySlot | undefined =>
+	[...BUDDY_ACCESSORIES, ...BUDDY_PRO_ACCESSORIES].find((a) => a.id === id)?.slot;
+
+export const withStudio = (
+	look: { color: IBuddyColorId; accessories: IBuddyAccessoryId[] },
+	studio: IBuddyStudioPick,
+): { color: IBuddyColorId; accessories: IBuddyAccessoryId[]; effect: IBuddyEffectId | null } => {
+	const picks = [studio.head, studio.eyes].filter((x): x is IBuddyAccessoryId => x !== null);
+	const taken = new Set(picks.map(slotOfAny));
+	const kept = look.accessories.filter((id) => id === BUDDY_CROWN || !taken.has(slotOfAny(id)));
+	return {
+		color: studio.color ?? look.color,
+		accessories: [...kept, ...picks],
+		effect: studio.effect,
+	};
+};

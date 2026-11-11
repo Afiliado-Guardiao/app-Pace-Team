@@ -15,6 +15,12 @@ interface IUseProFeatureScreenReturn {
 	openPro: () => void;
 }
 
+const OPEN_ROUTE: Record<IProFeatureKey, string> = {
+	ai: ROUTES.PACE_AI,
+	studio: ROUTES.BUDDY_STUDIO,
+	analytics: ROUTES.PRO_ANALYTICS,
+};
+
 const isKey = (value: unknown): value is IProFeatureKey =>
 	value === "ai" || value === "studio" || value === "analytics";
 
@@ -28,9 +34,9 @@ export const useProFeatureScreen = (): IUseProFeatureScreenReturn => {
 	return {
 		feature: PRO_FEATURES[key],
 		isPro,
-		canOpen: isPro && key !== "studio",
+		canOpen: isPro,
 		open: () => {
-			router.push(key === "ai" ? ROUTES.PACE_AI : ROUTES.PRO_ANALYTICS);
+			router.push(OPEN_ROUTE[key]);
 		},
 		goBack: () => {
 			if (router.canGoBack()) router.back();

@@ -46,6 +46,7 @@ export const BuddyLivePanel: React.FC = () => {
 								pose={panel.pose}
 								color={panel.look.color}
 								accessories={panel.look.accessories}
+								effect={panel.look.effect}
 							/>
 						</Pressable>
 						<Text style={styles.title}>{panel.speech.title}</Text>

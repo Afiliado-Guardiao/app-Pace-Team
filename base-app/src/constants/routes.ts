@@ -40,6 +40,7 @@ export const ROUTES = {
 	PRO_FEATURE: "/(auth)/pro-feature",
 	PRO_ANALYTICS: "/(auth)/pro-analytics",
 	PACE_AI: "/(auth)/pace-ai",
+	BUDDY_STUDIO: "/(auth)/buddy-studio",
 } as const;
 
 export type IRoute = (typeof ROUTES)[keyof typeof ROUTES];
