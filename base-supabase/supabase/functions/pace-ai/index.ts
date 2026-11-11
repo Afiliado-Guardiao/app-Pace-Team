@@ -194,6 +194,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
       messages: [...history, { role: "user", content: question }],
     });
   } catch (error) {
+    // Conversa recém-criada sem resposta não fica no histórico
+    if (conversationId !== wanted) {
+      await admin.from("ai_conversations").delete().eq("id", conversationId);
+    }
     if (error instanceof Anthropic.RateLimitError) return json({ error: "busy" }, 503);
     if (error instanceof Anthropic.AuthenticationError) return json({ error: "not_configured" }, 503);
     if (error instanceof Anthropic.APIError) return json({ error: "ai_failed", status: error.status }, 502);
