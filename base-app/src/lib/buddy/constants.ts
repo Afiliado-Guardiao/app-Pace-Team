@@ -34,6 +34,7 @@ export type IBuddyAccessoryId =
 	| "gato"
 	| "oni"
 	| "palha"
+	| "faixaNinja"
 	| "kitsune"
 	| "ondas"
 	| "tribal"
@@ -97,6 +98,7 @@ export const BUDDY_ACC_ORDER: readonly IBuddyAccessoryId[] = [
 	"tribal",
 	"hyottoko",
 	"palha",
+	"faixaNinja",
 	"vampiro",
 	"sorriso",
 	"coroa",
@@ -116,6 +118,7 @@ export const BUDDY_PRO_ACCESSORIES: readonly IBuddyAccessory[] = [
 	{ id: "robo", name: "Robô", slot: "head", pro: true },
 	{ id: "gato", name: "Orelhas de gato", slot: "head", pro: true },
 	{ id: "palha", name: "Chapéu de palha", slot: "head", pro: true },
+	{ id: "faixaNinja", name: "Faixa do raio", slot: "head", pro: true },
 	{ id: "kitsune", name: "Máscara kitsune", slot: "eyes", pro: true },
 	{ id: "hyottoko", name: "Hyottoko", slot: "eyes", pro: true },
 	{ id: "ondas", name: "Máscara das ondas", slot: "eyes", pro: true },

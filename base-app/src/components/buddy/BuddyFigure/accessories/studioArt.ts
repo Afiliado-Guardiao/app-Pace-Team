@@ -5,6 +5,7 @@ import { IBuddyAccessoryId } from "@/lib/buddy/constants";
 import astronauta from "../../../../../assets/studio/astronauta.png";
 import espadas from "../../../../../assets/studio/espadas.png";
 import espelhado from "../../../../../assets/studio/espelhado.png";
+import faixaNinja from "../../../../../assets/studio/faixa-ninja.png";
 import fone from "../../../../../assets/studio/fone.png";
 import gato from "../../../../../assets/studio/gato.png";
 import hyottoko from "../../../../../assets/studio/hyottoko.png";
@@ -52,6 +53,7 @@ export const STUDIO_ART: Partial<Record<IBuddyAccessoryId, IStudioArt>> = {
 	narigao: art(narigao, 0.904, { left: 10, top: 8, width: 68 }),
 	oni: art(oni, 0.879, { left: -4, top: -4, width: 96 }),
 	vampiro: art(vampiro, 0.744, { left: 23, top: 34, width: 42 }),
+	faixaNinja: art(faixaNinja, 0.339, { left: -4, top: -10, width: 96 }),
 	palha: art(palha, 0.49, { left: -8, top: -40, width: 104 }),
 	kitsune: art(kitsune, 0.822, { left: 4, top: -2, width: 84 }),
 	ondas: art(ondas, 1.1, { left: 5, top: -2, width: 80, isStretch: true }),

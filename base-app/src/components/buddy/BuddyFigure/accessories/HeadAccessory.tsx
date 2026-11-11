@@ -82,6 +82,7 @@ export const HeadAccessory: React.FC<IHeadAccessoryProps> = ({ id, pal, isNew, c
 		gato: null,
 		oni: null,
 		palha: null,
+		faixaNinja: null,
 		kitsune: null,
 		ondas: null,
 		tribal: null,
