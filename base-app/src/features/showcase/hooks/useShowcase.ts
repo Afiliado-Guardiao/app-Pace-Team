@@ -21,7 +21,7 @@ const BLINK_EVERY = 3100;
 // piscando, "Cada corrida. Cada km. Juntos." e Começar
 export const useShowcase = () => {
 	const router = useRouter();
-	const { width } = useWindowDimensions();
+	const { width, height } = useWindowDimensions();
 	const [isWaving, setIsWaving] = useState(true);
 	const [isBlink, setIsBlink] = useState(false);
 
@@ -49,8 +49,9 @@ export const useShowcase = () => {
 		};
 	}, []);
 
-	// A colagem foi desenhada para 390 de largura; escala para a tela
-	const k = Math.min(1.15, width / 390);
+	// Desenhada para 390 × 844: encolhe pela largura OU pela altura (no Safari,
+	// com as barras, sobra menos altura e o botão precisa caber sempre)
+	const k = Math.min(1.15, width / 390, height / 844);
 
 	return {
 		k,

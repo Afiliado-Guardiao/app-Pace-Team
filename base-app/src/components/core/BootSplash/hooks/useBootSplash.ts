@@ -20,7 +20,8 @@ const STILL_MS = 1100;
 // tempo fixo: com o app pronto (nada mais carregando) e pelo menos um
 // acessório no Bud, ele sai correndo e o Início aparece. Tocar pula.
 export const useBootSplash = () => {
-	const hasApp = useStore((s) => s.isAuthenticated || s.isCompleted);
+	// Só para quem já entrou na conta (antes do login vem o onboarding)
+	const hasApp = useStore((s) => s.isAuthenticated);
 	const [isVisible, setIsVisible] = useState(hasApp);
 	const reduceMotion = useReducedMotion();
 	const timeline = useSplashTimeline();

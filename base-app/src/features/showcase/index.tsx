@@ -11,7 +11,7 @@ import { CollagePhoto } from "./components/CollagePhoto";
 import { COLLAGE, SHOWCASE_COPY as C } from "./constants";
 import { useShowcase } from "./hooks/useShowcase";
 
-const createShowcaseStyles = (theme: ITheme, collageH: number) => {
+const createShowcaseStyles = (theme: ITheme, collageH: number, k: number) => {
 	const { colors, spacing, typography, radii } = theme.pace;
 	return {
 		root: { flex: 1, backgroundColor: colors.bgSunken },
@@ -20,20 +20,20 @@ const createShowcaseStyles = (theme: ITheme, collageH: number) => {
 		words: { alignItems: "center" as const },
 		soft: {
 			fontFamily: typography.fonts.bold,
-			fontSize: 30,
-			lineHeight: 36,
+			fontSize: 30 * k,
+			lineHeight: 36 * k,
 			color: colors.textTertiary,
 		},
 		strong: {
 			fontFamily: typography.fonts.extrabold,
-			fontSize: 30,
-			lineHeight: 36,
+			fontSize: 30 * k,
+			lineHeight: 36 * k,
 			color: colors.textPrimary,
 		},
 		bottom: { paddingHorizontal: spacing[5], gap: spacing[4], alignItems: "center" as const },
 		cta: {
 			alignSelf: "stretch" as const,
-			height: 60,
+			height: Math.max(48, 60 * k),
 			borderRadius: radii.pill,
 			alignItems: "center" as const,
 			justifyContent: "center" as const,
@@ -49,7 +49,7 @@ const createShowcaseStyles = (theme: ITheme, collageH: number) => {
 export const ShowcaseScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const show = useShowcase();
-	const styles = createShowcaseStyles(theme, show.collageH);
+	const styles = createShowcaseStyles(theme, show.collageH, show.k);
 
 	return (
 		<View style={styles.root}>
