@@ -49,7 +49,7 @@ export const useStepTeam = (showToast: (t: IFloatingToastData) => void): IUseSte
 			);
 		},
 		create: () => {
-			router.push({ pathname: ROUTES.CREATE_TEAM, params: { from: "setup" } });
+			router.push({ pathname: ROUTES.SETUP_TEAM, params: { from: "setup" } });
 		},
 		openJoin: () => {
 			setMode("join");

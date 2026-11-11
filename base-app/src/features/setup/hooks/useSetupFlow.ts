@@ -27,6 +27,7 @@ export const useSetupFlow = (): IUseSetupFlowReturn => {
 	const router = useRouter();
 	const saved = useStore((s) => s.answers[SETUP_KEYS.step]);
 	const setAnswer = useStore((s) => s.setAnswer);
+	const isLogged = useStore((s) => s.isAuthenticated);
 	const { team } = useMyTeam();
 	const { pro } = useMyPro();
 	const step: ISetupStep = isStep(saved) ? saved : "profile";
@@ -66,7 +67,9 @@ export const useSetupFlow = (): IUseSetupFlowReturn => {
 		},
 		finish: () => {
 			setAnswer(SETUP_KEYS.done, "1");
-			router.replace(ROUTES.HOME);
+			// Depois do onboarding vem a abertura de sempre (vídeo, fotos e o
+			// login com Apple ou e-mail); quem já entrou vai direto ao Início
+			router.replace(isLogged ? ROUTES.HOME : ROUTES.SPLASH);
 		},
 	};
 };

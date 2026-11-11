@@ -63,10 +63,10 @@ export const useShowcase = () => {
 			],
 		})),
 		start: () => {
-			router.replace(ROUTES.ONBOARDING);
+			router.replace(ROUTES.SETUP);
 		},
 		login: () => {
-			router.push(ROUTES.LOGIN);
+			router.push(ROUTES.WELCOME);
 		},
 	};
 };

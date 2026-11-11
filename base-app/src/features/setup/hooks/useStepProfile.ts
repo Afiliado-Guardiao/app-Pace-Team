@@ -6,7 +6,7 @@ import { updateProfile } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
 
-import { SETUP_COPY } from "../constants";
+import { SETUP_COPY, SETUP_KEYS } from "../constants";
 
 interface IUseStepProfileReturn {
 	name: string;
@@ -37,6 +37,7 @@ export const useStepProfile = (
 	showToast: (t: IFloatingToastData) => void,
 ): IUseStepProfileReturn => {
 	const user = useStore((s) => s.user);
+	const setAnswer = useStore((s) => s.setAnswer);
 	const [name, setNameState] = useState(user?.name ?? "");
 	const [handle, setHandleState] = useState(user?.handle ?? "");
 	const [isBusy, setIsBusy] = useState(false);
@@ -66,6 +67,8 @@ export const useStepProfile = (
 			);
 		},
 		submit: () => {
+			setAnswer(SETUP_KEYS.name, name.trim());
+			setAnswer(SETUP_KEYS.handle, handle);
 			if (IS_PREVIEW) {
 				onDone();
 				return;

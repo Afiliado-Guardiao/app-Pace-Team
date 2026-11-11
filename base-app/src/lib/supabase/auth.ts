@@ -144,7 +144,25 @@ export async function resetPasswordWithCode(params: {
 }
 
 // Login social — prontos para uso quando o app integrar os módulos nativos.
+// Apple: quem fez o onboarding está numa conta provisória (anônima) com
+// perfil, Buddy e equipe. A Apple é ligada a ela (mesmo id, nada se perde).
+// Se essa Apple já tem conta (atleta voltando), entra na conta antiga.
+// Requer "Allow manual linking" ligado no Supabase (Authentication).
 export async function signInWithApple(params: { idToken: string; nonce?: string }): Promise<void> {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (user?.is_anonymous === true) {
+		const linked = await supabase.auth.linkIdentity({
+			provider: "apple",
+			token: params.idToken,
+			nonce: params.nonce,
+		});
+		if (!linked.error) {
+			await syncAuthState();
+			return;
+		}
+	}
 	const { error } = await supabase.auth.signInWithIdToken({
 		provider: "apple",
 		token: params.idToken,

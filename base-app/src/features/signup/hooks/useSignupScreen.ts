@@ -71,8 +71,11 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 			// A foto só sobe depois que a conta existe; se falhar, dá para trocar no Perfil
 			.then(() => (photoUri ? uploadAvatar(photoUri).catch(() => undefined) : undefined))
 			.then(() => {
+				// Quem fez o onboarding já tem perfil e equipe nesta conta
+				const { answers } = useStore.getState();
 				setHasTeam(false);
-				router.replace(ROUTES.SETUP);
+				if (answers.setupWantsPro === "1") router.replace(ROUTES.PRO);
+				else router.replace(answers.setupDone === "1" ? ROUTES.HOME : ROUTES.SETUP);
 			})
 			.catch((error: unknown) => {
 				showToast({ ...SIGNUP_TOASTS.error, message: authErrorMessage(error) });

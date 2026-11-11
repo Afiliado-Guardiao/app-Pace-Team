@@ -30,8 +30,14 @@ interface IUseWelcomeScreenReturn {
 
 // Conta criada agora (Apple pela primeira vez): vai para o onboarding
 const NEW_ACCOUNT_MS = 10 * 60_000;
+// Depois do login: quis o Team Pro no onboarding → assinatura; conta nova
+// que pulou o onboarding → onboarding; senão, o Início
 const afterSignIn = () => {
-	const { user, answers } = useStore.getState();
+	const { user, answers, setAnswer } = useStore.getState();
+	if (answers.setupWantsPro === "1") {
+		setAnswer("setupWantsPro", "");
+		return ROUTES.PRO;
+	}
 	const isNew = user ? Date.now() - new Date(user.createdAt).getTime() < NEW_ACCOUNT_MS : false;
 	return isNew && answers.setupDone !== "1" ? ROUTES.SETUP : ROUTES.HOME;
 };

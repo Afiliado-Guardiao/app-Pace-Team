@@ -49,6 +49,11 @@ export const SETUP_KEYS = {
 	// Prévia por link: nome e tamanho da equipe criada (não vai ao servidor)
 	teamName: "setupTeamName",
 	teamSize: "setupTeamSize",
+	// Nome e @ do 02 (o resumo final usa antes do login)
+	name: "setupName",
+	handle: "setupHandle",
+	// "1" = quis o Team Pro no onboarding: abre a assinatura depois do login
+	wantsPro: "setupWantsPro",
 } as const;
 
 // 3a · os 8 acessórios da grade 4×2 (a coroa é só do líder)

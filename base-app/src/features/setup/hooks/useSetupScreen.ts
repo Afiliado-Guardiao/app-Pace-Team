@@ -27,6 +27,10 @@ import { useStepProfile } from "./useStepProfile";
 import { useStepTeam } from "./useStepTeam";
 
 const isGoal = (v: unknown): v is IGoalId => GOALS.some((g) => g.id === v);
+const handleOf = (h: string | null | undefined): string => {
+	if (h) return `@${h.replace(/^@/, "")}`;
+	return IS_PREVIEW ? ME.handle : "";
+};
 
 // Onboarding 03–08: etapa atual, objetivo, equipe, medalha e o resumo final
 export const useSetupScreen = () => {
@@ -39,6 +43,8 @@ export const useSetupScreen = () => {
 	const inv = useStepInvites(myTeam, showToast);
 	const { pro } = useMyPro();
 	const user = useStore((s) => s.user);
+	const savedName = useStore((s) => s.answers[SETUP_KEYS.name]);
+	const savedHandle = useStore((s) => s.answers[SETUP_KEYS.handle]);
 	const savedGoal = useStore((s) => s.answers[SETUP_KEYS.goal]);
 	const setAnswer = useStore((s) => s.setAnswer);
 	const [isMedalOpen, setIsMedalOpen] = useState(false);
@@ -71,8 +77,8 @@ export const useSetupScreen = () => {
 		goal,
 		chips,
 		people: (myTeam?.members ?? []).map((m) => ({ name: m.name, src: m.avatarUrl ?? undefined })),
-		name: user?.name ?? (IS_PREVIEW ? ME.name : ""),
-		handle: user?.handle ? `@${user.handle}` : IS_PREVIEW ? ME.handle : "",
+		name: savedName ?? user?.name ?? (IS_PREVIEW ? ME.name : ""),
+		handle: handleOf(savedHandle ?? user?.handle),
 		isMedalOpen,
 		back: flow.back,
 		next: flow.next,
@@ -91,7 +97,9 @@ export const useSetupScreen = () => {
 			flow.next();
 		},
 		openPro: () => {
-			router.push(ROUTES.PRO);
+			// A compra precisa da conta de verdade: sem login, abre depois dele
+			if (user) router.push(ROUTES.PRO);
+			else setAnswer(SETUP_KEYS.wantsPro, "1");
 			flow.go("done");
 		},
 		finish: flow.finish,

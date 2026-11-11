@@ -31,8 +31,10 @@ export const ROUTES = {
 	HISTORY: "/(auth)/history",
 	CHALLENGES: "/(auth)/challenges",
 	BUDDY: "/(auth)/buddy",
-	// Onboarding depois da conta (Buddy, objetivo, equipe, Team Pro)
-	SETUP: "/(auth)/setup",
+	// Onboarding (antes do login, na conta provisória): perfil, Buddy, objetivo,
+	// equipe e Team Pro; "Monte sua equipe" tem rota própria aqui
+	SETUP: "/(non-auth)/setup",
+	SETUP_TEAM: "/(non-auth)/setup-team",
 	// PACE TEAM PRO: o plano e a apresentação de cada recurso
 	PRO: "/(auth)/pro",
 	PRO_FEATURE: "/(auth)/pro-feature",
