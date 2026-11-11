@@ -4,6 +4,10 @@ export const DATA_KEYS = {
 	// Fica sob "my-team": entrar/sair/editar equipe também atualiza o Pro
 	myPro: ["pace", "my-team", "pro"] as const,
 	teamAnalytics: ["pace", "team-live", "analytics"] as const,
+	// PACE AI: números da semana (somem com os dados ao vivo) e o histórico
+	aiContext: ["pace", "team-live", "ai-context"] as const,
+	aiConversations: ["pace", "ai", "conversations"] as const,
+	aiMessages: (id: string) => ["pace", "ai", "messages", id] as const,
 	team: (id: string) => ["pace", "team", id] as const,
 	ranking: (size: number, scope: string) => ["pace", "ranking", size, scope] as const,
 	rankingAll: ["pace", "ranking"] as const,

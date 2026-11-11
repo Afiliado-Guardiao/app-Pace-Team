@@ -2,6 +2,7 @@
 // Para um projeto real, regenere com: `supabase gen types typescript`.
 // Mantido enxuto: apenas o que o app consome (profiles, onboardings, RPCs).
 
+import { IAiContext } from "./ai.types";
 import { ITeamAnalytics } from "./analytics.types";
 import {
 	IAthleteResult,
@@ -108,6 +109,31 @@ export interface Database {
 					distance_m: number;
 					route?: unknown;
 				};
+				Update: Record<string, never>;
+				Relationships: [];
+			};
+			ai_conversations: {
+				Row: {
+					id: string;
+					user_id: string;
+					title: string;
+					created_at: string;
+					updated_at: string;
+				};
+				Insert: Record<string, never>;
+				Update: Record<string, never>;
+				Relationships: [];
+			};
+			ai_messages: {
+				Row: {
+					id: string;
+					conversation_id: string;
+					user_id: string;
+					role: "user" | "assistant";
+					content: string;
+					created_at: string;
+				};
+				Insert: Record<string, never>;
 				Update: Record<string, never>;
 				Relationships: [];
 			};
@@ -250,6 +276,7 @@ export interface Database {
 			get_virada: { Args: Record<string, never>; Returns: IVirada | null };
 			get_my_pro: { Args: Record<string, never>; Returns: IMyPro };
 			get_team_analytics: { Args: Record<string, never>; Returns: ITeamAnalytics | null };
+			get_ai_context: { Args: Record<string, never>; Returns: IAiContext };
 			link_my_pro_to_team: { Args: Record<string, never>; Returns: undefined };
 			transfer_captain: { Args: { p_user_id: string }; Returns: undefined };
 			get_team_last_runs: { Args: Record<string, never>; Returns: ITeamLastRuns | null };

@@ -11,6 +11,8 @@ export { fromStoredCrew, routeShape, toStoredCrew } from "./postArt";
 export type { IRunCrew, IRunCrewPin, IRunOwner } from "./runCrew";
 export { buildRunCrew } from "./runCrew";
 export type { ITeamView } from "./teamView";
+export { useAiContext } from "./useAiContext";
+export { useAiHistory } from "./useAiHistory";
 export type { IAthleteView } from "./useAthleteProfile";
 export { useAthleteProfile } from "./useAthleteProfile";
 export { useAthleteSearch } from "./useAthleteSearch";

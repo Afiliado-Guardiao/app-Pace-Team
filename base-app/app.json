@@ -85,7 +85,7 @@
 				"expo-camera",
 				{
 					"cameraPermission": "Usamos a câmera para você tirar a foto da sua equipe e das suas corridas.",
-					"microphonePermission": false,
+					"microphonePermission": "O PACE TEAM usa o microfone só quando você toca no botão de voz para conversar com a PACE AI.",
 					"recordAudioAndroid": false
 				}
 			],
@@ -94,7 +94,7 @@
 				{
 					"photosPermission": "O PACE TEAM usa suas fotos para você escolher a foto de perfil e postar fotos das corridas no feed da equipe.",
 					"cameraPermission": false,
-					"microphonePermission": false
+					"microphonePermission": "O PACE TEAM usa o microfone só quando você toca no botão de voz para conversar com a PACE AI."
 				}
 			],
 			[
@@ -105,6 +105,13 @@
 			],
 			"@bacons/apple-targets",
 			"./plugins/withBuddyAppIntents",
+			[
+				"expo-speech-recognition",
+				{
+					"microphonePermission": "O PACE TEAM usa o microfone só quando você toca no botão de voz para conversar com a PACE AI.",
+					"speechRecognitionPermission": "O PACE TEAM transforma a sua voz em texto no próprio iPhone para você conversar com a PACE AI."
+				}
+			],
 			[
 				"expo-build-properties",
 				{

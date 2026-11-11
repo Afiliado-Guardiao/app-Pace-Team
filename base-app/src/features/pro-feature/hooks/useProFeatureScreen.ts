@@ -28,9 +28,9 @@ export const useProFeatureScreen = (): IUseProFeatureScreenReturn => {
 	return {
 		feature: PRO_FEATURES[key],
 		isPro,
-		canOpen: isPro && key === "analytics",
+		canOpen: isPro && key !== "studio",
 		open: () => {
-			router.push(ROUTES.PRO_ANALYTICS);
+			router.push(key === "ai" ? ROUTES.PACE_AI : ROUTES.PRO_ANALYTICS);
 		},
 		goBack: () => {
 			if (router.canGoBack()) router.back();
