@@ -49,8 +49,8 @@ const SHADOW_LAYERS = [
 		rx: 0.5,
 		ry: 0.5,
 		stops: [
-			{ offset: 0, color: "rgba(253,90,12,.45)" },
-			{ offset: 1, color: "rgba(253,90,12,0)" },
+			{ offset: 0, color: "rgba(24,16,8,.34)" },
+			{ offset: 1, color: "rgba(24,16,8,0)" },
 		],
 	},
 ];

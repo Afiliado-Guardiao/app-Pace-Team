@@ -9,7 +9,7 @@ interface IEyesProps {
 	pose: IBuddyPose;
 }
 
-const INK = "#0B1520";
+const INK = "#141210";
 const ROW: ViewStyle = {
 	position: "absolute",
 	left: 0,
@@ -40,7 +40,23 @@ const HAPPY: ViewStyle = {
 	borderTopLeftRadius: 10,
 	borderTopRightRadius: 10,
 };
-const OPEN: ViewStyle = { width: 10, height: 16, borderRadius: 8, backgroundColor: INK };
+// Olho da arte nova: oval preto brilhante, com reflexo suave no alto
+const OPEN: ViewStyle = {
+	width: 10,
+	height: 15,
+	borderRadius: 8,
+	backgroundColor: INK,
+	boxShadow: "0 1px 2px rgba(60,40,20,.35)",
+};
+const GLOSS: ViewStyle = {
+	position: "absolute",
+	left: 2,
+	top: 2,
+	width: 4,
+	height: 5,
+	borderRadius: 3,
+	backgroundColor: "rgba(255,255,255,.28)",
+};
 const FAST = {
 	transitionProperty: "transform",
 	transitionDuration: "0.09s",
@@ -72,7 +88,11 @@ const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1 }> = ({ pose, index }) => {
 		);
 	}
 	const [sx, sy] = eyeScale(pose, index);
-	return <Animated.View style={[OPEN, { transform: [{ scaleX: sx }, { scaleY: sy }] }, FAST]} />;
+	return (
+		<Animated.View style={[OPEN, { transform: [{ scaleX: sx }, { scaleY: sy }] }, FAST]}>
+			<View style={GLOSS} />
+		</Animated.View>
+	);
 };
 
 // Olhos do Buddy: abertos, piscando, dormindo, felizes ou doentes.
