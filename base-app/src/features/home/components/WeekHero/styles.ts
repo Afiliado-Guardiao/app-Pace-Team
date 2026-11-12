@@ -1,5 +1,6 @@
 import { TextStyle, ViewStyle } from "react-native";
 
+import { BUDDY_W } from "@/components/buddy";
 import { ITheme } from "@/theme";
 
 import { HERO } from "./layout";
@@ -20,6 +21,18 @@ interface IHeroMetrics {
 	frameWidth: number;
 	frameHeight: number;
 }
+
+// Bud da pista: um pouco mais largo que a pelúcia (ele é deitado, ela era em pé)
+const BUD_WIDTH = 1.45;
+const BUD_FEET = 104;
+const budBox = (ks: number, sceneTop: number) => {
+	const scale = (BUDDY_RECT.w * BUD_WIDTH * ks) / BUDDY_W;
+	return {
+		scale,
+		left: (BUDDY_RECT.x + BUDDY_RECT.w / 2) * ks - (BUDDY_W / 2) * scale,
+		top: sceneTop + (BUDDY_RECT.y + BUDDY_RECT.h) * ks - BUD_FEET * scale,
+	};
+};
 
 export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 	const { borders, colors, spacing, typography } = theme.pace;
@@ -99,6 +112,8 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 			width: BUDDY_RECT.w * m.ks,
 			height: BUDDY_RECT.h * m.ks,
 		} as ViewStyle,
+		// Novo Bud no lugar da pelúcia: mesmo centro, base no mesmo chão
+		budBox: budBox(m.ks, sceneTop),
 		tiles: { flexDirection: "row", alignItems: "flex-start", gap: spacing[2.5] } as ViewStyle,
 		tileLow: { flex: 1, marginTop: HERO.tilesOffset * m.k } as ViewStyle,
 		tileHigh: { flex: 1 } as ViewStyle,

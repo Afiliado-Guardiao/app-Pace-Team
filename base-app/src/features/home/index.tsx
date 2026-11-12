@@ -1,7 +1,6 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 
-import { BuddyRunner } from "@/components/buddy";
 import {
 	Avatar,
 	FloatingToast,
@@ -66,12 +65,7 @@ export const HomeScreen: React.FC = () => {
 				hasRail
 				scrollRef={feed.scrollRef}
 				testID="home-scroll"
-				backdrop={
-					<>
-						<HeroSky hero={hero} />
-						<BuddyRunner feetY={hero.runnerFeetY} />
-					</>
-				}
+				backdrop={<HeroSky hero={hero} />}
 			>
 				<View style={styles.header} onLayout={hero.layout.onHeaderLayout}>
 					<Pressable

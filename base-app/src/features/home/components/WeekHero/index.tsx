@@ -9,10 +9,12 @@ import { useTheme } from "@/theme";
 import { PRIZE_ART } from "@/lib/prizes";
 
 import { HOME_COPY } from "../../constants";
+import { useTrackBuddy } from "../../hooks/useTrackBuddy";
 import { IWeekHero } from "../../hooks/useWeekHero";
 import { IWeekSummary } from "../../hooks/useWeekSummary";
 import { HeroPill } from "../HeroPill";
 import { InnerTile } from "../InnerTile";
+import { TrackBuddy } from "../TrackBuddy";
 
 import { HOP_POINTS, HOP_TEAM, WEATHER_ICON_COLORS } from "./constants";
 import { useWeekHeroScene } from "./hooks/useWeekHeroScene";
@@ -29,11 +31,12 @@ const COUNT_DELAY = 300;
 // Junto com o arco: sobe enquanto ele varre e assenta no valor
 const COUNT_MS = 1500;
 
-// "Sua semana" do Início: medidor de tracinhos, Buddy de pelúcia sentado na
+// "Sua semana" do Início: medidor de tracinhos, o Bud sentado na
 // pista com um corredor por colega online, clima lá fora e os dois cards.
 export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) => {
 	const { theme } = useTheme();
 	const view = useWeekHeroScene(hero, week);
+	const trackBud = useTrackBuddy(hero.jump, view.k);
 	const { layout, weather, online } = hero;
 	const styles = createWeekHeroStyles(theme, {
 		k: view.k,
@@ -92,6 +95,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 						<Picture picture={view.scene} />
 					</Canvas>
 				) : null}
+				<TrackBuddy buddy={trackBud} box={styles.budBox} />
 				<View style={styles.online}>
 					<HeroPill
 						text={online.onlineText}
