@@ -111,6 +111,15 @@ export const ProScreen: React.FC = () => {
 					onTerms={screen.openTerms}
 					onPrivacy={screen.openPrivacy}
 				/>
+				<Button
+					fullWidth
+					variant="ghost"
+					icon="arrow-left"
+					onPress={screen.goBack}
+					testID="pro-back-app"
+				>
+					Voltar ao app
+				</Button>
 			</ScreenScroll>
 			<Sheet
 				open={screen.purchase.isDone}

@@ -17,5 +17,6 @@ export interface IScreenScrollProps {
 export interface IScreenScrollStyles {
 	scroll: ViewStyle;
 	content: ViewStyle;
+	top: ViewStyle;
 	backdrop: ViewStyle;
 }

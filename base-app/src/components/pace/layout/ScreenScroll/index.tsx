@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,7 +31,11 @@ export const ScreenScroll: React.FC<IScreenScrollProps> = ({
 }) => {
 	const { theme } = useTheme();
 	const insets = useSafeAreaInsets();
-	const styles = createScreenScrollStyles(theme, { insets, hasRail, bottom });
+	// Espaço de topo que a tela pediu vai SOMADO à área do relógio do iPhone
+	// (antes ele substituía, e a seta de voltar ficava embaixo do relógio)
+	const flat = StyleSheet.flatten(contentStyle);
+	const topGap = typeof flat.paddingTop === "number" ? flat.paddingTop : undefined;
+	const styles = createScreenScrollStyles(theme, { insets, hasRail, bottom, topGap });
 	const items = React.Children.toArray(children);
 
 	return (
@@ -39,7 +43,7 @@ export const ScreenScroll: React.FC<IScreenScrollProps> = ({
 			ref={scrollRef}
 			testID={testID}
 			style={styles.scroll}
-			contentContainerStyle={[styles.content, contentStyle]}
+			contentContainerStyle={[styles.content, contentStyle, styles.top]}
 			showsVerticalScrollIndicator={false}
 			keyboardShouldPersistTaps="handled"
 			// O campo em edição sobe acima do teclado

@@ -108,6 +108,15 @@ export const ProFeatureScreen: React.FC = () => {
 				>
 					{cta}
 				</Button>
+				<Button
+					fullWidth
+					variant="ghost"
+					icon="arrow-left"
+					onPress={screen.goBack}
+					testID="pro-feature-back-app"
+				>
+					Voltar ao app
+				</Button>
 			</ScreenScroll>
 		</View>
 	);

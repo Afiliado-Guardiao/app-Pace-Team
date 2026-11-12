@@ -14,7 +14,6 @@ interface IMiniBuddyProps {
 }
 
 const IDLE = { act: "idle", phase: null, blink: false, gx: 0, gy: 0 } as const;
-const DIM = [{ grayscale: 1 }, { brightness: 0.62 }] as const;
 
 // Miniatura parada do Buddy (cores e acessórios da folha e da bandeja).
 export const MiniBuddy: React.FC<IMiniBuddyProps> = ({
@@ -27,7 +26,8 @@ export const MiniBuddy: React.FC<IMiniBuddyProps> = ({
 		style={{
 			width: BUDDY_W * scale,
 			height: BUDDY_H * scale,
-			filter: isDim ? [...DIM] : undefined,
+			// Bloqueado: só mais apagado (filtro cinza vira quadrado no iPhone)
+			opacity: isDim ? 0.38 : 1,
 		}}
 		pointerEvents="none"
 	>

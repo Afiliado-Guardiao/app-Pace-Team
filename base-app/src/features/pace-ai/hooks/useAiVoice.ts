@@ -5,23 +5,27 @@ import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from "expo-spe
 
 import { IFloatingToastData } from "@/components/pace";
 
-import { VOICE_ERRORS } from "../constants";
+import { VOICE_ERRORS, VOICE_SPEEDS } from "../constants";
+import { pickVoice } from "../utils/pickVoice";
 
 interface IUseAiVoiceReturn {
 	isListening: boolean;
-	// O atleta perguntou por voz: o Buddy lê a resposta em voz alta
+	// O atleta usou a voz: o Buddy lê a resposta em voz alta
 	isSpeakOn: boolean;
 	heard: string;
+	speedLabel: string;
 	listen: () => void;
 	stopListening: () => void;
 	toggleSpeak: () => void;
+	cycleSpeed: () => void;
 	speak: (text: string) => void;
 }
 
 const LANG = "pt-BR";
 
-// Voz no próprio iPhone: a fala vira texto (reconhecimento no aparelho quando
-// disponível) e a resposta do Buddy pode ser lida em voz alta.
+// Voz no próprio iPhone. A fala vira texto no campo (não envia sozinha: o
+// atleta pensa, corrige e toca em Enviar). A resposta pode ser lida em voz
+// alta, com voz masculina natural quando o iPhone tiver, em 1x, 1,5x ou 2x.
 export const useAiVoice = (
 	onHeard: (text: string) => void,
 	showToast: (t: IFloatingToastData) => void,
@@ -29,7 +33,21 @@ export const useAiVoice = (
 	const [isListening, setIsListening] = useState(false);
 	const [isSpeakOn, setIsSpeakOn] = useState(false);
 	const [heard, setHeard] = useState("");
+	const [speed, setSpeed] = useState(0);
 	const finalRef = useRef("");
+	const voiceRef = useRef<string | undefined>(undefined);
+	const lastRef = useRef("");
+
+	useEffect(() => {
+		void Speech.getAvailableVoicesAsync()
+			.then((voices) => {
+				voiceRef.current = pickVoice(voices);
+			})
+			.catch(() => undefined);
+		return () => {
+			void Speech.stop();
+		};
+	}, []);
 
 	useSpeechRecognitionEvent("start", () => {
 		setIsListening(true);
@@ -37,11 +55,11 @@ export const useAiVoice = (
 	useSpeechRecognitionEvent("result", (event) => {
 		const text = event.results[0]?.transcript ?? "";
 		setHeard(text);
-		if (event.isFinal) finalRef.current = text;
+		finalRef.current = text;
 	});
 	useSpeechRecognitionEvent("end", () => {
 		setIsListening(false);
-		const text = (finalRef.current || "").trim();
+		const text = finalRef.current.trim();
 		finalRef.current = "";
 		setHeard("");
 		if (text) onHeard(text);
@@ -51,12 +69,14 @@ export const useAiVoice = (
 		if (event.error === "not-allowed") showToast({ tone: "danger", ...VOICE_ERRORS.denied });
 	});
 
-	useEffect(
-		() => () => {
-			void Speech.stop();
-		},
-		[],
-	);
+	const say = useCallback((text: string, index: number) => {
+		void Speech.stop();
+		Speech.speak(text.replace(/• /g, ""), {
+			language: LANG,
+			voice: voiceRef.current,
+			rate: VOICE_SPEEDS[index]?.rate ?? 1,
+		});
+	}, []);
 
 	const listen = useCallback(() => {
 		void Speech.stop();
@@ -71,9 +91,11 @@ export const useAiVoice = (
 				return;
 			}
 			setIsSpeakOn(true);
+			// Contínuo: uma pausa para pensar não encerra; para no toque do microfone
 			ExpoSpeechRecognitionModule.start({
 				lang: LANG,
 				interimResults: true,
+				continuous: true,
 				addsPunctuation: true,
 				requiresOnDeviceRecognition: ExpoSpeechRecognitionModule.supportsOnDeviceRecognition(),
 			});
@@ -86,6 +108,7 @@ export const useAiVoice = (
 		isListening,
 		isSpeakOn,
 		heard,
+		speedLabel: VOICE_SPEEDS[speed]?.label ?? "1x",
 		listen,
 		stopListening: () => {
 			ExpoSpeechRecognitionModule.stop();
@@ -94,10 +117,19 @@ export const useAiVoice = (
 			if (isSpeakOn) void Speech.stop();
 			setIsSpeakOn(!isSpeakOn);
 		},
+		cycleSpeed: () => {
+			const next = (speed + 1) % VOICE_SPEEDS.length;
+			setSpeed(next);
+			// Trocou no meio da leitura: continua na nova velocidade
+			void Speech.isSpeakingAsync()
+				.then((isSpeaking) => {
+					if (isSpeaking && lastRef.current) say(lastRef.current, next);
+				})
+				.catch(() => undefined);
+		},
 		speak: (text) => {
-			if (!isSpeakOn) return;
-			void Speech.stop();
-			Speech.speak(text.replace(/• /g, ""), { language: LANG, rate: 1.02 });
+			lastRef.current = text;
+			if (isSpeakOn) say(text, speed);
 		},
 	};
 };

@@ -23,6 +23,7 @@ export const PACE_AI_COPY = {
 	micStop: "Parar de ouvir",
 	speakOn: "Ler as respostas em voz alta",
 	speakOff: "Parar de ler as respostas",
+	speed: "Velocidade da voz",
 	left: (n: number, limit: number) => `Restam ${String(n)} de ${String(limit)} perguntas hoje`,
 	disclaimer:
 		"A PACE AI usa só as corridas registradas no PACE TEAM. Não substitui médico nem treinador.",
@@ -70,6 +71,13 @@ export const AI_ERRORS: Record<IAiErrorCode, { title: string; message: string }>
 		message: "Confira a sua conexão e tente de novo.",
 	},
 };
+
+// Velocidade da leitura em voz alta (como no WhatsApp)
+export const VOICE_SPEEDS = [
+	{ label: "1x", rate: 1.05 },
+	{ label: "1,5x", rate: 1.4 },
+	{ label: "2x", rate: 1.75 },
+] as const;
 
 export const VOICE_ERRORS = {
 	denied: {

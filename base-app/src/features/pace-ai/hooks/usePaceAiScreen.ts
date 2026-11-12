@@ -74,7 +74,10 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		},
 		[chat, refresh, scrollToEnd],
 	);
-	const voice = useAiVoice(ask, showToast);
+	// A fala entra no campo (somando ao que já está escrito); só vai no Enviar
+	const voice = useAiVoice((text) => {
+		setDraft((current) => (current.trim() ? `${current.trim()} ${text}` : text));
+	}, showToast);
 	voiceRef.current = voice;
 
 	const history: IAiHistoryModel = {
@@ -109,7 +112,7 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		toast,
 		scrollRef,
 		composer: {
-			draft: voice.isListening ? voice.heard : draft,
+			draft: voice.isListening ? [draft.trim(), voice.heard].filter(Boolean).join(" ") : draft,
 			setDraft,
 			submit: () => {
 				ask(draft);
@@ -122,6 +125,8 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 			listen: voice.listen,
 			stopListening: voice.stopListening,
 			toggleSpeak: voice.toggleSpeak,
+			speedLabel: voice.speedLabel,
+			cycleSpeed: voice.cycleSpeed,
 		},
 		history,
 		ask,

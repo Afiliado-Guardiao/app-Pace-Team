@@ -9,7 +9,12 @@ const DEFAULT_BOTTOM = 40;
 
 export const createScreenScrollStyles = (
 	theme: ITheme,
-	options: { insets: { top: number; bottom: number }; hasRail: boolean; bottom?: number },
+	options: {
+		insets: { top: number; bottom: number };
+		hasRail: boolean;
+		bottom?: number;
+		topGap?: number;
+	},
 ): IScreenScrollStyles => {
 	const { layout, spacing } = theme.pace;
 	const bottom = options.bottom ?? (options.hasRail ? RAIL_BOTTOM : DEFAULT_BOTTOM);
@@ -17,12 +22,13 @@ export const createScreenScrollStyles = (
 	return {
 		scroll: { flex: 1 },
 		content: {
-			paddingTop: options.insets.top + TOP_GAP,
+			paddingTop: options.insets.top + (options.topGap ?? TOP_GAP),
 			paddingLeft: SIDE_GUTTER,
 			paddingRight: options.hasRail ? layout.railPaddingRight : SIDE_GUTTER,
 			paddingBottom: options.insets.bottom + bottom,
 			gap: spacing.stackGap,
 		},
+		top: { paddingTop: options.insets.top + (options.topGap ?? TOP_GAP) },
 		backdrop: {
 			position: "absolute",
 			top: options.insets.top + TOP_GAP,

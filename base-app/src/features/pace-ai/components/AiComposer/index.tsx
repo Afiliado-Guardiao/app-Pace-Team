@@ -18,6 +18,8 @@ export interface IAiComposerModel {
 	listen: () => void;
 	stopListening: () => void;
 	toggleSpeak: () => void;
+	speedLabel: string;
+	cycleSpeed: () => void;
 }
 
 interface IAiComposerProps {
@@ -65,6 +67,19 @@ const createAiComposerStyles = (theme: ITheme, bottom: number) => {
 			fontSize: typography.sizes.micro,
 			color: colors.textTertiary,
 		},
+		voice: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing[2] },
+		speed: {
+			minWidth: 40,
+			paddingHorizontal: spacing[2],
+			paddingVertical: 4,
+			borderRadius: 12,
+			overflow: "hidden" as const,
+			textAlign: "center" as const,
+			fontFamily: typography.fonts.bold,
+			fontSize: typography.sizes.xs,
+			color: colors.textPrimary,
+			backgroundColor: colors.glass2,
+		},
 		placeholder: colors.textTertiary,
 	};
 };
@@ -111,13 +126,24 @@ export const AiComposer: React.FC<IAiComposerProps> = ({ model, bottom }) => {
 			</View>
 			<View style={styles.meta}>
 				<Text style={styles.left}>{C.left(model.left, model.limit)}</Text>
-				<IconButton
-					icon={model.isSpeakOn ? "volume-2" : "volume-x"}
-					label={model.isSpeakOn ? C.speakOff : C.speakOn}
-					size={28}
-					onPress={model.toggleSpeak}
-					testID="pace-ai-speak"
-				/>
+				<View style={styles.voice}>
+					<Text
+						style={styles.speed}
+						onPress={model.cycleSpeed}
+						accessibilityRole="button"
+						accessibilityLabel={C.speed}
+						testID="pace-ai-speed"
+					>
+						{model.speedLabel}
+					</Text>
+					<IconButton
+						icon={model.isSpeakOn ? "volume-2" : "volume-x"}
+						label={model.isSpeakOn ? C.speakOff : C.speakOn}
+						size={28}
+						onPress={model.toggleSpeak}
+						testID="pace-ai-speak"
+					/>
+				</View>
 			</View>
 		</View>
 	);

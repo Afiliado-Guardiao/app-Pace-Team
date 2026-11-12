@@ -33,7 +33,7 @@ Como responder:
 - Português do Brasil, tom leve, animado e próximo, como um amigo que corre junto. Pode usar 1 emoji quando combinar, sem exagero.
 - Respostas curtas: até 120 palavras, a não ser que o atleta peça detalhes.
 - Texto simples para tela de celular: sem markdown, sem asteriscos, sem títulos e sem tabelas. Para listas use linhas começando com "• ".
-- Escreva distâncias como "5,2 km" (vírgula decimal) e ritmo como "6:15 min/km". O ritmo nos dados está em segundos por km (paceSecKm): 375 vira 6:15 min/km.
+- Escreva distâncias como "5,2 km" (vírgula decimal). O ritmo já vem pronto no campo "ritmo" (ex.: "6:15 min/km"): copie exatamente, NUNCA calcule ritmo, tempo ou média você mesmo.
 - Ritmo acima de 12:00 min/km normalmente é caminhada ou trote bem leve: trate com naturalidade, sem julgar.
 
 Dados:
@@ -41,7 +41,8 @@ Dados:
 - Se faltar dado para responder (por exemplo, nenhuma corrida de 5 km para falar do 5 km), diga isso com clareza e sugira o que registrar no app.
 - As semanas vão de segunda a domingo; "weeks" vai da mais antiga para a atual (a última é a semana atual, ainda em andamento). "today" é a data de hoje.
 - Na equipe ("team.mates"), "isYou" marca o próprio atleta. Se perguntarem quem correu menos ou teve o pior desempenho, responda com os números, de um jeito gentil e motivador (ex.: sugerir chamar a pessoa para correr junto), nunca humilhando ninguém.
-- Para subir no ranking, use "team.cityRank" e "team.rival" (gapKm = km que faltam para alcançar a rival). Pontos vêm só de correr: não existe atalho nem compra.
+- Para o ranking, use "team.cityRank" e a frase pronta em "team.rival.situacao" (se a equipe está à frente ou atrás da rival e por quantos km). Não refaça essa conta. Pontos vêm só de correr: não existe atalho nem compra.
+- Se precisar de um número que não está pronto nos dados, diga que não tem esse dado em vez de calcular.
 
 Limites:
 - Você não é médico, nutricionista nem treinador. Não faça diagnóstico, não prescreva remédio nem treino para lesão. Se o atleta falar de dor, lesão, tontura ou mal-estar, recomende parar e procurar um profissional de saúde.
@@ -50,6 +51,44 @@ Limites:
 
 // deno-lint-ignore no-explicit-any
 type IAdmin = SupabaseClient<any, "public", "public">;
+
+// Ritmo em texto ("27:46 min/km") e situação da rival prontos: a IA só copia,
+// sem fazer conta (antes ela errava o ritmo e o lado da rival)
+function paceText(sec: unknown): string | null {
+  if (typeof sec !== "number" || sec <= 0) return null;
+  const m = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")} min/km`;
+}
+
+function kmText(km: number): string {
+  return `${km.toFixed(1).replace(".", ",")} km`;
+}
+
+function rivalSituation(rival: Record<string, unknown>): string {
+  const gap = typeof rival.gapKm === "number" ? rival.gapKm : 0;
+  const name = String(rival.name);
+  if (gap > 0) return `A equipe está ATRÁS da ${name}: faltam ${kmText(gap)} para alcançar.`;
+  if (gap < 0) return `A equipe está À FRENTE da ${name} por ${kmText(-gap)}.`;
+  return `A equipe está empatada com a ${name}.`;
+}
+
+function prepare(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(prepare);
+  if (!value || typeof value !== "object") return value;
+  const out: Record<string, unknown> = {};
+  for (const [key, v] of Object.entries(value as Record<string, unknown>)) {
+    if (key === "paceSecKm") out.ritmo = paceText(v) ?? "sem ritmo (distância curta)";
+    else out[key] = prepare(v);
+  }
+  const rival = out.rival as Record<string, unknown> | null | undefined;
+  if (rival && typeof rival === "object") {
+    rival.situacao = rivalSituation(rival);
+    delete rival.gapKm;
+    delete rival.gapPoints;
+  }
+  return out;
+}
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -189,7 +228,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       output_config: { effort: "low" },
       system: [
         { type: "text", text: SYSTEM },
-        { type: "text", text: `DADOS DO ATLETA (JSON):\n${JSON.stringify(context)}` },
+        { type: "text", text: `DADOS DO ATLETA (JSON):\n${JSON.stringify(prepare(context))}` },
       ],
       messages: [...history, { role: "user", content: question }],
     });

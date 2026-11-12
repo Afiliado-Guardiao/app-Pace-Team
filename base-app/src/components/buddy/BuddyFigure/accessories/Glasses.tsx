@@ -10,8 +10,11 @@ const SVG_STYLE = {
 	left: -8,
 	top: 11,
 	overflow: "visible",
-	filter: "drop-shadow(0 4px 5px rgba(0,0,0,.45))",
 } as const;
+// Lente (também usada como sombra). Sem "filter: drop-shadow": no iPhone ele
+// vira um quadrado branco atrás dos óculos.
+const LENS =
+	"M5 6 Q50 1 95 6 L96 12 Q95 24 84 27 Q70 29 60 26 Q55 17 50 16 Q45 17 40 26 Q30 29 16 27 Q5 24 4 12 Z";
 
 const ORANGE_LENS = ["#FFD27A", "#FD7A1E", "#E84A00", "#8A2400"] as const;
 
@@ -44,10 +47,11 @@ export const Glasses: React.FC<IGlassesProps> = ({
 					<Stop offset="1" stopColor="#fff" stopOpacity={0} />
 				</LinearGradient>
 			</Defs>
+			<Path d={LENS} fill="rgba(0,0,0,0.28)" transform="translate(0 3.5)" />
 			<Path d="M1 8 Q0 14 3 19 L6 18 Q4 13 5 9 Z" fill={DARK} />
 			<Path d="M99 8 Q100 14 97 19 L94 18 Q96 13 95 9 Z" fill={DARK} />
 			<Path
-				d="M5 6 Q50 1 95 6 L96 12 Q95 24 84 27 Q70 29 60 26 Q55 17 50 16 Q45 17 40 26 Q30 29 16 27 Q5 24 4 12 Z"
+				d={LENS}
 				fill={`url(#${lens})`}
 				stroke={rim}
 				strokeWidth={0.8}
