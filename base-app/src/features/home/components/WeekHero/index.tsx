@@ -14,7 +14,7 @@ import { IWeekSummary } from "../../hooks/useWeekSummary";
 import { HeroPill } from "../HeroPill";
 import { InnerTile } from "../InnerTile";
 
-import { WEATHER_ICON_COLORS } from "./constants";
+import { HOP_POINTS, HOP_TEAM, WEATHER_ICON_COLORS } from "./constants";
 import { useWeekHeroScene } from "./hooks/useWeekHeroScene";
 import { createWeekHeroStyles } from "./styles";
 
@@ -109,7 +109,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 				/>
 			</View>
 			<View style={styles.tiles}>
-				<View style={styles.tileHigh}>
+				<Animated.View key={`hp-${String(view.replay)}`} style={[styles.tileHigh, HOP_POINTS]}>
 					<InnerTile
 						icon="zap"
 						art={PRIZE_ART.coinPoints}
@@ -118,8 +118,8 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 						value={week.points}
 						unit="pts"
 					/>
-				</View>
-				<View style={styles.tileLow}>
+				</Animated.View>
+				<Animated.View key={`ht-${String(view.replay)}`} style={[styles.tileLow, HOP_TEAM]}>
 					<InnerTile
 						icon="users"
 						art={PRIZE_ART.badgeTeam}
@@ -129,7 +129,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 						unit={HOME_COPY.teamUnit}
 						onPress={onOpenTeam}
 					/>
-				</View>
+				</Animated.View>
 			</View>
 			{isReady ? (
 				<View style={styles.front} pointerEvents="none">
