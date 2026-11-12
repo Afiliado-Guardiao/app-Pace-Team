@@ -9,6 +9,7 @@ import { GradientLayers, Icon } from "@/components/pace";
 import { useTheme } from "@/theme";
 
 import { PRO_FAB_COPY, PRO_FAB_ITEMS } from "./constants";
+import { useFabDrag } from "./hooks/useFabDrag";
 import { useProFab } from "./hooks/useProFab";
 import { createProFabStyles, PRO_FAB_SIZE } from "./styles";
 
@@ -16,13 +17,15 @@ const NO_ACCESSORIES = [] as const;
 const POSE: IBuddyPose = { act: "idle", phase: null, blink: false, gx: 0, gy: 0 };
 const ICON = 17;
 
-// PACE TEAM PRO: botão laranja com o Buddy. Toque abre PACE AI, BUDDY STUDIO
-// e TEAM ANALYTICS; tocar fora (ou de novo no Buddy) fecha.
+// PACE TEAM PRO: botão laranja com o Buddy, solto (arrasta com o dedo e gruda
+// na borda). Toque abre PACE AI, BUDDY STUDIO e TEAM ANALYTICS; tocar fora (ou
+// de novo no Buddy) fecha.
 export const ProFab: React.FC = () => {
 	const { theme } = useTheme();
 	const insets = useSafeAreaInsets();
 	const fab = useProFab();
-	const styles = createProFabStyles(theme, insets.bottom);
+	const drag = useFabDrag();
+	const styles = createProFabStyles(theme, insets.bottom, drag.isLeft);
 
 	if (fab.isHidden) return null;
 
@@ -39,7 +42,11 @@ export const ProFab: React.FC = () => {
 					/>
 				</Animated.View>
 			) : null}
-			<View style={styles.root} pointerEvents="box-none">
+			<Animated.View
+				style={[styles.root, drag.dragStyle]}
+				pointerEvents="box-none"
+				{...drag.handlers}
+			>
 				{fab.isOpen ? (
 					<View style={styles.menu}>
 						{PRO_FAB_ITEMS.map((item, index) => (
@@ -80,7 +87,7 @@ export const ProFab: React.FC = () => {
 						</View>
 					</Pressable>
 				</Animated.View>
-			</View>
+			</Animated.View>
 		</>
 	);
 };

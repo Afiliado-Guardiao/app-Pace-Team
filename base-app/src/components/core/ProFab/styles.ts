@@ -4,6 +4,8 @@ import { ITheme } from "@/theme";
 
 export const PRO_FAB_SIZE = 52;
 const RIGHT = 10;
+// Distância da borda (o arrasto gruda nas duas bordas com essa folga)
+export const PRO_FAB_EDGE = RIGHT;
 const BOTTOM = 22;
 const BUDDY_SCALE = 0.5;
 const ITEM_H = 46;
@@ -22,7 +24,11 @@ interface IProFabStyles {
 }
 
 // Fica sozinho no canto de baixo à direita, abaixo do trilho das abas
-export const createProFabStyles = (theme: ITheme, bottomInset: number): IProFabStyles => {
+export const createProFabStyles = (
+	theme: ITheme,
+	bottomInset: number,
+	isLeft = false,
+): IProFabStyles => {
 	const { colors, spacing, typography, shadows } = theme.pace;
 	return {
 		backdrop: {
@@ -38,11 +44,11 @@ export const createProFabStyles = (theme: ITheme, bottomInset: number): IProFabS
 			position: "absolute",
 			right: RIGHT,
 			bottom: bottomInset + BOTTOM,
-			alignItems: "flex-end",
+			alignItems: isLeft ? "flex-start" : "flex-end",
 			gap: spacing[3],
 			zIndex: 30,
 		},
-		menu: { alignItems: "flex-end", gap: spacing[2] },
+		menu: { alignItems: isLeft ? "flex-start" : "flex-end", gap: spacing[2] },
 		item: {
 			height: ITEM_H,
 			flexDirection: "row",
