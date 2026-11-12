@@ -14,6 +14,7 @@ import { ROUTES } from "@/constants/routes";
 import { CREATE_TEAM_COPY } from "../constants";
 
 import { useLogoPicker } from "./useLogoPicker";
+import { useNewTeam } from "./useNewTeam";
 import { usePlaceField } from "./usePlaceField";
 import { useTeamSize } from "./useTeamSize";
 
@@ -30,11 +31,10 @@ const deviceCountry = (): string => {
 export const useCreateTeam = () => {
 	const router = useRouter();
 	const params = useLocalSearchParams<{ edit?: string; from?: string }>();
-	const setAnswer = useStore((s) => s.setAnswer);
 	const user = useStore((s) => s.user);
 	const { team } = useMyTeam();
 	const isEdit = params.edit === "1" && Boolean(team);
-	const { create, update } = useTeamActions();
+	const { update } = useTeamActions();
 	const { toast, showToast } = useFloatingToast();
 	const [country, setCountryCode] = useState(deviceCountry);
 	const place = countryOf(country);
@@ -81,6 +81,8 @@ export const useCreateTeam = () => {
 		void upload.catch(() => undefined).finally(next);
 	};
 
+	const newTeam = useNewTeam({ fail, finish });
+
 	const submit = (): void => {
 		if (name.trim().length < MIN_NAME) {
 			warn(CREATE_TEAM_COPY.nameMissing);
@@ -108,23 +110,7 @@ export const useCreateTeam = () => {
 			});
 			return;
 		}
-		create.mutate(form, {
-			onSuccess: (id) => {
-				finish(id, () => {
-					// Veio do onboarding: volta para ele, já na tela de convites
-					if (params.from === "setup") {
-						setAnswer("setupStep", "invites");
-						setAnswer("setupSolo", "");
-						setAnswer("setupTeamName", form.name);
-						setAnswer("setupTeamSize", String(form.size));
-						router.back();
-						return;
-					}
-					router.replace(ROUTES.INVITE);
-				});
-			},
-			onError: fail,
-		});
+		newTeam.submit(form);
 	};
 
 	return {
@@ -148,7 +134,8 @@ export const useCreateTeam = () => {
 		captain,
 		setCaptain,
 		slots: Number(teamSize.size),
-		isSubmitting: create.isPending || update.isPending,
+		isSubmitting: newTeam.isPending || update.isPending,
+		leave: newTeam.leave,
 		logoUri: logoUri ?? (isEdit ? (team?.logoUrl ?? null) : null),
 		logo,
 		submit,

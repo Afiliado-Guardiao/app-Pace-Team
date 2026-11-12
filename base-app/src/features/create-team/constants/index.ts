@@ -28,6 +28,11 @@ export const CREATE_TEAM_COPY = {
 	preparing: "Em preparação",
 	progressNote: " integrantes. A equipe entra no campeonato oficial quando estiver completa.",
 	submit: "Criar e convidar",
+	leaveTitle: (current: string) => `Você já está na equipe ${current}`,
+	leaveBody: (current: string) =>
+		`Quer sair da ${current} para abrir a nova? Se você é o capitão, o integrante mais antigo assume. Se ninguém sobrar, a equipe é apagada.`,
+	leaveConfirm: "Sair e criar a nova",
+	leaveCancel: (current: string) => `Ficar na ${current}`,
 	nameMissing: "Dê um nome para a equipe (pelo menos 2 letras).",
 	namePlaceholder: "Ex.: Pace Sharks",
 } as const;

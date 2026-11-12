@@ -14,6 +14,7 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { EmblemPicker } from "./components/EmblemPicker";
+import { LeaveTeamSheet } from "./components/LeaveTeamSheet";
 import { PlaceFields } from "./components/PlaceFields";
 import { SizeField } from "./components/SizeField";
 import { TeamPreviewCard } from "./components/TeamPreviewCard";
@@ -74,6 +75,7 @@ export const CreateTeamScreen: React.FC = () => {
 					{submitLabel}
 				</Button>
 			</ScreenScroll>
+			<LeaveTeamSheet leave={form.leave} />
 			<FloatingToast toast={form.toast} />
 		</View>
 	);

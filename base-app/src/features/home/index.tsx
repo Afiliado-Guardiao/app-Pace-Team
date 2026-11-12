@@ -17,12 +17,14 @@ import { FeedSection } from "./components/FeedSection";
 import { HeroSky } from "./components/HeroSky";
 import { HomeStack } from "./components/HomeStack";
 import { PostMenuSheet } from "./components/PostMenuSheet";
+import { TeamHandoffSheet } from "./components/TeamHandoffSheet";
 import { WeekHero } from "./components/WeekHero";
 import { HOME_COPY } from "./constants";
 import { useHomeFeed } from "./hooks/useHomeFeed";
 import { useHomeScreen } from "./hooks/useHomeScreen";
 import { useNotificationsOff } from "./hooks/useNotificationsOff";
 import { usePostMenu } from "./hooks/usePostMenu";
+import { useTeamHandoff } from "./hooks/useTeamHandoff";
 import { useWeekHero } from "./hooks/useWeekHero";
 import { useWeekSummary } from "./hooks/useWeekSummary";
 
@@ -53,6 +55,7 @@ export const HomeScreen: React.FC = () => {
 	const week = useWeekSummary();
 	const menu = usePostMenu();
 	const alerts = useNotificationsOff();
+	const handoff = useTeamHandoff();
 	const hero = useWeekHero({ myName: home.userName, hasToast: alerts.isOff });
 	const styles = createHomeStyles(theme);
 
@@ -108,7 +111,9 @@ export const HomeScreen: React.FC = () => {
 				<FeedSection posts={feed.posts} onMore={menu.open} onLayout={feed.onFeedLayout} />
 			</ScreenScroll>
 			<PostMenuSheet menu={menu} />
+			<TeamHandoffSheet handoff={handoff} />
 			<FloatingToast toast={menu.toast} />
+			<FloatingToast toast={handoff.toast} />
 		</View>
 	);
 };

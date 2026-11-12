@@ -16,6 +16,8 @@ export * from "./progress.types";
 export * from "./referral";
 export * from "./runCrew";
 export * from "./runs";
+export * from "./teamHandoff";
+export * from "./teamHandoff.types";
 export * from "./teamLive";
 export * from "./teamLive.types";
 export * from "./teamRuns";

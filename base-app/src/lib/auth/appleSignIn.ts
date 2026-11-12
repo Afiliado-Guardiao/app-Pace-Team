@@ -4,6 +4,8 @@ import * as AppleAuthentication from "expo-apple-authentication";
 
 import { signInWithApple } from "@/lib/supabase";
 
+import { useTeamHandoffStore } from "./teamHandoffStore";
+
 export type IAppleSignInResult = "ok" | "cancelled" | "unavailable";
 
 const CANCELED = "ERR_REQUEST_CANCELED";
@@ -22,7 +24,9 @@ export async function signInWithAppleNative(): Promise<IAppleSignInResult> {
 			],
 		});
 		if (!credential.identityToken) return "unavailable";
-		await signInWithApple({ idToken: credential.identityToken });
+		const handoff = await signInWithApple({ idToken: credential.identityToken });
+		// Equipe do onboarding: o Início avisa ou pergunta
+		if (handoff && handoff.status !== "gone") useTeamHandoffStore.getState().setPending(handoff);
 		return "ok";
 	} catch (error) {
 		if ((error as { code?: string }).code === CANCELED) return "cancelled";

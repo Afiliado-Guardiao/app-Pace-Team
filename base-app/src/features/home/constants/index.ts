@@ -94,3 +94,16 @@ export const STACK_POSES = {
 } as const;
 
 export const DOUBLE_TAP_MS = 320;
+
+// Equipe do onboarding quando o login da Apple cai na conta que o atleta já tinha
+export const HANDOFF_COPY = {
+	title: (current: string) => `Você já está na equipe ${current}`,
+	body: (created: string, current: string) =>
+		`No cadastro você criou a equipe ${created}. Quer sair da ${current} e ir para a ${created}? Se você era o capitão, o integrante mais antigo assume. Se ninguém sobrar, a equipe é apagada.`,
+	move: (created: string) => `Ir para a ${created}`,
+	stay: (current: string) => `Ficar na ${current}`,
+	toastTitle: "Equipe",
+	moved: (name: string) => `Pronto! Você está na equipe ${name}.`,
+	stayed: (name: string) => `Você continua na equipe ${name}.`,
+	failed: "Não deu certo agora. Verifique a conexão e tente de novo.",
+} as const;

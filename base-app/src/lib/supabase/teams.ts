@@ -68,8 +68,12 @@ const teamArgs = (params: ITeamForm) => ({
 	p_country: params.country,
 });
 
-export async function createTeam(params: ITeamForm): Promise<string> {
-	const { data, error } = await supabase.rpc("create_team", teamArgs(params));
+// leave: já está numa equipe e confirmou sair dela para abrir a nova
+export async function createTeam(params: ITeamForm & { leave?: boolean }): Promise<string> {
+	const { data, error } = await supabase.rpc("create_team", {
+		...teamArgs(params),
+		p_leave: params.leave ?? false,
+	});
 	if (error) throw error;
 	return data;
 }

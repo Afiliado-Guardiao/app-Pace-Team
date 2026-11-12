@@ -16,6 +16,7 @@ import {
 } from "./pace.types";
 import { IMyPro } from "./pro.types";
 import { IMyChallenges, INotificationRow, ITeamAchievements } from "./progress.types";
+import { ITeamHandoffChoice, ITeamHandoffResult } from "./teamHandoff.types";
 import { ITeamLastRuns, ITeamOnlineMate, IVirada } from "./teamLive.types";
 
 export interface Database {
@@ -240,8 +241,14 @@ export interface Database {
 					p_region: string;
 					p_size: number;
 					p_country?: string;
+					p_leave?: boolean;
 				};
 				Returns: string;
+			};
+			start_team_handoff: { Args: Record<string, never>; Returns: string | null };
+			claim_team_handoff: {
+				Args: { p_token: string; p_choice?: ITeamHandoffChoice };
+				Returns: ITeamHandoffResult;
 			};
 			update_team: {
 				Args: {

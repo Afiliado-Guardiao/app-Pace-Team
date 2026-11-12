@@ -3,6 +3,8 @@ import { User } from "@supabase/supabase-js";
 import { useStore } from "@/store";
 
 import { supabase } from "./client";
+import { claimTeamHandoff, startTeamHandoff } from "./teamHandoff";
+import { ITeamHandoff } from "./teamHandoff.types";
 import { IUser, ProfileRow } from "./types";
 
 function mapUser(authUser: User, profile: ProfileRow): IUser {
@@ -146,12 +148,17 @@ export async function resetPasswordWithCode(params: {
 // Login social — prontos para uso quando o app integrar os módulos nativos.
 // Apple: quem fez o onboarding está numa conta provisória (anônima) com
 // perfil, Buddy e equipe. A Apple é ligada a ela (mesmo id, nada se perde).
-// Se essa Apple já tem conta (atleta voltando), entra na conta antiga.
+// Se essa Apple já tem conta (atleta voltando), entra na conta antiga e a
+// equipe do onboarding vai junto (ou o atleta escolhe, se já tinha equipe).
 // Requer "Allow manual linking" ligado no Supabase (Authentication).
-export async function signInWithApple(params: { idToken: string; nonce?: string }): Promise<void> {
+export async function signInWithApple(params: {
+	idToken: string;
+	nonce?: string;
+}): Promise<ITeamHandoff | null> {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
+	let handoff: string | null = null;
 	if (user?.is_anonymous === true) {
 		const linked = await supabase.auth.linkIdentity({
 			provider: "apple",
@@ -160,8 +167,9 @@ export async function signInWithApple(params: { idToken: string; nonce?: string 
 		});
 		if (!linked.error) {
 			await syncAuthState();
-			return;
+			return null;
 		}
+		handoff = await startTeamHandoff().catch(() => null);
 	}
 	const { error } = await supabase.auth.signInWithIdToken({
 		provider: "apple",
@@ -170,6 +178,10 @@ export async function signInWithApple(params: { idToken: string; nonce?: string 
 	});
 	if (error) throw error;
 	await syncAuthState();
+	if (!handoff) return null;
+	const token = handoff;
+	const result = await claimTeamHandoff(token, "auto").catch(() => null);
+	return result ? { ...result, token } : null;
 }
 
 export async function signInWithGoogle(params: { idToken: string }): Promise<void> {
