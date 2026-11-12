@@ -41,7 +41,7 @@ const createGoalFieldStyles = (theme: ITheme) => {
 			color: colors.textSecondary,
 		},
 		value: {
-			fontFamily: typography.fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: VALUE_SIZE,
 			fontVariant: [...typography.tabularNums],
 			color: colors.ink.white,

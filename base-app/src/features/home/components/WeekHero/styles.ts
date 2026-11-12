@@ -71,7 +71,7 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 		numberBox: { position: "absolute", top: NUMBER_TOP * m.k, left: 0, right: 0 } as ViewStyle,
 		number: {
 			textAlign: "center",
-			fontFamily: fonts.bold,
+			fontFamily: theme.pace.typography.numericFonts.bold,
 			fontSize: NUMBER_SIZE * m.k,
 			lineHeight: NUMBER_SIZE * m.k * 1.1,
 			color: colors.textPrimary,

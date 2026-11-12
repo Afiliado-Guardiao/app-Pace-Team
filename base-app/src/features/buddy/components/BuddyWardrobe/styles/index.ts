@@ -42,7 +42,7 @@ export const createBuddyWardrobeStyles = (theme: ITheme) => {
 			width: 20,
 			height: 20,
 			borderRadius: 10,
-			backgroundColor: "rgba(20,30,40,.7)",
+			backgroundColor: "rgba(29,29,29,.7)",
 			alignItems: "center",
 			justifyContent: "center",
 		} as ViewStyle,

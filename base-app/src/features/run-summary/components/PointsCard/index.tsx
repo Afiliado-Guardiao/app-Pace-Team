@@ -21,7 +21,7 @@ const createPointsCardStyles = (theme: ITheme) => {
 		},
 		value: {
 			marginTop: spacing[2],
-			fontFamily: typography.fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: typography.sizes.display,
 			lineHeight: typography.sizes.display,
 			fontVariant: [...typography.tabularNums],

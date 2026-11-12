@@ -50,7 +50,7 @@ const createTeamSideStyles = (theme: ITheme, isUs: boolean, right: boolean) => {
 			color: colors.textTertiary,
 		},
 		points: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: POINTS_SIZE,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

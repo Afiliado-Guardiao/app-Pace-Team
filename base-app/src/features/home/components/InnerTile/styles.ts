@@ -40,7 +40,7 @@ export const createInnerTileStyles = (theme: ITheme) => {
 			color: colors.textPrimary,
 		} as TextStyle,
 		value: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: VALUE_SIZE,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

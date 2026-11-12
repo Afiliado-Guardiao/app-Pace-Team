@@ -38,7 +38,7 @@ export const createLifeBarStyles = (theme: ITheme, life: number): ILifeBarStyles
 			height: BAR_H,
 			borderRadius: BAR_H / 2,
 			padding: 1,
-			backgroundColor: "rgba(10,18,32,.55)",
+			backgroundColor: "rgba(17,17,17,.55)",
 			borderWidth: 0.5,
 			borderColor: "rgba(255,255,255,.35)",
 		},

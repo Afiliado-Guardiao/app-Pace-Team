@@ -72,7 +72,7 @@ export const createRunLiveStyles = (theme: ITheme, insets: { top: number; bottom
 		} as ViewStyle,
 		center: { alignItems: "center" } as ViewStyle,
 		time: {
-			fontFamily: typography.fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: TIME,
 			lineHeight: TIME,
 			letterSpacing: tracking(-0.02, TIME),
@@ -89,7 +89,7 @@ export const createRunLiveStyles = (theme: ITheme, insets: { top: number; bottom
 			rim: true,
 		},
 		km: {
-			fontFamily: typography.fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: typography.sizes.h2,
 			color: colors.textPrimary,
 			fontVariant: [...typography.tabularNums],

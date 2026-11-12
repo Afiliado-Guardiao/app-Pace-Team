@@ -12,12 +12,23 @@ export const paceTypography = {
 		extrabold: "Montserrat_800ExtraBold",
 	},
 
+	// Números (com fontVariant tabular): Roboto Mono, zero cortado, por peso
+	numericFonts: {
+		light: "RobotoMono_400Regular",
+		regular: "RobotoMono_400Regular",
+		medium: "RobotoMono_500Medium",
+		semibold: "RobotoMono_600SemiBold",
+		bold: "RobotoMono_700Bold",
+		extrabold: "RobotoMono_700Bold",
+	},
+
+	// Fonte da marca e dos números: Roboto Mono (técnica, zero cortado, "7Ø.Ø kg")
 	brandFonts: {
-		regular: "Exo2_400Regular",
-		semibold: "Exo2_600SemiBold",
-		bold: "Exo2_700Bold",
-		extrabold: "Exo2_800ExtraBold",
-		black: "Exo2_900Black",
+		regular: "RobotoMono_400Regular",
+		semibold: "RobotoMono_600SemiBold",
+		bold: "RobotoMono_700Bold",
+		extrabold: "RobotoMono_700Bold",
+		black: "RobotoMono_700Bold",
 	},
 
 	// --fs-* do design system + tamanhos usados pelos componentes

@@ -69,7 +69,7 @@ export const createCatalogSectionStyles = (theme: ITheme): ICatalogSectionStyles
 			color: colors.textSecondary,
 		},
 		metric: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: sizes.metricMd,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

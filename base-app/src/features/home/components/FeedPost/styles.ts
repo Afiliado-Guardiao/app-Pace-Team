@@ -56,7 +56,7 @@ export const createFeedPostStyles = (theme: ITheme, aspectRatio: number) => {
 			rim: true,
 		} as IGlassAppearance,
 		rankText: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: sizes.label,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,
@@ -83,7 +83,7 @@ export const createFeedPostStyles = (theme: ITheme, aspectRatio: number) => {
 		} as ViewStyle,
 		action: { flexDirection: "row", alignItems: "center", gap: spacing[1.5] } as ViewStyle,
 		count: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: sizes.sm,
 			fontVariant: [...typography.tabularNums],
 			color: colors.ink.white,

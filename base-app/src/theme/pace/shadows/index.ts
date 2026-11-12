@@ -5,8 +5,8 @@
 
 import { paceColors } from "../colors";
 
-const card = "0 20px 40px -20px rgba(8,14,22,.55)";
-const float = "0 24px 60px -20px rgba(8,14,22,.7)";
+const card = "0 20px 40px -20px rgba(13,13,13,.55)";
+const float = "0 24px 60px -20px rgba(13,13,13,.7)";
 const innerHighlight = "inset 0 1px 0 rgba(255,255,255,.40)";
 
 export const paceShadows = {

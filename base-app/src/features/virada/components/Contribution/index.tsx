@@ -43,7 +43,7 @@ const createContributionStyles = (theme: ITheme) => {
 		nameRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: 5 },
 		name: { fontFamily: fonts.semibold, fontSize: sizes.sm, color: colors.textPrimary },
 		points: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: sizes.sm,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

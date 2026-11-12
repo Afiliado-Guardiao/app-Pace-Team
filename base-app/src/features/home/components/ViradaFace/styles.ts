@@ -61,7 +61,7 @@ export const createViradaFaceStyles = (theme: ITheme, tone: IViradaTone, height:
 			gap: spacing[2.5],
 		} as ViewStyle,
 		diff: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: BIG,
 			fontVariant: [...typography.tabularNums],
 			color: viradaToneColor(theme, tone),

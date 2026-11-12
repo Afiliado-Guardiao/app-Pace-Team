@@ -33,7 +33,7 @@ const createMedalOverlayStyles = (theme: ITheme) => {
 	return {
 		dim: {
 			flex: 1,
-			backgroundColor: "rgba(4,10,18,.72)",
+			backgroundColor: "rgba(9,9,9,.72)",
 			justifyContent: "center" as const,
 			padding: spacing[5],
 		},

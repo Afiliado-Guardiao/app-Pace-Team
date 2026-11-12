@@ -49,7 +49,7 @@ const createMetricPillStyles = (theme: ITheme) => {
 		},
 		value: {
 			marginTop: 5,
-			fontFamily: typography.fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: typography.sizes.lg,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

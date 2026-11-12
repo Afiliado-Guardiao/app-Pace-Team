@@ -77,7 +77,7 @@ export const createRankRowStyles = (
 		},
 		right: { alignItems: "flex-end" },
 		points: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: sizes.md,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

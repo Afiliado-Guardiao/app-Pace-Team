@@ -96,7 +96,7 @@ export const createRunMapStyles = (theme: ITheme) => {
 		regionText: {
 			fontFamily: typography.fonts.semibold,
 			fontSize: 9,
-			color: "#aab6c2",
+			color: "#B4B4B4",
 		} as TextStyle,
 		routeColor: colors.route,
 		leaderColor: colors.leaderTrail,

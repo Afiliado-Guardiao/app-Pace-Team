@@ -50,7 +50,7 @@ const createTeamRunFaceStyles = (theme: ITheme) => {
 		sub: { fontFamily: fonts.medium, fontSize: sizes.sm, color: colors.textSecondary },
 		km: {
 			marginTop: KM_TOP,
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: BIG,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,

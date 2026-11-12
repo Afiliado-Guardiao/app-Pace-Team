@@ -47,7 +47,7 @@ export const createStatTileStyles = (
 		},
 		valueRow: { flexDirection: "row", alignItems: "baseline", gap: VALUE_GAP },
 		value: {
-			fontFamily: fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: valueSize,
 			fontVariant: [...typography.tabularNums],
 			letterSpacing: tracking(typography.tracking.tight, valueSize),

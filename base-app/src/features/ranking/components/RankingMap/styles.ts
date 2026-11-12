@@ -152,7 +152,7 @@ export const createCompetitorStyles = (theme: ITheme, o: ICompetitorStyleOptions
 			borderRadius: 13,
 			maxWidth: labelW,
 			borderWidth: 1,
-			backgroundColor: o.isSelected && !o.isMine ? "rgba(253,90,12,0.30)" : "rgba(14,22,32,0.74)",
+			backgroundColor: o.isSelected && !o.isMine ? "rgba(253,90,12,0.30)" : "rgba(21,21,21,0.74)",
 			borderColor: o.isSelected && !o.isMine ? colors.accent : colors.glassBorder,
 		} as ViewStyle,
 		badge: {

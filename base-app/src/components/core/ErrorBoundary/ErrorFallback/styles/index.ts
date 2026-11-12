@@ -6,7 +6,7 @@ export const createErrorFallbackStyles = () => {
 	return StyleSheet.create({
 		container: {
 			flex: 1,
-			backgroundColor: "#f9fafb",
+			backgroundColor: "#FAFAFA",
 			alignItems: "center",
 			justifyContent: "center",
 			padding: 24,
@@ -42,21 +42,21 @@ export const createErrorFallbackStyles = () => {
 		title: {
 			fontSize: 24,
 			fontWeight: "700",
-			color: "#1f2937",
+			color: "#282828",
 			marginBottom: 12,
 			textAlign: "center",
 			letterSpacing: -0.5,
 		},
 		message: {
 			fontSize: 16,
-			color: "#6b7280",
+			color: "#727272",
 			textAlign: "center",
 			marginBottom: 8,
 			lineHeight: 24,
 		},
 		errorDetails: {
 			fontSize: 14,
-			color: "#6b7280",
+			color: "#727272",
 			textAlign: "center",
 			marginBottom: 32,
 			lineHeight: 20,
@@ -64,7 +64,7 @@ export const createErrorFallbackStyles = () => {
 			paddingHorizontal: 12,
 		},
 		button: {
-			backgroundColor: "#1f2937",
+			backgroundColor: "#282828",
 			paddingHorizontal: 40,
 			paddingVertical: 16,
 			borderRadius: 12,
@@ -80,7 +80,7 @@ export const createErrorFallbackStyles = () => {
 			elevation: 3,
 		},
 		buttonPressed: {
-			backgroundColor: "#6b7280",
+			backgroundColor: "#727272",
 			transform: [{ scale: 0.98 }],
 		},
 		buttonText: {

@@ -27,6 +27,7 @@
     "@expo-google-fonts/exo-2": "^0.4.2",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/montserrat": "^0.4.2",
+    "@expo-google-fonts/roboto-mono": "^0.4.2",
     "@expo/metro-runtime": "~6.1.2",
     "@quidone/react-native-wheel-picker": "^1.6.1",
     "@react-native-async-storage/async-storage": "^2.2.0",

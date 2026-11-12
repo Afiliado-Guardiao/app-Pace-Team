@@ -20,7 +20,7 @@ export const createActivityGaugeStyles = (theme: ITheme, size: number): IActivit
 			alignItems: "center",
 		},
 		value: {
-			fontFamily: typography.fonts.bold,
+			fontFamily: typography.numericFonts.bold,
 			fontSize: valueSize,
 			fontVariant: [...typography.tabularNums],
 			color: colors.textPrimary,
