@@ -4,7 +4,7 @@ import { BUDDY_ACCESSORIES } from "../constants";
 import { BUDDY_KEYS, buddyNative } from "../native";
 import { effectiveColor, isUnlocked, rankOfPosition, sickAt, wornAccessories } from "../rules";
 import { buildSharedState } from "../sharedState";
-import { DEFAULT_ALARM, useBuddyStore } from "../store";
+import { DEFAULT_ALARM, EMPTY_STUDIO, useBuddyStore } from "../store";
 import { useBuddySync } from "../useBuddySync";
 
 // O 1º do ranking da equipe (com pontos) é quem ganha a coroa
@@ -22,6 +22,7 @@ const mockRuns = [{ startedAt: "2026-10-20T06:00:00.000Z" }];
 jest.mock("@/lib/data", () => ({
 	useMyTeam: () => ({ team: mockTeam }),
 	useMyRuns: () => ({ saved: mockRuns }),
+	useMyPro: () => ({ isPro: false }),
 }));
 jest.mock("@/lib/supabase/client", () => ({ AUTH_STORAGE_KEY: "sb-test-auth-token" }));
 jest.mock("../notifications", () => ({
@@ -80,6 +81,23 @@ describe("Pace Buddy — regras", () => {
 		// Sem equipe a coroa não vale
 		expect(state.accessories).toEqual(["faixa"]);
 		expect(state.next).toEqual({ name: "Óculos de grau", need: 5 });
+	});
+
+	it("com Team Pro, o cartão e o widget mostram o visual do Studio", () => {
+		const state = buildSharedState({
+			userName: "Lucas",
+			ctx: { teamName: "Pace", isLeader: false, rank: "none" },
+			goals: 4,
+			equipped: ["faixa"],
+			color: "azul",
+			lastFree: "azul",
+			kmIdx: 3,
+			lastRunAt: null,
+			alarm: DEFAULT_ALARM,
+			studio: { ...EMPTY_STUDIO, head: "samurai", color: "neon" },
+		});
+		expect(state.color).toBe("neon");
+		expect(state.accessories).toEqual(["samurai"]);
 	});
 });
 
