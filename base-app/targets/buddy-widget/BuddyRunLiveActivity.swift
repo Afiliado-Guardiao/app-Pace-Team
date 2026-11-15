@@ -88,7 +88,7 @@ private struct BuddyRunLockScreen: View {
       }
     }
     .padding(14)
-    .activityBackgroundTint(Color(hex: 0x0A1220))
+    .activityBackgroundTint(Color(hex: 0x0B0B0B))
     .activitySystemActionForegroundColor(Color.buddyOrange)
   }
 }

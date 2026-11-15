@@ -17,8 +17,8 @@ extension Color {
   static let buddyOrange400 = Color(hex: 0xFF7A2E)
   static let buddyOrange200 = Color(hex: 0xFFC29E)
   static let buddyInk = Color(hex: 0x0B1520)
-  static let buddyNavy = Color(hex: 0x1B2733)
-  static let buddyNavyDeep = Color(hex: 0x0A1220)
+  static let buddyNavy = Color(hex: 0x161616)
+  static let buddyNavyDeep = Color(hex: 0x0B0B0B)
   static let buddyOnline = Color(hex: 0x3BE27E)
 }
 
@@ -51,6 +51,25 @@ struct BuddyPalette {
     "amarelo": BuddyPalette(
       name: "Amarelo", body: [Color(hex: 0xFFE3A3), Color(hex: 0xFFCB5C), Color(hex: 0xF7B031), Color(hex: 0xD98E14)],
       shade: Color(red: 150 / 255, green: 90 / 255, blue: 0, opacity: 0.35)),
+    // Cores do Buddy Studio (Team Pro)
+    "neon": BuddyPalette(
+      name: "Neon", body: [Color(hex: 0xFFC2E8), Color(hex: 0xFF6FC4), Color(hex: 0xF23B9E), Color(hex: 0xB8167A)],
+      shade: Color(red: 150 / 255, green: 10 / 255, blue: 100 / 255, opacity: 0.4)),
+    "galaxia": BuddyPalette(
+      name: "Galáxia", body: [Color(hex: 0xC9B8FF), Color(hex: 0x7B5CF0), Color(hex: 0x3F2AA8), Color(hex: 0x1B1260)],
+      shade: Color(red: 20 / 255, green: 10 / 255, blue: 80 / 255, opacity: 0.55)),
+    "oceano": BuddyPalette(
+      name: "Oceano", body: [Color(hex: 0xB5FFF4), Color(hex: 0x4FE0D2), Color(hex: 0x16A8B8), Color(hex: 0x0B6A86)],
+      shade: Color(red: 5 / 255, green: 70 / 255, blue: 90 / 255, opacity: 0.45)),
+    "coral": BuddyPalette(
+      name: "Coral", body: [Color(hex: 0xFFD9CC), Color(hex: 0xFF9E80), Color(hex: 0xFF6A4D), Color(hex: 0xD9412B)],
+      shade: Color(red: 160 / 255, green: 40 / 255, blue: 20 / 255, opacity: 0.4)),
+    "grafite": BuddyPalette(
+      name: "Grafite", body: [Color(hex: 0x9AA6B4), Color(hex: 0x5C6876), Color(hex: 0x353F4B), Color(hex: 0x1A2129)],
+      shade: Color(red: 0, green: 0, blue: 0, opacity: 0.55)),
+    "lava": BuddyPalette(
+      name: "Lava", body: [Color(hex: 0xFFE08A), Color(hex: 0xFF9A2E), Color(hex: 0xF0461E), Color(hex: 0x8F1306)],
+      shade: Color(red: 120 / 255, green: 20 / 255, blue: 0, opacity: 0.5)),
     "bronze": BuddyPalette(
       name: "Bronze", body: [Color(hex: 0xF8D2AE), Color(hex: 0xD9884E), Color(hex: 0xA9602E), Color(hex: 0x6E3A18)],
       shade: Color(red: 80 / 255, green: 35 / 255, blue: 10 / 255, opacity: 0.5),

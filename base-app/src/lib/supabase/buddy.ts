@@ -48,6 +48,18 @@ export async function saveBuddyProfile(update: IBuddyProfileUpdate): Promise<voi
 	if (error) throw error;
 }
 
+// Visual do Buddy Studio (Team Pro): a equipe vê no cartão do Buddy enquanto o
+// atleta tiver o Pro (o servidor confere). Salvo à parte para não atrapalhar o resto.
+export interface IBuddyStudioLook {
+	color: string | null;
+	items: string[];
+}
+
+export async function saveBuddyStudio(studio: IBuddyStudioLook): Promise<void> {
+	const { error } = await supabase.from("buddy_profiles").upsert({ studio });
+	if (error) throw error;
+}
+
 // Meta cumprida pelo Buddy: soma e devolve o acessório liberado (ou null)
 export async function completeBuddyGoal(): Promise<{ goals: number; unlocked: string | null }> {
 	const { data, error } = await supabase.rpc("buddy_complete_goal");

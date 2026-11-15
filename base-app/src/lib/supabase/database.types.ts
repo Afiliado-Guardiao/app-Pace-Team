@@ -192,6 +192,7 @@ export interface Database {
 					alarm_time: string | null;
 					alarm_days: number[];
 					hide_crown: boolean;
+					studio: { color?: string | null; items?: string[] };
 					updated_at: string;
 				};
 				Insert: {
@@ -202,6 +203,7 @@ export interface Database {
 					alarm_time?: string | null;
 					alarm_days?: number[];
 					hide_crown?: boolean;
+					studio?: { color?: string | null; items?: string[] };
 				};
 				Update: {
 					color?: string;

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/constants";
-import { useMyRuns } from "@/lib/data";
+import { useMyPro, useMyRuns } from "@/lib/data";
 import { AUTH_STORAGE_KEY } from "@/lib/supabase/client";
 import { useStore } from "@/store";
 
@@ -27,6 +27,9 @@ export const useBuddySync = (): void => {
 	const lastFree = useBuddyStore((s) => s.lastFree);
 	const kmIdx = useBuddyStore((s) => s.kmIdx);
 	const alarm = useBuddyStore((s) => s.alarm);
+	// O cartão, o widget e a Live Activity mostram o visual do Studio (Team Pro)
+	const studio = useBuddyStore((s) => s.studio);
+	const { isPro } = useMyPro();
 	const lastSent = useRef("");
 	const lastRun = saved.at(0);
 	const lastRunAt = lastRun ? new Date(lastRun.startedAt).getTime() : null;
@@ -44,8 +47,9 @@ export const useBuddySync = (): void => {
 				kmIdx,
 				lastRunAt,
 				alarm,
+				studio: isPro ? studio : null,
 			}),
-		[userName, ctx, goals, equipped, color, lastFree, kmIdx, lastRunAt, alarm],
+		[userName, ctx, goals, equipped, color, lastFree, kmIdx, lastRunAt, alarm, isPro, studio],
 	);
 
 	// Onde o atalho encontra o servidor e o login (mesmo login do app)

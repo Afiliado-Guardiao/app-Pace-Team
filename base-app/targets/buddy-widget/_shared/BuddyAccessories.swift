@@ -166,7 +166,7 @@ private struct BuddyCap: View {
         .overlay(alignment: .bottom) { Rectangle().fill(Color.buddyOrange.opacity(0.85)).frame(height: 3) }
         .clipShape(BuddyRoundedShape(tx: 38, ty: 32, bx: 10, by: 8))
         .buddyAt(6, -17, 76, 32)
-      Ellipse().fill(LinearGradient(colors: [Color(hex: 0x2D3E4F), Color(hex: 0x141E28)], startPoint: .top, endPoint: .bottom))
+      Ellipse().fill(LinearGradient(colors: [Color(hex: 0x3B3B3B), Color(hex: 0x141E28)], startPoint: .top, endPoint: .bottom))
         .rotationEffect(.degrees(-5)).shadow(color: .black.opacity(0.5), radius: 3, y: 4)
         .buddyAt(44, 7, 56, 11)
       Circle().fill(buddyOrangeFill).shadow(color: Color.buddyOrange.opacity(0.7), radius: 3).buddyAt(37, -7, 13, 13)
@@ -179,7 +179,7 @@ private struct BuddyBackCap: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      Ellipse().fill(LinearGradient(colors: [Color(hex: 0x2D3E4F), Color(hex: 0x0F1822)], startPoint: .top, endPoint: .bottom))
+      Ellipse().fill(LinearGradient(colors: [Color(hex: 0x3B3B3B), Color(hex: 0x0F1822)], startPoint: .top, endPoint: .bottom))
         .rotationEffect(.degrees(-24)).buddyAt(54, -16, 46, 11)
       BuddyRoundedShape(tx: 38, ty: 32, bx: 10, by: 8)
         .fill(EllipticalGradient(colors: [Color.buddyOrange300, Color.buddyOrange, Color(hex: 0xB83000)],

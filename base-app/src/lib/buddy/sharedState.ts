@@ -8,8 +8,8 @@ import {
 	IBuddyColorId,
 	IBuddyRank,
 } from "./constants";
-import { effectiveColor, IBuddyContext, sickAt, wornAccessories } from "./rules";
-import { IBuddyAlarm } from "./store";
+import { effectiveColor, IBuddyContext, sickAt, withStudio, wornAccessories } from "./rules";
+import { IBuddyAlarm, IBuddyStudio } from "./store";
 
 export const BUDDY_STATE_VERSION = 1;
 
@@ -43,18 +43,25 @@ interface IBuddyInputs {
 	kmIdx: number;
 	lastRunAt: number | null;
 	alarm: IBuddyAlarm;
+	// Visual do Buddy Studio (só quando o atleta tem o Team Pro)
+	studio?: IBuddyStudio | null;
 }
 
 export const buildSharedState = (input: IBuddyInputs): IBuddySharedState => {
 	const next = BUDDY_ACCESSORIES.find((a) => a.need && input.goals < a.need);
+	const base = {
+		color: effectiveColor(input.color, input.lastFree, input.ctx.rank),
+		accessories: wornAccessories(input.equipped, input.goals, input.ctx),
+	};
+	const look = input.studio ? withStudio(base, input.studio) : base;
 	return {
 		version: BUDDY_STATE_VERSION,
 		userName: input.userName,
 		teamName: input.ctx.teamName,
 		isLeader: input.ctx.isLeader,
 		rank: input.ctx.rank,
-		color: effectiveColor(input.color, input.lastFree, input.ctx.rank),
-		accessories: wornAccessories(input.equipped, input.goals, input.ctx),
+		color: look.color,
+		accessories: look.accessories,
 		goals: input.goals,
 		next: next ? { name: next.name, need: next.need ?? 0 } : null,
 		kms: BUDDY_KMS,

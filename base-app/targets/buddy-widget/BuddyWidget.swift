@@ -53,7 +53,7 @@ struct BuddyWidgetView: View {
       if family == .systemMedium { medium } else { small }
     }
     .containerBackground(for: .widget) {
-      LinearGradient(colors: [Color(hex: 0x1B2733), Color(hex: 0x0A1220)], startPoint: .top, endPoint: .bottom)
+      LinearGradient(colors: [Color(hex: 0x161616), Color(hex: 0x0B0B0B)], startPoint: .top, endPoint: .bottom)
     }
   }
 

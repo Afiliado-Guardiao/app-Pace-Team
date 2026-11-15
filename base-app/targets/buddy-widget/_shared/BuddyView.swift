@@ -1,5 +1,6 @@
 // O Pace Buddy em SwiftUI, nas medidas do design (140 × 135): sombra,
-// capa, corpo 88 × 70, olhos, boca, mãos e acessórios. Fora do app o iOS
+// capa, o novo Bud de algodão (arte 3D em camadas: corpo e mãos), olhos,
+// boca e acessórios (os do Studio são as mesmas imagens 3D do app). Fora do app o iOS
 // não deixa animar o tempo todo, então cada gesto do design vira uma pose.
 import SwiftUI
 
@@ -81,7 +82,7 @@ struct BuddyView: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       Ellipse()
-        .fill(RadialGradient(colors: [Color.buddyOrange.opacity(0.45), Color.buddyOrange.opacity(0)],
+        .fill(RadialGradient(colors: [Color.black.opacity(0.34), Color.black.opacity(0)],
                              center: .center, startRadius: 0, endRadius: 40))
         .buddyAt(30, 112, 80, 14)
       ZStack(alignment: .topLeading) {
@@ -89,11 +90,18 @@ struct BuddyView: View {
           Ellipse().fill(RadialGradient(colors: [glow, .clear], center: .center, startRadius: 0, endRadius: 64))
             .buddyAt(6, 14, 128, 104)
         }
+        // Itens do Studio que abraçam a cabeça por trás (fone, orelhas, costas)
+        ForEach(accessories.filter { BudArt.studioBack[$0] != nil }, id: \.self) { id in
+          if let item = BudArt.studioBack[id] { BudStudioArt(item: item) }
+        }
         if accessories.contains("capa") { BuddyCape().buddyAt(12, 62, 116, 64) }
         if pose == .run { BuddyRunRing().buddyAt(14, 92, 112, 34) }
-        BuddyBody(pal: pal, pose: pose, accessories: accessories).buddyAt(26, 32, 88, 70)
-        BuddyHand(pal: pal, pose: pose, isRight: false).buddyAt(12, 68, 24, 24)
-        BuddyHand(pal: pal, pose: pose, isRight: true).buddyAt(104, 68, 24, 24)
+        BuddyBody(pal: pal, pose: pose, accessories: accessories)
+          .buddyAt(BudArt.body.minX, BudArt.body.minY, BudArt.body.width, BudArt.body.height)
+        BuddyHand(pal: pal, pose: pose, isRight: false)
+          .buddyAt(BudArt.handLFull.minX, BudArt.handLFull.minY, BudArt.handLFull.width, BudArt.handLFull.height)
+        BuddyHand(pal: pal, pose: pose, isRight: true)
+          .buddyAt(BudArt.handRFull.minX, BudArt.handRFull.minY, BudArt.handRFull.width, BudArt.handRFull.height)
         BuddyEffects(pose: pose, pal: pal)
       }
       .rotationEffect(.degrees(tilt), anchor: UnitPoint(x: 0.5, y: 0.75))
@@ -110,32 +118,38 @@ private struct BuddyBody: View {
   let pose: BuddyPose
   let accessories: [String]
 
+  private var face: [String] {
+    BuddyAccessoryOrder.sorted(accessories.filter { $0 != "capa" && BudArt.studioBack[$0] == nil })
+  }
+
   var body: some View {
     ZStack(alignment: .topLeading) {
-      BuddyBodyShape().fill(pal.bodyFill)
-      // Volume: brilho em cima à esquerda, sombra embaixo à direita
-      BuddyBodyShape().fill(LinearGradient(
-        colors: [Color.white.opacity(pal.metal == nil ? 0.55 : 0.3), .clear, pal.shade],
-        startPoint: .topLeading, endPoint: .bottomTrailing))
-      if pal.metal != nil {
-        Ellipse().fill(RadialGradient(colors: [Color.white.opacity(0.98), .clear], center: .center, startRadius: 0, endRadius: 14))
-          .buddyAt(14, 6, 28, 18)
-      }
+      BudTinted(name: "bud_body", tint: BudArt.tint(pal), opacity: pal.metal == nil ? 0.55 : 0.62)
+        .frame(width: 88, height: 86)
       if pose == .sick {
-        BuddyBodyShape().fill(RadialGradient(colors: [Color(hex: 0xFF402C, alpha: 0.38), .clear],
-                                             center: UnitPoint(x: 0.5, y: 0.38), startRadius: 0, endRadius: 40))
-        Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.6)).blur(radius: 2).buddyAt(10, 40, 16, 9)
-        Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.6)).blur(radius: 2).buddyAt(62, 40, 16, 9)
+        BudArt.image("bud_body").resizable().renderingMode(.template)
+          .foregroundStyle(Color(hex: 0xFF402C)).opacity(0.24)
+          .frame(width: 88, height: 86)
       }
-      BuddyEyes(pose: pose).buddyAt(0, 22, 88, 18)
-      BuddyMouth(pose: pose)
-      ForEach(BuddyAccessoryOrder.sorted(accessories.filter { $0 != "capa" }), id: \.self) { id in
-        BuddyHeadAccessory(id: id, pal: pal, crownLift: BuddyAccessoryOrder.crownLift(accessories))
+      ZStack(alignment: .topLeading) {
+        if pose == .sick {
+          Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.55)).blur(radius: 2).buddyAt(12, 40, 16, 9)
+          Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.55)).blur(radius: 2).buddyAt(60, 40, 16, 9)
+        }
+        BuddyEyes(pose: pose).buddyAt(0, 22, 88, 18)
+        BuddyMouth(pose: pose)
+        ForEach(face, id: \.self) { id in
+          if let item = BudArt.studioFront[id] {
+            BudStudioArt(item: item)
+          } else {
+            BuddyHeadAccessory(id: id, pal: pal, crownLift: BuddyAccessoryOrder.crownLift(accessories))
+          }
+        }
       }
+      .frame(width: 88, height: 70, alignment: .topLeading)
+      .offset(y: BudArt.faceTop)
     }
-    .frame(width: 88, height: 70, alignment: .topLeading)
-    .shadow(color: .black.opacity(0.45), radius: 8, x: 0, y: 10)
-    .shadow(color: pal.glow ?? Color.buddyOrange.opacity(0.35), radius: 10, x: 0, y: 6)
+    .frame(width: 88, height: 86, alignment: .topLeading)
     .scaleEffect(x: pose.isSleepy ? 1.07 : 1, y: pose.isSleepy ? 0.86 : 1, anchor: .bottom)
   }
 }
@@ -173,7 +187,11 @@ private struct BuddyEyes: View {
       BuddyArc(isUp: false).fill(Color.buddyInk).frame(width: 11, height: 9)
         .rotationEffect(.degrees(i == 1 ? 12 : -12)).padding(.top, 7)
     default:
-      Ellipse().fill(Color.buddyInk).frame(width: 10, height: 16)
+      // Olho da arte nova: oval preto com um reflexo suave
+      Ellipse().fill(Color(hex: 0x141210)).frame(width: 10, height: 15)
+        .overlay(alignment: .topLeading) {
+          Ellipse().fill(Color.white.opacity(0.28)).frame(width: 4, height: 5).offset(x: 2, y: 2)
+        }
         .scaleEffect(y: pose == .run ? 0.75 : 1)
     }
   }
@@ -247,16 +265,27 @@ private struct BuddyHand: View {
 
   // Braço esticado quando a mão sobe
   private var isRaised: Bool { offset.height < 0 && pose != .sleep }
+  // Parada: a mão da arte encaixada no corpo; mexendo: a esfera inteira
+  private var isAway: Bool { offset != .zero }
+
+  private var full: CGRect { isRight ? BudArt.handRFull : BudArt.handLFull }
+  private var rest: CGRect { isRight ? BudArt.handR : BudArt.handL }
 
   var body: some View {
-    Capsule()
-      .fill(pal.handFill)
-      .frame(width: isRaised ? 17 : 24, height: isRaised ? 34 : 24)
-      .offset(y: isRaised ? -5 : 0)
-      .rotationEffect(.degrees(isRaised ? (isRight ? 30 : -30) : 0))
-      .shadow(color: .black.opacity(0.4), radius: 4, x: 0, y: 4)
-      .frame(width: 24, height: 24)
-      .offset(offset)
+    ZStack(alignment: .topLeading) {
+      if isAway {
+        BudTinted(name: isRight ? "bud_hand_r_full" : "bud_hand_l_full", tint: BudArt.tint(pal))
+          .frame(width: full.width, height: full.height)
+      } else {
+        BudTinted(name: isRight ? "bud_hand_r" : "bud_hand_l", tint: BudArt.tint(pal))
+          .frame(width: rest.width, height: rest.height)
+          .offset(x: rest.minX - full.minX, y: rest.minY - full.minY)
+      }
+    }
+    .frame(width: full.width, height: full.height, alignment: .topLeading)
+    .scaleEffect(x: isRaised ? 0.82 : 1, y: isRaised ? 1.22 : 1, anchor: .bottom)
+    .rotationEffect(.degrees(isRaised ? (isRight ? 30 : -30) : 0))
+    .offset(offset)
   }
 }
 
@@ -264,7 +293,7 @@ private struct BuddyCape: View {
   var body: some View {
     ZStack {
       BuddyTrapezoid().fill(LinearGradient(colors: [Color.buddyOrange400, Color(hex: 0xCD3600)], startPoint: .top, endPoint: .bottom))
-      BuddyTrapezoid().fill(LinearGradient(colors: [Color(hex: 0x23313F), Color.buddyNavyDeep], startPoint: .top, endPoint: .bottom))
+      BuddyTrapezoid().fill(LinearGradient(colors: [Color(hex: 0x2F2F2F), Color.buddyNavyDeep], startPoint: .top, endPoint: .bottom))
         .padding(.horizontal, 6).padding(.bottom, 4)
     }
   }

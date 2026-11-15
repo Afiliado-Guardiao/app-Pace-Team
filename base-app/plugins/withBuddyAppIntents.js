@@ -16,6 +16,31 @@ const soundFiles = (projectRoot) => {
 	return fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith(".wav")) : [];
 };
 
+// Arte do novo Bud e dos itens do Studio para o cartão do Buddy (no widget elas
+// vêm do catálogo do alvo; aqui, como arquivos do pacote: UIImage(named:))
+const BUD_PARTS = {
+	bud_body: "body",
+	bud_hand_l: "handL",
+	bud_hand_r: "handR",
+	bud_hand_l_full: "handLFull",
+	bud_hand_r_full: "handRFull",
+};
+const artFiles = (projectRoot) => {
+	const bud = Object.entries(BUD_PARTS).map(([name, file]) => ({
+		from: path.join(projectRoot, "assets", "bud", `${file}.png`),
+		name: `${name}.png`,
+	}));
+	const studioDir = path.join(projectRoot, "assets", "studio");
+	const studio = fs
+		.readdirSync(studioDir)
+		.filter((f) => f.endsWith(".png"))
+		.map((f) => ({
+			from: path.join(studioDir, f),
+			name: `studio_${f.replace(/-/g, "_")}`,
+		}));
+	return [...bud, ...studio];
+};
+
 const swiftFiles = (projectRoot) =>
 	fs.readdirSync(path.join(projectRoot, SOURCE_DIR)).filter((f) => f.endsWith(".swift"));
 
@@ -37,6 +62,9 @@ const withCopiedFiles = (config) =>
 					path.join(platformProjectRoot, projectName, file),
 				);
 			}
+			for (const art of artFiles(projectRoot)) {
+				fs.copyFileSync(art.from, path.join(platformProjectRoot, projectName, art.name));
+			}
 			return c;
 		},
 	]);
@@ -51,7 +79,11 @@ const withSourcesInAppTarget = (config) =>
 				project: c.modResults,
 			});
 		}
-		for (const file of soundFiles(c.modRequest.projectRoot)) {
+		const resources = [
+			...soundFiles(c.modRequest.projectRoot),
+			...artFiles(c.modRequest.projectRoot).map((a) => a.name),
+		];
+		for (const file of resources) {
 			IOSConfig.XcodeUtils.addResourceFileToGroup({
 				filepath: path.posix.join(projectName, file),
 				groupName: projectName,
