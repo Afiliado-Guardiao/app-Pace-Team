@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View, ViewStyle } from "react-native";
 
 import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -33,7 +33,9 @@ export const ScreenScroll: React.FC<IScreenScrollProps> = ({
 	const insets = useSafeAreaInsets();
 	// Espaço de topo que a tela pediu vai SOMADO à área do relógio do iPhone
 	// (antes ele substituía, e a seta de voltar ficava embaixo do relógio)
-	const flat = StyleSheet.flatten(contentStyle);
+	// No iPhone, flatten(undefined) devolve undefined (no navegador devolve {}):
+	// sem o "?? {}" o app travava ao abrir nas telas sem contentStyle
+	const flat: ViewStyle = (StyleSheet.flatten(contentStyle) as ViewStyle | undefined) ?? {};
 	const topGap = typeof flat.paddingTop === "number" ? flat.paddingTop : undefined;
 	const styles = createScreenScrollStyles(theme, { insets, hasRail, bottom, topGap });
 	const items = React.Children.toArray(children);
