@@ -1,0 +1,80 @@
+# Build do iPhone no Mac grátis do GitHub (não gasta o limite de builds da
+# Expo) e envio para o TestFlight. Usa os mesmos certificados guardados na
+# Expo. Roda quando algo é enviado para o ramo ci/ios-build (ou manualmente).
+#
+# Segredos do repositório (Settings › Secrets and variables › Actions),
+# colados pelo dono do app:
+#   EXPO_TOKEN     chave de acesso da Expo (conta paceteam-app)
+#   ASC_KEY_ID     ID da chave da App Store Connect
+#   ASC_ISSUER_ID  Issuer ID da App Store Connect
+#   ASC_KEY_P8     conteúdo do arquivo AuthKey_XXXX.p8
+name: iOS build (TestFlight)
+on:
+  push:
+    branches: [ci/ios-build]
+  workflow_dispatch:
+concurrency:
+  group: ios-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 150
+    defaults:
+      run:
+        working-directory: base-app
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    steps:
+      - name: Conferir os segredos
+        working-directory: .
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          missing=""
+          [ -n "$EXPO_TOKEN" ] || missing="$missing EXPO_TOKEN"
+          [ -n "$ASC_KEY_ID" ] || missing="$missing ASC_KEY_ID"
+          [ -n "$ASC_ISSUER_ID" ] || missing="$missing ASC_ISSUER_ID"
+          [ -n "$ASC_KEY_P8" ] || missing="$missing ASC_KEY_P8"
+          if [ -n "$missing" ]; then echo "::error::Faltam os segredos:$missing"; exit 1; fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: base-app/package-lock.json
+      - name: Xcode 26
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X"; fi
+          xcodebuild -version
+      - name: Dependências
+        run: |
+          npm ci --no-audit --no-fund
+          npm install -g eas-cli@latest
+      - name: Build (no Mac do GitHub, com os certificados da Expo)
+        run: |
+          eas build --platform ios --profile production --local --non-interactive \
+            --output "$RUNNER_TEMP/pace-team.ipa"
+          ls -la "$RUNNER_TEMP/pace-team.ipa"
+      - name: Enviar ao TestFlight
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          export KEY="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$KEY"
+          node -e "
+          const fs=require('fs');const j=JSON.parse(fs.readFileSync('eas.json','utf8'));
+          Object.assign(j.submit.production.ios,{ascApiKeyPath:process.env.KEY,ascApiKeyId:process.env.ASC_KEY_ID,ascApiKeyIssuerId:process.env.ASC_ISSUER_ID});
+          fs.writeFileSync('eas.json',JSON.stringify(j,null,'\t')+'\n');"
+          eas submit --platform ios --profile production --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive
+          rm -f "$KEY"
+          git checkout -- eas.json
+        shell: bash
+      - name: Apagar o .ipa
+        if: always()
+        run: rm -f "$RUNNER_TEMP/pace-team.ipa" "$RUNNER_TEMP/AuthKey.p8"
