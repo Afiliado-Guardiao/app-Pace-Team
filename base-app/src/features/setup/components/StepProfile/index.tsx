@@ -17,8 +17,9 @@ interface IStepProfileProps {
 
 const SCALE = 92 / BUDDY_W;
 const WAVE: IBuddyPose = { act: "wave", phase: null, blink: false, gx: 0, gy: 0 };
-// Antes de escolher o presente, o Buddy aparece de óculos escuros (como no design)
-const SHADES = ["oculos"] as const;
+// Na criação da conta o Bud ainda não tem nada: o acessório vem depois,
+// quando o atleta escolhe o presente
+const NO_ACCESSORIES = [] as const;
 
 const createStepProfileStyles = (theme: ITheme) => {
 	const { colors, spacing, typography } = theme.pace;
@@ -84,7 +85,7 @@ export const StepProfile: React.FC<IStepProfileProps> = ({ profile }) => {
 						mode={arrival}
 						pose={WAVE}
 						scale={SCALE}
-						accessories={SHADES}
+						accessories={NO_ACCESSORIES}
 						label={C.thinking}
 					/>
 				</View>
