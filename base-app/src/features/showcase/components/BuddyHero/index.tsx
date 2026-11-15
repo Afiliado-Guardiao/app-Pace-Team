@@ -55,6 +55,7 @@ const createBuddyHeroStyles = (theme: ITheme, k: number, f: IShowcaseFlight) => 
 	return {
 		root: { alignSelf: "center" as const, ...box },
 		flight: { position: "absolute" as const, ...box },
+		measure: { position: "absolute" as const, left: 0, top: 0, ...box },
 		inner: { position: "absolute" as const, transform: [{ scale }], transformOrigin: "0% 0%" },
 		// Chama do foguete embaixo do Bud
 		flame: {
@@ -97,11 +98,10 @@ export const BuddyHero: React.FC<IBuddyHeroProps> = ({ pose, k, flight, heroRef 
 	const styles = createBuddyHeroStyles(theme, k, flight);
 
 	return (
-		<Animated.View
-			entering={ZoomIn.delay(700).springify().damping(12)}
-			style={styles.root}
-			ref={heroRef}
-		>
+		<Animated.View entering={ZoomIn.delay(700).springify().damping(12)} style={styles.root}>
+			{/* Caixa comum (não animada) só para medir onde o Bud está: no iPhone o
+			    Animated.View não tem measureInWindow e o app travava no Começar */}
+			<View ref={heroRef} collapsable={false} style={styles.measure} pointerEvents="none" />
 			<Animated.View style={[styles.flight, flightStyle(flight)]} pointerEvents="none">
 				<Animated.View style={styles.flame} />
 				<View style={styles.inner}>

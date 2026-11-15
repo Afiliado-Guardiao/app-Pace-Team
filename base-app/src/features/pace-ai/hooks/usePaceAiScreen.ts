@@ -63,6 +63,8 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 	const voiceRef = useRef<ReturnType<typeof useAiVoice> | null>(null);
 	const ask = useCallback(
 		(question: string) => {
+			// Campo vazio: não faz nada (antes ia e voltava sem enviar)
+			if (!question.trim()) return;
 			setDraft("");
 			scrollToEnd();
 			void chat.send(question).then((reply) => {
@@ -114,8 +116,11 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		composer: {
 			draft: voice.isListening ? [draft.trim(), voice.heard].filter(Boolean).join(" ") : draft,
 			setDraft,
+			// Com o microfone ligado, o que ele ouviu ainda não está no campo:
+			// envia o texto todo que aparece na tela
 			submit: () => {
-				ask(draft);
+				const heard = voice.isListening ? voice.takeHeard() : "";
+				ask([draft.trim(), heard].filter(Boolean).join(" "));
 			},
 			isSending: chat.isSending,
 			left: chat.left,

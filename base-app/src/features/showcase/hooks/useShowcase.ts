@@ -90,8 +90,18 @@ export const useShowcase = () => {
 			);
 		};
 		// Mede onde o Bud está agora e decola de lá
-		if (heroRef.current) heroRef.current.measureInWindow(launch);
-		else launch(width / 2 - 95, height / 2, 190, 183);
+		const fallback = () => {
+			launch(width / 2 - 95, height / 2, 190, 183);
+		};
+		// Nunca pode travar o Começar: sem medida, decola do meio da tela
+		try {
+			const node = heroRef.current as { measureInWindow?: unknown } | null;
+			if (node && typeof node.measureInWindow === "function") {
+				(heroRef.current as View).measureInWindow(launch);
+			} else fallback();
+		} catch {
+			fallback();
+		}
 	}, [flight.stage, isReduced, goNext, width, height]);
 
 	// Desenhada para 390 × 844: encolhe pela largura OU pela altura (no Safari,

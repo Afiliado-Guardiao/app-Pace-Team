@@ -102,6 +102,10 @@ export const AiComposer: React.FC<IAiComposerProps> = ({ model, bottom }) => {
 					maxLength={MAX_QUESTION}
 					multiline
 					editable={!model.isListening}
+					// O "Enviar" do teclado manda a pergunta
+					returnKeyType="send"
+					submitBehavior="submit"
+					onSubmitEditing={canSend ? model.submit : undefined}
 					accessibilityLabel={C.placeholder}
 					testID="pace-ai-input"
 				/>

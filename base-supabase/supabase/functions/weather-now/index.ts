@@ -21,7 +21,7 @@ import { Buffer } from "node:buffer";
 type IPreset = "day" | "hot" | "cold" | "night" | "rain" | "storm" | "cloudy";
 
 const UA = "PaceTeam/1.0 github.com/Afiliado-Guardiao/app-Pace-Team";
-const TIMEOUT_MS = 7000;
+const TIMEOUT_MS = 9000;
 const RADAR_ZOOM = 7;
 const RADAR_MAX_AGE_S = 30 * 60;
 const METAR_BOX_DEG = 0.45;
@@ -138,12 +138,25 @@ async function readMetar(lat: number, lng: number): Promise<IMetar | null> {
 
 // ---- 3. Reserva: MET Norway ---------------------------------------------------
 
-async function readMet(lat: number, lng: number): Promise<{ temp: number | null; symbol: string } | null> {
+interface IMet {
+	temp: number | null;
+	symbol: string;
+	// Chuva prevista para a próxima hora (mm)
+	mm: number;
+}
+
+async function readMet(lat: number, lng: number): Promise<IMet | null> {
 	const res = await fetchT(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat.toFixed(2)}&lon=${lng.toFixed(2)}`);
 	if (!res?.ok) return null;
-	const j = (await res.json()) as { properties?: { timeseries?: { data: { instant: { details: { air_temperature?: number } }; next_1_hours?: { summary: { symbol_code: string } } } }[] } };
+	const j = (await res.json()) as { properties?: { timeseries?: { data: { instant: { details: { air_temperature?: number } }; next_1_hours?: { summary: { symbol_code: string }; details?: { precipitation_amount?: number } } } }[] } };
 	const d = j.properties?.timeseries?.[0]?.data;
-	return d ? { temp: d.instant.details.air_temperature ?? null, symbol: d.next_1_hours?.summary.symbol_code ?? "" } : null;
+	return d
+		? {
+			temp: d.instant.details.air_temperature ?? null,
+			symbol: d.next_1_hours?.summary.symbol_code ?? "",
+			mm: d.next_1_hours?.details?.precipitation_amount ?? 0,
+		}
+		: null;
 }
 
 // ---- Sol ---------------------------------------------------------------------
@@ -171,7 +184,7 @@ interface IDecision {
 	rainMmH: number;
 }
 
-function decide(o: { radar: IRadar | null; metar: IMetar | null; met: { symbol: string } | null; temp: number | null; isDay: boolean }): IDecision {
+function decide(o: { radar: IRadar | null; metar: IMetar | null; met: IMet | null; temp: number | null; isDay: boolean }): IDecision {
 	const { radar, metar, met, temp, isDay } = o;
 	const near = metar && metar.distKm <= METAR_NEAR_KM ? metar : null;
 	const thunder = Boolean(near && /TS/.test(near.wx));
@@ -185,6 +198,12 @@ function decide(o: { radar: IRadar | null; metar: IMetar | null; met: { symbol: 
 	} else if (near && metarRain) {
 		if (thunder) return { preset: "storm", rainMmH: RAIN_MM[4] };
 		return { preset: "rain", rainMmH: /\+/.test(near.wx) ? RAIN_MM[3] : /-/.test(near.wx) ? RAIN_MM[1] : RAIN_MM[2] };
+	}
+	if (!radar && !near && met) {
+		if (/thunder/.test(met.symbol)) return { preset: "storm", rainMmH: Math.max(RAIN_MM[4], met.mm) };
+		if (/rain|sleet|showers/.test(met.symbol) && met.mm >= 0.3) {
+			return { preset: "rain", rainMmH: Math.min(RAIN_MM[4], Math.max(RAIN_MM[1], met.mm)) };
+		}
 	}
 	if (metarNearby) return { preset: "cloudy", rainMmH: 0 };
 	const cloudySky = near?.cloudy || /cloudy|fog|rain|sleet|snow/.test(met?.symbol ?? "") && !/partlycloudy/.test(met?.symbol ?? "");
@@ -211,6 +230,12 @@ Deno.serve(async (req: Request): Promise<Response> => {
 	const temp = metar?.temp ?? met?.temp ?? null;
 	const isDay = sunElevation(lat, lng, new Date()) > -0.833;
 	const d = decide({ radar, metar, met, temp, isDay });
+	console.log(JSON.stringify({
+		preset: d.preset,
+		radar: radar ? `${String(radar.here)}/${String(radar.near)}` : null,
+		metar: metar ? `${metar.icao} ${metar.wx}` : null,
+		met: met ? `${met.symbol} ${String(met.mm)}` : null,
+	}));
 	return json({
 		preset: d.preset,
 		temp,

@@ -19,6 +19,9 @@ interface IUseAiVoiceReturn {
 	toggleSpeak: () => void;
 	cycleSpeed: () => void;
 	speak: (text: string) => void;
+	// Enviar com o microfone ligado: para de ouvir e devolve o que ele ouviu
+	// (sem jogar de novo no campo depois)
+	takeHeard: () => string;
 }
 
 const LANG = "pt-BR";
@@ -37,6 +40,7 @@ export const useAiVoice = (
 	const finalRef = useRef("");
 	const voiceRef = useRef<string | undefined>(undefined);
 	const lastRef = useRef("");
+	const skipRef = useRef(false);
 
 	useEffect(() => {
 		void Speech.getAvailableVoicesAsync()
@@ -62,6 +66,11 @@ export const useAiVoice = (
 		const text = finalRef.current.trim();
 		finalRef.current = "";
 		setHeard("");
+		// Já foi enviado junto com a pergunta (takeHeard)
+		if (skipRef.current) {
+			skipRef.current = false;
+			return;
+		}
 		if (text) onHeard(text);
 	});
 	useSpeechRecognitionEvent("error", (event) => {
@@ -126,6 +135,14 @@ export const useAiVoice = (
 					if (isSpeaking && lastRef.current) say(lastRef.current, next);
 				})
 				.catch(() => undefined);
+		},
+		takeHeard: () => {
+			const text = finalRef.current.trim();
+			skipRef.current = true;
+			finalRef.current = "";
+			setHeard("");
+			ExpoSpeechRecognitionModule.stop();
+			return text;
 		},
 		speak: (text) => {
 			lastRef.current = text;
