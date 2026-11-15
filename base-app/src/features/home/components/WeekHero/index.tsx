@@ -5,7 +5,9 @@ import { Canvas, Picture } from "@shopify/react-native-skia";
 import Animated from "react-native-reanimated";
 
 import { CountUp, Icon } from "@/components/pace";
+import { HintTip } from "@/components/shared";
 import { useTheme } from "@/theme";
+import { useHint } from "@/lib/hints";
 import { PRIZE_ART } from "@/lib/prizes";
 
 import { HOME_COPY } from "../../constants";
@@ -37,6 +39,9 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 	const { theme } = useTheme();
 	const view = useWeekHeroScene(hero, week);
 	const trackBud = useTrackBuddy(hero.jump, view.k);
+	const budHint = useHint("bud");
+	const pointsHint = useHint("points");
+	const teamHint = useHint("team-tile");
 	const { layout, weather, online } = hero;
 	const styles = createWeekHeroStyles(theme, {
 		k: view.k,
@@ -96,6 +101,9 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 					</Canvas>
 				) : null}
 				<TrackBuddy buddy={trackBud} box={styles.budBox} />
+				<View style={[styles.buddyHit, styles.hintAnchor]} pointerEvents="none">
+					<HintTip id="bud" isShown={budHint.isShown} side="top" />
+				</View>
 				<View style={styles.online}>
 					<HeroPill
 						text={online.onlineText}
@@ -106,7 +114,10 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 				</View>
 				<Pressable
 					style={styles.buddyHit}
-					onPress={hero.onBuddyPress}
+					onPress={() => {
+						budHint.done();
+						hero.onBuddyPress();
+					}}
 					accessibilityRole="button"
 					accessibilityLabel="Pace Buddy"
 					testID="week-hero-buddy"
@@ -122,6 +133,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 						value={week.points}
 						unit="pts"
 					/>
+					<HintTip id="points" isShown={pointsHint.isShown} side="top" />
 				</Animated.View>
 				<Animated.View key={`ht-${String(view.replay)}`} style={[styles.tileLow, HOP_TEAM]}>
 					<InnerTile
@@ -131,8 +143,12 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam }) =
 						lineB={week.teamRest}
 						value={week.rank}
 						unit={HOME_COPY.teamUnit}
-						onPress={onOpenTeam}
+						onPress={() => {
+							teamHint.done();
+							onOpenTeam();
+						}}
 					/>
+					<HintTip id="team-tile" isShown={teamHint.isShown} side="top" />
 				</Animated.View>
 			</View>
 			{isReady ? (

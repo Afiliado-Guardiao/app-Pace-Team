@@ -117,6 +117,8 @@ export const INVITE_SHARE = {
 } as const;
 
 export const SETUP_COPY = {
+	// Bolinhas do Bud enquanto ele "chega" na página
+	thinking: "Pensando…",
 	back: "Voltar",
 	next: "Continuar",
 	// 02

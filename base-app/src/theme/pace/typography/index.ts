@@ -12,23 +12,28 @@ export const paceTypography = {
 		extrabold: "Montserrat_800ExtraBold",
 	},
 
-	// Números (com fontVariant tabular): Roboto Mono, zero cortado, por peso
+	// Números (com fontVariant tabular): Orbitron, zero quadrado cortado, por peso
 	numericFonts: {
-		light: "RobotoMono_400Regular",
-		regular: "RobotoMono_400Regular",
-		medium: "RobotoMono_500Medium",
-		semibold: "RobotoMono_600SemiBold",
-		bold: "RobotoMono_700Bold",
-		extrabold: "RobotoMono_700Bold",
+		light: "Orbitron_400Regular",
+		regular: "Orbitron_400Regular",
+		medium: "Orbitron_400Regular",
+		semibold: "Orbitron_500Medium",
+		bold: "Orbitron_500Medium",
+		extrabold: "Orbitron_600SemiBold",
 	},
 
-	// Fonte da marca e dos números: Roboto Mono (técnica, zero cortado, "7Ø.Ø kg")
+	// Letra de mão (setas do guia da primeira vez e do onboarding)
+	handFonts: {
+		light: "Kalam_300Light",
+		regular: "Kalam_400Regular",
+	},
+
 	brandFonts: {
-		regular: "RobotoMono_400Regular",
-		semibold: "RobotoMono_600SemiBold",
-		bold: "RobotoMono_700Bold",
-		extrabold: "RobotoMono_700Bold",
-		black: "RobotoMono_700Bold",
+		regular: "Exo2_400Regular",
+		semibold: "Exo2_600SemiBold",
+		bold: "Exo2_700Bold",
+		extrabold: "Exo2_800ExtraBold",
+		black: "Exo2_900Black",
 	},
 
 	// --fs-* do design system + tamanhos usados pelos componentes

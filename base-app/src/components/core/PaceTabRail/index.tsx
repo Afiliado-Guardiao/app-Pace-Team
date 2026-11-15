@@ -2,7 +2,9 @@ import React from "react";
 import { View } from "react-native";
 
 import { TabBar } from "@/components/pace";
+import { HINTS, IHintId, useHintStore } from "@/lib/hints";
 
+import { RailHints } from "./RailHints";
 import { createPaceTabRailStyles } from "./styles";
 
 interface IPaceTabRailProps {
@@ -19,7 +21,20 @@ export const PaceTabRail: React.FC<IPaceTabRailProps> = ({ active, onChange }) =
 
 	return (
 		<View style={styles.container} pointerEvents="box-none">
-			<TabBar orientation="vertical" size={RAIL_SIZE} active={active} onChange={onChange} />
+			<View>
+				<TabBar
+					orientation="vertical"
+					size={RAIL_SIZE}
+					active={active}
+					onChange={(tabId) => {
+						// Tocou na aba: a dica dela some de vez
+						const hintId = `tab-${tabId}`;
+						if (hintId in HINTS) useHintStore.getState().finish(hintId as IHintId);
+						onChange(tabId);
+					}}
+				/>
+				<RailHints size={RAIL_SIZE} />
+			</View>
 		</View>
 	);
 };

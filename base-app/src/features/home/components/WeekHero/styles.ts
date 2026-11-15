@@ -114,6 +114,8 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 		} as ViewStyle,
 		// Novo Bud no lugar da pelúcia: mesmo centro, base no mesmo chão
 		budBox: budBox(m.ks, sceneTop),
+		// Âncora da dica do Bud (a mesma caixa do toque, sem pegar o toque)
+		hintAnchor: { zIndex: 30 } as ViewStyle,
 		tiles: { flexDirection: "row", alignItems: "flex-start", gap: spacing[2.5] } as ViewStyle,
 		tileLow: { flex: 1, marginTop: HERO.tilesOffset * m.k } as ViewStyle,
 		tileHigh: { flex: 1 } as ViewStyle,

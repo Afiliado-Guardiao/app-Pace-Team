@@ -5,63 +5,77 @@ import * as SplashScreen from "expo-splash-screen";
 import { useIsFetching } from "@tanstack/react-query";
 import { useReducedMotion } from "react-native-reanimated";
 
+import { IBuddyDotsMode, IBuddyPose } from "@/components/buddy";
 import { useStore } from "@/store";
 
 import { markSplashDone } from "../splashState";
 
-import { useSplashBuddy } from "./useSplashBuddy";
-import { SPLASH_T, useSplashTimeline } from "./useSplashTimeline";
+// Linha do tempo (ms): o símbolo surge cinza no preto e acende branco; o Bud
+// chega correndo, vira as três bolinhas enquanto o app carrega e volta a ser
+// o Bud quando fica pronto; aí a abertura some.
+export const SPLASH_T = {
+	bright: 420,
+	run: 1250,
+	dots: 1950,
+	// Mínimo de bolinhas na tela (não pisca rápido demais)
+	minReady: 2700,
+	back: 650,
+	out: 320,
+	check: 250,
+	// Sem esperar mais que isso, mesmo com a internet lenta
+	maxMs: 8000,
+	still: 1100,
+} as const;
 
-// Com "Reduzir movimento": só o logo parado, um instante
-const STILL_MS = 1100;
+export type ISplashPhase = "logo" | "bright" | "run" | "dots" | "back" | "out";
 
-// Abertura de quem já tem o app: logo no azul do app e o Bud chegando
-// correndo, vestindo acessórios enquanto o Início carrega por trás. Sem
-// tempo fixo: com o app pronto (nada mais carregando) e pelo menos um
-// acessório no Bud, ele sai correndo e o Início aparece. Tocar pula.
+const IDLE: IBuddyPose = { act: "idle", phase: null, blink: false, gx: 0, gy: 0 };
+const POSES: Record<ISplashPhase, IBuddyPose> = {
+	logo: IDLE,
+	bright: IDLE,
+	run: { ...IDLE, phase: "run" },
+	dots: IDLE,
+	back: { ...IDLE, act: "wave" },
+	out: { ...IDLE, act: "wave" },
+};
+
+// Abertura de quem já tem o app (antes do login vem o onboarding). Tocar pula.
 export const useBootSplash = () => {
-	// Só para quem já entrou na conta (antes do login vem o onboarding)
 	const hasApp = useStore((s) => s.isAuthenticated);
 	const [isVisible, setIsVisible] = useState(hasApp);
+	const [phase, setPhase] = useState<ISplashPhase>("logo");
 	const reduceMotion = useReducedMotion();
-	const timeline = useSplashTimeline();
-	const buddy = useSplashBuddy();
 	const fetching = useRef(0);
 	fetching.current = useIsFetching();
 	const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 	const started = useRef(false);
-	const leaving = useRef(false);
 	const startedAt = useRef(0);
-
-	const clearTimers = useCallback(() => {
-		timers.current.forEach(clearTimeout);
-		timers.current = [];
-	}, []);
-
-	const finish = useCallback(() => {
-		clearTimers();
-		setIsVisible(false);
-		markSplashDone();
-	}, [clearTimers]);
 
 	const later = useCallback((fn: () => void, ms: number) => {
 		timers.current.push(setTimeout(fn, ms));
 	}, []);
 
-	// A cada acessório: se o app já está pronto, sai; senão cai o próximo
-	const tick = useCallback(() => {
-		if (leaving.current) return;
-		const isReady = fetching.current === 0 && buddy.drops.current >= 1;
-		const isLate = Date.now() - startedAt.current > SPLASH_T.maxMs;
-		if (isReady || isLate) {
-			leaving.current = true;
-			buddy.run();
-			timeline.leave(finish);
+	const finish = useCallback(() => {
+		timers.current.forEach(clearTimeout);
+		timers.current = [];
+		setIsVisible(false);
+		markSplashDone();
+	}, []);
+
+	// App pronto (nada carregando) ou tempo esgotado: o Bud volta e sai
+	const check = useCallback(() => {
+		const elapsed = Date.now() - startedAt.current;
+		const isReady = fetching.current === 0 && elapsed >= SPLASH_T.minReady;
+		if (!isReady && elapsed < SPLASH_T.maxMs) {
+			later(check, SPLASH_T.check);
 			return;
 		}
-		buddy.dropNext();
-		later(tick, SPLASH_T.dropEvery);
-	}, [buddy, timeline, finish, later]);
+		setPhase("back");
+		later(() => {
+			setPhase("out");
+		}, SPLASH_T.back);
+		later(finish, SPLASH_T.back + SPLASH_T.out);
+	}, [later, finish]);
 
 	useEffect(() => {
 		if (!hasApp) markSplashDone();
@@ -73,22 +87,29 @@ export const useBootSplash = () => {
 		startedAt.current = Date.now();
 		void SplashScreen.hideAsync();
 		if (reduceMotion) {
-			timeline.showAll();
-			later(finish, STILL_MS);
+			setPhase("bright");
+			later(finish, SPLASH_T.still);
 			return;
 		}
-		timeline.play();
-		later(buddy.stand, SPLASH_T.runIn + SPLASH_T.runInMs);
-		later(tick, SPLASH_T.firstDrop);
-	}, [isVisible, reduceMotion, timeline, buddy.stand, tick, finish, later]);
+		later(() => {
+			setPhase("bright");
+		}, SPLASH_T.bright);
+		later(() => {
+			setPhase("run");
+		}, SPLASH_T.run);
+		later(() => {
+			setPhase("dots");
+			check();
+		}, SPLASH_T.dots);
+	}, [isVisible, reduceMotion, later, finish, check]);
 
-	useEffect(() => clearTimers, [clearTimers]);
+	useEffect(
+		() => () => {
+			timers.current.forEach(clearTimeout);
+		},
+		[],
+	);
 
-	return {
-		isVisible,
-		isStill: reduceMotion,
-		styles: timeline.styles,
-		buddy,
-		skip: finish,
-	};
+	const mode: IBuddyDotsMode = phase === "dots" ? "dots" : "bud";
+	return { isVisible, phase, mode, pose: POSES[phase], skip: finish };
 };

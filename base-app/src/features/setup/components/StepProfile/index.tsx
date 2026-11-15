@@ -1,12 +1,13 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { BUDDY_H, BUDDY_W, BuddyFigure, IBuddyPose } from "@/components/buddy";
+import { BUDDY_H, BUDDY_W, BuddyDots, IBuddyPose } from "@/components/buddy";
 import { Button, Icon, Input } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { openLegalPage } from "@/constants/legal";
 
 import { SETUP_COPY as C } from "../../constants";
+import { useBudArrival } from "../../hooks/useBudArrival";
 import { useStepProfile } from "../../hooks/useStepProfile";
 import { BuddyBubble } from "../BuddyBubble";
 
@@ -25,11 +26,6 @@ const createStepProfileStyles = (theme: ITheme) => {
 		root: { gap: spacing[4] },
 		hello: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing[2] },
 		buddy: { width: BUDDY_W * SCALE, height: BUDDY_H * SCALE },
-		buddyInner: {
-			position: "absolute" as const,
-			transform: [{ scale: SCALE }],
-			transformOrigin: "0% 0%",
-		},
 		bubble: { flex: 1 },
 		title: { fontFamily: typography.fonts.extrabold, fontSize: 28, color: colors.textPrimary },
 		sub: {
@@ -77,17 +73,23 @@ const createStepProfileStyles = (theme: ITheme) => {
 export const StepProfile: React.FC<IStepProfileProps> = ({ profile }) => {
 	const { theme } = useTheme();
 	const styles = createStepProfileStyles(theme);
+	// Chegou voando do Começar: bolinhas "pensando" e depois o Bud
+	const arrival = useBudArrival();
 
 	return (
 		<View style={styles.root}>
 			<View style={styles.hello}>
 				<View style={styles.buddy} pointerEvents="none">
-					<View style={styles.buddyInner}>
-						<BuddyFigure pose={WAVE} color="branco" accessories={SHADES} />
-					</View>
+					<BuddyDots
+						mode={arrival}
+						pose={WAVE}
+						scale={SCALE}
+						accessories={SHADES}
+						label={C.thinking}
+					/>
 				</View>
 				<View style={styles.bubble}>
-					<BuddyBubble text={profile.bubble} tail="left" />
+					{arrival === "bud" ? <BuddyBubble text={profile.bubble} tail="left" /> : null}
 				</View>
 			</View>
 			<View>

@@ -6,7 +6,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BuddyFigure, IBuddyPose } from "@/components/buddy";
 import { GradientLayers, Icon } from "@/components/pace";
+import { HintTip } from "@/components/shared";
 import { useTheme } from "@/theme";
+import { useHint } from "@/lib/hints";
 
 import { PRO_FAB_COPY, PRO_FAB_ITEMS } from "./constants";
 import { useFabDrag } from "./hooks/useFabDrag";
@@ -25,6 +27,7 @@ export const ProFab: React.FC = () => {
 	const insets = useSafeAreaInsets();
 	const fab = useProFab();
 	const drag = useFabDrag();
+	const hint = useHint("pro");
 	const styles = createProFabStyles(theme, insets.bottom, drag.isLeft);
 
 	if (fab.isHidden) return null;
@@ -72,7 +75,10 @@ export const ProFab: React.FC = () => {
 				<Animated.View style={fab.fabStyle}>
 					<Pressable
 						style={styles.fab}
-						onPress={fab.toggle}
+						onPress={() => {
+							hint.done();
+							fab.toggle();
+						}}
 						accessibilityRole="button"
 						accessibilityLabel={fab.isOpen ? PRO_FAB_COPY.close : PRO_FAB_COPY.open}
 						testID="pro-fab"
@@ -86,6 +92,7 @@ export const ProFab: React.FC = () => {
 							<BuddyFigure pose={POSE} color="branco" accessories={NO_ACCESSORIES} />
 						</View>
 					</Pressable>
+					<HintTip id="pro" isShown={hint.isShown && !drag.isLeft && !fab.isOpen} side="topLeft" />
 				</Animated.View>
 			</Animated.View>
 		</>

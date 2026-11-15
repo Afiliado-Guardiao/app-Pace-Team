@@ -2,6 +2,7 @@ import { GestureResponderEvent, View, ViewStyle } from "react-native";
 
 import { Tabs } from "expo-router";
 
+import { HintScheduler } from "@/components/core/HintScheduler";
 import { PaceTabRail } from "@/components/core/PaceTabRail";
 import { ProFab } from "@/components/core/ProFab";
 import { RunReviewPopup } from "@/features/run-review";
@@ -43,6 +44,7 @@ export default function TabsLayout() {
 				<Tabs.Screen name="profile" />
 			</Tabs>
 			<ProFab />
+			<HintScheduler />
 			<RunReviewPopup />
 		</View>
 	);

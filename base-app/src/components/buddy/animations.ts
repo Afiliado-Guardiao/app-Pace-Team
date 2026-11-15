@@ -23,6 +23,13 @@ const t = (x: number, y: number, sx = 1, sy = 1, rot = "0deg") => [
 ];
 
 export const KF: Record<string, IKeyframes> = {
+	// Bolinhas do carregamento (o Bud vira três bolinhas que pulam)
+	dotBounce: {
+		"0%": { transform: [{ translateY: 0 }, { scale: 1 }] },
+		"30%": { transform: [{ translateY: -9 }, { scale: 1.08 }] },
+		"60%": { transform: [{ translateY: 0 }, { scale: 0.96 }] },
+		"100%": { transform: [{ translateY: 0 }, { scale: 1 }] },
+	},
 	float: {
 		"0%": { transform: t(0, 0) },
 		"50%": { transform: t(0, -4) },
