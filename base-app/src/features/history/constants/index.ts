@@ -1,8 +1,10 @@
 export const HISTORY_COPY = {
 	title: "Histórico",
 	calendar: "Calendário",
-	pickMonth: "Escolha o mês",
-	cancel: "Cancelar",
+	pickMonth: "Escolha o mês e o dia",
+	pickDayHint: "Toque num dia marcado para ver só as corridas dele.",
+	wholeMonth: "Ver o mês inteiro",
+	runsOnDay: (n: number): string => (n === 1 ? "1 corrida" : `${String(n)} corridas`),
 	month: "Outubro",
 	monthKm: "36,5",
 	runs: "Corridas",
@@ -17,6 +19,9 @@ export const HISTORY_COPY = {
 	invalidNote:
 		"Corridas com sinal de GPS inconsistente ou ritmo fora do padrão humano não pontuam. Você pode pedir revisão.",
 } as const;
+
+// Cabeçalho da grade de dias (começa no domingo)
+export const WEEK_DAYS = ["D", "S", "T", "Q", "Q", "S", "S"] as const;
 
 export const MONTH_NAMES = [
 	"Janeiro",

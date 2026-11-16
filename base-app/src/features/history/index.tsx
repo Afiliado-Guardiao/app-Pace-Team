@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 
 import {
+	Chip,
 	GlassCard,
 	InfoNote,
 	ScreenBackground,
@@ -23,9 +24,10 @@ const createHistoryStyles = (theme: ITheme) => ({
 	totals: { flexDirection: "row" as const },
 	cell: { flex: 1 },
 	runs: { gap: theme.pace.spacing[2] },
+	clearDay: { alignSelf: "flex-start" as const },
 });
 
-// 14a Histórico: resumo do mês, filtro e lista de corridas.
+// 14a Histórico: resumo do mês (ou do dia escolhido), filtro e lista de corridas.
 export const HistoryScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const history = useHistory();
@@ -68,6 +70,18 @@ export const HistoryScreen: React.FC = () => {
 						/>
 					</View>
 				</GlassCard>
+				{history.calendar.day !== null ? (
+					<Chip
+						size="sm"
+						icon="x"
+						selected
+						onPress={history.calendar.showWholeMonth}
+						style={styles.clearDay}
+						testID="history-clear-day"
+					>
+						{HISTORY_COPY.wholeMonth}
+					</Chip>
+				) : null}
 				<SegmentedControl
 					size="sm"
 					options={HISTORY_FILTERS}
