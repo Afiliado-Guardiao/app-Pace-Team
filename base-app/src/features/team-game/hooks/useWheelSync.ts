@@ -6,11 +6,17 @@ import { useWheelSpin } from "./useWheelSpin";
 
 interface IUseWheelSyncReturn {
 	spin: ReturnType<typeof useWheelSpin>;
+	// Girando ou com um sorteio novo que ainda não parou embaixo da seta
 	isSpinning: boolean;
+	// Quem acabou de ser sorteado e ainda não pode aparecer (a roleta não parou)
+	hiddenId: string | null;
 	// Último sorteio que já parou embaixo da seta
 	hit: { challenge: number; slot: number } | null;
 	latest: ITeamGamePlayer | null;
 }
+
+const keyOf = (p: ITeamGamePlayer | null): string =>
+	p ? `${p.userId}:${p.assignedAt ?? ""}` : "none";
 
 const latestOf = (game: ITeamGame | null): ITeamGamePlayer | null => {
 	const done = (game?.players ?? []).filter((p) => p.assignedAt !== null && p.challenge !== null);
@@ -23,6 +29,7 @@ export const useWheelSync = (game: ITeamGame | null): IUseWheelSyncReturn => {
 	const spin = useWheelSpin();
 	const [isSpinning, setIsSpinning] = useState(false);
 	const [hit, setHit] = useState<{ challenge: number; slot: number } | null>(null);
+	const [revealed, setRevealed] = useState<string | null>(null);
 	const seen = useRef<{ game: string | null; key: string | null }>({ game: null, key: null });
 	const latest = useMemo(() => latestOf(game), [game]);
 	const players = game?.players.length ?? 0;
@@ -30,7 +37,7 @@ export const useWheelSync = (game: ITeamGame | null): IUseWheelSyncReturn => {
 
 	useEffect(() => {
 		if (!game) return;
-		const key = latest ? `${latest.userId}:${latest.assignedAt ?? ""}` : "none";
+		const key = keyOf(latest);
 		const to =
 			latest?.challenge != null
 				? { challenge: latest.challenge, slot: latest.slot, players }
@@ -38,6 +45,7 @@ export const useWheelSync = (game: ITeamGame | null): IUseWheelSyncReturn => {
 		// Primeira vez vendo essa roleta (abriu a tela no meio): só posiciona
 		if (seen.current.game !== game.id) {
 			seen.current = { game: game.id, key };
+			setRevealed(key);
 			if (to) place(to);
 			setHit(to ? { challenge: to.challenge, slot: to.slot } : null);
 			return;
@@ -48,9 +56,16 @@ export const useWheelSync = (game: ITeamGame | null): IUseWheelSyncReturn => {
 		setIsSpinning(true);
 		land(to, () => {
 			setIsSpinning(false);
+			setRevealed(key);
 			setHit({ challenge: to.challenge, slot: to.slot });
 		});
 	}, [game, latest, players, land, place]);
 
-	return { spin, isSpinning, hit, latest };
+	// O resultado só aparece quando os anéis param: até lá, o sorteio novo fica
+	// escondido (a resposta do servidor chega antes do fim do giro). Ao abrir a
+	// tela no meio da roleta, o que já foi sorteado aparece direto.
+	const isFirstSight = game !== null && seen.current.game !== game.id;
+	const hiddenId = latest && !isFirstSight && keyOf(latest) !== revealed ? latest.userId : null;
+
+	return { spin, isSpinning: isSpinning || hiddenId !== null, hiddenId, hit, latest };
 };

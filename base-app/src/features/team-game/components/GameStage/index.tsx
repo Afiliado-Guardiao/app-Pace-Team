@@ -102,7 +102,11 @@ export const GameStage: React.FC<IGameStageProps> = ({ s }) => {
 					{C.runMine}
 				</Button>
 			) : null}
-			<GamePlayers players={game.players} status={wheel.isSpinning ? "spinning" : game.status} />
+			<GamePlayers
+				players={game.players}
+				status={wheel.isSpinning ? "spinning" : game.status}
+				hiddenId={wheel.hiddenId}
+			/>
 			<Text style={styles.rules}>{C.rules(game.stakes.win, game.stakes.lose)}</Text>
 			{phase === "spinning" && game.isStarter && !wheel.isSpinning ? (
 				<Button

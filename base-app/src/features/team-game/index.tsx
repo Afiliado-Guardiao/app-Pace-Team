@@ -24,19 +24,23 @@ export const TeamGameScreen: React.FC = () => {
 				<TopBar title={C.title} onBack={s.goBack} />
 				<Text style={styles.sub}>{C.sub}</Text>
 				{isLobby ? (
-					<>
-						<Text style={styles.section}>{C.onlineTitle}</Text>
-						<View style={styles.chips}>
-							<Text style={styles.chip}>Você</Text>
-							{s.mates.map((m) => (
-								<Text key={m.id} style={styles.chip}>
-									{m.name}
-								</Text>
-							))}
+					<View style={styles.body}>
+						<View style={styles.block}>
+							<Text style={styles.section}>{C.onlineTitle}</Text>
+							<View style={styles.chips}>
+								<Text style={styles.chip}>Você</Text>
+								{s.mates.map((m) => (
+									<Text key={m.id} style={styles.chip}>
+										{m.name}
+									</Text>
+								))}
+							</View>
+							{hasMates ? null : <Text style={styles.note}>{C.onlineNone}</Text>}
 						</View>
-						{hasMates ? null : <Text style={styles.note}>{C.onlineNone}</Text>}
-						<Text style={styles.section}>{C.levelTitle}</Text>
-						<LevelPicker level={s.level} onChange={s.setLevel} />
+						<View style={styles.block}>
+							<Text style={styles.section}>{C.levelTitle}</Text>
+							<LevelPicker level={s.level} onChange={s.setLevel} />
+						</View>
 						<Button
 							fullWidth
 							size="lg"
@@ -48,7 +52,7 @@ export const TeamGameScreen: React.FC = () => {
 						>
 							{C.call}
 						</Button>
-					</>
+					</View>
 				) : (
 					<GameStage s={s} />
 				)}

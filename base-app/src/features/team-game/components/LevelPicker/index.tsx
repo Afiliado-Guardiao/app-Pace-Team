@@ -9,16 +9,19 @@ import { GAME_LEVELS } from "../../constants";
 const createLevelPickerStyles = (theme: ITheme) => {
 	const { colors, typography, spacing, radii } = theme.pace;
 	return {
-		row: { flexDirection: "row" as const, gap: spacing[2] },
+		row: { gap: spacing[2] },
 		card: {
-			flex: 1,
-			padding: spacing[3],
+			flexDirection: "row" as const,
+			alignItems: "center" as const,
+			paddingVertical: spacing[3],
+			paddingHorizontal: spacing[4],
 			borderRadius: radii.md,
 			borderWidth: 1,
 			borderColor: colors.glassBorder,
 			backgroundColor: colors.glass1,
-			gap: 4,
 		},
+		texts: { flex: 1, gap: 2 },
+		points: { alignItems: "flex-end" as const, gap: 2 },
 		selected: { borderColor: colors.accent, backgroundColor: colors.accentSoft },
 		label: {
 			fontFamily: typography.fonts.extrabold,
@@ -67,10 +70,14 @@ export const LevelPicker: React.FC<ILevelPickerProps> = ({ level, onChange }) =>
 					}}
 					style={[styles.card, item.level === level ? styles.selected : null]}
 				>
-					<Text style={styles.label}>{item.label}</Text>
-					<Text style={styles.desc}>{item.desc}</Text>
-					<Text style={styles.win}>{`+${String(item.win)} pts`}</Text>
-					<Text style={styles.lose}>{`−${String(item.lose)} pts`}</Text>
+					<View style={styles.texts}>
+						<Text style={styles.label}>{item.label}</Text>
+						<Text style={styles.desc}>{item.desc}</Text>
+					</View>
+					<View style={styles.points}>
+						<Text style={styles.win}>{`ganha +${String(item.win)}`}</Text>
+						<Text style={styles.lose}>{`perde −${String(item.lose)}`}</Text>
+					</View>
 				</Pressable>
 			))}
 		</View>

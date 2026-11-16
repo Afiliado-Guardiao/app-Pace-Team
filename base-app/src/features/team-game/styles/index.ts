@@ -4,6 +4,8 @@ export const createTeamGameStyles = (theme: ITheme) => {
 	const { colors, typography, spacing, radii } = theme.pace;
 	return {
 		root: { flex: 1, backgroundColor: colors.bgSunken },
+		body: { gap: spacing[4] },
+		block: { gap: spacing[2.5] },
 		sub: {
 			marginTop: -spacing[2],
 			fontFamily: typography.fonts.medium,
