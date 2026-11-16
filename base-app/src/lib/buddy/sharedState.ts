@@ -13,6 +13,16 @@ import { IBuddyAlarm, IBuddyStudio } from "./store";
 
 export const BUDDY_STATE_VERSION = 1;
 
+// Água do dia (PACE HYDRATION, Team Pro): barrinha no cartão do Bud e a
+// resposta da Siri. goalMl null = orientação médica (sem meta).
+export interface IBuddyWater {
+	goalMl: number | null;
+	drankMl: number;
+	// Início do dia (ms) em que esses números valem
+	day: number;
+	isThirsty: boolean;
+}
+
 export interface IBuddySharedState {
 	version: number;
 	userName: string;
@@ -31,6 +41,7 @@ export interface IBuddySharedState {
 	lastRunAt: number | null;
 	sickAt: number | null;
 	alarm: IBuddyAlarm;
+	water: IBuddyWater | null;
 }
 
 interface IBuddyInputs {
@@ -45,6 +56,7 @@ interface IBuddyInputs {
 	alarm: IBuddyAlarm;
 	// Visual do Buddy Studio (só quando o atleta tem o Team Pro)
 	studio?: IBuddyStudio | null;
+	water?: IBuddyWater | null;
 }
 
 export const buildSharedState = (input: IBuddyInputs): IBuddySharedState => {
@@ -69,5 +81,6 @@ export const buildSharedState = (input: IBuddyInputs): IBuddySharedState => {
 		lastRunAt: input.lastRunAt,
 		sickAt: sickAt(input.lastRunAt),
 		alarm: input.alarm,
+		water: input.water ?? null,
 	};
 };

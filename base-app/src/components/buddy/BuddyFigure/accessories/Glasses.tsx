@@ -50,13 +50,7 @@ export const Glasses: React.FC<IGlassesProps> = ({
 			<Path d={LENS} fill="rgba(0,0,0,0.28)" transform="translate(0 3.5)" />
 			<Path d="M1 8 Q0 14 3 19 L6 18 Q4 13 5 9 Z" fill={DARK} />
 			<Path d="M99 8 Q100 14 97 19 L94 18 Q96 13 95 9 Z" fill={DARK} />
-			<Path
-				d={LENS}
-				fill={`url(#${lens})`}
-				stroke={rim}
-				strokeWidth={0.8}
-				strokeOpacity={0.9}
-			/>
+			<Path d={LENS} fill={`url(#${lens})`} stroke={rim} strokeWidth={0.8} strokeOpacity={0.9} />
 			<Path d="M12 9 Q22 7 30 8 L20 24 Q13 23 11 18 Z" fill={`url(#${shine})`} opacity={0.55} />
 			<Path d="M66 8 Q72 8 76 9 L70 25 Q66 25 63 24 Z" fill={`url(#${shine})`} opacity={0.35} />
 			<Path d="M3 7 Q50 -1 97 7 L97 11 Q50 4 3 11 Z" fill={DARK} />

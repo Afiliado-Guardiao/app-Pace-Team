@@ -1,4 +1,4 @@
-export type IProFeatureKey = "ai" | "studio" | "analytics";
+export type IProFeatureKey = "ai" | "studio" | "analytics" | "hydration";
 
 export interface IProFeatureInfo {
 	icon: string;
@@ -49,6 +49,21 @@ export const PRO_FEATURES: Record<IProFeatureKey, IProFeatureInfo> = {
 			"Evolução da equipe no ranking",
 		],
 		why: "Ajuda o capitão a montar a estratégia. Mostra mais informação, mas não muda pontos nem resultados.",
+	},
+	hydration: {
+		icon: "droplets",
+		title: "PACE HYDRATION",
+		tagline:
+			"Sua hidratação acompanha seu ritmo. Orientações personalizadas para sua rotina e suas corridas.",
+		bullets: [
+			"Estimativa diária pelo seu peso e pelas suas corridas",
+			"Registro rápido de cada copo, com o progresso do dia",
+			"O que fazer antes, durante e depois de correr",
+			"Sua taxa de suor pela pesagem antes e depois",
+			"Lembretes do Buddy nos horários que você escolher",
+			"Barrinha de água no cartão do Bud e resposta pela Siri",
+		],
+		why: "São estimativas de acompanhamento, não prescrição médica. Quem tem restrição de líquidos segue a orientação do seu médico.",
 	},
 };
 

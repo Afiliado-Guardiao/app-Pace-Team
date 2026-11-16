@@ -6,6 +6,7 @@ import { IBuddyPose } from "@/components/buddy";
 import { IBuddyAct } from "@/lib/buddy/constants";
 import { useBuddyLook } from "@/lib/buddy/useBuddyLook";
 import { useBuddyMood } from "@/lib/buddy/useBuddyMood";
+import { useHydration } from "@/lib/hydration";
 
 const BLINK_MS = 140;
 const BLINK_EVERY = { min: 2600, extra: 2400 } as const;
@@ -19,12 +20,16 @@ export interface IUseTrackBuddyReturn {
 	pose: IBuddyPose;
 	look: ReturnType<typeof useBuddyLook>;
 	life: number;
+	// Água do dia (0…1) — só com o Team Pro (PACE HYDRATION); null sem Pro
+	water: number | null;
 	hopStyle: ReturnType<typeof useAnimatedStyle>;
 }
 
-const actOf = (mood: string, life: number): IBuddyAct => {
+const actOf = (mood: string, life: number, isThirsty: boolean): IBuddyAct => {
 	if (mood === "sick") return "sick";
 	if (life <= SLEEPY_LIFE) return "sleep";
+	// PACE HYDRATION: pouca água para o horário deixa o Bud com sede
+	if (isThirsty) return "thirsty";
 	return "idle";
 };
 
@@ -33,11 +38,13 @@ const actOf = (mood: string, life: number): IBuddyAct => {
 export const useTrackBuddy = (jump: SharedValue<number>, k: number): IUseTrackBuddyReturn => {
 	const look = useBuddyLook();
 	const { mood, life } = useBuddyMood();
-	const act = actOf(mood, life);
+	const hydro = useHydration();
+	const hasWater = hydro.isPro && hydro.targetMl !== null;
+	const act = actOf(mood, life, hasWater && hydro.isThirsty);
 	const [isBlinking, setIsBlinking] = useState(false);
 
 	useEffect(() => {
-		if (act !== "idle") return undefined;
+		if (act !== "idle" && act !== "thirsty") return undefined;
 		let timer: ReturnType<typeof setTimeout>;
 		const next = (): void => {
 			timer = setTimeout(
@@ -72,6 +79,7 @@ export const useTrackBuddy = (jump: SharedValue<number>, k: number): IUseTrackBu
 		pose: { act, phase: null, blink: isBlinking, gx: 0, gy: 0 },
 		look,
 		life,
+		water: hasWater ? hydro.progress : null,
 		hopStyle,
 	};
 };

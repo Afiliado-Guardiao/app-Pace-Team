@@ -323,7 +323,9 @@ export type IBuddyAct =
 	| "wake"
 	| "impressed"
 	| "sick"
-	| "wink";
+	| "wink"
+	// Com sede (PACE HYDRATION): carinha triste e uma gotinha
+	| "thirsty";
 
 export type IBuddyPhase = "legs" | "run" | "ring" | "max" | "dash" | null;
 

@@ -9,6 +9,8 @@ enum BuddyPose: String, Codable, Hashable {
   // Gestos que existiam só no app: curioso ("?"), impressionado, continência
   // e cochilo espiando
   case curious, impressed, salute, peek
+  // Com sede (PACE HYDRATION): olhinhos caídos, boca triste e uma gota
+  case thirsty
 
   // Dormindo de verdade ou só espiando: corpo amassado e respiração lenta
   var isSleepy: Bool { self == .sleep || self == .peek }
@@ -178,6 +180,9 @@ private struct BuddyEyes: View {
     case .impressed:
       // Olhão arregalado
       Ellipse().fill(Color.buddyInk).frame(width: 12, height: 19)
+    case .thirsty:
+      // Olhinhos caídos, meio fechados
+      Ellipse().fill(Color(hex: 0x141210)).frame(width: 10, height: 9).padding(.top, 5)
     case .celebrate:
       BuddyArc(isUp: true).stroke(Color.buddyInk, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 4)
     case .wink where i == 1:
@@ -222,6 +227,9 @@ private struct BuddyMouth: View {
       Capsule().fill(Color.buddyInk.opacity(0.8)).buddyAt(41, 46, 7, 2.5)
     case .impressed:
       Ellipse().fill(Color.buddyInk).buddyAt(40, 44, 8, 9)
+    case .thirsty:
+      // Boquinha triste (arco para baixo)
+      BuddyArc(isUp: true).stroke(Color.buddyInk.opacity(0.85), lineWidth: 2.4).buddyAt(38, 47, 12, 5)
     case .sick:
       ZStack(alignment: .topLeading) {
         Ellipse().fill(Color.buddyInk).buddyAt(39, 45, 9, 7)
@@ -259,6 +267,7 @@ private struct BuddyHand: View {
     case .run: return isRight ? CGSize(width: 2, height: 2) : CGSize(width: -2, height: -4)
     case .armsUp: return CGSize(width: isRight ? 8 : -8, height: -36)
     case .wink: return isRight ? CGSize(width: 4, height: -24) : .zero
+    case .thirsty: return CGSize(width: isRight ? 3 : -3, height: 6)
     case .idle, .tilt: return .zero
     }
   }
@@ -341,6 +350,9 @@ private struct BuddyEffects: View {
       if pose == .sick {
         BuddyDrop().buddyAt(34, 30, 7, 10)
         BuddyDrop().buddyAt(104, 40, 7, 10)
+      }
+      if pose == .thirsty {
+        BuddyDrop().buddyAt(114, 8, 7, 10)
       }
       if pose == .curious {
         Text("?").font(.system(size: 26, weight: .heavy))

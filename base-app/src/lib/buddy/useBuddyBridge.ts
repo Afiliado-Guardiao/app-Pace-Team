@@ -1,3 +1,5 @@
+import { useHydrationSync } from "@/lib/hydration";
+
 import { useBuddyAppEvents } from "./useBuddyAppEvents";
 import { useBuddyProfileSync } from "./useBuddyProfileSync";
 import { useBuddySync } from "./useBuddySync";
@@ -8,4 +10,6 @@ export const useBuddyBridge = (): void => {
 	useBuddySync();
 	useBuddyProfileSync();
 	useBuddyAppEvents();
+	// PACE HYDRATION: lembretes e aviso de reposição depois da corrida
+	useHydrationSync();
 };

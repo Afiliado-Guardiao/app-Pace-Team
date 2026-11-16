@@ -39,7 +39,7 @@ const createProPillarsStyles = (theme: ITheme) => {
 	};
 };
 
-// Os 3 pilares do Team Pro: PACE AI, Buddy Studio e Team Analytics
+// Os 4 pilares do Team Pro: PACE AI, Buddy Studio, Team Analytics e PACE Hydration
 export const ProPillars: React.FC = () => {
 	const { theme } = useTheme();
 	const styles = createProPillarsStyles(theme);

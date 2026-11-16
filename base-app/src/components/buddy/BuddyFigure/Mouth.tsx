@@ -76,6 +76,27 @@ export const Mouth: React.FC<IMouthProps> = ({ act }) => {
 			/>
 		);
 	}
+	// Com sede: boquinha triste (arco para baixo)
+	if (act === "thirsty") {
+		return (
+			<View
+				style={{
+					position: "absolute",
+					left: 38,
+					top: 47,
+					width: 12,
+					height: 6,
+					borderTopWidth: 2.4,
+					borderLeftWidth: 0.6,
+					borderRightWidth: 0.6,
+					borderColor: INK,
+					borderTopLeftRadius: 8,
+					borderTopRightRadius: 8,
+					opacity: 0.85,
+				}}
+			/>
+		);
+	}
 	if (act === "impressed") {
 		return (
 			<View

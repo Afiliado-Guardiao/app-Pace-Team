@@ -12,6 +12,7 @@ import { CELEBRATE, GLYPH, GOLD, IMPRESSED, METAL } from "./effects/shared";
 import { SleepZ } from "./effects/SleepZ";
 import { Sparkles } from "./effects/Sparkles";
 import { Sweat } from "./effects/Sweat";
+import { ThirstDrop } from "./effects/ThirstDrop";
 import { IBuddyPose, isSleepAct } from "./pose";
 
 interface IEffectsProps {
@@ -30,6 +31,7 @@ export const Effects: React.FC<IEffectsProps> = ({ pose, pal }) => {
 			{a === "shake" ? <ShakeArcs /> : null}
 			{isSleepAct(a) ? <SleepZ /> : null}
 			{a === "sick" ? <Sweat /> : null}
+			{a === "thirsty" ? <ThirstDrop /> : null}
 			{a === "curious" ? (
 				<Animated.Text
 					style={[{ ...GLYPH, left: 114, top: 0, fontSize: 28, zIndex: 5 }, anim("q", "1.4s")]}

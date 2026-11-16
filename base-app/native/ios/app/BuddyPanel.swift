@@ -197,6 +197,32 @@ struct BuddyShortcuts: AppShortcutsProvider {
       shortTitle: "Correr com a equipe",
       systemImageName: "figure.2"
     )
+    // PACE HYDRATION: "E aí Siri, pergunte ao Bud quanto de água eu tenho que beber"
+    AppShortcut(
+      intent: AskWaterIntent(),
+      phrases: [
+        "Pergunte ao \(.applicationName) quanto de água eu tenho que beber",
+        "Pergunta pro \(.applicationName) quanto de água eu tenho que beber",
+        "Quanto de água eu tenho que beber, \(.applicationName)",
+        "\(.applicationName), quanto de água eu preciso beber",
+      ],
+      shortTitle: "Quanto de água beber",
+      systemImageName: "drop.fill"
+    )
+  }
+}
+
+// A Siri responde por voz quanto de água falta hoje (estimativa do PACE
+// HYDRATION gravada pelo app no App Group), sem abrir o app
+@available(iOS 26.0, *)
+struct AskWaterIntent: AppIntent {
+  static var title: LocalizedStringResource = "Quanto de água beber"
+  static var description = IntentDescription("O Bud diz quanto de água falta hoje (PACE HYDRATION).")
+  static var openAppWhenRun: Bool = false
+
+  func perform() async throws -> some IntentResult & ProvidesDialog {
+    let text = BudWaterText.answer(BuddyStore.state(), at: Date())
+    return .result(dialog: IntentDialog(stringLiteral: text))
   }
 }
 
@@ -212,7 +238,9 @@ struct BuddyPanelView: View {
   // Parado, o Buddy faz o gesto do último toque nele
   private var pose: BuddyPose {
     if model.isRunning || model.mode == .bye { return speech.pose }
-    return BuddyPoke.pose(at: Date()) ?? speech.pose
+    // Com pouca água para o horário (PACE HYDRATION), o Bud fica com sede
+    let isThirsty = model.state.waterToday(at: Date())?.isThirsty == true
+    return BuddyPoke.pose(at: Date()) ?? (isThirsty ? .thirsty : speech.pose)
   }
 
   var body: some View {
@@ -243,6 +271,10 @@ struct BuddyPanelView: View {
         }
         .multilineTextAlignment(.center)
         .padding(.top, 2)
+
+        if let water = model.state.waterToday(at: Date()), model.mode != .bye, !model.isRunning {
+          BudWaterBar(water: water)
+        }
 
         if model.liveActivitiesOff && model.mode != .bye {
           Text("O contador da corrida não aparece: ligue Atividades ao Vivo em Ajustes › PACE TEAM.")

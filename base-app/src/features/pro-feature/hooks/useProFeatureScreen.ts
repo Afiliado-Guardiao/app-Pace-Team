@@ -19,10 +19,11 @@ const OPEN_ROUTE: Record<IProFeatureKey, string> = {
 	ai: ROUTES.PACE_AI,
 	studio: ROUTES.BUDDY_STUDIO,
 	analytics: ROUTES.PRO_ANALYTICS,
+	hydration: ROUTES.HYDRATION,
 };
 
 const isKey = (value: unknown): value is IProFeatureKey =>
-	value === "ai" || value === "studio" || value === "analytics";
+	value === "ai" || value === "studio" || value === "analytics" || value === "hydration";
 
 // Apresentação de um recurso Pro: explica o que faz e leva ao Team Pro
 export const useProFeatureScreen = (): IUseProFeatureScreenReturn => {

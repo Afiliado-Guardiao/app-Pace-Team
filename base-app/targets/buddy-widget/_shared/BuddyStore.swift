@@ -42,6 +42,8 @@ struct BuddyState: Codable, Hashable {
   var lastRunAt: Double?
   var sickAt: Double?
   var alarm: BuddyAlarm
+  // Água do dia (PACE HYDRATION, Team Pro); nil sem Pro
+  var water: BuddyWater? = nil
 
   static let empty = BuddyState(
     version: 1, userName: "", teamName: "", isLeader: false, rank: "none",

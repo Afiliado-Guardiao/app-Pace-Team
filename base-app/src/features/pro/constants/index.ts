@@ -29,7 +29,7 @@ export const PRO_COPY = {
 	retry: "Tentar de novo",
 	doneTitle: "Sua equipe agora é PRO!",
 	doneBody:
-		"A Apple confirmou. Os integrantes da equipe já podem usar o PACE AI, o Buddy Studio e o Team Analytics.",
+		"A Apple confirmou. Os integrantes da equipe já podem usar o PACE AI, o Buddy Studio, o Team Analytics e o PACE Hydration.",
 	doneCta: "Bora!",
 } as const;
 
@@ -52,7 +52,7 @@ export const PRO_STATUS_COPY = {
 		"Quando o capitão tornar a equipe PRO, até 10 integrantes ganham os recursos. Que tal avisar?",
 	memberCta: "Avisar o capitão",
 	memberShare:
-		"Capitão, bora tornar nossa equipe PRO no PACE TEAM? Uma assinatura libera o PACE AI, o Buddy Studio e o Team Analytics para até 10 de nós.",
+		"Capitão, bora tornar nossa equipe PRO no PACE TEAM? Uma assinatura libera o PACE AI, o Buddy Studio, o Team Analytics e o PACE Hydration para até 10 de nós.",
 	linkTitle: "Você já tem o Team Pro",
 	linkBodyFree: "Sua assinatura está sem equipe. Ligue ela à equipe que você capitaneia agora.",
 	linkBodyOther: "Ela está ligada à ",
@@ -78,7 +78,7 @@ export const PRO_TOASTS = {
 	error: { tone: "danger", icon: "alert-circle", title: "Não deu certo agora. Tente de novo." },
 } as const;
 
-// Os três pilares do Team Pro
+// Os quatro pilares do Team Pro
 export const PRO_PILLARS = [
 	{
 		id: "ai",
@@ -97,5 +97,11 @@ export const PRO_PILLARS = [
 		icon: "chart-column",
 		title: "PACE TEAM ANALYTICS",
 		text: "Relatórios do desempenho coletivo: evolução, participação e quanto falta para a rival.",
+	},
+	{
+		id: "hydration",
+		icon: "droplets",
+		title: "PACE HYDRATION",
+		text: "Sua hidratação acompanha seu ritmo. Orientações personalizadas para sua rotina e suas corridas.",
 	},
 ] as const;

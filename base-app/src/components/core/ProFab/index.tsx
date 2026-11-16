@@ -20,7 +20,7 @@ const POSE: IBuddyPose = { act: "idle", phase: null, blink: false, gx: 0, gy: 0 
 const ICON = 17;
 
 // PACE TEAM PRO: botão laranja com o Buddy, solto (arrasta com o dedo e gruda
-// na borda). Toque abre PACE AI, BUDDY STUDIO e TEAM ANALYTICS; tocar fora (ou
+// na borda). Toque abre PACE AI, BUDDY STUDIO, TEAM ANALYTICS e PACE HYDRATION; tocar fora (ou
 // de novo no Buddy) fecha.
 export const ProFab: React.FC = () => {
 	const { theme } = useTheme();

@@ -1,10 +1,11 @@
 // Os 3 recursos do PACE TEAM PRO que o botão do Buddy abre
-export type IProFeatureId = "ai" | "studio" | "analytics";
+export type IProFeatureId = "ai" | "studio" | "analytics" | "hydration";
 
 export const PRO_FAB_ITEMS: readonly { id: IProFeatureId; icon: string; label: string }[] = [
 	{ id: "ai", icon: "sparkles", label: "PACE AI" },
 	{ id: "studio", icon: "palette", label: "BUDDY STUDIO" },
 	{ id: "analytics", icon: "chart-column", label: "TEAM ANALYTICS" },
+	{ id: "hydration", icon: "droplets", label: "PACE HYDRATION" },
 ];
 
 export const PRO_FAB_COPY = {

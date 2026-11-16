@@ -184,5 +184,7 @@ export const eyeScale = (pose: IBuddyPose, index: 0 | 1): readonly [number, numb
 		sx = 1.3;
 		sy = blink ? 0.1 : 1.35;
 	}
+	// Com sede: olhos caídos, meio fechados
+	if (a === "thirsty") sy = blink ? 0.1 : 0.62;
 	return [sx, sy];
 };

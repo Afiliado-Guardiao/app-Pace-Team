@@ -15,6 +15,7 @@ interface ITrackBuddyProps {
 }
 
 const BAR = { w: 7, h: 46, gap: 2 } as const;
+const WATER = "#8FD9FF";
 
 // Verde com a vida cheia, amarelo na metade e vermelho perto de adoecer
 const lifeColor = (theme: ITheme, life: number): string => {
@@ -58,6 +59,26 @@ const createTrackBuddyStyles = (theme: ITheme, o: ITrackBuddyProps) => {
 			borderWidth: 0.5,
 			borderColor: "rgba(255,255,255,.4)",
 		} as ViewStyle,
+		// Barrinha de água (PACE HYDRATION) ao lado da barrinha de vida
+		water: {
+			position: "absolute",
+			left: 4 * scale + BAR.w * scale + 3 * scale,
+			top: 50 * scale,
+			width: BAR.w * scale,
+			height: BAR.h * scale,
+			borderRadius: (BAR.w * scale) / 2,
+			padding: BAR.gap * scale,
+			justifyContent: "flex-end",
+			backgroundColor: "rgba(0,0,0,.55)",
+			borderWidth: 0.5,
+			borderColor: "rgba(143,217,255,.6)",
+		} as ViewStyle,
+		waterFill: {
+			width: "100%",
+			height: `${String(Math.round(Math.max(0.06, o.buddy.water ?? 0) * 100))}%`,
+			borderRadius: (BAR.w * scale) / 2,
+			backgroundColor: WATER,
+		} as ViewStyle,
 		fill: {
 			width: "100%",
 			height: `${String(Math.round(Math.max(0.06, o.buddy.life) * 100))}%`,
@@ -87,6 +108,11 @@ export const TrackBuddy: React.FC<ITrackBuddyProps> = (props) => {
 			<View style={styles.bar}>
 				<View style={styles.fill} />
 			</View>
+			{buddy.water !== null ? (
+				<View style={styles.water}>
+					<View style={styles.waterFill} />
+				</View>
+			) : null}
 		</Animated.View>
 	);
 };

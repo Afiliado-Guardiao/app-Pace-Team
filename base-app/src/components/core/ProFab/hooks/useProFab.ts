@@ -22,7 +22,7 @@ interface IUseProFabReturn {
 }
 
 const SPRING = { damping: 14, stiffness: 220, mass: 0.7 } as const;
-const STAGGER = 0.18;
+const STAGGER = 0.14;
 const RISE = 18;
 
 // Botão laranja do Buddy: abre os 3 recursos Pro em leque, um por vez
@@ -44,13 +44,13 @@ export const useProFab = (): IUseProFabReturn => {
 	const item = (index: number) =>
 		// eslint-disable-next-line react-hooks/rules-of-hooks -- quantidade fixa (3)
 		useAnimatedStyle(() => {
-			const k = Math.min(1, Math.max(0, (t.value - index * STAGGER) / (1 - 2 * STAGGER)));
+			const k = Math.min(1, Math.max(0, (t.value - index * STAGGER) / (1 - 3 * STAGGER)));
 			return {
 				opacity: k,
 				transform: [{ translateY: (1 - k) * RISE }, { scale: 0.85 + 0.15 * k }],
 			};
 		});
-	const itemStyles = [item(2), item(1), item(0)];
+	const itemStyles = [item(3), item(2), item(1), item(0)];
 
 	return {
 		isHidden: segments.at(-1) === "run",
@@ -67,6 +67,7 @@ export const useProFab = (): IUseProFabReturn => {
 			if (isPro && id === "analytics") router.push(ROUTES.PRO_ANALYTICS);
 			else if (isPro && id === "ai") router.push(ROUTES.PACE_AI);
 			else if (isPro && id === "studio") router.push(ROUTES.BUDDY_STUDIO);
+			else if (isPro && id === "hydration") router.push(ROUTES.HYDRATION);
 			else router.push({ pathname: ROUTES.PRO_FEATURE, params: { id } });
 		},
 		backdropStyle: useAnimatedStyle(() => ({ opacity: Math.min(1, t.value) })),

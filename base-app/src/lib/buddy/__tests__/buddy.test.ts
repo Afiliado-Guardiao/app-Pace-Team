@@ -23,6 +23,7 @@ jest.mock("@/lib/data", () => ({
 	useMyTeam: () => ({ team: mockTeam }),
 	useMyRuns: () => ({ saved: mockRuns }),
 	useMyPro: () => ({ isPro: false }),
+	useWeather: () => ({ preset: "day", temp: 22, rainMmH: 0, isDay: true, sun: 0, rain: 0 }),
 }));
 jest.mock("@/lib/supabase/client", () => ({ AUTH_STORAGE_KEY: "sb-test-auth-token" }));
 jest.mock("../notifications", () => ({

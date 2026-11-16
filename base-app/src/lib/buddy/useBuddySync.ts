@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/constants";
 import { useMyPro, useMyRuns } from "@/lib/data";
+import { startOfDay, useHydration } from "@/lib/hydration";
 import { AUTH_STORAGE_KEY } from "@/lib/supabase/client";
 import { useStore } from "@/store";
 
@@ -30,6 +31,16 @@ export const useBuddySync = (): void => {
 	// O cartão, o widget e a Live Activity mostram o visual do Studio (Team Pro)
 	const studio = useBuddyStore((s) => s.studio);
 	const { isPro } = useMyPro();
+	// Água do dia para o cartão do Bud e a Siri (só com o Team Pro)
+	const hydro = useHydration();
+	const today = startOfDay(Date.now());
+	const water = useMemo(
+		() =>
+			hydro.isPro
+				? { goalMl: hydro.targetMl, drankMl: hydro.drankMl, day: today, isThirsty: hydro.isThirsty }
+				: null,
+		[hydro.isPro, hydro.targetMl, hydro.drankMl, hydro.isThirsty, today],
+	);
 	const lastSent = useRef("");
 	const lastRun = saved.at(0);
 	const lastRunAt = lastRun ? new Date(lastRun.startedAt).getTime() : null;
@@ -48,8 +59,22 @@ export const useBuddySync = (): void => {
 				lastRunAt,
 				alarm,
 				studio: isPro ? studio : null,
+				water,
 			}),
-		[userName, ctx, goals, equipped, color, lastFree, kmIdx, lastRunAt, alarm, isPro, studio],
+		[
+			userName,
+			ctx,
+			goals,
+			equipped,
+			color,
+			lastFree,
+			kmIdx,
+			lastRunAt,
+			alarm,
+			isPro,
+			studio,
+			water,
+		],
 	);
 
 	// Onde o atalho encontra o servidor e o login (mesmo login do app)
