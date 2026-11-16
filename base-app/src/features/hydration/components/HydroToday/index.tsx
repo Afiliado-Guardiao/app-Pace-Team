@@ -114,17 +114,19 @@ export const HydroToday: React.FC<IHydroTodayProps> = ({ hydro, onAdd, onOther, 
 							strokeWidth={STROKE}
 							fill="none"
 						/>
-						<Circle
-							cx={RING / 2}
-							cy={RING / 2}
-							r={R}
-							stroke={WATER}
-							strokeWidth={STROKE}
-							fill="none"
-							strokeLinecap="round"
-							strokeDasharray={`${String(LEN * hydro.progress)} ${String(LEN)}`}
-							transform={`rotate(-90 ${String(RING / 2)} ${String(RING / 2)})`}
-						/>
+						{hydro.progress > 0 ? (
+							<Circle
+								cx={RING / 2}
+								cy={RING / 2}
+								r={R}
+								stroke={WATER}
+								strokeWidth={STROKE}
+								fill="none"
+								strokeLinecap="round"
+								strokeDasharray={`${String(LEN * hydro.progress)} ${String(LEN)}`}
+								transform={`rotate(-90 ${String(RING / 2)} ${String(RING / 2)})`}
+							/>
+						) : null}
 					</Svg>
 					<View style={styles.bud} pointerEvents="none">
 						<View style={styles.budInner}>
