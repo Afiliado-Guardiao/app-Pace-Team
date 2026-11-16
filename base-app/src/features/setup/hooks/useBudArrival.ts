@@ -9,7 +9,7 @@ import { IBuddyDotsMode } from "@/components/buddy";
 // Bolinhas na tela antes de o Bud aparecer ("pensando")
 const DOTS_MS = 950;
 
-// O Bud chegou voando da página anterior (?arrive=1): aparece como as três
+// O Bud chegou voando da página anterior (?arrive=1): aparece como as quatro
 // bolinhas do carregamento e logo vira o Bud para conversar
 export const useBudArrival = (): IBuddyDotsMode => {
 	const { arrive } = useLocalSearchParams<{ arrive?: string }>();

@@ -10,6 +10,8 @@ import {
 export const EASE_OUT = cubicBezier(0.22, 1, 0.36, 1);
 export const EASE_SPRING = cubicBezier(0.34, 1.56, 0.64, 1);
 export const EASE_DASH = cubicBezier(0.55, 0, 0.8, 0.2);
+// Derretendo (começa devagar e acelera)
+export const EASE_IN = cubicBezier(0.5, 0, 0.75, 0);
 
 type IFrame = Record<string, unknown>;
 type IKeyframes = Record<string, IFrame>;
@@ -23,12 +25,13 @@ const t = (x: number, y: number, sx = 1, sy = 1, rot = "0deg") => [
 ];
 
 export const KF: Record<string, IKeyframes> = {
-	// Bolinhas do carregamento (o Bud vira três bolinhas que pulam)
-	dotBounce: {
-		"0%": { transform: [{ translateY: 0 }, { scale: 1 }] },
-		"30%": { transform: [{ translateY: -9 }, { scale: 1.08 }] },
-		"60%": { transform: [{ translateY: 0 }, { scale: 0.96 }] },
-		"100%": { transform: [{ translateY: 0 }, { scale: 1 }] },
+	// Bolinhas "pensando" do carregamento (onda que passa por elas, como o
+	// indicador de pensando do Claude): sobe, cresce e acende; desce e apaga
+	dotThink: {
+		"0%": { opacity: 1, transform: [{ translateY: 0 }, { scale: 1 }] },
+		"30%": { opacity: 1, transform: [{ translateY: -5 }, { scale: 1.16 }] },
+		"62%": { opacity: 0.42, transform: [{ translateY: 0 }, { scale: 0.78 }] },
+		"100%": { opacity: 1, transform: [{ translateY: 0 }, { scale: 1 }] },
 	},
 	float: {
 		"0%": { transform: t(0, 0) },
