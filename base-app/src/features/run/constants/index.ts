@@ -1,6 +1,9 @@
 import { IRunMode } from "@/lib/run";
 
 export const RUN_COPY = {
+	// Roleta da equipe (Jogar com a equipe)
+	game: "Jogar com a equipe · roleta",
+	gameLive: "Roleta rolando · entrar",
 	titleStart: "Pronto para",
 	titleHighlight: "correr?",
 	subtitleSoloTeam: "Cada km soma pontos para ",

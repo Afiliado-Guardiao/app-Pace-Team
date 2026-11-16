@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BuddyRunner } from "@/components/buddy";
 import {
+	Button,
 	Chip,
 	FloatingToast,
 	GlassPill,
@@ -25,6 +26,7 @@ import { StartButton } from "./components/StartButton";
 import { RUN_COPY, RUN_MODES } from "./constants";
 import { useRunCrew } from "./hooks/useRunCrew";
 import { useRunSetup } from "./hooks/useRunSetup";
+import { useTeamGameEntry } from "./hooks/useTeamGameEntry";
 import { createRunSetupStyles, RUN_SIDE } from "./styles";
 
 // Chão do Buddy corredor: na altura do INICIAR, passando por trás dele
@@ -37,6 +39,7 @@ export const RunSetupScreen: React.FC = () => {
 	const { size, onLayout } = useLayoutSize();
 	const setup = useRunSetup();
 	const crew = useRunCrew();
+	const teamGame = useTeamGameEntry();
 	const styles = createRunSetupStyles(theme, insets);
 	const isTeam = setup.mode === "team";
 	// Antes do GPS responder: sem ponto no mapa (a prévia usa a rota de exemplo)
@@ -116,6 +119,18 @@ export const RunSetupScreen: React.FC = () => {
 						sub={crew.onlineSub}
 						isReady={crew.hasOnline}
 					/>
+				) : null}
+				{isTeam ? (
+					<Button
+						variant={teamGame.isLive ? "primary" : "glass"}
+						size="sm"
+						icon="disc-3"
+						onPress={teamGame.open}
+						testID="run-team-game"
+						accessibilityLabel={teamGame.label}
+					>
+						{teamGame.label}
+					</Button>
 				) : null}
 				<GoalEditor goal={setup.goal} onChange={setup.setGoal} />
 				<View style={styles.startRow}>

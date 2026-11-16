@@ -16,6 +16,7 @@ import {
 } from "./pace.types";
 import { IMyPro } from "./pro.types";
 import { IMyChallenges, INotificationRow, ITeamAchievements } from "./progress.types";
+import { ITeamGame, ITeamGameLevel, ITeamGameSpin } from "./teamGame.types";
 import { ITeamHandoffChoice, ITeamHandoffResult } from "./teamHandoff.types";
 import { ITeamLastRuns, ITeamOnlineMate, IVirada } from "./teamLive.types";
 
@@ -247,6 +248,10 @@ export interface Database {
 				};
 				Returns: string;
 			};
+			get_team_game: { Args: Record<string, never>; Returns: ITeamGame | null };
+			start_team_game: { Args: { p_level: ITeamGameLevel }; Returns: ITeamGame | null };
+			spin_team_game: { Args: { p_game: string }; Returns: ITeamGameSpin };
+			cancel_team_game: { Args: { p_game: string }; Returns: ITeamGame | null };
 			start_team_handoff: { Args: Record<string, never>; Returns: string | null };
 			claim_team_handoff: {
 				Args: { p_token: string; p_choice?: ITeamHandoffChoice };
