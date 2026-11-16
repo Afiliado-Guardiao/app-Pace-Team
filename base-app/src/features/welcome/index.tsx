@@ -12,8 +12,8 @@ import { WELCOME_COPY, WELCOME_VIDEO } from "./constants";
 import { useWelcomeScreen } from "./hooks/useWelcomeScreen";
 import { COMPACT_HEIGHT, createWelcomeStyles } from "./styles";
 
-const LOGO_HEIGHT = 40;
-const LOGO_HEIGHT_COMPACT = 32;
+const LOGO_HEIGHT = 22;
+const LOGO_HEIGHT_COMPACT = 18;
 const HEADLINE_DELAY = 450;
 
 // 02b Boas-vindas: vídeo, logo, frase e entrada por Apple, Google ou e-mail.

@@ -8,7 +8,7 @@ interface IStoryLogoProps {
 	width: number;
 }
 
-const RATIO = 216 / 696;
+const RATIO = 215 / 1659;
 
 // Logo PACE TEAM branco no rodapé do story.
 export const StoryLogo: React.FC<IStoryLogoProps> = ({ x, y, width }) => (

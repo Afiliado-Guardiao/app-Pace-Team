@@ -9,7 +9,7 @@
 		"userInterfaceStyle": "dark",
 		"newArchEnabled": true,
 		"scheme": "paceteam",
-		"backgroundColor": "#1B2733",
+		"backgroundColor": "#000000",
 		"ios": {
 			"supportsTablet": false,
 			"bundleIdentifier": "com.paceteam.app",
@@ -46,7 +46,7 @@
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/brand/app-icon-tile.png",
-				"backgroundColor": "#1B2733"
+				"backgroundColor": "#171717"
 			},
 			"package": "com.paceteam.app",
 			"edgeToEdgeEnabled": true,

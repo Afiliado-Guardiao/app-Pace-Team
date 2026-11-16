@@ -20,4 +20,4 @@ export const SPLASH_TIMING = {
 	sloganOffset: 8,
 } as const;
 
-export const LOGO_HEIGHT = 74;
+export const LOGO_HEIGHT = 34;

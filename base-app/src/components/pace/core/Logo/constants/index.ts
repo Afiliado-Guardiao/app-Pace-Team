@@ -8,7 +8,8 @@ import logoHorizontalWhite from "../../../../../../assets/brand/logo-horizontal-
 import symbol from "../../../../../../assets/brand/symbol.png";
 import { ILogoVariant } from "../types";
 
-// Logos raster extraídos do painel de identidade (sempre sobre fundo escuro).
+// Marca nova (2026-11-16): "PACE [Bud] TEAM" em Inter Bold creme; o símbolo
+// é o Bud; o ícone é o Bud com o "buddy" e a seta. Sempre sobre fundo escuro.
 export const LOGO_FILES: Record<ILogoVariant, ImageSourcePropType> = {
 	horizontal: logoHorizontal,
 	white: logoHorizontalWhite,
@@ -18,10 +19,13 @@ export const LOGO_FILES: Record<ILogoVariant, ImageSourcePropType> = {
 	iconOutline,
 };
 
+// Proporção largura/altura do logo escrito (logo-horizontal.png: 1659 x 215)
+export const WORDMARK_RATIO = 1659 / 215;
+
 // Proporção largura/altura de cada arquivo
 export const LOGO_RATIO: Record<ILogoVariant, number> = {
-	horizontal: 696 / 222,
-	white: 696 / 216,
+	horizontal: WORDMARK_RATIO,
+	white: WORDMARK_RATIO,
 	symbol: 312 / 192,
 	icon: 1,
 	iconMono: 1,

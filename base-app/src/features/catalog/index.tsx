@@ -37,7 +37,7 @@ export const CatalogScreen: React.FC = () => {
 			>
 				<View style={styles.header}>
 					<IconButton icon="arrow-left" label="Voltar" onPress={catalog.goBack} />
-					<Logo height={34} />
+					<Logo height={20} />
 					<Text style={styles.headerTitle}>Catálogo PACE</Text>
 					<Badge tone="accent">Só em desenvolvimento</Badge>
 					<Text style={styles.headerHint}>

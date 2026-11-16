@@ -10,9 +10,10 @@ export const SPLASH_COPY = {
 	loading: "Carregando…",
 } as const;
 
-// Símbolo do logo do mesmo tamanho da abertura nativa (330 px de 1284)
-const SYMBOL_K = 330 / 1284;
-const SYMBOL_RATIO = 224 / 368;
+// Logo escrito do mesmo tamanho da abertura nativa (62% da largura,
+// splash-black.png); proporção do logo-wordmark.png (1659 x 215)
+const SYMBOL_K = 0.62;
+const SYMBOL_RATIO = 215 / 1659;
 export const SPLASH_BUD_SCALE = 1.1;
 
 const symbolOpacity = (phase: ISplashPhase): number => {

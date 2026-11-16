@@ -1,6 +1,7 @@
 // PACE TEAM — tipografia (tokens/typography.css).
 // Montserrat em tudo (títulos 800, métricas 600–700 tabulares, UI 500–700).
-// Exo 2 só como fonte de marca, em momentos raros que ecoam o logo.
+// Inter Bold é a letra da marca (o logo "PACE [Bud] TEAM"), em momentos raros
+// que ecoam o logo.
 
 export const paceTypography = {
 	fonts: {
@@ -29,11 +30,11 @@ export const paceTypography = {
 	},
 
 	brandFonts: {
-		regular: "Exo2_400Regular",
-		semibold: "Exo2_600SemiBold",
-		bold: "Exo2_700Bold",
-		extrabold: "Exo2_800ExtraBold",
-		black: "Exo2_900Black",
+		regular: "Inter_400Regular",
+		semibold: "Inter_600SemiBold",
+		bold: "Inter_700Bold",
+		extrabold: "Inter_700Bold",
+		black: "Inter_700Bold",
 	},
 
 	// --fs-* do design system + tamanhos usados pelos componentes

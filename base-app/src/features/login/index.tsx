@@ -17,7 +17,7 @@ import { LOGIN_COPY } from "./constants";
 import { useLoginScreen } from "./hooks/useLoginScreen";
 import { createLoginStyles } from "./styles";
 
-const LOGO_HEIGHT = 56;
+const LOGO_HEIGHT = 30;
 const PHOTO_BLUR = 22;
 
 // 03 Login: e-mail e senha (Supabase), esqueci a senha e atalhos Apple/Google.

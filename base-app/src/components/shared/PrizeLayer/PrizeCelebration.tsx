@@ -14,7 +14,7 @@ import { PrizeRays } from "./PrizeRays";
 import { createPrizeLayerStyles } from "./styles";
 
 const ART = 270;
-const LOGO_H = 34;
+const LOGO_H = 18;
 
 // Card comemorativo exclusivo do PACE TEAM quando sai uma conquista nova
 export const PrizeCelebration: React.FC = () => {

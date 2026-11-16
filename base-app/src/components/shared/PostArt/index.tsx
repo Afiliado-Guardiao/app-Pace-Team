@@ -91,7 +91,7 @@ const placePins = (
 	});
 };
 const LOGO_WIDTH = 34;
-const LOGO_RATIO = 696 / 222;
+const LOGO_RATIO = 1659 / 215;
 const COPY = { distance: "Distância", pace: "Ritmo", time: "Tempo" } as const;
 
 // Foto da corrida com a marca PACE TEAM: métricas, percurso, equipe e logo.

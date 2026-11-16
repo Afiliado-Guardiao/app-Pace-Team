@@ -34,7 +34,7 @@ export const useAppInitialization = (): {
 		Inter_500Medium,
 		Inter_600SemiBold,
 		Inter_700Bold,
-		// Montserrat + Exo 2 do design system PACE TEAM
+		// Inter é também a letra da marca; Montserrat etc. do design system
 		...paceFontAssets,
 	});
 
