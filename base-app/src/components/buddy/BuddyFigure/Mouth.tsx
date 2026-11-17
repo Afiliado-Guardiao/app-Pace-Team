@@ -7,12 +7,14 @@ import { isSleepAct } from "./pose";
 
 interface IMouthProps {
 	act: IBuddyAct;
+	// Cor da boca (clara no Bud preto); padrão: preto
+	ink?: string;
 }
 
 const INK = "#0B1520";
 
 // Boca do Buddy: termômetro (doente), risquinho (sono) ou "O" (impressionado).
-export const Mouth: React.FC<IMouthProps> = ({ act }) => {
+export const Mouth: React.FC<IMouthProps> = ({ act, ink = INK }) => {
 	if (act === "sick") {
 		return (
 			<View
@@ -27,7 +29,7 @@ export const Mouth: React.FC<IMouthProps> = ({ act }) => {
 						width: 9,
 						height: 7,
 						borderRadius: 5,
-						backgroundColor: INK,
+						backgroundColor: ink,
 					}}
 				/>
 				<View
@@ -70,7 +72,7 @@ export const Mouth: React.FC<IMouthProps> = ({ act }) => {
 					width: 7,
 					height: 2.5,
 					borderRadius: 2,
-					backgroundColor: INK,
+					backgroundColor: ink,
 					opacity: 0.8,
 				}}
 			/>
@@ -89,7 +91,7 @@ export const Mouth: React.FC<IMouthProps> = ({ act }) => {
 					borderTopWidth: 2.4,
 					borderLeftWidth: 0.6,
 					borderRightWidth: 0.6,
-					borderColor: INK,
+					borderColor: ink,
 					borderTopLeftRadius: 8,
 					borderTopRightRadius: 8,
 					opacity: 0.85,
@@ -107,7 +109,7 @@ export const Mouth: React.FC<IMouthProps> = ({ act }) => {
 					width: 10,
 					height: 12,
 					borderRadius: 6,
-					backgroundColor: INK,
+					backgroundColor: ink,
 					boxShadow: "inset 0 -3px 0 #3A1A10",
 				}}
 			/>

@@ -108,7 +108,7 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 			{tint ? (
 				<Image
 					source={BUD_ART.body}
-					style={[OVER, { tintColor: tint, opacity: pal.metal ? 0.62 : 0.55 }]}
+					style={[OVER, { tintColor: tint, opacity: pal.tintAlpha ?? (pal.metal ? 0.62 : 0.55) }]}
 					resizeMode="contain"
 				/>
 			) : null}
@@ -131,8 +131,8 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 				</Animated.View>
 			) : null}
 			<View style={FACE} pointerEvents="none">
-				<Eyes pose={pose} />
-				<Mouth act={pose.act} />
+				<Eyes pose={pose} ink={pal.face} />
+				<Mouth act={pose.act} ink={pal.face} />
 				{heads.map((id) => (
 					<HeadAccessory
 						key={id}

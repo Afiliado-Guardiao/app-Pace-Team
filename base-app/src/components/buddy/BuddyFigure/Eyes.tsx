@@ -7,6 +7,8 @@ import { eyeOffset, eyeScale, IBuddyPose, isSleepAct } from "./pose";
 
 interface IEyesProps {
 	pose: IBuddyPose;
+	// Cor dos olhos (clara no Bud preto); padrão: preto
+	ink?: string;
 }
 
 const INK = "#141210";
@@ -63,10 +65,11 @@ const FAST = {
 	transitionTimingFunction: "ease-out",
 } as const;
 
-const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1 }> = ({ pose, index }) => {
+const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1; ink: string }> = ({ pose, index, ink }) => {
 	const { act } = pose;
-	if (isSleepAct(act) && !(act === "peek" && index === 0)) return <View style={CLOSED} />;
-	if (act === "celebrate") return <View style={HAPPY} />;
+	const color = { borderColor: ink };
+	if (isSleepAct(act) && !(act === "peek" && index === 0)) return <View style={[CLOSED, color]} />;
+	if (act === "celebrate") return <View style={[HAPPY, color]} />;
 	if (act === "sick") {
 		return (
 			<Animated.View
@@ -79,7 +82,7 @@ const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1 }> = ({ pose, index }) => {
 						borderTopRightRadius: 2,
 						borderBottomLeftRadius: 6,
 						borderBottomRightRadius: 6,
-						backgroundColor: INK,
+						backgroundColor: ink,
 						transform: [{ rotate: index ? "12deg" : "-12deg" }],
 					},
 					{ transitionProperty: "height", transitionDuration: "0.09s" },
@@ -89,14 +92,21 @@ const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1 }> = ({ pose, index }) => {
 	}
 	const [sx, sy] = eyeScale(pose, index);
 	return (
-		<Animated.View style={[OPEN, { transform: [{ scaleX: sx }, { scaleY: sy }] }, FAST]}>
+		<Animated.View
+			style={[
+				OPEN,
+				{ backgroundColor: ink },
+				{ transform: [{ scaleX: sx }, { scaleY: sy }] },
+				FAST,
+			]}
+		>
 			<View style={GLOSS} />
 		</Animated.View>
 	);
 };
 
 // Olhos do Buddy: abertos, piscando, dormindo, felizes ou doentes.
-export const Eyes: React.FC<IEyesProps> = ({ pose }) => {
+export const Eyes: React.FC<IEyesProps> = ({ pose, ink = INK }) => {
 	const [ex, ey] = eyeOffset(pose);
 
 	return (
@@ -111,8 +121,8 @@ export const Eyes: React.FC<IEyesProps> = ({ pose }) => {
 				},
 			]}
 		>
-			<Eye pose={pose} index={0} />
-			<Eye pose={pose} index={1} />
+			<Eye pose={pose} index={0} ink={ink} />
+			<Eye pose={pose} index={1} ink={ink} />
 		</Animated.View>
 	);
 };

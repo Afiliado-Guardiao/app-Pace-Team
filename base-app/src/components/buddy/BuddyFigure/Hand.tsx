@@ -25,16 +25,22 @@ const SPRING_T = {
 const FADE = { transitionProperty: "opacity", transitionDuration: "0.16s" } as const;
 const FILL: ViewStyle = { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 };
 
-const tintOf = (pal: IBuddyPalette): string | null => {
+interface IHandTint {
+	color: string;
+	alpha: number;
+}
+
+const tintOf = (pal: IBuddyPalette): IHandTint | null => {
 	if (pal === BUDDY_COLORS.branco) return null;
-	return pal.metal && pal.m ? pal.m[1] : pal.c[2];
+	const color = pal.metal && pal.m ? pal.m[1] : pal.c[2];
+	return { color, alpha: pal.tintAlpha ?? 0.55 };
 };
 
 // Uma camada da mão (arte + cor por cima, como no corpo), em tamanho fixo
 const HandArt: React.FC<{
 	source: ImageSourcePropType;
 	box: { left: number; top: number; width: number; height: number };
-	tint: string | null;
+	tint: IHandTint | null;
 	opacity: number;
 }> = ({ source, box, tint, opacity }) => {
 	const art: ImageStyle = {
@@ -50,7 +56,7 @@ const HandArt: React.FC<{
 			{tint ? (
 				<Animated.Image
 					source={source}
-					style={[art, { tintColor: tint, opacity: 0.55 }]}
+					style={[art, { tintColor: tint.color, opacity: tint.alpha }]}
 					resizeMode="stretch"
 				/>
 			) : null}

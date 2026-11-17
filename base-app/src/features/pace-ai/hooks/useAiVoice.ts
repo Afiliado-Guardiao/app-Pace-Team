@@ -5,6 +5,7 @@ import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from "expo-spe
 import { IFloatingToastData } from "@/components/pace";
 
 import { VOICE_ERRORS } from "../constants";
+import { addResult, dictationText, EMPTY_DICTATION } from "../utils/dictation";
 
 import { IUseAiSpeakerReturn } from "./useAiSpeaker";
 
@@ -30,22 +31,24 @@ export const useAiVoice = (
 ): IUseAiVoiceReturn => {
 	const [isListening, setIsListening] = useState(false);
 	const [heard, setHeard] = useState("");
-	const finalRef = useRef("");
+	// Trechos da fala desde que o microfone ligou (pausas não apagam nada)
+	const dictRef = useRef(EMPTY_DICTATION);
 	const skipRef = useRef(false);
 	const { stop: stopSpeaking, turnOn } = speaker;
 
 	useSpeechRecognitionEvent("start", () => {
+		dictRef.current = EMPTY_DICTATION;
 		setIsListening(true);
 	});
 	useSpeechRecognitionEvent("result", (event) => {
 		const text = event.results[0]?.transcript ?? "";
-		setHeard(text);
-		finalRef.current = text;
+		dictRef.current = addResult(dictRef.current, text, event.isFinal);
+		setHeard(dictationText(dictRef.current));
 	});
 	useSpeechRecognitionEvent("end", () => {
 		setIsListening(false);
-		const text = finalRef.current.trim();
-		finalRef.current = "";
+		const text = dictationText(dictRef.current);
+		dictRef.current = EMPTY_DICTATION;
 		setHeard("");
 		// Já foi enviado junto com a pergunta (takeHeard)
 		if (skipRef.current) {
@@ -93,9 +96,9 @@ export const useAiVoice = (
 			ExpoSpeechRecognitionModule.stop();
 		},
 		takeHeard: () => {
-			const text = finalRef.current.trim();
+			const text = dictationText(dictRef.current);
 			skipRef.current = true;
-			finalRef.current = "";
+			dictRef.current = EMPTY_DICTATION;
 			setHeard("");
 			ExpoSpeechRecognitionModule.stop();
 			return text;

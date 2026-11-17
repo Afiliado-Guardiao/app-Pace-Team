@@ -126,7 +126,7 @@ private struct BuddyBody: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      BudTinted(name: "bud_body", tint: BudArt.tint(pal), opacity: pal.metal == nil ? 0.55 : 0.62)
+      BudTinted(name: "bud_body", tint: BudArt.tint(pal), opacity: pal.tintAlpha ?? (pal.metal == nil ? 0.55 : 0.62))
         .frame(width: 88, height: 86)
       if pose == .sick {
         BudArt.image("bud_body").resizable().renderingMode(.template)
@@ -138,8 +138,8 @@ private struct BuddyBody: View {
           Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.55)).blur(radius: 2).buddyAt(12, 40, 16, 9)
           Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.55)).blur(radius: 2).buddyAt(60, 40, 16, 9)
         }
-        BuddyEyes(pose: pose).buddyAt(0, 22, 88, 18)
-        BuddyMouth(pose: pose)
+        BuddyEyes(pose: pose, ink: pal.face).buddyAt(0, 22, 88, 18)
+        BuddyMouth(pose: pose, ink: pal.face)
         ForEach(face, id: \.self) { id in
           if let item = BudArt.studioFront[id] {
             BudStudioArt(item: item)
@@ -158,6 +158,10 @@ private struct BuddyBody: View {
 
 private struct BuddyEyes: View {
   let pose: BuddyPose
+  // Cor dos olhos (clara no Bud preto); padrão: preto
+  var ink: Color? = nil
+  private var dark: Color { ink ?? .buddyInk }
+  private var deep: Color { ink ?? Color(hex: 0x141210) }
 
   var body: some View {
     HStack(alignment: .top, spacing: 20) {
@@ -171,29 +175,29 @@ private struct BuddyEyes: View {
   @ViewBuilder private func eye(_ i: Int) -> some View {
     switch pose {
     case .sleep:
-      BuddyArc(isUp: false).stroke(Color.buddyInk, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
+      BuddyArc(isUp: false).stroke(dark, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
     case .peek where i == 0:
-      BuddyArc(isUp: false).stroke(Color.buddyInk, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
+      BuddyArc(isUp: false).stroke(dark, lineWidth: 2.6).frame(width: 13, height: 7).padding(.top, 6)
     case .peek:
       // Um olho só, meio aberto, espiando
-      Ellipse().fill(Color.buddyInk).frame(width: 9, height: 9).padding(.top, 4)
+      Ellipse().fill(dark).frame(width: 9, height: 9).padding(.top, 4)
     case .impressed:
       // Olhão arregalado
-      Ellipse().fill(Color.buddyInk).frame(width: 12, height: 19)
+      Ellipse().fill(dark).frame(width: 12, height: 19)
     case .thirsty:
       // Olhinhos caídos, meio fechados
-      Ellipse().fill(Color(hex: 0x141210)).frame(width: 10, height: 9).padding(.top, 5)
+      Ellipse().fill(deep).frame(width: 10, height: 9).padding(.top, 5)
     case .celebrate:
-      BuddyArc(isUp: true).stroke(Color.buddyInk, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 4)
+      BuddyArc(isUp: true).stroke(dark, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 4)
     case .wink where i == 1:
       // Piscadinha: o olho direito fecha
-      BuddyArc(isUp: true).stroke(Color.buddyInk, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 5)
+      BuddyArc(isUp: true).stroke(dark, lineWidth: 3).frame(width: 13, height: 8).padding(.top, 5)
     case .sick:
-      BuddyArc(isUp: false).fill(Color.buddyInk).frame(width: 11, height: 9)
+      BuddyArc(isUp: false).fill(dark).frame(width: 11, height: 9)
         .rotationEffect(.degrees(i == 1 ? 12 : -12)).padding(.top, 7)
     default:
       // Olho da arte nova: oval preto com um reflexo suave
-      Ellipse().fill(Color(hex: 0x141210)).frame(width: 10, height: 15)
+      Ellipse().fill(deep).frame(width: 10, height: 15)
         .overlay(alignment: .topLeading) {
           Ellipse().fill(Color.white.opacity(0.28)).frame(width: 4, height: 5).offset(x: 2, y: 2)
         }
@@ -220,19 +224,21 @@ struct BuddyArc: Shape {
 
 private struct BuddyMouth: View {
   let pose: BuddyPose
+  var ink: Color? = nil
+  private var dark: Color { ink ?? .buddyInk }
 
   var body: some View {
     switch pose {
     case .sleep, .peek:
-      Capsule().fill(Color.buddyInk.opacity(0.8)).buddyAt(41, 46, 7, 2.5)
+      Capsule().fill(dark.opacity(0.8)).buddyAt(41, 46, 7, 2.5)
     case .impressed:
-      Ellipse().fill(Color.buddyInk).buddyAt(40, 44, 8, 9)
+      Ellipse().fill(dark).buddyAt(40, 44, 8, 9)
     case .thirsty:
       // Boquinha triste (arco para baixo)
-      BuddyArc(isUp: true).stroke(Color.buddyInk.opacity(0.85), lineWidth: 2.4).buddyAt(38, 47, 12, 5)
+      BuddyArc(isUp: true).stroke(dark.opacity(0.85), lineWidth: 2.4).buddyAt(38, 47, 12, 5)
     case .sick:
       ZStack(alignment: .topLeading) {
-        Ellipse().fill(Color.buddyInk).buddyAt(39, 45, 9, 7)
+        Ellipse().fill(dark).buddyAt(39, 45, 9, 7)
         // Termômetro
         ZStack(alignment: .leading) {
           Capsule().fill(LinearGradient(colors: [.white, Color(hex: 0xCFD9E2)], startPoint: .top, endPoint: .bottom))
@@ -283,10 +289,10 @@ private struct BuddyHand: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       if isAway {
-        BudTinted(name: isRight ? "bud_hand_r_full" : "bud_hand_l_full", tint: BudArt.tint(pal))
+        BudTinted(name: isRight ? "bud_hand_r_full" : "bud_hand_l_full", tint: BudArt.tint(pal), opacity: pal.tintAlpha ?? 0.55)
           .frame(width: full.width, height: full.height)
       } else {
-        BudTinted(name: isRight ? "bud_hand_r" : "bud_hand_l", tint: BudArt.tint(pal))
+        BudTinted(name: isRight ? "bud_hand_r" : "bud_hand_l", tint: BudArt.tint(pal), opacity: pal.tintAlpha ?? 0.55)
           .frame(width: rest.width, height: rest.height)
           .offset(x: rest.minX - full.minX, y: rest.minY - full.minY)
       }
