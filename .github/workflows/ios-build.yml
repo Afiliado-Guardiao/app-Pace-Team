@@ -71,13 +71,23 @@ jobs:
           const fs=require('fs');const j=JSON.parse(fs.readFileSync('eas.json','utf8'));
           Object.assign(j.submit.production.ios,{ascApiKeyPath:process.env.KEY,ascApiKeyId:process.env.ASC_KEY_ID,ascApiKeyIssuerId:process.env.ASC_ISSUER_ID});
           fs.writeFileSync('eas.json',JSON.stringify(j,null,'\t')+'\n');"
-          # Até 3 tentativas (a Apple às vezes recusa por instabilidade). Se
-          # falhar, o fim da saída vira aviso de erro, legível sem login.
+          # 1º: direto do Mac para a Apple (altool), sem depender do envio da
+          # Expo, que às vezes fica fora do ar. 2º: o envio da Expo, com limite
+          # de 30 min por tentativa. Se tudo falhar, o fim da saída vira aviso
+          # de erro, legível sem login.
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          cp "$KEY" "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           ok=""
-          for i in 1 2 3; do
-            if eas submit --platform ios --profile production --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive 2>&1 | tee "$RUNNER_TEMP/submit.log"; [ "${PIPESTATUS[0]}" = 0 ]; then ok=1; break; fi
-            echo "Tentativa $i falhou"; sleep 60
+          for i in 1 2; do
+            if xcrun altool --upload-app -f "$RUNNER_TEMP/pace-team.ipa" -t ios \
+              --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee -a "$RUNNER_TEMP/submit.log"; [ "${PIPESTATUS[0]}" = 0 ]; then ok=1; break; fi
+            echo "Envio direto $i falhou"; sleep 60
           done
+          if [ -z "$ok" ]; then
+            if perl -e 'alarm shift; exec @ARGV' 1800 eas submit --platform ios --profile production \
+              --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive 2>&1 | tee -a "$RUNNER_TEMP/submit.log"; [ "${PIPESTATUS[0]}" = 0 ]; then ok=1; fi
+          fi
+          rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           if [ -z "$ok" ]; then
             msg=$(tail -n 40 "$RUNNER_TEMP/submit.log" | sed 's/\x1b\[[0-9;]*m//g' | grep -v '^\s*$' | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
             echo "::error title=Envio ao TestFlight::$msg"
