@@ -55,7 +55,17 @@ jobs:
           npm ci --no-audit --no-fund
           npm install -g eas-cli@latest
       - name: Build (no Mac do GitHub, com os certificados da Expo)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
         run: |
+          # Com a chave da App Store Connect o EAS entra na Apple e liga sozinho
+          # os recursos novos do app (ex.: Apple Saúde) no perfil de assinatura
+          export EXPO_ASC_API_KEY_PATH="$RUNNER_TEMP/AuthKey.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$EXPO_ASC_API_KEY_PATH"
+          export EXPO_ASC_KEY_ID="$ASC_KEY_ID" EXPO_ASC_ISSUER_ID="$ASC_ISSUER_ID"
+          export EXPO_APPLE_TEAM_ID=DD89586P8R EXPO_APPLE_TEAM_TYPE=INDIVIDUAL
           eas build --platform ios --profile production --local --non-interactive \
             --output "$RUNNER_TEMP/pace-team.ipa"
           ls -la "$RUNNER_TEMP/pace-team.ipa"
