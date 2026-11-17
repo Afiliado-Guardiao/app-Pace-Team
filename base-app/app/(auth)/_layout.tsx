@@ -4,6 +4,7 @@ import { BuddyFlight, BuddyLivePanel } from "@/components/buddy";
 import { PrizeLayer } from "@/components/shared/PrizeLayer";
 import { useTheme } from "@/theme";
 import { useBuddyBridge, useBuddyPresence } from "@/lib/buddy";
+import { useWatchSync } from "@/lib/data";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { usePushRouting } from "@/lib/hooks/usePushRouting";
 import { useGpsWarmup } from "@/lib/run";
@@ -19,6 +20,8 @@ export default function AuthLayout() {
 	useBuddyPresence();
 	useGpsWarmup();
 	usePushRouting();
+	// Relógio conectado: corridas do app Saúde entram sozinhas
+	useWatchSync(true);
 
 	if (!shouldRender) return null;
 

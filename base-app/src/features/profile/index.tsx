@@ -177,6 +177,15 @@ export const ProfileScreen: React.FC = () => {
 				}
 			>
 				<Text style={styles.settingsText}>{PROFILE_COPY.settingsBody}</Text>
+				<Button
+					fullWidth
+					variant="glass"
+					icon="watch"
+					onPress={profile.openWatch}
+					testID="profile-open-watch"
+				>
+					{PROFILE_COPY.watch}
+				</Button>
 				<SubscriptionSection actions={subscription} />
 				<LegalLinks />
 			</Sheet>

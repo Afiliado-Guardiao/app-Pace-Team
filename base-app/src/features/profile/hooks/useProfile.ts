@@ -97,6 +97,11 @@ export const useProfile = () => {
 		openBuddy: () => {
 			router.push(ROUTES.BUDDY);
 		},
+		// Relógio e Apple Saúde (sai de Configurações)
+		openWatch: () => {
+			setIsSettingsOpen(false);
+			router.push(ROUTES.WATCH);
+		},
 		// Arrastar a corrida para a esquerda exclui
 		removeRun: remove,
 		openRun: (id: string | number) => {

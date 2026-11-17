@@ -2,6 +2,7 @@ export const PROFILE_COPY = {
 	buddy: "Seu Buddy",
 	privacy: "Privacidade",
 	settings: "Configurações",
+	watch: "Relógio e Apple Saúde",
 	edit: "Editar perfil",
 	runs: "Corridas",
 	km: "Km",

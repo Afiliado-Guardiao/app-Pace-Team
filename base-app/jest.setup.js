@@ -118,3 +118,13 @@ jest.mock("@shopify/react-native-skia", () => {
 		TileMode: {},
 	};
 });
+
+// App Saúde (HealthKit) é nativo: nos testes, sem relógio e sem corridas
+jest.mock("@kingstinct/react-native-healthkit", () => ({
+	isHealthDataAvailable: () => false,
+	requestAuthorization: jest.fn(() => Promise.resolve(false)),
+	queryWorkoutSamples: jest.fn(() => Promise.resolve([])),
+	WorkoutActivityType: { running: 37 },
+	WorkoutTypeIdentifier: "HKWorkoutTypeIdentifier",
+	WorkoutRouteTypeIdentifier: "HKWorkoutRouteTypeIdentifier",
+}));

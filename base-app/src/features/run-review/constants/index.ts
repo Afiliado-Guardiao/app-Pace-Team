@@ -1,5 +1,7 @@
 export const RUN_REVIEW_COPY = {
 	title: "Corrida com o Buddy",
+	// Corrida que chegou do relógio (app Saúde)
+	watchTitle: "Corrida do relógio",
 	close: "Fechar",
 	distance: "Distância",
 	time: "Tempo",

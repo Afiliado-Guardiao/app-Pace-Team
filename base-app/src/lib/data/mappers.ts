@@ -77,7 +77,15 @@ export const toRun = (run: ISavedRun, index: number): IRun => {
 		status: run.status,
 		image: RUN_PHOTOS[index % RUN_PHOTOS.length] ?? PHOTOS.runnerCitySunset,
 		route: run.route,
+		isWatch: run.source === "watch",
+		hr: run.avgHr ?? null,
 	};
+};
+
+// " · Relógio · 152 bpm" (detalhe e lista de corridas que vieram do relógio)
+export const watchLine = (run: { source?: string; avgHr?: number | null }): string => {
+	if (run.source !== "watch") return "";
+	return run.avgHr ? ` · Relógio · ${String(run.avgHr)} bpm` : " · Relógio";
 };
 
 export const toTeamMember = (m: ITeamMemberStat): ITeamMember => ({

@@ -81,6 +81,8 @@ export const RunRow: React.FC<IRunRowProps> = ({ run, seed, onPress }) => {
 	const { theme } = useTheme();
 	const styles = createRunRowStyles(theme, run.pts > 0);
 	const status = STATUS[run.status];
+	const hrText = run.hr ? ` · ${String(run.hr)} bpm` : "";
+	const watchText = run.isWatch ? ` · Relógio${hrText}` : "";
 
 	return (
 		<Pressable
@@ -100,7 +102,7 @@ export const RunRow: React.FC<IRunRowProps> = ({ run, seed, onPress }) => {
 							{status.label}
 						</Badge>
 					</View>
-					<Text style={styles.date}>{run.date}</Text>
+					<Text style={styles.date}>{`${run.date}${watchText}`}</Text>
 					<View style={styles.stats}>
 						<Text style={styles.number}>
 							{run.km}

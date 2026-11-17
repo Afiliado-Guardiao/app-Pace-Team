@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { useLocalSearchParams, useRouter } from "expo-router";
 
-import { runDate, runPayload, runTitle, useMyRuns, useSaveRun } from "@/lib/data";
+import { runDate, runPayload, runTitle, useMyRuns, useSaveRun, watchLine } from "@/lib/data";
 import { formatPace } from "@/lib/pace";
 import { distanceMeters, IRunPoint, ROUTE, useRunStore } from "@/lib/run";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -151,7 +151,7 @@ export const useRunSummary = (variant: IRunSummaryVariant) => {
 		isGroup,
 		isDetail,
 		title: isDetail || isGroup ? RUN_SUMMARY_COPY.titleDetail : RUN_SUMMARY_COPY.titleDone,
-		meta: source.startedAt ? runDate(source.startedAt) : emptyMeta,
+		meta: source.startedAt ? `${runDate(source.startedAt)}${watchLine(own ?? {})}` : emptyMeta,
 		runTitle: source.startedAt ? `${runner}${runTitle(source.startedAt)}` : emptyTitle,
 		// Fotos de quem correu (no fim do percurso de cada um)
 		pins: team.pins,

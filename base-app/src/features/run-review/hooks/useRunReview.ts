@@ -16,7 +16,7 @@ import { ISavedRun } from "@/lib/supabase";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
-import { REVIEW_WINDOW_MS } from "../constants";
+import { REVIEW_WINDOW_MS, RUN_REVIEW_COPY } from "../constants";
 
 // Toque sem querer no Buddy (começou e encerrou sem correr): não avisa
 const MIN_REVIEW_SECONDS = 30;
@@ -65,6 +65,7 @@ export const useRunReview = () => {
 
 	return {
 		isOpen: run !== null,
+		title: run?.source === "watch" ? RUN_REVIEW_COPY.watchTitle : RUN_REVIEW_COPY.title,
 		isConfirming,
 		isDiscarding: deleteRun.isPending,
 		isInvalid: run?.status === "invalid",

@@ -106,6 +106,14 @@
 			"@bacons/apple-targets",
 			"./plugins/withBuddyAppIntents",
 			[
+				"@kingstinct/react-native-healthkit",
+				{
+					"NSHealthShareUsageDescription": "O PACE TEAM lê as corridas que o seu relógio salva no app Saúde (distância, tempo, batimentos e percurso) para somar ao seu histórico e aos pontos da equipe. Só corridas, e só com a sua permissão.",
+					"NSHealthUpdateUsageDescription": false,
+					"background": false
+				}
+			],
+			[
 				"expo-speech-recognition",
 				{
 					"microphonePermission": "O PACE TEAM usa o microfone só quando você toca no botão de voz para conversar com a PACE AI.",

@@ -41,7 +41,7 @@ export const RunReviewPopup: React.FC = () => {
 					<GlassSurface appearance={styles.appearance} radius={28} style={styles.card}>
 						<View style={styles.header}>
 							<View style={styles.titles}>
-								<Text style={styles.title}>{RUN_REVIEW_COPY.title}</Text>
+								<Text style={styles.title}>{review.title}</Text>
 								<Text style={styles.meta}>{review.date}</Text>
 							</View>
 							<IconButton

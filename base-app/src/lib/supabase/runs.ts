@@ -11,6 +11,10 @@ export interface ISavedRun {
 	route: [number, number][];
 	// "team" = correu com a equipe (pelo app ou pelo Buddy)
 	mode?: string;
+	// "watch" = veio do relógio (app Saúde)
+	source?: "app" | "watch";
+	// Média de batimentos (só corridas do relógio que medem)
+	avgHr?: number | null;
 }
 
 export interface ISaveRunPayload {
@@ -24,7 +28,8 @@ export interface ISaveRunPayload {
 // Percurso guardado com no máximo ~400 pontos (o suficiente para o desenho)
 const MAX_ROUTE_POINTS = 400;
 const COORD_DECIMALS = 5;
-const RUN_COLUMNS = "id, started_at, duration_s, distance_m, status, points, route, mode";
+const RUN_COLUMNS =
+	"id, started_at, duration_s, distance_m, status, points, route, mode, source, avg_hr";
 
 const simplify = (route: ISaveRunPayload["route"]): [number, number][] => {
 	const step = Math.max(1, Math.ceil(route.length / MAX_ROUTE_POINTS));
@@ -45,6 +50,8 @@ const toSavedRun = (row: {
 	points: number;
 	route: unknown;
 	mode?: string;
+	source?: "app" | "watch";
+	avg_hr?: number | null;
 }): ISavedRun => ({
 	id: row.id,
 	startedAt: row.started_at,
@@ -54,6 +61,8 @@ const toSavedRun = (row: {
 	points: row.points,
 	route: Array.isArray(row.route) ? row.route.filter(isPoint) : [],
 	mode: row.mode,
+	source: row.source ?? "app",
+	avgHr: row.avg_hr ?? null,
 });
 
 // Salva a corrida; o banco valida (ritmo humano, mínimos) e calcula os pontos.
@@ -73,6 +82,48 @@ export async function saveRun(payload: ISaveRunPayload): Promise<ISavedRun> {
 		.select(RUN_COLUMNS)
 		.single();
 	if (error) throw error;
+	return toSavedRun(data);
+}
+
+export interface IWatchRunPayload {
+	externalId: string;
+	startedAt: number;
+	finishedAt: number;
+	seconds: number;
+	km: number;
+	route: readonly (readonly [number, number])[];
+	avgHr: number | null;
+	deviceName: string | null;
+}
+
+// Já está no PACE TEAM: a mesma corrida (código do app Saúde) ou uma corrida
+// gravada no mesmo horário (pelo app ou por outro relógio)
+const isAlreadyThere = (error: { code?: string; message?: string }): boolean =>
+	error.code === "23505" || (error.message ?? "").includes("duplicate_run");
+
+// Importa uma corrida do relógio (app Saúde). O banco valida com as mesmas
+// regras das corridas do app e calcula os pontos. null = já estava lá.
+export async function importWatchRun(run: IWatchRunPayload): Promise<ISavedRun | null> {
+	const { data, error } = await supabase
+		.from("runs")
+		.insert({
+			mode: "free",
+			source: "watch",
+			external_id: run.externalId,
+			started_at: new Date(run.startedAt).toISOString(),
+			finished_at: new Date(run.finishedAt).toISOString(),
+			duration_s: Math.round(run.seconds),
+			distance_m: Math.round(run.km * 10000) / 10,
+			route: simplify(run.route),
+			avg_hr: run.avgHr,
+			device_name: run.deviceName,
+		})
+		.select(RUN_COLUMNS)
+		.single();
+	if (error) {
+		if (isAlreadyThere(error)) return null;
+		throw error;
+	}
 	return toSavedRun(data);
 }
 

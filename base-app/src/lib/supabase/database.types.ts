@@ -102,6 +102,10 @@ export interface Database {
 					status: IRunStatusDb;
 					points: number;
 					created_at: string;
+					source: "app" | "watch";
+					external_id: string | null;
+					avg_hr: number | null;
+					device_name: string | null;
 				};
 				Insert: {
 					mode?: string;
@@ -110,6 +114,10 @@ export interface Database {
 					duration_s: number;
 					distance_m: number;
 					route?: unknown;
+					source?: "app" | "watch";
+					external_id?: string | null;
+					avg_hr?: number | null;
+					device_name?: string | null;
 				};
 				Update: Record<string, never>;
 				Relationships: [];

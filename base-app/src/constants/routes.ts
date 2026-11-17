@@ -44,6 +44,8 @@ export const ROUTES = {
 	TEAM_GAME: "/(auth)/team-game",
 	PACE_AI: "/(auth)/pace-ai",
 	BUDDY_STUDIO: "/(auth)/buddy-studio",
+	// Relógio e Apple Saúde: corridas do relógio entram no PACE TEAM
+	WATCH: "/(auth)/watch",
 } as const;
 
 export type IRoute = (typeof ROUTES)[keyof typeof ROUTES];

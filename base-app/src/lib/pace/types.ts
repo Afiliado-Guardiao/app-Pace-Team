@@ -56,6 +56,9 @@ export interface IRun {
 	image: ImageSourcePropType;
 	// Percurso gravado pelo GPS (só nas corridas reais; a prévia não tem)
 	route?: readonly (readonly [number, number])[];
+	// Veio do relógio (app Saúde); hr = média de batimentos, quando mediu
+	isWatch?: boolean;
+	hr?: number | null;
 }
 
 export interface IOnlineFriend {
