@@ -5,6 +5,7 @@ import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 
 import { IPostArtLayers } from "@/components/shared/PostArt";
+import { toShareLook, useBuddyLook } from "@/lib/buddy";
 import { routeShape, toStoredCrew, useMyTeam, usePostActions } from "@/lib/data";
 import { pickFromGallery } from "@/lib/media";
 import { useRunStore } from "@/lib/run";
@@ -50,6 +51,9 @@ export const useRunPost = () => {
 		? { name: myTeam.name, rank: myTeam.position, isUp: true, logoUrl: myTeam.logoUrl }
 		: null;
 	const track = usePostTrack();
+	// Quem usa acessório pago do Buddy Studio: o Bud vai junto no post (topo)
+	const look = useBuddyLook();
+	const shown = { ...layers, bud: toShareLook(look) };
 
 	// No iPhone abre direto na câmera ao vivo quando há permissão
 	useEffect(() => {
@@ -83,7 +87,7 @@ export const useRunPost = () => {
 				uri: photo.kind === "shot" ? photo.uri : undefined,
 				seconds: run.seconds,
 				km: run.km,
-				layers,
+				layers: shown,
 				caption: caption.trim() || POST_COPY.defaultCaption,
 			};
 			const done = (): void => {
@@ -105,7 +109,7 @@ export const useRunPost = () => {
 			addMyPost,
 			photo,
 			run,
-			layers,
+			shown,
 			caption,
 			router,
 			publishMutation,
@@ -130,7 +134,7 @@ export const useRunPost = () => {
 		selectedSample: photo.kind === "sample" ? photo.index : -1,
 		image: imageOf(photo),
 		flashStyle: flash.style,
-		layers,
+		layers: shown,
 		caption,
 		setCaption,
 		selectSample: (index: number) => {
@@ -152,7 +156,7 @@ export const useRunPost = () => {
 		shoot: () => {
 			void shoot();
 		},
-		toggleLayer: (key: keyof IPostArtLayers) => {
+		toggleLayer: (key: "route" | "stats" | "badge") => {
 			setLayers((l) => ({ ...l, [key]: !l[key] }));
 		},
 		close: () => {

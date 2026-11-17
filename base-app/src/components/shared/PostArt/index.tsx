@@ -3,13 +3,14 @@ import { Image, ImageSourcePropType, StyleProp, Text, View, ViewStyle } from "re
 
 import Svg, { Path } from "react-native-svg";
 
-import { GradientLayers, Logo, useLayoutSize } from "@/components/pace";
+import { GradientLayers, useLayoutSize } from "@/components/pace";
 import { useTheme } from "@/theme";
 import type { ICrewLine, IRunCrewPin } from "@/lib/data";
 import { CREW, formatDistance, formatDurationText, formatPace, MY_TEAM } from "@/lib/pace";
 import { IS_PREVIEW } from "@/constants/preview";
 
 import { IPostCrewPath, postCrewArt } from "./crew";
+import { PostLogo } from "./PostLogo";
 import { PostPin } from "./PostPin";
 import { PostTeamBadge } from "./PostTeamBadge";
 import { postTrack } from "./route";
@@ -28,6 +29,8 @@ export interface IPostArtLayers {
 	route: boolean;
 	stats: boolean;
 	badge: boolean;
+	// Visual do Bud (Buddy Studio) de quem postou, sentado em cima do logo
+	bud?: unknown;
 }
 
 interface IPostArtProps {
@@ -90,8 +93,6 @@ const placePins = (
 		return { image: pin.image, name: pin.name, label: pin.label, x: x + crowd.length * SPREAD, y };
 	});
 };
-const LOGO_WIDTH = 34;
-const LOGO_RATIO = 1659 / 215;
 const COPY = { distance: "Distância", pace: "Ritmo", time: "Tempo" } as const;
 
 // Foto da corrida com a marca PACE TEAM: métricas, percurso, equipe e logo.
@@ -194,9 +195,7 @@ export const PostArt: React.FC<IPostArtProps> = ({
 							cqw={cqw}
 						/>
 					) : null}
-					<View style={styles.logo} pointerEvents="none">
-						<Logo variant="horizontal" height={(LOGO_WIDTH * cqw) / LOGO_RATIO} />
-					</View>
+					<PostLogo cqw={cqw} boxHeight={size.height} bud={layers.bud} logoStyle={styles.logo} />
 				</>
 			) : null}
 		</View>

@@ -33,6 +33,8 @@ export interface IHydroReminders {
 export interface IHydroBodyInput {
 	weightKg: number | null;
 	heightCm: number | null;
+	// Idade escolhida na régua (sem ela, vem da data de nascimento do cadastro)
+	age?: number | null;
 }
 
 interface IHydrationState {

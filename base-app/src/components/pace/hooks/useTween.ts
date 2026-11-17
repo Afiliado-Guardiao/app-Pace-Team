@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 
 import { useReducedMotion } from "react-native-reanimated";
 
+import { useSplashDone } from "@/components/core/BootSplash/splashState";
+
 interface IUseTweenOptions {
 	duration: number;
 	delay?: number;
@@ -9,10 +11,13 @@ interface IUseTweenOptions {
 }
 
 // Anima um número de 0 até o alvo (CountUp, arco do medidor). Com
-// "reduzir movimento" ligado, vai direto ao valor final.
+// "reduzir movimento" ligado, vai direto ao valor final. Espera a abertura
+// (o Bud das bolinhas) sair da frente: antes contava escondido atrás dela e o
+// atleta já via o número parado.
 export const useTween = (target: number, options: IUseTweenOptions): number => {
 	const { duration, delay = 0, easing } = options;
 	const reduceMotion = useReducedMotion();
+	const isSplashDone = useSplashDone();
 	const [value, setValue] = useState(reduceMotion ? target : 0);
 
 	useEffect(() => {
@@ -20,6 +25,7 @@ export const useTween = (target: number, options: IUseTweenOptions): number => {
 			setValue(target);
 			return;
 		}
+		if (!isSplashDone) return;
 
 		let frame = 0;
 		const start = Date.now() + delay;
@@ -34,7 +40,7 @@ export const useTween = (target: number, options: IUseTweenOptions): number => {
 		return () => {
 			cancelAnimationFrame(frame);
 		};
-	}, [target, duration, delay, easing, reduceMotion]);
+	}, [target, duration, delay, easing, reduceMotion, isSplashDone]);
 
 	return value;
 };

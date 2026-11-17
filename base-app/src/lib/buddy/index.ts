@@ -8,6 +8,8 @@ export { useBuddyRankStore } from "./rankStore";
 export * from "./rules";
 export type { IBuddySharedState } from "./sharedState";
 export { buildSharedState } from "./sharedState";
+export type { IShareLook } from "./shareLook";
+export { toShareLook } from "./shareLook";
 export type { IBuddyAlarm, IBuddyStudio } from "./store";
 export { DEFAULT_ALARM, EMPTY_STUDIO, useBuddyStore } from "./store";
 export { useBuddyBridge } from "./useBuddyBridge";

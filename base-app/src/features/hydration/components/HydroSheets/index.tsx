@@ -1,17 +1,15 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { Button, Input, Sheet, Switch } from "@/components/pace";
+import { Button, Input, Sheet } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 
 import { HYDRO_COPY as C } from "../../constants";
 import { IAmountForm } from "../../hooks/useAmountForm";
-import { IBodyForm } from "../../hooks/useBodyForm";
 import { ISweatForm } from "../../hooks/useSweatForm";
 
 interface IHydroSheetsProps {
 	amount: IAmountForm;
-	body: IBodyForm;
 	sweat: ISweatForm;
 }
 
@@ -48,8 +46,8 @@ const Actions: React.FC<{ onSave: () => void; onCancel: () => void; id: string }
 	</>
 );
 
-// As janelas de preencher do PACE HYDRATION: outro valor, seus dados e pesagem
-export const HydroSheets: React.FC<IHydroSheetsProps> = ({ amount, body, sweat }) => {
+// As janelas de preencher do PACE HYDRATION: outro valor e pesagem
+export const HydroSheets: React.FC<IHydroSheetsProps> = ({ amount, sweat }) => {
 	const { theme } = useTheme();
 	const styles = createHydroSheetsStyles(theme);
 	const f = sweat.fields;
@@ -69,44 +67,6 @@ export const HydroSheets: React.FC<IHydroSheetsProps> = ({ amount, body, sweat }
 					onChangeText={amount.setValue}
 					testID="hydro-amount-input"
 				/>
-			</Sheet>
-			<Sheet
-				open={body.isOpen}
-				title={C.bodyTitle}
-				onClose={body.close}
-				actions={<Actions onSave={body.save} onCancel={body.close} id="hydro-body" />}
-			>
-				<View style={styles.form}>
-					<Input
-						label={C.weightLabel}
-						type="number"
-						value={body.weight}
-						onChangeText={body.setWeight}
-						testID="hydro-weight"
-					/>
-					<Input
-						label={C.heightLabel}
-						type="number"
-						value={body.height}
-						onChangeText={body.setHeight}
-						testID="hydro-height"
-					/>
-					<Switch
-						label={C.restriction}
-						checked={body.hasRestriction}
-						onChange={body.setRestriction}
-						testID="hydro-restriction"
-					/>
-					{body.hasRestriction ? (
-						<Input
-							label={C.restrictionNote}
-							value={body.note}
-							onChangeText={body.setNote}
-							testID="hydro-restriction-note"
-						/>
-					) : null}
-					<Text style={styles.help}>{C.restrictionHelp}</Text>
-				</View>
 			</Sheet>
 			<Sheet
 				open={sweat.isOpen}

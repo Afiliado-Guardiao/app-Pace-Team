@@ -18,7 +18,7 @@ import { ROUTES } from "@/constants/routes";
 import { HYDRO_COPY } from "../constants";
 
 import { IAmountForm, useAmountForm } from "./useAmountForm";
-import { IBodyForm, useBodyForm } from "./useBodyForm";
+import { IHydroSetup, useHydroSetup } from "./useHydroSetup";
 import { ISweatForm, useSweatForm } from "./useSweatForm";
 
 export interface IHydrationScreen {
@@ -26,7 +26,8 @@ export interface IHydrationScreen {
 	reminders: IHydroReminders;
 	toast: IFloatingToastData | null;
 	amount: IAmountForm;
-	body: IBodyForm;
+	// Seus dados em passos (abre sozinho na primeira vez)
+	setup: IHydroSetup;
 	sweat: ISweatForm;
 	add: (ml: number, kind?: IHydroKind) => void;
 	remove: (id: string) => void;
@@ -51,6 +52,11 @@ export const useHydrationScreen = (): IHydrationScreen => {
 			message: ml ? `+${formatMl(ml)}` : undefined,
 		});
 	};
+	const goBack = () => {
+		if (router.canGoBack()) router.back();
+		else router.replace(ROUTES.HOME);
+	};
+	const setup = useHydroSetup(goBack);
 	const amount = useAmountForm(() => {
 		saved();
 	});
@@ -66,7 +72,7 @@ export const useHydrationScreen = (): IHydrationScreen => {
 		reminders: st.reminders,
 		toast,
 		amount,
-		body: useBodyForm(),
+		setup,
 		sweat: useSweatForm(),
 		add: (ml, kind = "day") => {
 			st.addLog(ml, kind);
@@ -78,10 +84,7 @@ export const useHydrationScreen = (): IHydrationScreen => {
 			const next = r.pausedUntil === 1 ? { ...r, pausedUntil: nextMidnight() } : r;
 			st.setReminders(next);
 		},
-		goBack: () => {
-			if (router.canGoBack()) router.back();
-			else router.replace(ROUTES.HOME);
-		},
+		goBack,
 	};
 };
 

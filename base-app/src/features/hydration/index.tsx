@@ -10,6 +10,7 @@ import { HydroLog } from "./components/HydroLog";
 import { HydroProfile } from "./components/HydroProfile";
 import { HydroReminders } from "./components/HydroReminders";
 import { HydroRunCard } from "./components/HydroRunCard";
+import { HydroSetup } from "./components/HydroSetup";
 import { HydroSheets } from "./components/HydroSheets";
 import { HydroSweatCard } from "./components/HydroSweatCard";
 import { HydroToday } from "./components/HydroToday";
@@ -50,7 +51,7 @@ export const HydrationScreen: React.FC = () => {
 					onOther={() => {
 						s.amount.open("day");
 					}}
-					onEditData={s.body.open}
+					onEditData={s.setup.open}
 				/>
 				<HydroLog logs={hydro.todayLogs} onRemove={s.remove} />
 				<HydroRunCard
@@ -65,11 +66,12 @@ export const HydrationScreen: React.FC = () => {
 				<HydroProfile
 					body={hydro.body}
 					hasRestriction={hydro.hasRestriction}
-					onEdit={s.body.open}
+					onEdit={s.setup.open}
 				/>
 				<Text style={styles.disclaimer}>{C.disclaimer}</Text>
 			</ScreenScroll>
-			<HydroSheets amount={s.amount} body={s.body} sweat={s.sweat} />
+			<HydroSheets amount={s.amount} sweat={s.sweat} />
+			<HydroSetup setup={s.setup} />
 			<FloatingToast toast={s.toast} />
 		</View>
 	);

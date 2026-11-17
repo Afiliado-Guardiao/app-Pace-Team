@@ -6,5 +6,5 @@ export { HYDRATION_PUSH } from "./notifications";
 export type { IHydroKind, IHydroLog, IHydroReminders } from "./store";
 export { DEFAULT_REMINDERS, useHydrationStore } from "./store";
 export type { IRunWithHydration, IUseHydrationReturn } from "./useHydration";
-export { useHydration } from "./useHydration";
+export { ageOf, useHydration } from "./useHydration";
 export { useHydrationSync } from "./useHydrationSync";

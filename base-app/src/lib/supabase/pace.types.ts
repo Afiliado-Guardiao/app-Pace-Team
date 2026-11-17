@@ -112,7 +112,7 @@ export interface IFeedRow {
 	sample: number | null;
 	seconds: number;
 	km: number;
-	layers: { route: boolean; stats: boolean; badge: boolean };
+	layers: { route: boolean; stats: boolean; badge: boolean; bud?: unknown };
 	caption: string;
 	createdAt: string;
 	likes: number;

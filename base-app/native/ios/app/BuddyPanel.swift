@@ -200,11 +200,31 @@ struct BuddyShortcuts: AppShortcutsProvider {
     // PACE HYDRATION: "E aí Siri, pergunte ao Bud quanto de água eu tenho que beber"
     AppShortcut(
       intent: AskWaterIntent(),
+      // Do jeito que se fala no dia a dia ("pergunta o Bud…", "…que eu tenho
+      // que beber", "quanta água…"): a Siri só reconhece frases desta lista
       phrases: [
         "Pergunte ao \(.applicationName) quanto de água eu tenho que beber",
         "Pergunta pro \(.applicationName) quanto de água eu tenho que beber",
+        "Pergunta ao \(.applicationName) quanto de água eu tenho que beber",
+        "Pergunta o \(.applicationName) quanto de água eu tenho que beber",
+        "Pergunte pro \(.applicationName) quanto de água eu tenho que beber",
+        "Pergunte ao \(.applicationName) quanto de água que eu tenho que beber",
+        "Pergunta pro \(.applicationName) quanto de água que eu tenho que beber",
+        "Pergunta ao \(.applicationName) quanto de água que eu tenho que beber",
+        "Pergunta o \(.applicationName) quanto de água que eu tenho que beber",
+        "Pergunte ao \(.applicationName) quanta água eu tenho que beber",
+        "Pergunta pro \(.applicationName) quanta água eu tenho que beber",
+        "Pergunta o \(.applicationName) quanta água eu tenho que beber",
+        "Pergunte ao \(.applicationName) quanto de água eu preciso beber",
+        "Pergunta pro \(.applicationName) quanto de água eu preciso beber",
+        "Pergunta o \(.applicationName) quanto de água eu preciso beber",
         "Quanto de água eu tenho que beber, \(.applicationName)",
+        "Quanta água eu tenho que beber, \(.applicationName)",
         "\(.applicationName), quanto de água eu preciso beber",
+        "\(.applicationName), quanto de água eu tenho que beber",
+        "\(.applicationName), quanto de água falta",
+        "\(.applicationName), quanta água falta hoje",
+        "Água no \(.applicationName)",
       ],
       shortTitle: "Quanto de água beber",
       systemImageName: "drop.fill"

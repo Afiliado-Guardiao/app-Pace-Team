@@ -48,7 +48,7 @@ export interface IUseHydrationReturn {
 
 const DAY_MS = 86_400_000;
 
-const ageOf = (birthday: string | null | undefined, now: number): number | null => {
+export const ageOf = (birthday: string | null | undefined, now: number): number | null => {
 	if (!birthday) return null;
 	const b = new Date(birthday).getTime();
 	return Number.isFinite(b) ? Math.floor((now - b) / (365.25 * DAY_MS)) : null;
@@ -66,7 +66,11 @@ export const useHydration = (): IUseHydrationReturn => {
 	const today = startOfDay(now);
 
 	return useMemo(() => {
-		const body: IHydroBody = { ...st.body, age: ageOf(birthday, now) };
+		const body: IHydroBody = {
+			weightKg: st.body.weightKg,
+			heightCm: st.body.heightCm,
+			age: st.body.age ?? ageOf(birthday, now),
+		};
 		const withH = (run: IHydroRun): IRunWithHydration => ({
 			run,
 			hydration: runHydration({ run, body, tempC: weather.temp, tests: st.tests }),

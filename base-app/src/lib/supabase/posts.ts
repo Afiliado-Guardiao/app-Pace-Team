@@ -9,7 +9,7 @@ export interface IPublishPostPayload {
 	sample?: number;
 	seconds: number;
 	km: number;
-	layers: { route: boolean; stats: boolean; badge: boolean };
+	layers: { route: boolean; stats: boolean; badge: boolean; bud?: unknown };
 	caption: string;
 	runId?: string | null;
 	// "personal" = no perfil; "team" = post da equipe (foto do grupo)
