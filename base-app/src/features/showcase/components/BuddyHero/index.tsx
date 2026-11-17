@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View, ViewStyle } from "react-native";
 
-import Animated, { ZoomIn } from "react-native-reanimated";
+import Animated, { cubicBezier, ZoomIn } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 
 import { BUDDY_H, BUDDY_W, BuddyFigure, EASE_OUT, IBuddyPose } from "@/components/buddy";
@@ -21,8 +21,10 @@ const SIZE = 190;
 const ARROW = { w: 62, h: 46 } as const;
 // Setinha desenhada à mão apontando para o Buddy (como na referência)
 const ARROW_PATH = "M58 40 C 56 18, 38 6, 8 12 M8 12 L 18 4 M8 12 L 17 20";
-// Foguete: decola acelerando (lento no começo, rápido no fim)
-const LAUNCH = "cubic-bezier(0.55, 0, 0.85, 0.35)";
+// Foguete: decola acelerando (lento no começo, rápido no fim). No iPhone a
+// curva tem que vir do cubicBezier do Reanimated: escrita como texto
+// funciona na prévia web, mas no aparelho dá erro e o app cai ao tocar em Começar
+const LAUNCH = cubicBezier(0.55, 0, 0.85, 0.35);
 
 // Susto: pula e estica; foguete: afina, encolhe e voa até o canto de cima
 const flightStyle = (f: IShowcaseFlight): ViewStyle => {
