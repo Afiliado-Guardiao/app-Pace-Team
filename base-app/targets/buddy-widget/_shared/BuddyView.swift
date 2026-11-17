@@ -126,7 +126,7 @@ private struct BuddyBody: View {
 
   var body: some View {
     ZStack(alignment: .topLeading) {
-      BudTinted(name: "bud_body", tint: BudArt.tint(pal), opacity: pal.tintAlpha ?? (pal.metal == nil ? 0.55 : 0.62))
+      BudTinted(name: BudArt.part("bud_body", pal), tint: BudArt.tint(pal), opacity: pal.metal == nil ? 0.55 : 0.62)
         .frame(width: 88, height: 86)
       if pose == .sick {
         BudArt.image("bud_body").resizable().renderingMode(.template)
@@ -138,8 +138,8 @@ private struct BuddyBody: View {
           Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.55)).blur(radius: 2).buddyAt(12, 40, 16, 9)
           Ellipse().fill(Color(hex: 0xFF483C, alpha: 0.55)).blur(radius: 2).buddyAt(60, 40, 16, 9)
         }
-        BuddyEyes(pose: pose, ink: pal.face).buddyAt(0, 22, 88, 18)
-        BuddyMouth(pose: pose, ink: pal.face)
+        BuddyEyes(pose: pose, isOnDark: pal.isDark).buddyAt(0, 22, 88, 18)
+        BuddyMouth(pose: pose, ink: pal.isDark ? Color(hex: 0xC9CDD3) : nil)
         ForEach(face, id: \.self) { id in
           if let item = BudArt.studioFront[id] {
             BudStudioArt(item: item)
@@ -158,10 +158,10 @@ private struct BuddyBody: View {
 
 private struct BuddyEyes: View {
   let pose: BuddyPose
-  // Cor dos olhos (clara no Bud preto); padrão: preto
-  var ink: Color? = nil
-  private var dark: Color { ink ?? .buddyInk }
-  private var deep: Color { ink ?? Color(hex: 0x141210) }
+  // Bud preto: olho preto com aro claro e brilho forte; traços claros
+  var isOnDark = false
+  private var dark: Color { isOnDark ? Color(hex: 0xC9CDD3) : .buddyInk }
+  private var deep: Color { isOnDark ? Color(hex: 0xC9CDD3) : Color(hex: 0x141210) }
 
   var body: some View {
     HStack(alignment: .top, spacing: 20) {
@@ -197,9 +197,13 @@ private struct BuddyEyes: View {
         .rotationEffect(.degrees(i == 1 ? 12 : -12)).padding(.top, 7)
     default:
       // Olho da arte nova: oval preto com um reflexo suave
-      Ellipse().fill(deep).frame(width: 10, height: 15)
+      Ellipse().fill(Color(hex: 0x141210)).frame(width: 10, height: 15)
+        .overlay { if isOnDark { Ellipse().stroke(Color(hex: 0xAAB0BA, alpha: 0.65), lineWidth: 0.9) } }
         .overlay(alignment: .topLeading) {
-          Ellipse().fill(Color.white.opacity(0.28)).frame(width: 4, height: 5).offset(x: 2, y: 2)
+          Ellipse().fill(Color.white.opacity(isOnDark ? 0.92 : 0.28)).frame(width: 4, height: 5).offset(x: 2, y: 2)
+        }
+        .overlay(alignment: .bottomTrailing) {
+          if isOnDark { Circle().fill(Color.white.opacity(0.45)).frame(width: 2, height: 2).offset(x: -2, y: -2.5) }
         }
         .scaleEffect(y: pose == .run ? 0.75 : 1)
     }
@@ -289,10 +293,10 @@ private struct BuddyHand: View {
   var body: some View {
     ZStack(alignment: .topLeading) {
       if isAway {
-        BudTinted(name: isRight ? "bud_hand_r_full" : "bud_hand_l_full", tint: BudArt.tint(pal), opacity: pal.tintAlpha ?? 0.55)
+        BudTinted(name: BudArt.part(isRight ? "bud_hand_r_full" : "bud_hand_l_full", pal), tint: BudArt.tint(pal))
           .frame(width: full.width, height: full.height)
       } else {
-        BudTinted(name: isRight ? "bud_hand_r" : "bud_hand_l", tint: BudArt.tint(pal), opacity: pal.tintAlpha ?? 0.55)
+        BudTinted(name: BudArt.part(isRight ? "bud_hand_r" : "bud_hand_l", pal), tint: BudArt.tint(pal))
           .frame(width: rest.width, height: rest.height)
           .offset(x: rest.minX - full.minX, y: rest.minY - full.minY)
       }

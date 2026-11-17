@@ -7,8 +7,8 @@ import { eyeOffset, eyeScale, IBuddyPose, isSleepAct } from "./pose";
 
 interface IEyesProps {
 	pose: IBuddyPose;
-	// Cor dos olhos (clara no Bud preto); padrão: preto
-	ink?: string;
+	// Bud preto: olho preto com aro claro e brilho forte (senão some no corpo)
+	isOnDark?: boolean;
 }
 
 const INK = "#141210";
@@ -59,14 +59,37 @@ const GLOSS: ViewStyle = {
 	borderRadius: 3,
 	backgroundColor: "rgba(255,255,255,.28)",
 };
+// No Bud preto: aro claro em volta e reflexos mais fortes, como vidro
+const OPEN_DARK: ViewStyle = {
+	borderWidth: 0.9,
+	borderColor: "rgba(170,176,186,.65)",
+	boxShadow: "0 1px 3px rgba(0,0,0,.6)",
+};
+const GLOSS_DARK: ViewStyle = { backgroundColor: "rgba(255,255,255,.92)" };
+const GLOSS_LOW: ViewStyle = {
+	position: "absolute",
+	right: 2,
+	bottom: 2.5,
+	width: 2,
+	height: 2,
+	borderRadius: 1,
+	backgroundColor: "rgba(255,255,255,.45)",
+};
+// Olhos fechados e doentes no Bud preto: traço claro
+const LINE_DARK = "#C9CDD3";
 const FAST = {
 	transitionProperty: "transform",
 	transitionDuration: "0.09s",
 	transitionTimingFunction: "ease-out",
 } as const;
 
-const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1; ink: string }> = ({ pose, index, ink }) => {
+const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1; isOnDark: boolean }> = ({
+	pose,
+	index,
+	isOnDark,
+}) => {
 	const { act } = pose;
+	const ink = isOnDark ? LINE_DARK : INK;
 	const color = { borderColor: ink };
 	if (isSleepAct(act) && !(act === "peek" && index === 0)) return <View style={[CLOSED, color]} />;
 	if (act === "celebrate") return <View style={[HAPPY, color]} />;
@@ -95,18 +118,19 @@ const Eye: React.FC<{ pose: IBuddyPose; index: 0 | 1; ink: string }> = ({ pose, 
 		<Animated.View
 			style={[
 				OPEN,
-				{ backgroundColor: ink },
+				isOnDark ? OPEN_DARK : null,
 				{ transform: [{ scaleX: sx }, { scaleY: sy }] },
 				FAST,
 			]}
 		>
-			<View style={GLOSS} />
+			<View style={[GLOSS, isOnDark ? GLOSS_DARK : null]} />
+			{isOnDark ? <View style={GLOSS_LOW} /> : null}
 		</Animated.View>
 	);
 };
 
 // Olhos do Buddy: abertos, piscando, dormindo, felizes ou doentes.
-export const Eyes: React.FC<IEyesProps> = ({ pose, ink = INK }) => {
+export const Eyes: React.FC<IEyesProps> = ({ pose, isOnDark = false }) => {
 	const [ex, ey] = eyeOffset(pose);
 
 	return (
@@ -121,8 +145,8 @@ export const Eyes: React.FC<IEyesProps> = ({ pose, ink = INK }) => {
 				},
 			]}
 		>
-			<Eye pose={pose} index={0} ink={ink} />
-			<Eye pose={pose} index={1} ink={ink} />
+			<Eye pose={pose} index={0} isOnDark={isOnDark} />
+			<Eye pose={pose} index={1} isOnDark={isOnDark} />
 		</Animated.View>
 	);
 };

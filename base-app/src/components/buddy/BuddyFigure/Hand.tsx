@@ -7,7 +7,7 @@ import { BUDDY_COLORS, IBuddyPalette } from "@/lib/buddy/constants";
 
 import { EASE_SPRING } from "../animations";
 
-import { BUD_ART, HAND_BOX } from "./budArt";
+import { budArtOf, HAND_BOX } from "./budArt";
 import { handAnimation, handPositions, IBuddyPose, isRingPhase, isSleepAct } from "./pose";
 
 interface IHandProps {
@@ -31,9 +31,9 @@ interface IHandTint {
 }
 
 const tintOf = (pal: IBuddyPalette): IHandTint | null => {
-	if (pal === BUDDY_COLORS.branco) return null;
+	if (pal === BUDDY_COLORS.branco || pal.isDark) return null;
 	const color = pal.metal && pal.m ? pal.m[1] : pal.c[2];
-	return { color, alpha: pal.tintAlpha ?? 0.55 };
+	return { color, alpha: 0.55 };
 };
 
 // Uma camada da mão (arte + cor por cima, como no corpo), em tamanho fixo
@@ -76,6 +76,7 @@ export const Hand: React.FC<IHandProps> = ({ pose, pal, index, isMini }) => {
 	const full = index ? HAND_BOX.handRFull : HAND_BOX.handLFull;
 	const rest = index ? HAND_BOX.handR : HAND_BOX.handL;
 	const tint = tintOf(pal);
+	const art = budArtOf(pal.isDark);
 
 	return (
 		<Animated.View
@@ -99,13 +100,13 @@ export const Hand: React.FC<IHandProps> = ({ pose, pal, index, isMini }) => {
 					]}
 				>
 					<HandArt
-						source={index ? BUD_ART.handRFull : BUD_ART.handLFull}
+						source={index ? art.handRFull : art.handLFull}
 						box={{ left: 0, top: 0, width: full.width, height: full.height }}
 						tint={tint}
 						opacity={isAway ? 1 : 0}
 					/>
 					<HandArt
-						source={index ? BUD_ART.handR : BUD_ART.handL}
+						source={index ? art.handR : art.handL}
 						box={{
 							left: rest.left - full.left,
 							top: rest.top - full.top,

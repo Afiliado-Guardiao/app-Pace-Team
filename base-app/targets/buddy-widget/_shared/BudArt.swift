@@ -29,8 +29,13 @@ enum BudArt {
   static let handRFull = box(499, 738, 159, 159)
 
   // Cor do Buddy por cima do algodão (o branco é a arte pura)
+  // Nome da camada da arte: o Bud preto usa a arte escura própria
+  static func part(_ name: String, _ pal: BuddyPalette) -> String {
+    pal.isDark ? name + "_dark" : name
+  }
+
   static func tint(_ pal: BuddyPalette) -> Color? {
-    if pal.name == "Branco" { return nil }
+    if pal.name == "Branco" || pal.isDark { return nil }
     if let metal = pal.metal { return metal[1] }
     return pal.body[2]
   }

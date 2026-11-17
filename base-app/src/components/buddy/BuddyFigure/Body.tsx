@@ -15,7 +15,7 @@ import {
 import { anim, EASE_SPRING } from "../animations";
 
 import { HeadAccessory } from "./accessories/HeadAccessory";
-import { BODY_H, BODY_LEFT, BODY_TOP, BODY_W, BUD_ART, FACE_TOP } from "./budArt";
+import { BODY_H, BODY_LEFT, BODY_TOP, BODY_W, budArtOf, FACE_TOP } from "./budArt";
 import { Eyes } from "./Eyes";
 import { Mouth } from "./Mouth";
 import { IBuddyPose, isSleepAct } from "./pose";
@@ -58,11 +58,13 @@ const CHEEK: ViewStyle = {
 const ART: ImageStyle = { width: BODY_W, height: BODY_H };
 const OVER: ImageStyle = { position: "absolute", top: 0, left: 0, width: BODY_W, height: BODY_H };
 const SICK = "#FF402C";
+// Boca no Bud preto: clara para aparecer
+const DARK_FACE = "#C9CDD3";
 
 // Cor do Buddy por cima do algodão: a arte tingida, meio transparente, deixa
 // a luz e a sombra da arte aparecerem (o branco é a arte pura)
 const tintOf = (pal: IBuddyPalette): string | null => {
-	if (pal === BUDDY_COLORS.branco) return null;
+	if (pal === BUDDY_COLORS.branco || pal.isDark) return null;
 	return pal.metal && pal.m ? pal.m[1] : pal.c[2];
 };
 
@@ -83,6 +85,7 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 	const crownLift = heads.some((x) => HATS.includes(x)) ? CROWN_LIFT : 0;
 
 	const tint = tintOf(pal);
+	const art = budArtOf(pal.isDark);
 
 	return (
 		<Animated.View
@@ -104,11 +107,11 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 				},
 			]}
 		>
-			<Image source={BUD_ART.body} style={ART} resizeMode="contain" />
+			<Image source={art.body} style={ART} resizeMode="contain" />
 			{tint ? (
 				<Image
-					source={BUD_ART.body}
-					style={[OVER, { tintColor: tint, opacity: pal.tintAlpha ?? (pal.metal ? 0.62 : 0.55) }]}
+					source={art.body}
+					style={[OVER, { tintColor: tint, opacity: pal.metal ? 0.62 : 0.55 }]}
 					resizeMode="contain"
 				/>
 			) : null}
@@ -120,7 +123,7 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 			{isSick ? (
 				<Animated.View style={[FILL, isMini ? null : anim("flush", "1.6s")]} pointerEvents="none">
 					<Image
-						source={BUD_ART.body}
+						source={art.body}
 						style={[OVER, { tintColor: SICK, opacity: 0.24 }]}
 						resizeMode="contain"
 					/>
@@ -131,8 +134,8 @@ export const Body: React.FC<IBodyProps> = ({ pose, pal, accessories, dropId, isM
 				</Animated.View>
 			) : null}
 			<View style={FACE} pointerEvents="none">
-				<Eyes pose={pose} ink={pal.face} />
-				<Mouth act={pose.act} ink={pal.face} />
+				<Eyes pose={pose} isOnDark={pal.isDark} />
+				<Mouth act={pose.act} ink={pal.isDark ? DARK_FACE : undefined} />
 				{heads.map((id) => (
 					<HeadAccessory
 						key={id}

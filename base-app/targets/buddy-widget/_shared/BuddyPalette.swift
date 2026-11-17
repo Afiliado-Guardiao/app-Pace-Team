@@ -32,10 +32,8 @@ struct BuddyPalette {
   var ink: Color? = nil
   var spark = false
   var isTier = false
-  // Força da cor por cima da arte branca (padrão 0,55; o preto vai quase cheio)
-  var tintAlpha: Double? = nil
-  // Olhos e boca claros quando o corpo é escuro demais para o preto
-  var face: Color? = nil
+  // Bud preto: arte própria (sem pintar por cima) e olhos com aro e brilho
+  var isDark = false
 
   static func of(_ id: String) -> BuddyPalette { all[id] ?? all["branco"]! }
 
@@ -70,7 +68,7 @@ struct BuddyPalette {
       shade: Color(red: 160 / 255, green: 40 / 255, blue: 20 / 255, opacity: 0.4)),
     "grafite": BuddyPalette(
       name: "Preto", body: [Color(hex: 0x3A3F46), Color(hex: 0x1E2227), Color(hex: 0x0B0C0E), Color(hex: 0x000000)],
-      shade: Color(red: 0, green: 0, blue: 0, opacity: 0.7), tintAlpha: 0.88, face: Color(hex: 0xF4F1EA)),
+      shade: Color(red: 0, green: 0, blue: 0, opacity: 0.7), isDark: true),
     "lava": BuddyPalette(
       name: "Lava", body: [Color(hex: 0xFFE08A), Color(hex: 0xFF9A2E), Color(hex: 0xF0461E), Color(hex: 0x8F1306)],
       shade: Color(red: 120 / 255, green: 20 / 255, blue: 0, opacity: 0.5)),

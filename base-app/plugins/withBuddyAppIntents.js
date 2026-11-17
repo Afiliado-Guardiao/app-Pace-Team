@@ -24,6 +24,11 @@ const BUD_PARTS = {
 	bud_hand_r: "handR",
 	bud_hand_l_full: "handLFull",
 	bud_hand_r_full: "handRFull",
+	bud_body_dark: "bodyDark",
+	bud_hand_l_dark: "handLDark",
+	bud_hand_r_dark: "handRDark",
+	bud_hand_l_full_dark: "handLFullDark",
+	bud_hand_r_full_dark: "handRFullDark",
 };
 const artFiles = (projectRoot) => {
 	const bud = Object.entries(BUD_PARTS).map(([name, file]) => ({

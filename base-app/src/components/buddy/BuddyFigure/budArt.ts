@@ -2,12 +2,30 @@
 // corpo inteiro (domo) e as mãos. "handL"/"handR" são a mão como na arte
 // (encaixada no corpo); "Full" é a esfera completa, para quando a mão se mexe.
 import body from "../../../../assets/bud/body.png";
+import bodyDark from "../../../../assets/bud/bodyDark.png";
 import handL from "../../../../assets/bud/handL.png";
+import handLDark from "../../../../assets/bud/handLDark.png";
 import handLFull from "../../../../assets/bud/handLFull.png";
+import handLFullDark from "../../../../assets/bud/handLFullDark.png";
 import handR from "../../../../assets/bud/handR.png";
+import handRDark from "../../../../assets/bud/handRDark.png";
 import handRFull from "../../../../assets/bud/handRFull.png";
+import handRFullDark from "../../../../assets/bud/handRFullDark.png";
 
 export const BUD_ART = { body, handL, handR, handLFull, handRFull } as const;
+
+// Bud preto: a mesma arte com a luz e a sombra levadas para o escuro (pintar
+// a arte branca de preto por cima deixava o Bud chapado, sem volume)
+const BUD_ART_DARK: typeof BUD_ART = {
+	body: bodyDark,
+	handL: handLDark,
+	handR: handRDark,
+	handLFull: handLFullDark,
+	handRFull: handRFullDark,
+};
+
+export const budArtOf = (isDark: boolean | undefined): typeof BUD_ART =>
+	isDark ? BUD_ART_DARK : BUD_ART;
 
 // Medidas na arte original (px): caixa do corpo e das mãos
 const SRC = { x: 125, y: 535, w: 455, h: 444 } as const;

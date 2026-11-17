@@ -20,6 +20,12 @@ module.exports = (config) => ({
 		bud_hand_r: "../../assets/bud/handR.png",
 		bud_hand_l_full: "../../assets/bud/handLFull.png",
 		bud_hand_r_full: "../../assets/bud/handRFull.png",
+		// Bud preto: arte própria (luz e sombra no escuro)
+		bud_body_dark: "../../assets/bud/bodyDark.png",
+		bud_hand_l_dark: "../../assets/bud/handLDark.png",
+		bud_hand_r_dark: "../../assets/bud/handRDark.png",
+		bud_hand_l_full_dark: "../../assets/bud/handLFullDark.png",
+		bud_hand_r_full_dark: "../../assets/bud/handRFullDark.png",
 		studio_astronauta: "../../assets/studio/astronauta.png",
 		studio_espadas: "../../assets/studio/espadas.png",
 		studio_espelhado: "../../assets/studio/espelhado.png",

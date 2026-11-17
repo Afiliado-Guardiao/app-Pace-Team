@@ -164,10 +164,9 @@ export interface IBuddyPalette {
 	ink?: string;
 	// Cor do Buddy Studio (Team Pro)
 	pro?: boolean;
-	// Força da cor por cima da arte branca (padrão 0,55; o preto vai quase cheio)
-	tintAlpha?: number;
-	// Cor dos olhos e da boca quando o corpo é escuro demais para o preto
-	face?: string;
+	// Corpo escuro: usa a arte preta própria (sem pintar por cima) e o rosto
+	// ganha aro e brilho para aparecer no preto
+	isDark?: boolean;
 }
 
 export const BUDDY_COLORS: Record<IBuddyColorId, IBuddyPalette> = {
@@ -256,8 +255,7 @@ export const BUDDY_COLORS: Record<IBuddyColorId, IBuddyPalette> = {
 		pro: true,
 		c: ["#3A3F46", "#1E2227", "#0B0C0E", "#000000"],
 		sh: "rgba(0,0,0,.7)",
-		tintAlpha: 0.88,
-		face: "#F4F1EA",
+		isDark: true,
 	},
 	lava: {
 		name: "Lava",
