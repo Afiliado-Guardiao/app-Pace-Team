@@ -66,8 +66,18 @@ jobs:
           printf '%s\n' "$ASC_KEY_P8" > "$EXPO_ASC_API_KEY_PATH"
           export EXPO_ASC_KEY_ID="$ASC_KEY_ID" EXPO_ASC_ISSUER_ID="$ASC_ISSUER_ID"
           export EXPO_APPLE_TEAM_ID=DD89586P8R EXPO_APPLE_TEAM_TYPE=INDIVIDUAL
+          set +e
           eas build --platform ios --profile production --local --non-interactive \
-            --output "$RUNNER_TEMP/pace-team.ipa"
+            --output "$RUNNER_TEMP/pace-team.ipa" 2>&1 | tee "$RUNNER_TEMP/build.log"
+          code=${PIPESTATUS[0]}
+          set -e
+          if [ "$code" != 0 ]; then
+            # O registro do GitHub pede login: o erro vira aviso legível sem login
+            msg=$( (grep -iE "error|provision|entitlement|capabilit|signing|failed" "$RUNNER_TEMP/build.log" | tail -n 25; echo '---'; tail -n 25 "$RUNNER_TEMP/build.log") \
+              | sed 's/\x1b\[[0-9;]*m//g' | grep -v '^\s*$' | sed 's/%/%25/g' | awk '{printf "%s%%0A", substr($0,1,300)}')
+            echo "::error title=Build::$msg"
+            exit 1
+          fi
           ls -la "$RUNNER_TEMP/pace-team.ipa"
       - name: Enviar ao TestFlight
         env:
