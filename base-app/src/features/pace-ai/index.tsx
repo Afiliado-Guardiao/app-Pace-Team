@@ -4,7 +4,7 @@ import { ScrollView, Text, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { FloatingToast, ScreenBackground, TopBar } from "@/components/pace";
+import { FloatingToast, InfoNote, ScreenBackground, TopBar } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
@@ -65,9 +65,17 @@ export const PaceAiScreen: React.FC = () => {
 					<AiHello text={screen.greeting} isThinking={screen.isSending} />
 					{isEmpty && screen.week ? <AiWeekCard week={screen.week} /> : null}
 					{isEmpty ? <AiSuggestions onAsk={screen.ask} isDisabled={screen.isSending} /> : null}
-					{screen.messages.map((m) => (
-						<AiBubble key={m.id} role={m.role} content={m.content} />
+					{screen.messages.map((m, i) => (
+						<AiBubble
+							key={m.id}
+							role={m.role}
+							content={m.content}
+							isPlaying={m.isPlaying}
+							onListen={m.onListen}
+							testID={`pace-ai-msg-${String(i)}`}
+						/>
 					))}
+					{screen.showVoiceTip ? <InfoNote icon="audio-lines">{C.voiceTip}</InfoNote> : null}
 					{screen.isSending ? <AiThinking /> : null}
 					{isEmpty ? <Text style={styles.disclaimer}>{C.disclaimer}</Text> : null}
 				</ScrollView>

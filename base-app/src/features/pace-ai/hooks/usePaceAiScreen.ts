@@ -4,7 +4,7 @@ import { ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
-import { useAiContext, useAiHistory, useMyPro } from "@/lib/data";
+import { useAiContext, useMyPro } from "@/lib/data";
 import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
@@ -13,18 +13,23 @@ import { IAiComposerModel } from "../components/AiComposer";
 import { IAiHistoryModel } from "../components/AiHistorySheet";
 import { DAILY_LIMIT, PACE_AI_COPY } from "../constants";
 import { aiWeekView, IAiWeekView } from "../utils/aiWeek";
+import { IAiBubbleItem, toBubbles } from "../utils/bubbles";
 
+import { useAiHistoryModel } from "./useAiHistoryModel";
+import { useAiSpeaker } from "./useAiSpeaker";
 import { useAiVoice } from "./useAiVoice";
-import { IChatMessage, usePaceAiChat } from "./usePaceAiChat";
+import { usePaceAiChat } from "./usePaceAiChat";
 
 interface IUsePaceAiScreenReturn {
 	greeting: string;
 	week: IAiWeekView | null;
-	messages: IChatMessage[];
+	messages: IAiBubbleItem[];
 	isSending: boolean;
 	toast: IFloatingToastData | null;
 	scrollRef: React.RefObject<ScrollView | null>;
 	composer: IAiComposerModel;
+	// Só a voz básica no iPhone: como baixar a natural
+	showVoiceTip: boolean;
 	history: IAiHistoryModel;
 	ask: (question: string) => void;
 	openHistory: () => void;
@@ -41,7 +46,6 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 	const { isPro, isLoading: isProLoading } = useMyPro();
 	const isAllowed = IS_PREVIEW || isPro;
 	const { context, refresh } = useAiContext(isAllowed);
-	const historyData = useAiHistory(isAllowed);
 	const chat = usePaceAiChat(context, showToast);
 	const userName = useStore((s) => s.user?.name);
 	const [draft, setDraft] = useState("");
@@ -60,7 +64,9 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 80);
 	}, []);
 
-	const voiceRef = useRef<ReturnType<typeof useAiVoice> | null>(null);
+	const speaker = useAiSpeaker();
+	const speakRef = useRef(speaker.speak);
+	speakRef.current = speaker.speak;
 	const ask = useCallback(
 		(question: string) => {
 			// Campo vazio: não faz nada (antes ia e voltava sem enviar)
@@ -69,7 +75,7 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 			scrollToEnd();
 			void chat.send(question).then((reply) => {
 				scrollToEnd();
-				if (reply) voiceRef.current?.speak(reply);
+				if (reply) speakRef.current(reply);
 				else setDraft(question);
 				void refresh();
 			});
@@ -77,39 +83,26 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		[chat, refresh, scrollToEnd],
 	);
 	// A fala entra no campo (somando ao que já está escrito); só vai no Enviar
-	const voice = useAiVoice((text) => {
-		setDraft((current) => (current.trim() ? `${current.trim()} ${text}` : text));
-	}, showToast);
-	voiceRef.current = voice;
+	const voice = useAiVoice(
+		(text) => {
+			setDraft((current) => (current.trim() ? `${current.trim()} ${text}` : text));
+		},
+		showToast,
+		speaker,
+	);
 
-	const history: IAiHistoryModel = {
+	const history = useAiHistoryModel({
+		isAllowed,
 		isOpen: isHistoryOpen,
-		items: historyData.conversations,
-		activeId: chat.conversationId,
-		close: () => {
-			setIsHistoryOpen(false);
-		},
-		pick: (id) => {
-			setIsHistoryOpen(false);
-			void historyData.loadMessages(id).then((list) => {
-				chat.open(id, list);
-				scrollToEnd();
-			});
-		},
-		remove: (id) => {
-			historyData.remove(id);
-			if (id === chat.conversationId) chat.reset();
-		},
-		startNew: () => {
-			setIsHistoryOpen(false);
-			chat.reset();
-		},
-	};
+		setIsOpen: setIsHistoryOpen,
+		chat,
+		onLoaded: scrollToEnd,
+	});
 
 	return {
 		greeting: PACE_AI_COPY.greeting(firstName(context?.me.name ?? userName)),
 		week,
-		messages: chat.messages,
+		messages: toBubbles(chat.messages, speaker),
 		isSending: chat.isSending,
 		toast,
 		scrollRef,
@@ -126,13 +119,14 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 			left: chat.left,
 			limit: DAILY_LIMIT,
 			isListening: voice.isListening,
-			isSpeakOn: voice.isSpeakOn,
+			isSpeakOn: speaker.isSpeakOn,
 			listen: voice.listen,
 			stopListening: voice.stopListening,
-			toggleSpeak: voice.toggleSpeak,
-			speedLabel: voice.speedLabel,
-			cycleSpeed: voice.cycleSpeed,
+			toggleSpeak: speaker.toggleSpeak,
+			speedLabel: speaker.speedLabel,
+			cycleSpeed: speaker.cycleSpeed,
 		},
+		showVoiceTip: speaker.isBasicVoice && (speaker.isSpeakOn || speaker.playing !== null),
 		history,
 		ask,
 		openHistory: () => {

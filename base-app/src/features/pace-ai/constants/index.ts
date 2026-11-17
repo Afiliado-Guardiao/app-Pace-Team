@@ -24,6 +24,11 @@ export const PACE_AI_COPY = {
 	speakOn: "Ler as respostas em voz alta",
 	speakOff: "Parar de ler as respostas",
 	speed: "Velocidade da voz",
+	listenAgain: "Ouvir",
+	listenStop: "Parar",
+	listenAgainLabel: "Ouvir esta resposta de novo",
+	voiceTip:
+		"Para a voz do Buddy ficar bem mais natural, baixe uma voz melhor no iPhone: Ajustes › Acessibilidade › Conteúdo Falado › Vozes › Português (Brasil) › Felipe (Aprimorada).",
 	left: (n: number, limit: number) => `Restam ${String(n)} de ${String(limit)} perguntas hoje`,
 	disclaimer:
 		"A PACE AI usa só as corridas registradas no PACE TEAM. Não substitui médico nem treinador.",
