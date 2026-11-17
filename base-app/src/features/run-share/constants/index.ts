@@ -60,7 +60,7 @@ export const SHARE_COPY = {
 	yourTeam: "SUA EQUIPE",
 	inRanking: "NO RANKING",
 	distance: "Distância",
-	pace: "Ritmo",
+	pace: "Pace",
 	time: "Tempo",
 	points: "Pontos",
 	you: "Você",

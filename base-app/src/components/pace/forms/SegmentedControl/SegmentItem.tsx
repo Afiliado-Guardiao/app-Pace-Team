@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import { GlassSurface } from "../../primitives";
 
@@ -8,6 +8,7 @@ import { ISegmentedControlStyles } from "./types";
 interface ISegmentItemProps {
 	value: string;
 	label: string;
+	badge?: string;
 	isActive: boolean;
 	onSelect: (value: string) => void;
 	styles: ISegmentedControlStyles;
@@ -18,6 +19,7 @@ interface ISegmentItemProps {
 export const SegmentItem: React.FC<ISegmentItemProps> = ({
 	value,
 	label,
+	badge,
 	isActive,
 	onSelect,
 	styles,
@@ -41,6 +43,11 @@ export const SegmentItem: React.FC<ISegmentItemProps> = ({
 				<Text style={isActive ? styles.activeText : styles.itemText} numberOfLines={1}>
 					{label}
 				</Text>
+				{badge ? (
+					<View style={styles.badge}>
+						<Text style={styles.badgeText}>{badge}</Text>
+					</View>
+				) : null}
 			</GlassSurface>
 		</Pressable>
 	);

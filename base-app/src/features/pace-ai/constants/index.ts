@@ -10,7 +10,7 @@ export const PACE_AI_COPY = {
 	weekTitle: "Sua semana",
 	weekKm: "km",
 	weekRuns: "corridas",
-	weekPace: "ritmo médio",
+	weekPace: "pace médio",
 	prevWeek: (km: string) => `Semana passada: ${km} km`,
 	noRuns: "Nenhuma corrida nesta semana ainda. Bora sair para a primeira?",
 	weeksLabel: "Últimas 8 semanas",

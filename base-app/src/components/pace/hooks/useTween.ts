@@ -4,24 +4,30 @@ import { useReducedMotion } from "react-native-reanimated";
 
 import { useSplashDone } from "@/components/core/BootSplash/splashState";
 
+import { useReplayEpoch } from "./useReplayEpoch";
+
 interface IUseTweenOptions {
 	duration: number;
 	delay?: number;
 	easing: (t: number) => number;
+	// Número contando não é movimento na tela: o CountUp anima mesmo com
+	// "reduzir movimento" ligado (o arco do medidor respeita)
+	isMotion?: boolean;
 }
 
-// Anima um número de 0 até o alvo (CountUp, arco do medidor). Com
-// "reduzir movimento" ligado, vai direto ao valor final. Espera a abertura
-// (o Bud das bolinhas) sair da frente: antes contava escondido atrás dela e o
-// atleta já via o número parado.
+// Anima um número de 0 até o alvo (CountUp, arco do medidor). Espera a
+// abertura (o Bud das bolinhas) sair da frente e recomeça sempre que o app
+// volta do segundo plano (é assim que o atleta "abre" o app quase sempre).
 export const useTween = (target: number, options: IUseTweenOptions): number => {
-	const { duration, delay = 0, easing } = options;
+	const { duration, delay = 0, easing, isMotion = true } = options;
 	const reduceMotion = useReducedMotion();
+	const isStill = isMotion && reduceMotion;
 	const isSplashDone = useSplashDone();
-	const [value, setValue] = useState(reduceMotion ? target : 0);
+	const replay = useReplayEpoch();
+	const [value, setValue] = useState(isStill ? target : 0);
 
 	useEffect(() => {
-		if (reduceMotion) {
+		if (isStill) {
 			setValue(target);
 			return;
 		}
@@ -40,7 +46,7 @@ export const useTween = (target: number, options: IUseTweenOptions): number => {
 		return () => {
 			cancelAnimationFrame(frame);
 		};
-	}, [target, duration, delay, easing, reduceMotion, isSplashDone]);
+	}, [target, duration, delay, easing, isStill, isSplashDone, replay]);
 
 	return value;
 };

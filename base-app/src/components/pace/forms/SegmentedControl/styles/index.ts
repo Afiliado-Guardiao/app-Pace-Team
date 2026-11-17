@@ -22,11 +22,24 @@ export const createSegmentedControlStyles = (
 		item: {
 			height: itemHeight,
 			paddingHorizontal: ITEM_PADDING_X[size],
+			flexDirection: "row",
 			alignItems: "center",
 			justifyContent: "center",
+			gap: 5,
 		},
 		itemText: { fontFamily: typography.fonts.semibold, fontSize, color: colors.textSecondary },
 		activeText: { fontFamily: typography.fonts.bold, fontSize, color: colors.ink.white },
+		badge: {
+			paddingHorizontal: 5,
+			paddingVertical: 1,
+			borderRadius: 6,
+			backgroundColor: colors.ink.white,
+		},
+		badgeText: {
+			fontFamily: typography.fonts.extrabold,
+			fontSize: typography.sizes.micro,
+			color: colors.orange[500],
+		},
 		containerAppearance: {
 			fill: { color: colors.glass1 },
 			blur: blur.intensity.glass,

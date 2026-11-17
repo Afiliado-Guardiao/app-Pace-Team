@@ -5,7 +5,7 @@ export const RUN_REVIEW_COPY = {
 	close: "Fechar",
 	distance: "Distância",
 	time: "Tempo",
-	pace: "Ritmo",
+	pace: "Pace",
 	speed: "Velocidade",
 	team: "Ficha da equipe",
 	best: "Melhor desempenho",

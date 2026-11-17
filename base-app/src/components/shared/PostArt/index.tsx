@@ -93,7 +93,7 @@ const placePins = (
 		return { image: pin.image, name: pin.name, label: pin.label, x: x + crowd.length * SPREAD, y };
 	});
 };
-const COPY = { distance: "Distância", pace: "Ritmo", time: "Tempo" } as const;
+const COPY = { distance: "Distância", pace: "Pace", time: "Tempo" } as const;
 
 // Foto da corrida com a marca PACE TEAM: métricas, percurso, equipe e logo.
 export const PostArt: React.FC<IPostArtProps> = ({

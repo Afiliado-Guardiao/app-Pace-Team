@@ -44,6 +44,7 @@ export const SegmentedControl: React.FC<ISegmentedControlProps> = ({
 						key={item.value}
 						value={item.value}
 						label={item.label}
+						badge={"badge" in item ? item.badge : undefined}
 						isActive={item.value === value}
 						onSelect={onChange}
 						styles={styles}

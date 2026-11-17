@@ -108,7 +108,7 @@ export const RouteCompareCard: React.FC<IRouteCompareCardProps> = ({
 						)}
 						<Text style={styles.deltaText}>{deltaText}</Text>
 					</View>
-					<Text style={styles.sub}>{`Ritmo: ${paces}`}</Text>
+					<Text style={styles.sub}>{`Pace: ${paces}`}</Text>
 					<Text style={styles.cheer}>{cheer}</Text>
 				</View>
 			</View>

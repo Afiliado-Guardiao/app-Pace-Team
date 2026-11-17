@@ -156,6 +156,24 @@ export const SETUP_COPY = {
 		{ say: "E aí Siri, correr com o Buddy", reply: "Bora! Corrida com o Buddy iniciada." },
 		{ say: "E aí Siri, Bud, correr com a equipe", reply: "Chamando a sua equipe…" },
 	],
+	// Água (Team Pro): a Siri responde quanto beber hoje
+	callWater: "Água",
+	callPro: "PRO",
+	callWaterText: "Pergunte à Siri quanto de água beber hoje",
+	callWaterPhrases: [
+		{
+			say: "E aí Siri, pergunta pro Bud quanto de água eu tenho que beber",
+			reply: "Hoje, cerca de 2,6 litros. Faltam 1,2 litro.",
+		},
+	],
+	callWaterNote: "PACE HYDRATION é do Team Pro. É uma estimativa, não uma orientação médica.",
+	// Relógio: corridas do Apple Watch, Garmin, Polar… pelo app Saúde
+	callWatch: "Relógio",
+	callWatchBubble: "Seu relógio também conta!",
+	callWatchText: "Correu com o relógio? Vale ponto também.",
+	callWatchBrands: "Apple Watch, Garmin, Polar, Coros, Suunto…",
+	callWatchHint:
+		"Ligue o relógio no app Saúde do iPhone e conecte em Perfil › Configurações › Relógio e Apple Saúde.",
 	callCta: "Entendi",
 	// 3c
 	careTitle: "Cuide de mim",

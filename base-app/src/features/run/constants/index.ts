@@ -16,7 +16,7 @@ export const RUN_COPY = {
 	start: "INICIAR",
 	distance: "Distância",
 	time: "Tempo",
-	pace: "Ritmo",
+	pace: "Pace",
 	goalHint: "Ajuste dois valores e o terceiro é calculado. Toque no número para digitar.",
 	onlineTitleSuffix: " do time online",
 	onlineSub: "Com o app aberto ou correndo agora",

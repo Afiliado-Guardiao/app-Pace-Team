@@ -23,6 +23,7 @@ export const useCountUp = (
 		duration: options.duration,
 		delay: options.delay,
 		easing: easeOutBack,
+		isMotion: false,
 	});
 
 	return { text: formatCountUp(current, parts), isNumeric: parts.isNumeric };

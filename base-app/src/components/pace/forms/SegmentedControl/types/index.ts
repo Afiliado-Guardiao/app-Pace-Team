@@ -2,7 +2,8 @@ import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 import { IGlassAppearance } from "../../../primitives";
 
-export type ISegmentOption = string | { value: string; label: string };
+// badge: selinho pequeno ao lado do nome (ex.: "PRO")
+export type ISegmentOption = string | { value: string; label: string; badge?: string };
 export type ISegmentSize = "sm" | "md";
 
 export interface ISegmentedControlProps {
@@ -20,6 +21,8 @@ export interface ISegmentedControlStyles {
 	pressable: ViewStyle;
 	item: ViewStyle;
 	itemText: TextStyle;
+	badge: ViewStyle;
+	badgeText: TextStyle;
 	activeText: TextStyle;
 	containerAppearance: IGlassAppearance;
 	activeAppearance: IGlassAppearance;

@@ -12,7 +12,7 @@ export const RUN_LIVE_COPY = {
 	finish: "Finalizar",
 	share: "Compartilhar",
 	post: "Postar",
-	pace: "Ritmo",
+	pace: "Pace",
 	speed: "km/h",
 	pause: "Pausar",
 	resume: "Retomar",

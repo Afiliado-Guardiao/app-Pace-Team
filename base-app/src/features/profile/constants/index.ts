@@ -6,7 +6,7 @@ export const PROFILE_COPY = {
 	edit: "Editar perfil",
 	runs: "Corridas",
 	km: "Km",
-	pace: "Ritmo",
+	pace: "Pace",
 	stats: "Estatísticas",
 	medals: "Medalhas",
 	seeAll: "Ver todas",
