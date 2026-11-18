@@ -95,24 +95,36 @@ jobs:
           # Expo, que às vezes fica fora do ar. 2º: o envio da Expo, com limite
           # de 30 min por tentativa. Se tudo falhar, o fim da saída vira aviso
           # de erro, legível sem login.
+          # Só conta como enviado quando o build aparece na App Store Connect:
+          # o altool já terminou "com sucesso" sem nada chegar na Apple
+          export ASC_APP_ID=6826709233
+          PLIST=$(unzip -Z1 "$RUNNER_TEMP/pace-team.ipa" | grep -E '^Payload/[^/]+\.app/Info\.plist$' | head -1)
+          unzip -p "$RUNNER_TEMP/pace-team.ipa" "$PLIST" > "$RUNNER_TEMP/Info.plist"
+          VER=$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' "$RUNNER_TEMP/Info.plist")
+          echo "Build $VER"
+          arrived() { node ../.github/scripts/asc-upload-status.js "$VER" 2>&1 | tee -a "$RUNNER_TEMP/submit.log"; [ "${PIPESTATUS[0]}" = 0 ]; }
           mkdir -p "$HOME/.appstoreconnect/private_keys"
           cp "$KEY" "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           ok=""
           for i in 1 2; do
-            if xcrun altool --upload-app -f "$RUNNER_TEMP/pace-team.ipa" -t ios \
-              --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee -a "$RUNNER_TEMP/submit.log"; [ "${PIPESTATUS[0]}" = 0 ]; then ok=1; break; fi
-            echo "Envio direto $i falhou"; sleep 60
+            xcrun altool --upload-app -f "$RUNNER_TEMP/pace-team.ipa" -t ios \
+              --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee -a "$RUNNER_TEMP/submit.log"
+            if arrived; then ok=1; break; fi
+            echo "Envio direto $i não chegou na Apple"
           done
           if [ -z "$ok" ]; then
-            if perl -e 'alarm shift; exec @ARGV' 1800 eas submit --platform ios --profile production \
-              --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive 2>&1 | tee -a "$RUNNER_TEMP/submit.log"; [ "${PIPESTATUS[0]}" = 0 ]; then ok=1; fi
+            perl -e 'alarm shift; exec @ARGV' 1800 eas submit --platform ios --profile production \
+              --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive 2>&1 | tee -a "$RUNNER_TEMP/submit.log"
+            if arrived; then ok=1; fi
           fi
           rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
+          # O fim da saída do envio sempre vira aviso (legível sem login)
+          msg=$(tail -n 40 "$RUNNER_TEMP/submit.log" | sed 's/\x1b\[[0-9;]*m//g' | grep -v '^\s*$' | sed 's/%/%25/g' | awk '{printf "%s%%0A", substr($0,1,300)}')
           if [ -z "$ok" ]; then
-            msg=$(tail -n 40 "$RUNNER_TEMP/submit.log" | sed 's/\x1b\[[0-9;]*m//g' | grep -v '^\s*$' | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
-            echo "::error title=Envio ao TestFlight::$msg"
+            echo "::error title=Envio ao TestFlight (build $VER)::$msg"
             rm -f "$KEY"; exit 1
           fi
+          echo "::notice title=Enviado ao TestFlight (build $VER)::$msg"
           rm -f "$KEY"
           git checkout -- eas.json
         shell: bash
