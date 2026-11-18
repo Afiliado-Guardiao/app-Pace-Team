@@ -97,6 +97,9 @@ jobs:
           # de erro, legível sem login.
           # Só conta como enviado quando o build aparece na App Store Connect:
           # o altool já terminou "com sucesso" sem nada chegar na Apple
+          # shell: bash roda com "-e -o pipefail": um envio que falha não pode
+          # derrubar o passo antes de o erro virar aviso
+          set +e +o pipefail
           export ASC_APP_ID=6826709233
           PLIST=$(unzip -Z1 "$RUNNER_TEMP/pace-team.ipa" | grep -E '^Payload/[^/]+\.app/Info\.plist$' | head -1)
           unzip -p "$RUNNER_TEMP/pace-team.ipa" "$PLIST" > "$RUNNER_TEMP/Info.plist"
@@ -107,18 +110,23 @@ jobs:
           cp "$KEY" "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
           ok=""
           for i in 1 2; do
-            xcrun altool --upload-app -f "$RUNNER_TEMP/pace-team.ipa" -t ios \
-              --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee -a "$RUNNER_TEMP/submit.log"
+            echo "=== altool $i ===" | tee -a "$RUNNER_TEMP/submit.log"
+            perl -e 'alarm shift; exec @ARGV' 900 xcrun altool --upload-app -f "$RUNNER_TEMP/pace-team.ipa" -t ios \
+              --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" --verbose 2>&1 | tail -n 60 | tee -a "$RUNNER_TEMP/submit.log"
+            echo "altool saiu com ${PIPESTATUS[0]}" | tee -a "$RUNNER_TEMP/submit.log"
             if arrived; then ok=1; break; fi
             echo "Envio direto $i não chegou na Apple"
           done
           if [ -z "$ok" ]; then
+            echo "=== eas submit ===" | tee -a "$RUNNER_TEMP/submit.log"
             perl -e 'alarm shift; exec @ARGV' 1800 eas submit --platform ios --profile production \
               --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive 2>&1 | tee -a "$RUNNER_TEMP/submit.log"
             if arrived; then ok=1; fi
           fi
           rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
-          # O fim da saída do envio sempre vira aviso (legível sem login)
+          # A saída do envio vai para o resumo da execução e vira aviso (os dois
+          # são legíveis sem login no GitHub)
+          { echo "### Envio do build $VER"; echo '```'; sed 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/submit.log" | tail -n 250; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           msg=$(tail -n 40 "$RUNNER_TEMP/submit.log" | sed 's/\x1b\[[0-9;]*m//g' | grep -v '^\s*$' | sed 's/%/%25/g' | awk '{printf "%s%%0A", substr($0,1,300)}')
           if [ -z "$ok" ]; then
             echo "::error title=Envio ao TestFlight (build $VER)::$msg"
