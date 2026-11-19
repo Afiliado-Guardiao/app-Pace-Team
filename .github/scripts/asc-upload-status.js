@@ -31,16 +31,25 @@ const findUpload = async () => {
 	return json.data.find((d) => d.attributes.cfBundleVersion === version) ?? null;
 };
 
+// "Chegou" não basta: a Apple ainda analisa o build (PROCESSING) e pode
+// recusar depois (FAILED). Só sai quando a análise termina.
+const WAIT = ["AWAITING_UPLOAD", "PROCESSING"];
+
 (async () => {
-	for (let i = 0; i < 20; i += 1) {
+	let seen = false;
+	// Até 10 min para aparecer e até 45 min para a Apple terminar a análise
+	for (let i = 0; i < 90; i += 1) {
 		const up = await findUpload().catch(() => null);
-		if (up) {
-			const state = up.attributes.state;
+		const state = up?.attributes.state;
+		if (state && !WAIT.includes(state.state)) {
 			console.log(`Build ${version} na Apple: ${JSON.stringify(state)}`);
 			process.exit(state.errors.length > 0 || state.state === "FAILED" ? 1 : 0);
 		}
+		if (state && !seen) console.log(`Build ${version} chegou; a Apple está analisando…`);
+		seen = seen || Boolean(state);
+		if (!seen && i >= 20) break;
 		await new Promise((r) => setTimeout(r, 30000));
 	}
-	console.log(`Build ${version} não apareceu na App Store Connect`);
+	console.log(`Build ${version} ${seen ? "ficou em análise tempo demais" : "não apareceu na App Store Connect"}`);
 	process.exit(2);
 })();

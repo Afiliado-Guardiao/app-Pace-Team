@@ -114,10 +114,13 @@ jobs:
             perl -e 'alarm shift; exec @ARGV' 900 xcrun altool --upload-app -f "$RUNNER_TEMP/pace-team.ipa" -t ios \
               --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" --verbose 2>&1 | tail -n 60 | tee -a "$RUNNER_TEMP/submit.log"
             echo "altool saiu com ${PIPESTATUS[0]}" | tee -a "$RUNNER_TEMP/submit.log"
+            # O altool sai com 0 mesmo quando a Apple recusa o build: recusa por
+            # validação não adianta repetir (o build precisa ser corrigido)
+            if grep -q "VALIDATION_ERROR" "$RUNNER_TEMP/submit.log"; then invalid=1; break; fi
             if arrived; then ok=1; break; fi
             echo "Envio direto $i não chegou na Apple"
           done
-          if [ -z "$ok" ]; then
+          if [ -z "$ok" ] && [ -z "$invalid" ]; then
             echo "=== eas submit ===" | tee -a "$RUNNER_TEMP/submit.log"
             perl -e 'alarm shift; exec @ARGV' 1800 eas submit --platform ios --profile production \
               --path "$RUNNER_TEMP/pace-team.ipa" --non-interactive 2>&1 | tee -a "$RUNNER_TEMP/submit.log"

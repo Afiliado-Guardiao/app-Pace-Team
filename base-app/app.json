@@ -109,7 +109,7 @@
 				"@kingstinct/react-native-healthkit",
 				{
 					"NSHealthShareUsageDescription": "O PACE TEAM lê as corridas que o seu relógio salva no app Saúde (distância, tempo, batimentos e percurso) para somar ao seu histórico e aos pontos da equipe. Só corridas, e só com a sua permissão.",
-					"NSHealthUpdateUsageDescription": false,
+					"NSHealthUpdateUsageDescription": "O PACE TEAM não grava nada no app Saúde. Ele só lê as corridas que o seu relógio salva lá, para somar ao seu histórico e aos pontos da equipe.",
 					"background": false
 				}
 			],
