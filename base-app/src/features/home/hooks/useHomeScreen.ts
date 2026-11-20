@@ -17,6 +17,8 @@ interface IUseHomeScreenReturn {
 	openProfile: () => void;
 	openNotifications: () => void;
 	openTeam: () => void;
+	// Card "Seus pontos": o Histórico mostra de que corrida veio cada ponto
+	openPoints: () => void;
 	openStackCard: (id: IStackCardId) => void;
 }
 
@@ -37,6 +39,9 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 	}, [router]);
 	const openNotifications = useCallback(() => {
 		router.push(ROUTES.NOTIFICATIONS);
+	}, [router]);
+	const openPoints = useCallback(() => {
+		router.push(ROUTES.HISTORY);
 	}, [router]);
 	const openTeam = useCallback(() => {
 		router.navigate(ROUTES.TEAM);
@@ -70,6 +75,7 @@ export const useHomeScreen = (): IUseHomeScreenReturn => {
 		openProfile,
 		openNotifications,
 		openTeam,
+		openPoints,
 		openStackCard,
 	};
 };

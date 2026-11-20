@@ -1,8 +1,7 @@
 import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
+import { IMapWorld } from "@/components/shared/RankingTrail";
 import { ITheme } from "@/theme";
-
-import { IMapWorld } from "./geometry";
 
 // Cores da ilustração (chão da floresta embaixo e sombras do cabeçalho)
 export const MAP_COLORS = {

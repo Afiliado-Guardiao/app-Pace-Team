@@ -1,7 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { BuddyRunner } from "@/components/buddy";
 import {
 	Avatar,
 	Button,
@@ -27,8 +26,6 @@ interface ITeamEmptyProps {
 
 const TITLE = 34;
 const BACKDROP_BLUR = 10;
-// Chão do Buddy corredor: acima do título
-const RUNNER_FEET_Y = 111;
 
 const createTeamEmptyStyles = (theme: ITheme) => {
 	const { colors, typography } = theme.pace;
@@ -81,7 +78,7 @@ export const TeamEmpty: React.FC<ITeamEmptyProps> = ({
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.teamRunningSunset} blur={BACKDROP_BLUR} />
-			<ScreenScroll hasRail backdrop={<BuddyRunner feetY={RUNNER_FEET_Y} />}>
+			<ScreenScroll hasRail>
 				<View style={styles.intro}>
 					<Text style={styles.title}>
 						{TEAM_COPY.emptyTitleA}

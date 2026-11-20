@@ -45,8 +45,8 @@ export const HYDRO_COPY = {
 	remindersOn: "Lembretes do Buddy",
 	every: "A cada",
 	window: (start: string, end: string) => `Das ${start} às ${end}`,
-	earlier: "Começar mais cedo",
-	later: "Terminar mais tarde",
+	startAt: "Começa às",
+	endAt: "Termina às",
 	pause: "Pausar hoje",
 	resume: "Voltar a lembrar",
 	paused: "Pausado até amanhã",
@@ -86,4 +86,7 @@ export const EVERY_OPTIONS = [
 	{ value: "120", label: "2h" },
 	{ value: "180", label: "3h" },
 ] as const;
+// Lembretes só entre 7h e 22h
+export const HOURS = { min: 7, max: 22 } as const;
+
 export const DAY_LETTERS = ["D", "S", "T", "Q", "Q", "S", "S"] as const;

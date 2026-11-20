@@ -17,7 +17,6 @@ interface IHeroMetrics {
 	k: number;
 	ks: number;
 	width: number;
-	heroY: number;
 	frameWidth: number;
 	frameHeight: number;
 }
@@ -39,7 +38,7 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 	const { fonts, sizes, lineHeights } = typography;
 	const boxH = HERO.boxHeight * m.k;
 	const sceneH = SCENE_H * m.ks;
-	const sceneTop = boxH - sceneH;
+	const sceneTop = HERO.sceneInBox * m.k;
 
 	return {
 		root: { position: "relative" } as ViewStyle,
@@ -80,6 +79,15 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 			color: colors.textSecondary,
 		} as TextStyle,
 		box: { marginTop: HERO.titleGap, height: boxH } as ViewStyle,
+		// Quem da equipe está online e quem não, logo embaixo da pista
+		presence: {
+			position: "absolute",
+			left: 14 * m.k,
+			right: 14 * m.k,
+			top: sceneTop + sceneH + 2 * m.k,
+		} as ViewStyle,
+		// A mesma caixa da cena, agora dentro do painel de acrílico (seção Buddy)
+		panelBox: { height: boxH } as ViewStyle,
 		fill: { position: "absolute", left: 0, top: 0, width: m.width, height: boxH } as ViewStyle,
 		numberBox: { position: "absolute", top: NUMBER_TOP * m.k, left: 0, right: 0 } as ViewStyle,
 		number: {
@@ -119,13 +127,14 @@ export const createWeekHeroStyles = (theme: ITheme, m: IHeroMetrics) => {
 		tiles: { flexDirection: "row", alignItems: "flex-start", gap: spacing[2.5] } as ViewStyle,
 		tileLow: { flex: 1, marginTop: HERO.tilesOffset * m.k } as ViewStyle,
 		tileHigh: { flex: 1 } as ViewStyle,
-		front: {
+		// Céu, chuva, névoa e nuvens: só no card do Buddy (presos à caixa da cena)
+		// Sobe até o topo do card: as bolinhas ficam na frente do clima
+		weather: {
 			position: "absolute",
-			top: -m.heroY,
-			left: -HERO.gutter,
+			left: 0,
+			top: -HERO.panelTop,
 			width: m.frameWidth,
 			height: m.frameHeight,
 		} as ViewStyle,
-		frontCanvas: { width: m.frameWidth, height: m.frameHeight } as ViewStyle,
 	};
 };

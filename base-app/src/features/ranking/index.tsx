@@ -1,7 +1,6 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { BuddyRunner } from "@/components/buddy";
 import {
 	Button,
 	Chip,
@@ -25,8 +24,6 @@ import { RANKING_COPY, RANKING_SCOPES } from "./constants";
 import { useRankingScreen } from "./hooks/useRankingScreen";
 
 const TITLE = 30;
-// Chão do Buddy corredor: no alto do primeiro card, por trás dele
-const RUNNER_FEET_Y = 214;
 
 const createRankingStyles = (theme: ITheme) => {
 	const { colors, spacing, typography } = theme.pace;
@@ -133,11 +130,7 @@ export const RankingScreen: React.FC = () => {
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.teamRunningSunset} />
-			<ScreenScroll
-				hasRail
-				testID="ranking-scroll"
-				backdrop={<BuddyRunner feetY={RUNNER_FEET_Y} />}
-			>
+			<ScreenScroll hasRail testID="ranking-scroll">
 				<View style={styles.header}>
 					<View>
 						<Text style={styles.title} accessibilityRole="header">

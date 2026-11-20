@@ -1,21 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useWindowDimensions } from "react-native";
 
+import {
+	depthScale,
+	IPlacedTeam,
+	mapWorld,
+	MORE_SPOT,
+	TRAIL_SPOTS,
+} from "@/components/shared/RankingTrail";
 import { IRankedTeam } from "@/lib/pace";
-
-import { depthScale, mapWorld, MORE_SPOT, TRAIL_SPOTS } from "../geometry";
 
 import { useMapScroll } from "./useMapScroll";
 
-export interface IPlacedTeam {
-	team: IRankedTeam;
-	rank: number;
-	x: number;
-	y: number;
-	scale: number;
-	// Olha para a direita (o próximo colocado acima está à direita)
-	faceRight: boolean;
-}
+export type { IPlacedTeam };
 
 // Mapa do ranking: equipes na trilha, a sua selecionada no começo, tocar
 // seleciona e centraliza. `dataKey` muda com escopo/categoria (repete a

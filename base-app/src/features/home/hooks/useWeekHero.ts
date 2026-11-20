@@ -1,7 +1,6 @@
 import { SharedValue } from "react-native-reanimated";
 
 import { useSceneClock } from "../components/WeekHero/hooks/useSceneClock";
-import { HERO, heroScale } from "../components/WeekHero/layout";
 
 import { useBuddyJump } from "./useBuddyJump";
 import { IHeroLayout, useHeroLayout } from "./useHeroLayout";
@@ -15,11 +14,7 @@ export interface IWeekHero {
 	clocks: { clock: SharedValue<number>; still: SharedValue<number> };
 	jump: SharedValue<number>;
 	onBuddyPress: () => void;
-	// Chão do Buddyzinho que corre pela tela: entre o título e o medidor
-	runnerFeetY: number;
 }
-
-const RUNNER_FLOOR = 40;
 
 // Bloco "Sua semana" do Início: clima, corredores online, posição na tela,
 // relógio das animações e o pulinho do Buddy de pelúcia
@@ -29,8 +24,6 @@ export const useWeekHero = (o: { myName: string; hasToast: boolean }): IWeekHero
 	const layout = useHeroLayout(o.hasToast);
 	const clocks = useSceneClock();
 	const { jump, onBuddyPress } = useBuddyJump();
-	const { k } = heroScale(layout.width || HERO.baseWidth);
-	const heroInBackdrop = layout.heroY - layout.backdropTop;
 
 	return {
 		weather,
@@ -39,6 +32,5 @@ export const useWeekHero = (o: { myName: string; hasToast: boolean }): IWeekHero
 		clocks,
 		jump,
 		onBuddyPress,
-		runnerFeetY: heroInBackdrop + HERO.titleHeight + HERO.titleGap + RUNNER_FLOOR * k,
 	};
 };

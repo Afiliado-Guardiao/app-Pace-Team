@@ -8,8 +8,8 @@ import { useTheme } from "@/theme";
 
 import { MAP_ART } from "./assets";
 import { useCompetitorAnim } from "./hooks/useCompetitorAnim";
-import { IPlacedTeam } from "./hooks/useRankingMap";
 import { accentOf, createCompetitorStyles, initialsOf } from "./styles";
+import { IPlacedTeam } from "./types";
 
 interface IMapCompetitorProps {
 	spot: IPlacedTeam;

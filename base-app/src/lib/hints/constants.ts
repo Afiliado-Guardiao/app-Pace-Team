@@ -22,7 +22,7 @@ export interface IHintDef {
 export const HINTS: Record<IHintId, IHintDef> = {
 	bud: { text: "toque no Bud\npara cuidar dele", order: 1, isTap: true },
 	"tab-run": { text: "comece uma\ncorrida aqui", order: 2, isTap: true },
-	points: { text: "seus pontos\nda semana", order: 3, isTap: false },
+	points: { text: "seus pontos: toque\npara ver de onde vêm", order: 3, isTap: true },
 	pro: { text: "PACE AI, Studio\ne Analytics", order: 4, isTap: true },
 	"tab-ranking": { text: "sua equipe\nno ranking", order: 5, isTap: true },
 	"team-tile": { text: "a posição da sua\nequipe na cidade", order: 6, isTap: false },

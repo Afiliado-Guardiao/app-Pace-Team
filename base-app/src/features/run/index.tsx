@@ -3,7 +3,6 @@ import { Text, View } from "react-native";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { BuddyRunner } from "@/components/buddy";
 import {
 	Button,
 	Chip,
@@ -27,10 +26,7 @@ import { RUN_COPY, RUN_MODES } from "./constants";
 import { useRunCrew } from "./hooks/useRunCrew";
 import { useRunSetup } from "./hooks/useRunSetup";
 import { useTeamGameEntry } from "./hooks/useTeamGameEntry";
-import { createRunSetupStyles, RUN_SIDE } from "./styles";
-
-// Chão do Buddy corredor: na altura do INICIAR, passando por trás dele
-const RUNNER_FEET_Y = 24;
+import { createRunSetupStyles } from "./styles";
 
 // 06a Preparar corrida: mapa com a sua posição, modo, meta e INICIAR.
 export const RunSetupScreen: React.FC = () => {
@@ -134,7 +130,6 @@ export const RunSetupScreen: React.FC = () => {
 				) : null}
 				<GoalEditor goal={setup.goal} onChange={setup.setGoal} />
 				<View style={styles.startRow}>
-					<BuddyRunner feetY={RUNNER_FEET_Y} offsetLeft={RUN_SIDE} />
 					<StartButton enabled={setup.gps !== "searching"} onPress={setup.handleStart} />
 				</View>
 			</View>

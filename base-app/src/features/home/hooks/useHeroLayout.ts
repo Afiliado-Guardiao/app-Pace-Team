@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
-import { LayoutChangeEvent, useWindowDimensions } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme";
 
-import { HERO, heroFrame } from "../components/WeekHero/layout";
+import { cardFrame, HERO } from "../components/WeekHero/layout";
 import { IHeroFrame } from "../components/WeekHero/scene/types";
 
 export interface IHeroLayout {
@@ -27,7 +27,6 @@ const heightOf = (e: LayoutChangeEvent): number => e.nativeEvent.layout.height;
 export const useHeroLayout = (hasToast: boolean): IHeroLayout => {
 	const { theme } = useTheme();
 	const insets = useSafeAreaInsets();
-	const screen = useWindowDimensions();
 	const [headerH, setHeaderH] = useState(0);
 	const [toastH, setToastH] = useState(0);
 	const [size, setSize] = useState({ width: 0, height: 0 });
@@ -46,12 +45,8 @@ export const useHeroLayout = (hasToast: boolean): IHeroLayout => {
 	const gap = theme.pace.spacing.stackGap;
 	const backdropTop = insets.top + HERO.scrollTop;
 	const heroY = backdropTop + headerH + gap + (hasToast ? toastH + gap : 0);
-	const frame = heroFrame({
-		heroY,
-		width: size.width,
-		height: size.height,
-		screenWidth: screen.width,
-	});
+	// O clima fica só no card do Buddy (a cena e o céu no mesmo quadro dele)
+	const frame = cardFrame(size.width);
 
 	return {
 		width: size.width,

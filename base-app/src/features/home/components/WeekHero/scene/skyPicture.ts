@@ -98,8 +98,8 @@ const drawClouds = (canvas: SkCanvas, frame: IHeroFrame, t: number): void => {
 	for (let i = 0; i < CLOUDS; i++) {
 		const speed = 1 + hash(i * 2.1) * 0.6;
 		const x = ((hash(i * 4.3) * span + (t / CLOUD_LAP_S) * span * speed) % span) - 160;
-		const y =
-			frame.sceneY - 60 + hash(i * 6.7) * Math.max(120, frame.sceneY * 0.55) - frame.sceneY * 0.35;
+		// No card do Buddy: por cima da cabeça dele, na parte de cima da pista
+		const y = frame.sceneY + 30 + hash(i * 6.7) * 90;
 		const r = 34 + hash(i * 8.9) * 26;
 		paint.setColor(rgba(220, 230, 242, 0.16 + hash(i * 1.3) * 0.08));
 		canvas.drawCircle(x, y, r, paint);

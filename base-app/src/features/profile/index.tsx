@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { BuddyButton, BuddyRunner } from "@/components/buddy";
+import { BuddyButton } from "@/components/buddy";
 import {
 	Button,
 	FloatingToast,
@@ -33,9 +33,6 @@ import { usePrivacy } from "./hooks/usePrivacy";
 import { useProfile } from "./hooks/useProfile";
 import { useSubscriptionActions } from "./hooks/useSubscriptionActions";
 
-// Chão do Buddy corredor: logo abaixo da foto, por trás dela
-const RUNNER_FEET_Y = 135;
-
 const createProfileStyles = (theme: ITheme) => ({
 	root: { flex: 1 },
 	actions: { flexDirection: "row" as const, justifyContent: "flex-end" as const, gap: 8 },
@@ -64,11 +61,7 @@ export const ProfileScreen: React.FC = () => {
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.runnerCitySunset} />
-			<ScreenScroll
-				hasRail
-				testID="profile-scroll"
-				backdrop={<BuddyRunner feetY={RUNNER_FEET_Y} />}
-			>
+			<ScreenScroll hasRail testID="profile-scroll">
 				<View style={styles.actions}>
 					<BuddyButton
 						label={PROFILE_COPY.buddy}

@@ -5,18 +5,16 @@ import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { GlassSurface, IconButton } from "@/components/pace";
+import { MAP_ART, MapCompetitor, REGIONS } from "@/components/shared/RankingTrail";
 import { useTheme } from "@/theme";
 import { IRankedTeam } from "@/lib/pace";
 
 import { RANKING_COPY } from "../../constants";
 import { RankingFilters } from "../RankingFilters";
 
-import { MAP_ART } from "./assets";
 import { Fade } from "./Fade";
-import { REGIONS } from "./geometry";
 import { useRankingMap } from "./hooks/useRankingMap";
 import { MapCard } from "./MapCard";
-import { MapCompetitor } from "./MapCompetitor";
 import { createRankingMapStyles, MAP_COLORS } from "./mapStyles";
 
 export interface IRankingMapProps {

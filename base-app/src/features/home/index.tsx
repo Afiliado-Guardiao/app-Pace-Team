@@ -13,7 +13,6 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { FeedSection } from "./components/FeedSection";
-import { HeroSky } from "./components/HeroSky";
 import { HomeStack } from "./components/HomeStack";
 import { PostMenuSheet } from "./components/PostMenuSheet";
 import { TeamHandoffSheet } from "./components/TeamHandoffSheet";
@@ -61,12 +60,7 @@ export const HomeScreen: React.FC = () => {
 	return (
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.runnerCitySunset} />
-			<ScreenScroll
-				hasRail
-				scrollRef={feed.scrollRef}
-				testID="home-scroll"
-				backdrop={<HeroSky hero={hero} />}
-			>
+			<ScreenScroll hasRail scrollRef={feed.scrollRef} testID="home-scroll">
 				<View style={styles.header} onLayout={hero.layout.onHeaderLayout}>
 					<Pressable
 						onPress={home.openProfile}
@@ -100,7 +94,12 @@ export const HomeScreen: React.FC = () => {
 						/>
 					</View>
 				) : null}
-				<WeekHero week={week} hero={hero} onOpenTeam={home.openTeam} />
+				<WeekHero
+					week={week}
+					hero={hero}
+					onOpenTeam={home.openTeam}
+					onOpenPoints={home.openPoints}
+				/>
 				<HomeStack onOpen={home.openStackCard} />
 				<FeedSection posts={feed.posts} onMore={menu.open} onLayout={feed.onFeedLayout} />
 			</ScreenScroll>

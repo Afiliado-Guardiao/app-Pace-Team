@@ -2,10 +2,9 @@ import React from "react";
 import { Image, Text, View } from "react-native";
 
 import { Button, GlassSurface, Icon } from "@/components/pace";
+import { accentOf, initialsOf } from "@/components/shared/RankingTrail";
 import { useTheme } from "@/theme";
 import { formatKm, formatPoints, IRankedTeam } from "@/lib/pace";
-
-import { accentOf, initialsOf } from "./styles";
 
 interface IMapCardProps {
 	team: IRankedTeam;

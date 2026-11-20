@@ -5,7 +5,8 @@ import { Button, Chip, GlassCard, SegmentedControl, Switch } from "@/components/
 import { ITheme, useTheme } from "@/theme";
 import { IHydroReminders } from "@/lib/hydration";
 
-import { DAY_LETTERS, EVERY_OPTIONS, HYDRO_COPY as C } from "../../constants";
+import { DAY_LETTERS, EVERY_OPTIONS, HOURS, HYDRO_COPY as C } from "../../constants";
+import { HourStepper } from "../HourStepper";
 
 interface IHydroRemindersProps {
 	reminders: IHydroReminders;
@@ -75,28 +76,26 @@ export const HydroReminders: React.FC<IHydroRemindersProps> = ({ reminders: r, o
 							testID="hydro-every"
 						/>
 						<Text style={styles.label}>{C.window(hh(r.startHour), hh(r.endHour))}</Text>
-						<View style={styles.row}>
-							<Chip
-								size="sm"
-								icon="minus"
-								onPress={() => {
-									onChange({ startHour: Math.max(7, r.startHour - 1) });
-								}}
-								testID="hydro-start-earlier"
-							>
-								{C.earlier}
-							</Chip>
-							<Chip
-								size="sm"
-								icon="plus"
-								onPress={() => {
-									onChange({ endHour: Math.min(22, r.endHour + 1) });
-								}}
-								testID="hydro-end-later"
-							>
-								{C.later}
-							</Chip>
-						</View>
+						<HourStepper
+							label={C.startAt}
+							hour={r.startHour}
+							min={HOURS.min}
+							max={r.endHour - 1}
+							onChange={(h) => {
+								onChange({ startHour: h });
+							}}
+							testID="hydro-start"
+						/>
+						<HourStepper
+							label={C.endAt}
+							hour={r.endHour}
+							min={r.startHour + 1}
+							max={HOURS.max}
+							onChange={(h) => {
+								onChange({ endHour: h });
+							}}
+							testID="hydro-end"
+						/>
 						<View style={styles.row}>
 							{DAY_LETTERS.map((letter, d) => (
 								<Chip
