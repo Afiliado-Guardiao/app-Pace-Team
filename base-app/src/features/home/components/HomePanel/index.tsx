@@ -17,6 +17,9 @@ interface IHomePanelProps {
 	budColor: IBuddyColorId;
 	// A cena atual do Buddy (medidor, pista, corredores), sem mudanças
 	buddy: React.ReactNode;
+	// Muda ao abrir o app, ao voltar ao Início e ao voltar do segundo plano:
+	// as animações da seção na frente (medidor dos Pontos) recomeçam
+	replay: number;
 }
 
 // Só a seção atual e as vizinhas ficam montadas; a do Buddy, sempre (o
@@ -26,7 +29,7 @@ const isMounted = (i: number, index: number): boolean =>
 
 // Card de acrílico do Início: bolinhas de vidro (atalhos) e as seções que
 // passam para o lado
-export const HomePanel: React.FC<IHomePanelProps> = ({ panel, budColor, buddy }) => {
+export const HomePanel: React.FC<IHomePanelProps> = ({ panel, budColor, buddy, replay }) => {
 	const { pager } = panel;
 	const width = pager.width;
 	const height = PANEL.bubblesHeight + sectionHeightOf(width);
@@ -51,13 +54,13 @@ export const HomePanel: React.FC<IHomePanelProps> = ({ panel, budColor, buddy })
 								isMounted(i, pager.index) ? (
 									<View key={s.id} style={styles.slot(i)}>
 										{s.id === "ranking" ? (
-											<PanelSection section={s} panel={panel} k={k} />
+											<PanelSection section={s} panel={panel} k={k} replay={replay} />
 										) : (
 											<View style={styles.inner}>
 												{s.id === "buddy" ? (
 													buddy
 												) : (
-													<PanelSection section={s} panel={panel} k={k} />
+													<PanelSection section={s} panel={panel} k={k} replay={replay} />
 												)}
 											</View>
 										)}

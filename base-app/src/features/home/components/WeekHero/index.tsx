@@ -90,6 +90,7 @@ export const WeekHero: React.FC<IWeekHeroProps> = ({ week, hero, onOpenTeam, onO
 			{weather.credit ? <Text style={styles.credit}>{weather.credit}</Text> : null}
 			<HomePanel
 				panel={panel}
+				replay={view.replay}
 				budColor={trackBud.look.color}
 				buddy={
 					<View style={styles.panelBox}>

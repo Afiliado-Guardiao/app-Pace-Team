@@ -14,16 +14,17 @@ interface IPanelSectionProps {
 	section: IPanelSection;
 	panel: IHomePanel;
 	k: number;
+	replay: number;
 }
 
 // Conteúdo de cada seção do painel (a do Buddy vem pronta do Início)
-export const PanelSection: React.FC<IPanelSectionProps> = ({ section, panel, k }) => {
+export const PanelSection: React.FC<IPanelSectionProps> = ({ section, panel, k, replay }) => {
 	const { data, open, visit } = panel;
 	const isActive = PANEL_SECTIONS[panel.pager.index]?.id === section.id;
 	const id = section.id;
 
 	if (id === "points") {
-		return <PointsSection points={data.points} isActive={isActive} k={k} />;
+		return <PointsSection points={data.points} isActive={isActive} k={k} replay={replay} />;
 	}
 	if (id === "run") {
 		return (

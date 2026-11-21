@@ -9,7 +9,15 @@ const DOWN_MS = 20;
 
 // Medidor ao entrar na seção, como o painel de um carro: os tracinhos acendem
 // até o fim, param um instante e voltam até o valor de verdade
-export const useTickCount = (target: number, isActive: boolean, total: number): number => {
+// replay: muda ao abrir o app e ao voltar ao Início (a seção já estava na
+// frente, então só "ficar ativa" não bastava para animar de novo)
+export const useTickCount = (o: {
+	target: number;
+	isActive: boolean;
+	total: number;
+	replay: number;
+}): number => {
+	const { target, isActive, total, replay } = o;
 	const reduceMotion = useReducedMotion();
 	const [lit, setLit] = useState(0);
 
@@ -37,7 +45,7 @@ export const useTickCount = (target: number, isActive: boolean, total: number): 
 		return () => {
 			timers.forEach(clearTimeout);
 		};
-	}, [target, isActive, total, reduceMotion]);
+	}, [target, isActive, total, reduceMotion, replay]);
 
 	return lit;
 };
