@@ -21,6 +21,7 @@ interface IPointsSectionProps {
 }
 
 const NUMBER_SIZE = 56;
+const EMPTY_TOP = 500;
 
 // Pontos: medidor de tracinhos com a agulha no topo, o número grande, as
 // ondas e duas linhas de texto (sem quadradinhos: os cards abaixo já mostram)
@@ -28,10 +29,13 @@ export const PointsSection: React.FC<IPointsSectionProps> = ({ points, isActive,
 	const { theme } = useTheme();
 	const s = createSectionStyles(theme, k);
 	const target = Math.round(points.fraction * GAUGE.ticks);
-	const lit = useTickCount(target, isActive);
-	// O número sobe junto com os tracinhos: cada tracinho aceso é a fração dos
-	// pontos até ali (512 → 12, 23, 35… até 512 no último)
-	const shown = target > 0 ? Math.round((points.value * lit) / target) : points.value;
+	const lit = useTickCount(target, isActive, GAUGE.ticks);
+	// O número anda junto com os tracinhos: cada tracinho vale a mesma fração
+	// dos pontos, então ele sobe além do valor no topo e volta até o valor certo
+	// Semana sem pontos: só animação, o número sobe até uns 500 no topo e volta a 0
+	const perTick = target > 0 ? points.value / target : EMPTY_TOP / GAUGE.ticks;
+	// Sem tracinho aceso no fim, vale o número de verdade (pontos sem km também)
+	const shown = target === 0 && lit === 0 ? points.value : Math.round(perTick * lit);
 	const seconds = useWaveClock(isActive);
 	const w = PANEL.baseWidth * k;
 	const h = PANEL.sectionHeight * k;

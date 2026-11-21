@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 
 import { useReducedMotion } from "react-native-reanimated";
 
-const STEP_MS = 24;
 const START_MS = 200;
+const UP_MS = 11;
+const HOLD_MS = 140;
+const DOWN_MS = 20;
 
-// Tracinhos acendendo em sequência (24 ms cada) ao entrar na seção
-export const useTickCount = (target: number, isActive: boolean): number => {
+// Medidor ao entrar na seção, como o painel de um carro: os tracinhos acendem
+// até o fim, param um instante e voltam até o valor de verdade
+export const useTickCount = (target: number, isActive: boolean, total: number): number => {
 	const reduceMotion = useReducedMotion();
 	const [lit, setLit] = useState(0);
 
@@ -20,20 +23,21 @@ export const useTickCount = (target: number, isActive: boolean): number => {
 			return undefined;
 		}
 		setLit(0);
-		let n = 0;
-		let timer: ReturnType<typeof setInterval> | null = null;
-		const start = setTimeout(() => {
-			timer = setInterval(() => {
-				n += 1;
-				setLit(Math.min(n, target));
-				if (n >= target && timer) clearInterval(timer);
-			}, STEP_MS);
-		}, START_MS);
-		return () => {
-			clearTimeout(start);
-			if (timer) clearInterval(timer);
+		const timers: ReturnType<typeof setTimeout>[] = [];
+		const at = (ms: number, n: number): void => {
+			timers.push(
+				setTimeout(() => {
+					setLit(n);
+				}, ms),
+			);
 		};
-	}, [target, isActive, reduceMotion]);
+		for (let n = 1; n <= total; n++) at(START_MS + n * UP_MS, n);
+		const top = START_MS + total * UP_MS + HOLD_MS;
+		for (let n = total - 1, i = 1; n >= target; n--, i++) at(top + i * DOWN_MS, n);
+		return () => {
+			timers.forEach(clearTimeout);
+		};
+	}, [target, isActive, total, reduceMotion]);
 
 	return lit;
 };

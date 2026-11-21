@@ -40,7 +40,8 @@ export const createPanelBubblesStyles = (theme: ITheme) => {
 		} as ViewStyle,
 		glassOn: { borderColor: ACRYLIC.bubbleBorderOn } as ViewStyle,
 		fill: { position: "absolute", left: 0, top: 0, width: MAX, height: MAX } as ViewStyle,
-		icon: { filter: "drop-shadow(0 1px 2px rgba(0,0,0,.45))" } as ViewStyle,
+		// Sem "filter: drop-shadow": no iPhone ele vira um quadrado branco
+		icon: {} as ViewStyle,
 		bud: {
 			position: "absolute",
 			left: (MAX - 140 * BUD_SCALE) / 2,

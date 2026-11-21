@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { GestureResponderHandlers, PanResponder } from "react-native";
 
+import * as Haptics from "expo-haptics";
+
 import {
 	SharedValue,
 	useAnimatedStyle,
@@ -43,6 +45,10 @@ export const usePanelPager = (): IPanelPager => {
 	const goTo = useCallback(
 		(next: number) => {
 			const i = clamp(next);
+			// Trocou de seção: um toque leve no celular (como um seletor)
+			if (i !== indexRef.current) {
+				void Haptics.selectionAsync().catch(() => undefined);
+			}
 			indexRef.current = i;
 			lastIndex = i;
 			setIndex(i);

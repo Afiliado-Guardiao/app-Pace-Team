@@ -36,15 +36,12 @@ const half = NEEDLE.base / 2;
 const NEEDLE_DOWN = `${String(GAUGE.cx - half)},${String(top - NEEDLE.h)} ${String(GAUGE.cx + half)},${String(top - NEEDLE.h)} ${String(GAUGE.cx)},${String(top)}`;
 const NEEDLE_UP = `${String(GAUGE.cx - half)},${String(low + NEEDLE.h)} ${String(GAUGE.cx + half)},${String(low + NEEDLE.h)} ${String(GAUGE.cx)},${String(low)}`;
 
-const SHADOW = { filter: "drop-shadow(0 2px 6px rgba(0,0,0,.35))" } as const;
-
 // Medidor de tracinhos em semicírculo: 54 traços que acendem até a fração
 export const PointsGauge: React.FC<IPointsGaugeProps> = ({ width, lit }) => (
 	<Svg
 		width={width}
 		height={width * GAUGE_RATIO}
 		viewBox={`0 ${String(-PAD)} ${String(GAUGE.w)} ${String(GAUGE.h + PAD)}`}
-		style={SHADOW}
 	>
 		{ticks.map((t, i) => (
 			<Line

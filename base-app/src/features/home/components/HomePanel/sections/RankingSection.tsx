@@ -12,6 +12,7 @@ import { useTrailWindow } from "../hooks/useTrailWindow";
 
 import { PanelBar } from "./PanelBar";
 import { PanelButton } from "./PanelButton";
+import { Shade } from "./Shade";
 import { createSectionStyles } from "./styles";
 
 interface IRankingSectionProps {
@@ -23,9 +24,6 @@ interface IRankingSectionProps {
 }
 
 // Sombras por cima do mapa: em cima (bolinhas) e embaixo (textos e botão)
-const TOP_SHADE = "linear-gradient(to bottom, rgba(0,0,0,.55), rgba(0,0,0,0))";
-const BOTTOM_SHADE =
-	"linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.55) 40%, rgba(0,0,0,.85))";
 
 // Ranking: a Trilha até o Cume (a mesma da tela de Ranking) ocupando o card
 // todo, com a sua equipe e as vizinhas; a posição, quanto falta e o botão
@@ -60,22 +58,10 @@ export const RankingSection: React.FC<IRankingSectionProps> = ({
 		width: trail.world.iw,
 		height: trail.world.ih,
 	};
-	const topShade: ViewStyle = {
-		position: "absolute",
-		left: 0,
-		right: 0,
-		top: 0,
-		height: PANEL.bubblesHeight + 20,
-		experimental_backgroundImage: TOP_SHADE,
-	};
-	const bottomShade: ViewStyle = {
-		position: "absolute",
-		left: 0,
-		right: 0,
-		bottom: 0,
-		height: size.height * 0.48,
-		experimental_backgroundImage: BOTTOM_SHADE,
-	};
+	const topH = PANEL.bubblesHeight + 20;
+	const bottomH = size.height * 0.48;
+	const topShade: ViewStyle = { position: "absolute", left: 0, top: 0 };
+	const bottomShade: ViewStyle = { position: "absolute", left: 0, bottom: 0 };
 	const info: ViewStyle = {
 		position: "absolute",
 		left: 20 * k,
@@ -121,8 +107,8 @@ export const RankingSection: React.FC<IRankingSectionProps> = ({
 				accessibilityLabel={PANEL_COPY.ranking.action}
 				testID="home-panel-ranking-trail"
 			/>
-			<View style={topShade} pointerEvents="none" />
-			<View style={bottomShade} pointerEvents="none" />
+			<Shade stops={[0.55, 0.2, 0]} width={size.width} height={topH} style={topShade} />
+			<Shade stops={[0, 0.55, 0.85]} width={size.width} height={bottomH} style={bottomShade} />
 			<View style={info} pointerEvents="box-none">
 				<View style={[s.row, { alignItems: "flex-end" }]}>
 					<Text style={[s.number, { fontSize: 40 * k, lineHeight: 44 * k }]}>{ranking.pos}</Text>
