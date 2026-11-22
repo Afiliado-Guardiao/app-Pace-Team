@@ -16,13 +16,14 @@ const SYMBOL_K = 0.62;
 const SYMBOL_RATIO = 215 / 1659;
 export const SPLASH_BUD_SCALE = 1.1;
 
-// Logo antigo (logo-old.png, 655 x 179) do mesmo tamanho e lugar da abertura
-// nativa (56% da largura): aparece apagado e vai quase sumindo
-const OLD_K = 0.56;
-const OLD_RATIO = 179 / 655;
+// Símbolo antigo (logo-old.png, 368 x 224, só o desenho, sem as letras), do
+// tamanho que ele tinha na abertura antiga (330 px de 1284): aparece e vai se
+// apagando por uns 2 segundos até dar lugar ao logo novo
+const OLD_K = 330 / 1284;
+const OLD_RATIO = 224 / 368;
 const oldOpacity = (phase: ISplashPhase): number => {
-	if (phase === "old") return 0.55;
-	if (phase === "fade") return 0.08;
+	if (phase === "old") return 0.9;
+	if (phase === "fade") return 0.05;
 	return 0;
 };
 
@@ -62,7 +63,7 @@ export const createBootSplashStyles = (theme: ITheme, width: number, phase: ISpl
 			marginTop: -(oldW * OLD_RATIO) / 2,
 			opacity: oldOpacity(phase),
 			transitionProperty: "opacity",
-			transitionDuration: phase === "fade" ? "0.85s" : "0.2s",
+			transitionDuration: phase === "fade" ? "1.6s" : "0.2s",
 		} as ImageStyle,
 		// Depois do antigo: surge cinza e acende branco
 		symbol: {

@@ -10,12 +10,12 @@ import { useStore } from "@/store";
 
 import { markSplashDone } from "../splashState";
 
-// Linha do tempo (ms): o logo antigo (o mesmo da abertura nativa) vai quase
-// se apagando e dá lugar ao logo de hoje, que surge cinza e acende; o Bud
+// Linha do tempo (ms): o símbolo antigo aparece e passa uns 2 segundos se
+// apagando; dá lugar ao logo de hoje, que surge cinza e acende; o Bud
 // chega correndo, vira as três bolinhas enquanto o app carrega e volta a ser
 // o Bud quando fica pronto; aí a abertura some.
 // O logo antigo fica um instante e some devagar; depois vem o novo
-const OLD = { fade: 350, gone: 1250 } as const;
+const OLD = { fade: 300, gone: 2000 } as const;
 export const SPLASH_T = {
 	fade: OLD.fade,
 	logo: OLD.gone,
