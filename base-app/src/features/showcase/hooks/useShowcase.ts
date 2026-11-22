@@ -10,7 +10,13 @@ import { useStore } from "@/store";
 import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
-import { COLLAGE_H } from "../constants";
+import { REF } from "../constants";
+
+// No quadro da referência: onde acaba a última frase da arte, onde começa o
+// bloco de baixo (ondinhas do Bud) e onde ele termina ("Já tenho conta")
+const ART_END = 662;
+const BOTTOM_START = 688;
+const REF_BOTTOM = 1250;
 
 export interface IShowcaseFlight {
 	stage: "idle" | "scared" | "rocket";
@@ -66,7 +72,7 @@ export const useShowcase = () => {
 			["setupSolo", "setupTeamName", "setupWantsPro", "setupDone"].forEach((key) => {
 				setAnswer(key, "");
 			});
-			router.replace({ pathname: ROUTES.SETUP, params: { step: "profile", arrive: "1" } });
+			router.replace({ pathname: ROUTES.SETUP, params: { step: "boost", arrive: "1" } });
 			return;
 		}
 		router.replace({ pathname: ROUTES.SETUP, params: { arrive: "1" } });
@@ -104,13 +110,20 @@ export const useShowcase = () => {
 		}
 	}, [flight.stage, isReduced, goNext, width, height]);
 
-	// Desenhada para 390 × 844: encolhe pela largura OU pela altura (no Safari,
-	// com as barras, sobra menos altura e o botão precisa caber sempre)
-	const k = Math.min(1.15, width / 390, height / 844);
+	// Montada no quadro da referência (print do iPhone, 591 × 1280). A arte
+	// de cima sempre ocupa a largura toda (a roleta e o relógio encostam nas
+	// bordas, como se continuassem do lado de fora)
+	const ua = width / REF.w;
+	// Embaixo (Bud, frase e botões): no iPhone X em diante é a mesma escala;
+	// nos de botão de início (tela mais baixa) encolhe para caber sob a arte
+	const u = Math.min(ua, height / REF.h, (height - ART_END * ua) / (REF_BOTTOM - BOTTOM_START));
+	const isShort = u < Math.min(ua, height / REF.h) - 0.001;
 
 	return {
-		k,
-		collageH: COLLAGE_H * k,
+		ua,
+		u,
+		left: (width - REF.w * u) / 2,
+		top: isShort ? height - REF_BOTTOM * u : 0,
 		pose: flight.stage === "idle" ? { ...IDLE, blink: isBlink } : SCARED,
 		flight,
 		isLeaving: flight.stage !== "idle",

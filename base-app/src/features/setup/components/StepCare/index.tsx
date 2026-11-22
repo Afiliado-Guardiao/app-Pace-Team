@@ -168,7 +168,7 @@ export const StepCare: React.FC<IStepCareProps> = ({ onDone }) => {
 				onPress={onDone}
 				testID="setup-care-cta"
 			>
-				{C.next}
+				{C.careCta}
 			</Button>
 		</View>
 	);

@@ -9,16 +9,18 @@ interface IBuddyBubbleProps {
 	text: string;
 	// Rabinho embaixo (padrão) ou à esquerda
 	tail?: "bottom" | "left";
+	// Balão largo (páginas antes do nome, como na referência do dono do app)
+	isWide?: boolean;
 }
 
 const TAIL = 10;
 
-const createBuddyBubbleStyles = (theme: ITheme, tail: "bottom" | "left") => {
+const createBuddyBubbleStyles = (theme: ITheme, tail: "bottom" | "left", isWide: boolean) => {
 	const { colors, typography } = theme.pace;
 	return {
 		root: {
 			alignSelf: tail === "left" ? ("flex-start" as const) : ("center" as const),
-			maxWidth: 260,
+			maxWidth: isWide ? 320 : 260,
 		},
 		pill: {
 			paddingHorizontal: 14,
@@ -29,8 +31,8 @@ const createBuddyBubbleStyles = (theme: ITheme, tail: "bottom" | "left") => {
 		},
 		text: {
 			fontFamily: typography.fonts.bold,
-			fontSize: 13,
-			lineHeight: 18,
+			fontSize: isWide ? 15 : 13,
+			lineHeight: isWide ? 20 : 18,
 			color: colors.textOnLight,
 		},
 		hidden: { color: "transparent" },
@@ -49,9 +51,13 @@ const createBuddyBubbleStyles = (theme: ITheme, tail: "bottom" | "left") => {
 };
 
 // Balão de fala do Buddy, que "digita" o texto com o cursor laranja
-export const BuddyBubble: React.FC<IBuddyBubbleProps> = ({ text, tail = "bottom" }) => {
+export const BuddyBubble: React.FC<IBuddyBubbleProps> = ({
+	text,
+	tail = "bottom",
+	isWide = false,
+}) => {
 	const { theme } = useTheme();
-	const styles = createBuddyBubbleStyles(theme, tail);
+	const styles = createBuddyBubbleStyles(theme, tail, isWide);
 	const typed = useTypewriter(text);
 
 	return (

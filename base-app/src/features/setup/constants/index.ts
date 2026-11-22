@@ -2,6 +2,8 @@ import { IBuddyAccessoryId } from "@/lib/buddy/constants";
 
 // Etapas do onboarding depois de criar a conta (telas 03 a 08 do Cloud Design)
 export type ISetupStep =
+	| "boost"
+	| "plan"
 	| "profile"
 	| "acc"
 	| "call"
@@ -13,6 +15,8 @@ export type ISetupStep =
 	| "done";
 
 export const SETUP_STEPS: readonly ISetupStep[] = [
+	"boost",
+	"plan",
 	"profile",
 	"acc",
 	"call",
@@ -23,21 +27,6 @@ export const SETUP_STEPS: readonly ISetupStep[] = [
 	"pro",
 	"done",
 ];
-
-// Barra de 7 segmentos (02 conta · 03 Buddy · 04 objetivo · 05 equipe ·
-// 06 convites · 07 Team Pro · 08 conclusão): qual segmento cada etapa acende
-export const SEGMENTS = 7;
-export const SEGMENT_OF: Record<ISetupStep, number> = {
-	profile: 1,
-	acc: 2,
-	call: 2,
-	care: 2,
-	goal: 3,
-	team: 4,
-	invites: 5,
-	pro: 6,
-	done: 7,
-};
 
 // Guarda o progresso no aparelho (fechou o app, volta na mesma etapa)
 export const SETUP_KEYS = {
@@ -120,7 +109,32 @@ export const SETUP_COPY = {
 	// Bolinhas do Bud enquanto ele "chega" na página
 	thinking: "Pensando…",
 	back: "Voltar",
-	next: "Continuar",
+	// Antes do nome: o gráfico da evolução e o caminho até o prêmio
+	boostBubble: "Quando você entra em uma equipe, seu desempenho aumenta 35%.",
+	// Textos dos rascunhos do dono do app (com a ortografia revisada)
+	boostTitle: "E ainda melhor: fazer sua\nprópria equipe com os amigos",
+	boostCardTitle: "E você vai ver toda a evolução.",
+	boostDayOne: "DIA 1",
+	boostMonthTwo: "MÊS 2",
+	boostAxis: "EVOLUÇÃO",
+	boostWith: "COM Pace Team",
+	boostWithout: "SEM APOIO",
+	boostNote: "Comparação ilustrativa",
+	boostCta: "Quero montar uma equipe",
+	planBubble: "O pace que você quer já está a caminho.",
+	planTitle: "Montamos cada passo.",
+	planSteps: [
+		{ title: "Monte sua equipe", text: "e dispute com o seu estado" },
+		{
+			title: "Buddy",
+			text: "vai te ajudar com performance,\ndados e o controle da\nágua que você bebe",
+		},
+		{ title: "Evolução visível", text: "pace, km e recordes" },
+	],
+	planCta: "Vamos começar com o plano",
+	// Cada botão fala uma coisa (nada de "Continuar" em tudo)
+	profileCta: "Pode me chamar assim",
+	careCta: "Prometo cuidar de você",
 	// 02
 	profileBubble: "Oi! Como posso te chamar?",
 	profileTitle: "Crie sua conta",
@@ -191,7 +205,7 @@ export const SETUP_COPY = {
 	// 04
 	goalTitle: "O que você quer conquistar com o PACE?",
 	goalBubble: "Me conta o seu objetivo!",
-	goalCta: "CONTINUAR",
+	goalCta: "Esse é o meu objetivo",
 	// 05
 	teamTitle: "Sua equipe começa com você.",
 	teamSub: "Convide seus amigos, monte seu time e suba no ranking juntos.",
@@ -226,7 +240,7 @@ export const SETUP_COPY = {
 	medalText: "Você montou sua equipe. Tô orgulhoso!",
 	medalLevelA: "Nível 1",
 	medalLevelB: "Nível 2 ↑",
-	medalCta: "Continuar",
+	medalCta: "Bora pra próxima",
 	// 07
 	proBadge: "PACE TEAM PRO",
 	proTitle: "Você lidera. Sua equipe evolui junto.",

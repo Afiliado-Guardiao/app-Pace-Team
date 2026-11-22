@@ -30,7 +30,7 @@ export const useSetupFlow = (): IUseSetupFlowReturn => {
 	const isLogged = useStore((s) => s.isAuthenticated);
 	const { team } = useMyTeam();
 	const { pro } = useMyPro();
-	const step: ISetupStep = isStep(saved) ? saved : "profile";
+	const step: ISetupStep = isStep(saved) ? saved : SETUP_STEPS[0];
 	const hasTeam = Boolean(team);
 
 	const go = useCallback(

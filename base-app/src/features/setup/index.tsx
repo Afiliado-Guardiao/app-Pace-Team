@@ -6,13 +6,15 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { MedalOverlay } from "./components/MedalOverlay";
-import { SetupProgress } from "./components/SetupProgress";
+import { SetupBack } from "./components/SetupBack";
 import { StepAcc } from "./components/StepAcc";
+import { StepBoost } from "./components/StepBoost";
 import { StepCall } from "./components/StepCall";
 import { StepCare } from "./components/StepCare";
 import { StepDone } from "./components/StepDone";
 import { StepGoal } from "./components/StepGoal";
 import { StepInvites } from "./components/StepInvites";
+import { StepPlan } from "./components/StepPlan";
 import { StepPro } from "./components/StepPro";
 import { StepProfile } from "./components/StepProfile";
 import { StepTeam } from "./components/StepTeam";
@@ -23,7 +25,7 @@ const createSetupStyles = (theme: ITheme) => ({
 	content: { gap: theme.pace.spacing[5], paddingTop: theme.pace.spacing[2] },
 });
 
-// Onboarding depois da conta (03 Buddy · 04 objetivo · 05 equipe ·
+// Onboarding (gráfico da evolução · caminho até o prêmio · 02 conta · 03 Buddy · 04 objetivo · 05 equipe ·
 // 06 convites · 07 Team Pro · 08 conclusão), uma etapa por vez
 export const SetupScreen: React.FC = () => {
 	const { theme } = useTheme();
@@ -34,7 +36,9 @@ export const SetupScreen: React.FC = () => {
 		<View style={styles.root}>
 			<ScreenBackground photo={PHOTOS.teamRunningSunset} />
 			<ScreenScroll contentStyle={styles.content} key={s.step}>
-				<SetupProgress current={s.segment} onBack={s.canBack ? s.back : undefined} />
+				<SetupBack onBack={s.canBack ? s.back : undefined} />
+				{s.step === "boost" ? <StepBoost onDone={s.next} /> : null}
+				{s.step === "plan" ? <StepPlan onDone={s.next} /> : null}
 				{s.step === "profile" ? <StepProfile profile={s.profile} /> : null}
 				{s.step === "acc" ? <StepAcc onDone={s.next} /> : null}
 				{s.step === "call" ? <StepCall onDone={s.next} /> : null}

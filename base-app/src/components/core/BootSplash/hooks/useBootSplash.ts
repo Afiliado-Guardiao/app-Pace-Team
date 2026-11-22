@@ -10,13 +10,18 @@ import { useStore } from "@/store";
 
 import { markSplashDone } from "../splashState";
 
-// Linha do tempo (ms): o símbolo surge cinza no preto e acende branco; o Bud
+// Linha do tempo (ms): o logo antigo (o mesmo da abertura nativa) vai quase
+// se apagando e dá lugar ao logo de hoje, que surge cinza e acende; o Bud
 // chega correndo, vira as três bolinhas enquanto o app carrega e volta a ser
 // o Bud quando fica pronto; aí a abertura some.
+// O logo antigo fica um instante e some devagar; depois vem o novo
+const OLD = { fade: 350, gone: 1250 } as const;
 export const SPLASH_T = {
-	bright: 420,
-	run: 1250,
-	dots: 1950,
+	fade: OLD.fade,
+	logo: OLD.gone,
+	bright: OLD.gone + 420,
+	run: OLD.gone + 1250,
+	dots: OLD.gone + 1950,
 	// Mínimo de bolinhas na tela (não pisca rápido demais)
 	minReady: 2700,
 	back: 650,
@@ -27,10 +32,12 @@ export const SPLASH_T = {
 	still: 1100,
 } as const;
 
-export type ISplashPhase = "logo" | "bright" | "run" | "dots" | "back" | "out";
+export type ISplashPhase = "old" | "fade" | "logo" | "bright" | "run" | "dots" | "back" | "out";
 
 const IDLE: IBuddyPose = { act: "idle", phase: null, blink: false, gx: 0, gy: 0 };
 const POSES: Record<ISplashPhase, IBuddyPose> = {
+	old: IDLE,
+	fade: IDLE,
 	logo: IDLE,
 	bright: IDLE,
 	run: { ...IDLE, phase: "run" },
@@ -43,7 +50,7 @@ const POSES: Record<ISplashPhase, IBuddyPose> = {
 export const useBootSplash = () => {
 	const hasApp = useStore((s) => s.isAuthenticated);
 	const [isVisible, setIsVisible] = useState(hasApp);
-	const [phase, setPhase] = useState<ISplashPhase>("logo");
+	const [phase, setPhase] = useState<ISplashPhase>("old");
 	const reduceMotion = useReducedMotion();
 	const fetching = useRef(0);
 	fetching.current = useIsFetching();
@@ -91,6 +98,12 @@ export const useBootSplash = () => {
 			later(finish, SPLASH_T.still);
 			return;
 		}
+		later(() => {
+			setPhase("fade");
+		}, SPLASH_T.fade);
+		later(() => {
+			setPhase("logo");
+		}, SPLASH_T.logo);
 		later(() => {
 			setPhase("bright");
 		}, SPLASH_T.bright);

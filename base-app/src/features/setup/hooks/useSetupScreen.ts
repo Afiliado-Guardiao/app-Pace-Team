@@ -14,10 +14,10 @@ import {
 	GOALS,
 	IGoalId,
 	ISetupStep,
-	SEGMENT_OF,
 	SETUP_ACCESSORIES,
 	SETUP_COPY,
 	SETUP_KEYS,
+	SETUP_STEPS,
 } from "../constants";
 
 import { useSetupFlow } from "./useSetupFlow";
@@ -66,8 +66,7 @@ export const useSetupScreen = () => {
 
 	return {
 		step: flow.step,
-		segment: SEGMENT_OF[flow.step],
-		canBack: flow.step !== "profile" && flow.step !== "done",
+		canBack: flow.step !== SETUP_STEPS[0] && flow.step !== "done",
 		toast,
 		team,
 		inv,

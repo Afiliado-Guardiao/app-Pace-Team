@@ -1,57 +1,42 @@
-import { ImageSourcePropType } from "react-native";
+import welcomeTop from "../../../../assets/onboarding/welcome-top.png";
 
-import rankingShot from "../../../../assets/onboarding/ranking.png";
-import storyShot from "../../../../assets/onboarding/story.png";
+// Tudo medido na referência do dono do app: o print do iPhone inteiro em
+// 591 × 1280. A tela é montada nesse quadro e encolhe/estica por u
+// (u = largura da tela / 591, limitado pela altura)
+export const REF = { w: 591, h: 1280 } as const;
 
-// Medidas na referência de 390 de largura (a tela encolhe/estica por k)
-
-export interface IAppShot {
-	source: ImageSourcePropType;
-	x: number;
-	y: number;
-	w: number;
-	h: number;
-}
-
-// Duas telas do app inclinadas (a arte de compartilhar e o ranking da montanha)
-export const APP_SHOTS: readonly IAppShot[] = [
-	{ source: storyShot, x: 205, y: 27, w: 130, h: 169 },
-	{ source: rankingShot, x: 25, y: 202, w: 143, h: 168 },
-];
+// Parte de cima: a arte do dono do app, recortada da referência (0 a 720).
+// As frases foram tiradas da imagem e vão escritas por cima (letra de mão),
+// com a ortografia certa, no mesmo lugar
+export const TOP_ART = welcomeTop;
+export const TOP_ART_H = 720;
 
 export interface IHandNote {
 	text: string;
 	x: number;
 	y: number;
 	w: number;
-	align: "left" | "center";
 }
 
-// Frases escritas à mão
+// Frases à mão (centralizadas na largura w), no quadro da referência
 export const HAND_NOTES: readonly IHandNote[] = [
-	{ text: "corra com seus\namigos", x: 24, y: 64, w: 150, align: "center" },
-	{ text: "não deixe o buddy\ndoente", x: 140, y: 180, w: 128, align: "center" },
-	{ text: "faça uma equipe e\nsuba a montanha", x: 214, y: 258, w: 170, align: "left" },
+	{ text: "conecte com o\nseu relógio", x: 166, y: 68, w: 160 },
+	{ text: "para incentivar a\nequipe a ganhar\nmais pontos", x: 225, y: 264, w: 190 },
+	{
+		text: "fala quanto de água tem que beber depois da corrida e outras\nfunções",
+		x: 6,
+		y: 504,
+		w: 580,
+	},
+	{ text: "mas cuidado para não deixar ele doente por falta de corrida", x: 6, y: 628, w: 580 },
 ];
+export const NOTE_FONT = { size: 20, line: 30 } as const;
 
-// Setas à mão (caminho + ponta) e risquinhos de brilho, no mesmo espaço 390
-export const HAND_ARROWS: readonly string[] = [
-	"M150 118 C 162 134, 182 138, 203 131 M203 131 L 194 125 M203 131 L 195 139",
-	"M184 176 C 178 160, 156 150, 132 154 M132 154 L 141 147 M132 154 L 141 161",
-	"M168 320 C 184 324, 202 318, 216 306 M216 306 L 206 307 M216 306 L 212 315",
-];
-export const SPARKS: readonly string[] = [
-	"M198 32 L 206 40 M194 44 L 204 46 M207 26 L 209 36",
-	"M340 186 L 350 192 M342 198 L 354 200 M336 202 L 342 210",
-	"M22 228 L 32 236 M16 242 L 28 244 M26 252 L 34 256",
-	"M176 368 Q 192 362 208 368 M180 376 Q 194 371 206 376",
-];
-
-// Buddy doente pequenininho (para "não deixe o buddy doente")
-export const SICK_BUD = { x: 54, y: 138, w: 74 } as const;
-
-// Altura da área de cima na referência de 390 de largura
-export const COLLAGE_H = 380;
+// O Bud grande, a frase, o Começar e o "Já tenho conta"
+export const HERO = { x: 175, y: 722, w: 240 } as const;
+export const WORDS = { y: 936, size: 46, line: 53 } as const;
+export const CTA = { x: 28, y: 1100, w: 535, h: 90, font: 26 } as const;
+export const LOGIN = { y: 1210, font: 23 } as const;
 
 export const SHOWCASE_COPY = {
 	name: "buddy",

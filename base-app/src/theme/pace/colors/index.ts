@@ -151,6 +151,15 @@ export const paceColors = {
 	crewRoute: "rgba(255,255,255,.92)",
 	crewRouteGlow: "rgba(255,255,255,.28)",
 
+	// Onboarding antes do nome (rascunhos do dono do app): linha da evolução,
+	// troféu do fim do gráfico / do caminho e o cinza dos textos
+	evolutionLine: "#DE7C95",
+	evolutionLineGlow: "rgba(222,124,149,.28)",
+	evolutionArea: "rgba(255,255,255,.07)",
+	trophyGold: "#F4D646",
+	trophyGlow: "rgba(244,214,70,.22)",
+	textMuted: "rgba(255,255,255,.62)",
+
 	// Tendência no ranking (feed)
 	trendUp: "#2FD08A",
 	trendDown: "#FF5A5A",

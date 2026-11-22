@@ -138,7 +138,7 @@ export const StepProfile: React.FC<IStepProfileProps> = ({ profile }) => {
 				onPress={profile.submit}
 				testID="setup-profile-cta"
 			>
-				{C.next}
+				{C.profileCta}
 			</Button>
 			<Text style={styles.legal}>
 				{C.profileLegalA}

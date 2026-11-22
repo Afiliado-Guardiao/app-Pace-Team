@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, ViewStyle } from "react-native";
+import { Image, ImageStyle, Text, View, ViewStyle } from "react-native";
 
 import Animated, { cubicBezier, ZoomIn } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
@@ -7,20 +7,24 @@ import Svg, { Path } from "react-native-svg";
 import { BUDDY_H, BUDDY_W, BuddyFigure, EASE_OUT, IBuddyPose } from "@/components/buddy";
 import { ITheme, useTheme } from "@/theme";
 
-import { SHOWCASE_COPY as C } from "../../constants";
+import budArcs from "../../../../../assets/onboarding/bud-arcs.png";
+import { HERO, SHOWCASE_COPY as C } from "../../constants";
 import { IShowcaseFlight } from "../../hooks/useShowcase";
 
 interface IBuddyHeroProps {
 	pose: IBuddyPose;
-	k: number;
+	u: number;
 	flight: IShowcaseFlight;
 	heroRef: React.RefObject<View | null>;
 }
 
-const SIZE = 190;
-const ARROW = { w: 62, h: 46 } as const;
-// Setinha desenhada à mão apontando para o Buddy (como na referência)
-const ARROW_PATH = "M58 40 C 56 18, 38 6, 8 12 M8 12 L 18 4 M8 12 L 17 20";
+// Setinha à mão apontando para o Buddy e o "buddy" embaixo (medidas da
+// referência, a partir do canto do Bud)
+const ARROW = { x: 275, y: 93, w: 95, h: 60 } as const;
+const ARROW_PATH = "M82 50 C 82 26, 58 8, 10 12 M10 12 L 22 3 M10 12 L 21 22";
+const NAME = { x: 27, y: 61, size: 32 } as const;
+// As duas ondinhas em cima da cabeça (recortadas da arte do dono do app)
+const ARCS = { x: 87, y: -32, w: 60, h: 28 } as const;
 // Foguete: decola acelerando (lento no começo, rápido no fim). No iPhone a
 // curva tem que vir do cubicBezier do Reanimated: escrita como texto
 // funciona na prévia web, mas no aparelho dá erro e o app cai ao tocar em Começar
@@ -50,12 +54,13 @@ const flightStyle = (f: IShowcaseFlight): ViewStyle => {
 	} as ViewStyle;
 };
 
-const createBuddyHeroStyles = (theme: ITheme, k: number, f: IShowcaseFlight) => {
+const createBuddyHeroStyles = (theme: ITheme, u: number, f: IShowcaseFlight) => {
 	const { colors, typography } = theme.pace;
-	const scale = (SIZE * k) / BUDDY_W;
+	const k = u * 1.5;
+	const scale = (HERO.w * u) / BUDDY_W;
 	const box = { width: BUDDY_W * scale, height: BUDDY_H * scale };
 	return {
-		root: { alignSelf: "center" as const, ...box },
+		root: { position: "absolute" as const, left: HERO.x * u, top: HERO.y * u, ...box },
 		flight: { position: "absolute" as const, ...box },
 		measure: { position: "absolute" as const, left: 0, top: 0, ...box },
 		inner: { position: "absolute" as const, transform: [{ scale }], transformOrigin: "0% 0%" },
@@ -75,18 +80,28 @@ const createBuddyHeroStyles = (theme: ITheme, k: number, f: IShowcaseFlight) => 
 		} as ViewStyle,
 		note: {
 			position: "absolute" as const,
-			right: -84 * k,
-			top: box.height * 0.42,
-			alignItems: "flex-start" as const,
+			left: ARROW.x * u,
+			top: ARROW.y * u,
 			opacity: f.stage === "idle" ? 1 : 0,
 			transitionProperty: "opacity",
 			transitionDuration: "0.2s",
 		} as ViewStyle,
+		arcs: {
+			position: "absolute",
+			left: ARCS.x * u,
+			top: ARCS.y * u,
+			width: ARCS.w * u,
+			height: ARCS.h * u,
+			opacity: f.stage === "idle" ? 1 : 0,
+			transitionProperty: "opacity",
+			transitionDuration: "0.2s",
+		} as ImageStyle,
 		name: {
-			marginTop: 2,
-			marginLeft: 18,
+			position: "absolute" as const,
+			left: NAME.x * u,
+			top: NAME.y * u,
 			fontFamily: typography.handFonts.regular,
-			fontSize: 24,
+			fontSize: NAME.size * u,
 			color: colors.textPrimary,
 		},
 		ink: colors.textPrimary,
@@ -95,9 +110,9 @@ const createBuddyHeroStyles = (theme: ITheme, k: number, f: IShowcaseFlight) => 
 
 // O Bud grande no meio: pisca quando a página abre; no Começar ele se assusta,
 // vira foguete e sobe até onde vai conversar na próxima página
-export const BuddyHero: React.FC<IBuddyHeroProps> = ({ pose, k, flight, heroRef }) => {
+export const BuddyHero: React.FC<IBuddyHeroProps> = ({ pose, u, flight, heroRef }) => {
 	const { theme } = useTheme();
-	const styles = createBuddyHeroStyles(theme, k, flight);
+	const styles = createBuddyHeroStyles(theme, u, flight);
 
 	return (
 		<Animated.View entering={ZoomIn.delay(700).springify().damping(12)} style={styles.root}>
@@ -110,12 +125,17 @@ export const BuddyHero: React.FC<IBuddyHeroProps> = ({ pose, k, flight, heroRef 
 					<BuddyFigure pose={pose} color="branco" accessories={[]} />
 				</View>
 			</Animated.View>
+			<Image source={budArcs} style={styles.arcs} />
 			<Animated.View style={styles.note} pointerEvents="none">
-				<Svg width={ARROW.w} height={ARROW.h} viewBox={`0 0 ${String(ARROW.w)} ${String(ARROW.h)}`}>
+				<Svg
+					width={ARROW.w * u}
+					height={ARROW.h * u}
+					viewBox={`0 0 ${String(ARROW.w)} ${String(ARROW.h)}`}
+				>
 					<Path
 						d={ARROW_PATH}
 						stroke={styles.ink}
-						strokeWidth={1.8}
+						strokeWidth={2.6}
 						fill="none"
 						strokeLinecap="round"
 					/>

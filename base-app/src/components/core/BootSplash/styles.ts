@@ -16,6 +16,16 @@ const SYMBOL_K = 0.62;
 const SYMBOL_RATIO = 215 / 1659;
 export const SPLASH_BUD_SCALE = 1.1;
 
+// Logo antigo (logo-old.png, 655 x 179) do mesmo tamanho e lugar da abertura
+// nativa (56% da largura): aparece apagado e vai quase sumindo
+const OLD_K = 0.56;
+const OLD_RATIO = 179 / 655;
+const oldOpacity = (phase: ISplashPhase): number => {
+	if (phase === "old") return 0.55;
+	if (phase === "fade") return 0.08;
+	return 0;
+};
+
 const symbolOpacity = (phase: ISplashPhase): number => {
 	if (phase === "logo") return 0.35;
 	if (phase === "bright") return 1;
@@ -26,7 +36,8 @@ export const createBootSplashStyles = (theme: ITheme, width: number, phase: ISpl
 	const symbolW = width * SYMBOL_K;
 	const budW = BUDDY_W * SPLASH_BUD_SCALE;
 	const budH = BUDDY_H * SPLASH_BUD_SCALE;
-	const isBudIn = phase !== "logo" && phase !== "bright";
+	const isBudIn = phase === "run" || phase === "dots" || phase === "back" || phase === "out";
+	const oldW = width * OLD_K;
 	return {
 		root: {
 			position: "absolute",
@@ -41,7 +52,19 @@ export const createBootSplashStyles = (theme: ITheme, width: number, phase: ISpl
 			transitionDuration: "0.3s",
 		} as ViewStyle,
 		fill: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 } as ViewStyle,
-		// Surge cinza (como a abertura nativa) e acende branco
+		old: {
+			position: "absolute",
+			left: "50%",
+			top: "50%",
+			width: oldW,
+			height: oldW * OLD_RATIO,
+			marginLeft: -oldW / 2,
+			marginTop: -(oldW * OLD_RATIO) / 2,
+			opacity: oldOpacity(phase),
+			transitionProperty: "opacity",
+			transitionDuration: phase === "fade" ? "0.85s" : "0.2s",
+		} as ImageStyle,
+		// Depois do antigo: surge cinza e acende branco
 		symbol: {
 			position: "absolute",
 			left: "50%",
