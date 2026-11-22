@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-import { Button, Chip, GlassCard, SegmentedControl, Switch } from "@/components/pace";
+import { Chip, GlassCard, SegmentedControl, Switch } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { IHydroReminders } from "@/lib/hydration";
 
@@ -45,11 +45,11 @@ const hh = (h: number): string => `${String(h)}h`;
 const toggleDay = (days: readonly number[], d: number): number[] =>
 	days.includes(d) ? days.filter((x) => x !== d) : [...days, d].sort();
 
-// Lembretes do Buddy: liga/desliga, intervalo, janela do dia, dias e pausa
+// Lembretes do Buddy: liga/desliga, intervalo, horário e dias. Ligado fica
+// ligado todo dia até o atleta desligar (sem pausa automática)
 export const HydroReminders: React.FC<IHydroRemindersProps> = ({ reminders: r, onChange }) => {
 	const { theme } = useTheme();
 	const styles = createHydroRemindersStyles(theme);
-	const isPaused = r.pausedUntil > Date.now();
 
 	return (
 		<GlassCard testID="hydro-reminders">
@@ -111,18 +111,6 @@ export const HydroReminders: React.FC<IHydroRemindersProps> = ({ reminders: r, o
 								</Chip>
 							))}
 						</View>
-						<Button
-							size="sm"
-							variant="glass"
-							icon={isPaused ? "bell" : "bell-off"}
-							onPress={() => {
-								onChange({ pausedUntil: isPaused ? 0 : 1 });
-							}}
-							testID="hydro-pause"
-						>
-							{isPaused ? C.resume : C.pause}
-						</Button>
-						{isPaused ? <Text style={styles.note}>{C.paused}</Text> : null}
 					</>
 				) : null}
 				<Switch

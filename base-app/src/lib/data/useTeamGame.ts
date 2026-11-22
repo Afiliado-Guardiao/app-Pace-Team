@@ -8,6 +8,7 @@ import {
 	ITeamGame,
 	ITeamGameLevel,
 	ITeamGameSpin,
+	pushTeamGame,
 	spinTeamGame,
 	startTeamGame,
 } from "@/lib/supabase";
@@ -62,6 +63,10 @@ export const useTeamGame = (isLive = false): IUseTeamGameReturn => {
 		if (!game) return null;
 		const result = IS_PREVIEW ? demoSpinGame(game) : await spinTeamGame(game.id);
 		if (result) save(result.game);
+		// Último giro: avisa cada participante no celular (mesmo com o app fechado)
+		if (result && !IS_PREVIEW && result.game.status === "running") {
+			pushTeamGame(result.game.id).catch(() => undefined);
+		}
 		return result;
 	}, [game, save]);
 

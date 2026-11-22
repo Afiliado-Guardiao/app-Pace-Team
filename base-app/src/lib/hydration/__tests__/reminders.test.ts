@@ -1,53 +1,51 @@
 import { planHydrationReminders } from "../notifications";
-import { DEFAULT_REMINDERS } from "../store";
+import { DEFAULT_REMINDERS, IHydroReminders } from "../store";
 
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
+const on = (o: Partial<IHydroReminders>): IHydroReminders => ({
+	...DEFAULT_REMINDERS,
+	isOn: true,
+	days: ALL_DAYS,
+	startHour: 8,
+	endHour: 10,
+	everyMin: 60,
+	...o,
+});
 
 describe("planHydrationReminders", () => {
 	beforeEach(() => {
 		jest.useFakeTimers();
-		// Uma segunda às 6h: todos os horários de hoje ainda vêm pela frente
-		jest.setSystemTime(new Date(2026, 10, 23, 6, 0, 0));
+		// Uma segunda-feira
+		jest.setSystemTime(new Date(2026, 10, 23, 12, 0, 0));
 	});
 	afterEach(() => {
 		jest.useRealTimers();
 	});
 
-	it("diz quanto falta beber hoje e a meta do dia nos dias seguintes", () => {
-		const plan = planHydrationReminders(
-			{ ...DEFAULT_REMINDERS, isOn: true, days: ALL_DAYS, startHour: 8, endHour: 10, everyMin: 60 },
-			{ todayMl: 1500, dayMl: 2100 },
-		);
-		const today = plan.filter((p) => p.at.getDate() === 23);
-		const tomorrow = plan.filter((p) => p.at.getDate() === 24);
-		expect(today).toHaveLength(3);
-		expect(today[0]?.body).toBe("Falta você beber 1,5 L de água hoje. Já bebeu?");
-		expect(tomorrow[0]?.body).toBe("Falta você beber 2,1 L de água hoje. Já bebeu?");
-		expect(today[0]?.at.getHours()).toBe(8);
+	it("todo dia: repete sozinho em cada horário e diz quanto falta beber", () => {
+		const plan = planHydrationReminders(on({}), { todayMl: 1500, dayMl: 2100 });
+		expect(plan.map((p) => p.hour)).toEqual([8, 9, 10]);
+		expect(plan.every((p) => p.weekday === null)).toBe(true);
+		expect(plan[0]?.body).toBe("Falta você beber 1,5 L de água hoje. Já bebeu?");
 	});
 
-	it("não lembra hoje quando a meta já foi batida", () => {
-		const plan = planHydrationReminders(
-			{ ...DEFAULT_REMINDERS, isOn: true, days: ALL_DAYS, startHour: 8, endHour: 10, everyMin: 60 },
-			{ todayMl: 0, dayMl: 2100 },
+	it("meta de hoje batida: o lembrete continua, com a meta do dia", () => {
+		const plan = planHydrationReminders(on({}), { todayMl: 0, dayMl: 2100 });
+		expect(plan).toHaveLength(3);
+		expect(plan[0]?.body).toBe(
+			"Sua meta de água é de cerca de 2,1 L por dia. Já bebeu um copo agora?",
 		);
-		expect(plan.some((p) => p.at.getDate() === 23)).toBe(false);
-		expect(plan.some((p) => p.at.getDate() === 24)).toBe(true);
 	});
 
-	it("respeita o horário escolhido", () => {
-		const plan = planHydrationReminders(
-			{
-				...DEFAULT_REMINDERS,
-				isOn: true,
-				days: ALL_DAYS,
-				startHour: 15,
-				endHour: 17,
-				everyMin: 60,
-			},
-			{ todayMl: 900, dayMl: 2100 },
-		);
-		const hours = plan.filter((p) => p.at.getDate() === 23).map((p) => p.at.getHours());
-		expect(hours).toEqual([15, 16, 17]);
+	it("dias escolhidos: hoje o que falta, os outros dias a meta inteira", () => {
+		const plan = planHydrationReminders(on({ days: [1, 3], startHour: 15, endHour: 15 }), {
+			todayMl: 900,
+			dayMl: 2100,
+		});
+		const monday = plan.find((p) => p.weekday === 2);
+		const wednesday = plan.find((p) => p.weekday === 4);
+		expect(monday?.body).toBe("Falta você beber 900 ml de água hoje. Já bebeu?");
+		expect(wednesday?.body).toBe("Falta você beber 2,1 L de água hoje. Já bebeu?");
+		expect(monday?.hour).toBe(15);
 	});
 });

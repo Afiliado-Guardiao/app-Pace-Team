@@ -56,39 +56,46 @@ export interface IHydroLeft {
 	dayMl: number | null;
 }
 
-// Os próximos dias de lembrete ficam agendados com data e hora; ao abrir o
-// app (e a cada copo registrado) tudo é refeito com o quanto falta de verdade
-const DAYS_AHEAD = 3;
-const MIN_AHEAD_MS = 60_000;
+// Lembretes que se repetem sozinhos (todo dia, ou nos dias da semana
+// escolhidos): ficam ligados até o atleta desligar, sem pausa nem prazo. O
+// texto é refeito ao abrir o app e a cada copo registrado
+export interface IReminderSpec {
+	id: string;
+	body: string;
+	hour: number;
+	minute: number;
+	// null = todo dia; 1 (domingo) a 7 (sábado) = só nesse dia da semana
+	weekday: number | null;
+}
 
 const leftText = (ml: number): string => `Falta você beber ${formatMl(ml)} de água hoje. Já bebeu?`;
+// Meta de hoje já batida: o lembrete continua, com a meta do dia
+const goalText = (ml: number): string =>
+	`Sua meta de água é de cerca de ${formatMl(ml)} por dia. Já bebeu um copo agora?`;
 
-const bodyFor = (left: number | null, i: number): string =>
-	left === null ? MESSAGES[i % MESSAGES.length] : leftText(left);
+const bodyFor = (amount: number | null, dayMl: number | null, i: number): string => {
+	if (amount === null || dayMl === null) return MESSAGES[i % MESSAGES.length];
+	return amount > 0 ? leftText(amount) : goalText(dayMl);
+};
 
-// Datas dos lembretes: hoje (o que falta agora) e os próximos dias (a meta
-// do dia), só nos dias escolhidos e com hora ainda por vir
-export const planHydrationReminders = (
-	r: IHydroReminders,
-	left: IHydroLeft,
-): { at: Date; body: string; id: string }[] => {
+export const planHydrationReminders = (r: IHydroReminders, left: IHydroLeft): IReminderSpec[] => {
 	const slots = slotsOf(r);
-	const now = Date.now();
-	const out: { at: Date; body: string; id: string }[] = [];
-	for (let d = 0; d < DAYS_AHEAD; d++) {
-		const day = new Date(now);
-		day.setDate(day.getDate() + d);
-		const amount = d === 0 ? left.todayMl : left.dayMl;
-		// Meta do dia batida: sem lembrete
-		const isDone = amount !== null && amount <= 0;
-		if (!r.days.includes(day.getDay()) || isDone) continue;
-		slots.forEach((slot, i) => {
-			const at = new Date(day);
-			at.setHours(slot.hour, slot.minute, 0, 0);
-			if (at.getTime() < now + MIN_AHEAD_MS) return;
-			out.push({ at, body: bodyFor(amount, i), id: `${PREFIX}${String(d)}-${String(i)}` });
+	const everyDay = r.days.length === 7;
+	const today = new Date().getDay();
+	const out: IReminderSpec[] = [];
+	slots.forEach((slot, i) => {
+		if (everyDay) {
+			const body = bodyFor(left.todayMl, left.dayMl, i);
+			out.push({ id: `${PREFIX}${String(i)}`, body, ...slot, weekday: null });
+			return;
+		}
+		r.days.forEach((day) => {
+			// Hoje: quanto falta; os outros dias da semana: a meta do dia inteira
+			const amount = day === today ? left.todayMl : left.dayMl;
+			const body = bodyFor(amount, left.dayMl, i);
+			out.push({ id: `${PREFIX}${String(i)}-${String(day)}`, body, ...slot, weekday: day + 1 });
 		});
-	}
+	});
 	return out.slice(0, MAX_SLOTS);
 };
 
@@ -100,15 +107,26 @@ export async function scheduleHydrationReminders(
 ): Promise<void> {
 	if (!isIos) return;
 	await cancelHydrationReminders();
-	const isPaused = r.pausedUntil > Date.now();
-	if (!isPro || !r.isOn || isPaused || r.days.length === 0) return;
+	if (!isPro || !r.isOn || r.days.length === 0) return;
 	if (!(await ensureNotificationPermission())) return;
 	await Promise.all(
 		planHydrationReminders(r, left).map((p) =>
 			Notifications.scheduleNotificationAsync({
 				identifier: p.id,
 				content: { title: HYDRATION_PUSH.title, body: p.body, sound: true },
-				trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: p.at },
+				trigger:
+					p.weekday === null
+						? {
+								type: Notifications.SchedulableTriggerInputTypes.DAILY,
+								hour: p.hour,
+								minute: p.minute,
+							}
+						: {
+								type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+								weekday: p.weekday,
+								hour: p.hour,
+								minute: p.minute,
+							},
 			}),
 		),
 	);

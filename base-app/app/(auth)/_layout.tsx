@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 
 import { BuddyFlight, BuddyLivePanel } from "@/components/buddy";
+import { TeamGameInvite } from "@/components/core/TeamGameInvite";
 import { PrizeLayer } from "@/components/shared/PrizeLayer";
 import { useTheme } from "@/theme";
 import { useBuddyBridge, useBuddyPresence } from "@/lib/buddy";
@@ -40,6 +41,8 @@ export default function AuthLayout() {
 			<BuddyLivePanel />
 			<BuddyFlight />
 			<PrizeLayer />
+			{/* Convite da roleta da equipe: o seu desafio, em qualquer tela */}
+			<TeamGameInvite />
 		</>
 	);
 }

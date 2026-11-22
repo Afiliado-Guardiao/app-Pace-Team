@@ -24,7 +24,8 @@ export interface IHydroReminders {
 	everyMin: number;
 	// 0 = domingo … 6 = sábado
 	days: number[];
-	// Pausado até (ms); 0 = não pausado
+	// Antiga pausa "só hoje" (saiu: o lembrete ligado fica ligado). Fica no
+	// tipo só para não quebrar o que já está salvo no celular
 	pausedUntil: number;
 	// Aviso de reposição depois de cada corrida
 	isPostRunOn: boolean;

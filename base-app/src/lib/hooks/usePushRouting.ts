@@ -9,6 +9,7 @@ import { ROUTES } from "@/constants/routes";
 interface IPushData {
 	type?: string;
 	runId?: string;
+	gameId?: string;
 }
 
 // Com o app aberto, a notificação também aparece no alto da tela
@@ -26,7 +27,7 @@ if (Platform.OS !== "web") {
 
 // Tocar na notificação abre o lugar certo: "fulano concluiu uma corrida" abre
 // a corrida dele; "sua equipe está correndo" abre Correr; "fulano está
-// online" abre a aba Equipe.
+// online" abre a aba Equipe; "você está na roleta" abre a roleta.
 export const usePushRouting = (): void => {
 	const router = useRouter();
 
@@ -38,6 +39,9 @@ export const usePushRouting = (): void => {
 				router.push({ pathname: ROUTES.RUN_DETAIL, params: { teamRun: data.runId } });
 			} else if (data?.type === "team_running") {
 				router.navigate(ROUTES.RUN);
+			} else if (data?.type === "team_game") {
+				// Sorteado na roleta da equipe: abre a roleta com o seu desafio
+				router.push(ROUTES.TEAM_GAME);
 			} else if (data?.type === "team_online") {
 				router.navigate(ROUTES.TEAM);
 			}

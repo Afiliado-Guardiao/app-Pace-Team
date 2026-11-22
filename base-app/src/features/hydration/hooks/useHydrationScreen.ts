@@ -35,8 +35,6 @@ export interface IHydrationScreen {
 	goBack: () => void;
 }
 
-const DAY_MS = 86_400_000;
-
 // PACE HYDRATION (Team Pro): estimativa do dia, registro, corrida, suor e
 // lembretes. Sem Pro, a apresentação do recurso explica o que ele faz.
 export const useHydrationScreen = (): IHydrationScreen => {
@@ -79,16 +77,7 @@ export const useHydrationScreen = (): IHydrationScreen => {
 			saved(ml);
 		},
 		remove: st.removeLog,
-		setReminders: (r) => {
-			// "Pausar hoje" vale até a meia-noite
-			const next = r.pausedUntil === 1 ? { ...r, pausedUntil: nextMidnight() } : r;
-			st.setReminders(next);
-		},
+		setReminders: st.setReminders,
 		goBack,
 	};
-};
-
-const nextMidnight = (): number => {
-	const d = new Date(Date.now() + DAY_MS);
-	return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 };

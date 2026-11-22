@@ -21,6 +21,13 @@ export async function spinTeamGame(gameId: string): Promise<ITeamGameSpin> {
 	return data;
 }
 
+// Roleta terminou de girar: cada participante recebe o push com o desafio
+// dele (só quem chamou pede, uma vez)
+export async function pushTeamGame(gameId: string): Promise<void> {
+	const { error } = await supabase.functions.invoke("team-game-push", { body: { gameId } });
+	if (error) throw error;
+}
+
 export async function cancelTeamGame(gameId: string): Promise<ITeamGame | null> {
 	const { data, error } = await supabase.rpc("cancel_team_game", { p_game: gameId });
 	if (error) throw error;
