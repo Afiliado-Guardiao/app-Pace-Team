@@ -1,4 +1,5 @@
 export const RUN_LIVE_COPY = {
+	backToMe: "Voltar para mim",
 	solo: "Corrida livre",
 	team: "Corrida em equipe",
 	titleSolo: "Modo corrida",

@@ -41,6 +41,10 @@ export interface IRunMapProps {
 	interactive?: boolean;
 	// Corrida ao vivo: a câmera acompanha o atleta (em `me` ou na ponta da rota)
 	follow?: boolean;
+	// Acompanhando, mas a pessoa arrastou ou deu zoom: a câmera espera a mira
+	followPaused?: boolean;
+	// A pessoa mexeu no mapa (arrastou ou deu zoom)
+	onUserMove?: () => void;
 	// Botão da mira: cada número novo leva a câmera até `me`
 	recenter?: number;
 	style?: StyleProp<ViewStyle>;

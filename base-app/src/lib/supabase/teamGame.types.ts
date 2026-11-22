@@ -23,6 +23,9 @@ export interface ITeamGamePlayer {
 	assignedAt: string | null;
 	status: ITeamGamePlayerStatus;
 	points: number | null;
+	// O que correu no desafio (null = não correu no prazo)
+	runKm?: number | null;
+	runSeconds?: number | null;
 }
 
 export interface ITeamGame {
@@ -34,9 +37,24 @@ export interface ITeamGame {
 	createdAt: string;
 	endsAt: string | null;
 	isSuccess: boolean | null;
+	settledAt?: string | null;
 	wheel: ITeamGameCell[];
 	stakes: { win: number; lose: number };
 	players: ITeamGamePlayer[];
+}
+
+// Pontos que a roleta me deu ou tirou (Histórico)
+export interface IGamePoints {
+	gameId: string;
+	at: string;
+	points: number;
+	status: ITeamGamePlayerStatus;
+	km: number | null;
+	pace: number | null;
+	// Corrida do desafio (null = não correu no prazo)
+	runId: string | null;
+	runKm: number | null;
+	runSeconds: number | null;
 }
 
 export interface ITeamGameSpin {

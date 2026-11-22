@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 
 import { formatKm, formatPoints } from "@/lib/pace";
-import { ISavedRun } from "@/lib/supabase";
+import { IGamePoints, ISavedRun } from "@/lib/supabase";
 
 import {
 	buildDayCells,
 	dayLabel,
+	gamesIn,
 	IDayCell,
 	IRunDate,
 	ISummary,
@@ -43,6 +44,8 @@ export interface IUseHistoryMonthReturn {
 	summary: ISummary;
 	// A corrida é do mês (e do dia, se escolhido)?
 	isInMonth: (id: string | number) => boolean;
+	// Roletas do mês (e do dia, se escolhido)
+	games: IGamePoints[];
 }
 
 // Calendário do Histórico: escolhe o mês e, se quiser, um dia; o resumo e a
@@ -51,6 +54,7 @@ export interface IUseHistoryMonthReturn {
 export const useHistoryMonth = (
 	saved: readonly ISavedRun[],
 	stats: IMonthStats,
+	allGames: readonly IGamePoints[],
 ): IUseHistoryMonthReturn => {
 	const now = new Date();
 	const current = monthKeyOf(now);
@@ -84,19 +88,23 @@ export const useHistoryMonth = (
 		return date.month === selected && (day === null || date.day === day);
 	};
 
+	const games = useMemo(() => gamesIn(allGames, selected, day), [allGames, selected, day]);
+
 	const summary = useMemo(() => {
+		const gamePoints = games.reduce((sum, g) => sum + g.points, 0);
 		if (day !== null) {
 			const onDay = saved.filter((r) => {
 				const d = dateById.get(r.id);
 				return d?.month === selected && d.day === day;
 			});
-			return summarize(dayLabel(selected, day), onDay);
+			return summarize(dayLabel(selected, day), onDay, gamePoints);
 		}
 		const label = monthLabel(selected, year);
 		if (selected !== current) {
 			return summarize(
 				label,
 				saved.filter((r) => dateById.get(r.id)?.month === selected),
+				gamePoints,
 			);
 		}
 		return {
@@ -105,7 +113,7 @@ export const useHistoryMonth = (
 			runs: String(stats.monthRuns),
 			points: formatPoints(stats.monthPoints),
 		};
-	}, [selected, day, current, year, stats, saved, dateById]);
+	}, [selected, day, current, year, stats, saved, dateById, games]);
 
 	return {
 		isPickerOpen,
@@ -133,5 +141,6 @@ export const useHistoryMonth = (
 		},
 		summary,
 		isInMonth: isPicked,
+		games,
 	};
 };

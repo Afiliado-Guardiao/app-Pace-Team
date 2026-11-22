@@ -53,3 +53,4 @@ export { useVirada } from "./useVirada";
 export { useWatchSync } from "./useWatchSync";
 export { useWeather } from "./useWeather";
 export type { IViradaContribution, IViradaRankRow, IViradaView } from "./viradaView";
+export { useMyGamePoints } from "./useMyGamePoints";

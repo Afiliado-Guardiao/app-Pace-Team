@@ -70,6 +70,8 @@ export const createRunLiveStyles = (theme: ITheme, insets: { top: number; bottom
 			alignItems: "center",
 			gap: spacing[3.5],
 		} as ViewStyle,
+		// Mira: volta a câmera para o atleta (só depois de mexer no mapa)
+		locate: { alignSelf: "flex-end" } as ViewStyle,
 		center: { alignItems: "center" } as ViewStyle,
 		time: {
 			fontFamily: typography.numericFonts.bold,

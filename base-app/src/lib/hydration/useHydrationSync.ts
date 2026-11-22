@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import { formatMl } from "./day";
 import { scheduleHydrationReminders, schedulePostRunReminder } from "./notifications";
 import { useHydrationStore } from "./store";
 import { useHydration } from "./useHydration";
@@ -17,7 +16,8 @@ export const useHydrationSync = (): void => {
 	const reminders = useHydrationStore((s) => s.reminders);
 	const notified = useHydrationStore((s) => s.notifiedRuns);
 	const markRunNotified = useHydrationStore((s) => s.markRunNotified);
-	const { isPro, lastRun, hasRestriction, remainingMl, baseMl } = hydro;
+	const { isPro, lastRun, hasRestriction, remainingMl, baseMl, tempC } = hydro;
+	const { weightKg } = hydro.body;
 	// Arredonda em 50 ml: o lembrete não é refeito a cada mililitro
 	const todayMl = hasRestriction ? null : Math.ceil(remainingMl / 50) * 50;
 	const dayMl = hasRestriction ? null : Math.ceil(baseMl / 50) * 50;
@@ -32,6 +32,23 @@ export const useHydrationSync = (): void => {
 		const endedAt = new Date(run.startedAt).getTime() + run.seconds * 1000;
 		if (notified.includes(run.id) || Date.now() - endedAt > POST_RUN_WINDOW_MS) return;
 		markRunNotified(run.id);
-		schedulePostRunReminder(run.id, formatMl(hydration.replaceMl)).catch(ignore);
-	}, [isPro, hasRestriction, reminders.isPostRunOn, lastRun, notified, markRunNotified]);
+		schedulePostRunReminder({
+			runId: run.id,
+			startedAt: run.startedAt,
+			seconds: run.seconds,
+			km: run.km,
+			tempC,
+			weightKg,
+			...hydration,
+		}).catch(ignore);
+	}, [
+		isPro,
+		hasRestriction,
+		reminders.isPostRunOn,
+		lastRun,
+		notified,
+		markRunNotified,
+		tempC,
+		weightKg,
+	]);
 };

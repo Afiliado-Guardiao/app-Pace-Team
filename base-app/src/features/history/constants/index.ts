@@ -11,6 +11,9 @@ export const HISTORY_COPY = {
 	runsValue: "4",
 	points: "Pontos",
 	pointsValue: "266",
+	gameDone: "Roleta da equipe · concluiu",
+	gameFailed: "Roleta da equipe · não concluiu",
+	gameGoal: "Desafio:",
 	empty: "Nenhuma corrida aqui ainda. As corridas que você terminar aparecem nesta lista.",
 	teamEmpty:
 		"Nenhuma corrida da equipe ainda. Quando alguém da equipe correr, a corrida aparece aqui.",

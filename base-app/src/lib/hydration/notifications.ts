@@ -5,6 +5,7 @@ import * as Notifications from "expo-notifications";
 import { ensureNotificationPermission } from "@/lib/buddy/notifications";
 
 import { formatMl } from "./day";
+import { IHydroNotice } from "./notice";
 import { IHydroReminders } from "./store";
 
 // Lembretes do PACE HYDRATION: na janela do dia escolhida, nos dias
@@ -25,7 +26,8 @@ const MESSAGES = [
 
 export const HYDRATION_PUSH = {
 	title: "PACE HYDRATION",
-	postRun: "Boa corrida! Não esqueça da reposição de líquidos, aos poucos.",
+	// Curto, para caber inteiro na tela bloqueada; a conta fica no pop-up
+	postRun: (amount: string) => `Beba cerca de ${amount} aos poucos. Toque para ver a conta.`,
 	preRun: "Sua corrida está chegando. Prepare sua hidratação!",
 } as const;
 
@@ -113,7 +115,12 @@ export async function scheduleHydrationReminders(
 		planHydrationReminders(r, left).map((p) =>
 			Notifications.scheduleNotificationAsync({
 				identifier: p.id,
-				content: { title: HYDRATION_PUSH.title, body: p.body, sound: true },
+				content: {
+					title: HYDRATION_PUSH.title,
+					body: p.body,
+					data: { type: "hydro_reminder" },
+					sound: true,
+				},
 				trigger:
 					p.weekday === null
 						? {
@@ -133,16 +140,17 @@ export async function scheduleHydrationReminders(
 }
 
 // Reposição: um aviso uns minutos depois que a corrida aparece no app
-export async function schedulePostRunReminder(runId: string, liters: string): Promise<void> {
+export async function schedulePostRunReminder(notice: IHydroNotice): Promise<void> {
 	if (!isIos) return;
 	const hour = new Date().getHours();
 	if (hour >= QUIET_START || hour < QUIET_END) return;
 	if (!(await ensureNotificationPermission())) return;
 	await Notifications.scheduleNotificationAsync({
-		identifier: `${PREFIX}run-${runId}`,
+		identifier: `${PREFIX}run-${notice.runId}`,
 		content: {
 			title: HYDRATION_PUSH.title,
-			body: `${HYDRATION_PUSH.postRun} Estimativa: cerca de ${liters} nas próximas horas.`,
+			body: HYDRATION_PUSH.postRun(formatMl(notice.replaceMl)),
+			data: { type: "hydro_run", ...notice },
 			sound: true,
 		},
 		trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 10 * 60 },

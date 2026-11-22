@@ -16,7 +16,7 @@ import {
 } from "./pace.types";
 import { IMyPro } from "./pro.types";
 import { IMyChallenges, INotificationRow, ITeamAchievements } from "./progress.types";
-import { ITeamGame, ITeamGameLevel, ITeamGameSpin } from "./teamGame.types";
+import { ITeamGame, IGamePoints, ITeamGameLevel, ITeamGameSpin } from "./teamGame.types";
 import { ITeamHandoffChoice, ITeamHandoffResult } from "./teamHandoff.types";
 import { ITeamLastRuns, ITeamOnlineMate, IVirada } from "./teamLive.types";
 
@@ -256,6 +256,7 @@ export interface Database {
 				};
 				Returns: string;
 			};
+			get_my_game_points: { Args: Record<string, never>; Returns: IGamePoints[] };
 			get_team_game: { Args: Record<string, never>; Returns: ITeamGame | null };
 			start_team_game: { Args: { p_level: ITeamGameLevel }; Returns: ITeamGame | null };
 			spin_team_game: { Args: { p_game: string }; Returns: ITeamGameSpin };

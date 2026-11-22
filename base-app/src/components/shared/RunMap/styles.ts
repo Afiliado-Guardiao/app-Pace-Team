@@ -98,6 +98,7 @@ export const createRunMapStyles = (theme: ITheme) => {
 			fontSize: 9,
 			color: "#B4B4B4",
 		} as TextStyle,
+		hiddenColor: "transparent",
 		routeColor: colors.route,
 		leaderColor: colors.leaderTrail,
 		crewColor: colors.crewRoute,

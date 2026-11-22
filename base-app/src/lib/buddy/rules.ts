@@ -77,10 +77,9 @@ export const wornAccessories = (
 export const sickAt = (lastRunAt: number | null): number | null =>
 	lastRunAt === null ? null : lastRunAt + BUDDY_SICK_DAYS * DAY_MS;
 
-// Buddy Studio: um item por vez, sozinho. Com um item do Studio, o Buddy
-// mostra só ele (na cor de sempre, ou só a cor/efeito escolhido), sem somar
-// com os acessórios conquistados. A coroa do líder fica, se não houver nada
-// na cabeça.
+// Buddy Studio: cor, acessório e efeito somam. Os acessórios do Studio entram
+// no lugar dos conquistados (a coroa do líder fica, se não houver nada na
+// cabeça); só com cor ou efeito, o Buddy continua com o que conquistou.
 export interface IBuddyStudioPick {
 	color: IBuddyColorId | null;
 	head: IBuddyAccessoryId | null;
@@ -100,13 +99,10 @@ export const withStudio = (
 	const picks = [studio.head, studio.eyes, studio.back ?? null, studio.mouth ?? null].filter(
 		(x): x is IBuddyAccessoryId => x !== null,
 	);
-	const hasPick = picks.length > 0 || studio.color !== null || studio.effect !== null;
-	if (!hasPick) return { ...look, effect: null };
+	const color = studio.color ?? look.color;
+	const effect = studio.effect;
+	if (picks.length === 0) return { color, accessories: look.accessories, effect };
 	const hasHead = picks.some((id) => slotOfAny(id) === "head");
 	const crown = !hasHead && look.accessories.includes(BUDDY_CROWN) ? [BUDDY_CROWN] : [];
-	return {
-		color: studio.color ?? look.color,
-		accessories: [...picks, ...crown],
-		effect: studio.effect,
-	};
+	return { color, accessories: [...picks, ...crown], effect };
 };

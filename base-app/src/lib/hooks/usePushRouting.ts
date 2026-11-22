@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 
+import { toHydroNotice, useHydroNotice } from "@/lib/hydration";
 import { ROUTES } from "@/constants/routes";
 
 interface IPushData {
@@ -27,7 +28,9 @@ if (Platform.OS !== "web") {
 
 // Tocar na notificação abre o lugar certo: "fulano concluiu uma corrida" abre
 // a corrida dele; "sua equipe está correndo" abre Correr; "fulano está
-// online" abre a aba Equipe; "você está na roleta" abre a roleta.
+// online" abre a aba Equipe; "você está na roleta" abre a roleta; "a roleta
+// terminou" abre o Início (o pop-up do resultado aparece por cima); a água
+// depois da corrida abre o pop-up com a conta.
 export const usePushRouting = (): void => {
 	const router = useRouter();
 
@@ -42,6 +45,14 @@ export const usePushRouting = (): void => {
 			} else if (data?.type === "team_game") {
 				// Sorteado na roleta da equipe: abre a roleta com o seu desafio
 				router.push(ROUTES.TEAM_GAME);
+			} else if (data?.type === "team_game_result") {
+				router.navigate(ROUTES.HOME);
+			} else if (data?.type === "hydro_run") {
+				const notice = toHydroNotice(data);
+				if (notice) useHydroNotice.getState().open(notice);
+				else router.push(ROUTES.HYDRATION);
+			} else if (data?.type === "hydro_reminder") {
+				router.push(ROUTES.HYDRATION);
 			} else if (data?.type === "team_online") {
 				router.navigate(ROUTES.TEAM);
 			}

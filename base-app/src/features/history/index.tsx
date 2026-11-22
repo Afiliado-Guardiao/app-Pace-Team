@@ -15,6 +15,7 @@ import { RunRow } from "@/components/shared/RunRow";
 import { SwipeToDelete } from "@/components/shared/SwipeToDelete";
 import { ITheme, useTheme } from "@/theme";
 
+import { GameRow } from "./components/GameRow";
 import { MonthSheet } from "./components/MonthSheet";
 import { HISTORY_COPY, HISTORY_FILTERS } from "./constants";
 import { useHistory } from "./hooks/useHistory";
@@ -90,22 +91,30 @@ export const HistoryScreen: React.FC = () => {
 					testID="history-filter"
 				/>
 				<View style={styles.runs}>
-					{history.runs.map((run, i) => (
-						<SwipeToDelete
-							key={run.id}
-							isEnabled={!history.isTeam}
-							onDelete={() => history.removeRun(run)}
-							testID={`history-run-${String(i)}`}
-						>
-							<RunRow
-								run={run}
-								seed={i}
-								onPress={() => {
-									history.openRun(run.id);
-								}}
-							/>
-						</SwipeToDelete>
+					{history.looseGames.map((g) => (
+						<GameRow key={g.id} entry={g} />
 					))}
+					{history.runs.map((run, i) => {
+						const game = history.gameOf(run.id);
+						return (
+							<React.Fragment key={run.id}>
+								<SwipeToDelete
+									isEnabled={!history.isTeam}
+									onDelete={() => history.removeRun(run)}
+									testID={`history-run-${String(i)}`}
+								>
+									<RunRow
+										run={run}
+										seed={i}
+										onPress={() => {
+											history.openRun(run.id);
+										}}
+									/>
+								</SwipeToDelete>
+								{game ? <GameRow entry={game} /> : null}
+							</React.Fragment>
+						);
+					})}
 				</View>
 				{history.isEmpty ? <InfoNote icon="footprints">{history.emptyText}</InfoNote> : null}
 				{history.isTeam && !history.isEmpty ? (

@@ -24,6 +24,8 @@ export const DATA_KEYS = {
 	teamOnline: ["pace", "team-live", "online"] as const,
 	// Roleta da equipe (some junto com a presença e as corridas da equipe)
 	teamGame: ["pace", "team-live", "game"] as const,
+	// Pontos que a roleta me deu ou tirou (Histórico)
+	gamePoints: ["pace", "team-live", "game-points"] as const,
 	teamRuns: ["pace", "team-live", "runs"] as const,
 	teamRun: (id: string) => ["pace", "team-live", "run", id] as const,
 	teamLivePositions: ["pace", "team-live", "positions"] as const,

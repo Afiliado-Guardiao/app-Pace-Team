@@ -18,6 +18,7 @@ export const GAME_COPY = {
 	mineHint: "Corra agora e bata a distância e o pace. A corrida confere sozinha.",
 	runMine: "Correr meu desafio",
 	until: (time: string) => `Vale até ${time}`,
+	showResult: "Ver o resultado",
 	again: "Nova roleta",
 	win: (pts: number) => `Todos cumpriram! +${String(pts)} pontos para cada um no ranking`,
 	lose: "Nem todos cumpriram. Quem falhou perdeu pontos no ranking",

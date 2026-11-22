@@ -2,12 +2,13 @@ import { useMemo, useState } from "react";
 
 import { useRouter } from "expo-router";
 
-import { useMyRuns, useMyStats, useRemoveRun, useTeamRunList } from "@/lib/data";
+import { useMyGamePoints, useMyRuns, useMyStats, useRemoveRun, useTeamRunList } from "@/lib/data";
 import { IRun } from "@/lib/pace";
 import { ROUTES } from "@/constants/routes";
 
 import { HISTORY_COPY, HISTORY_FILTERS, TEAM_FILTER } from "../constants";
 
+import { IGameEntry, useHistoryGames } from "./useHistoryGames";
 import { IUseHistoryMonthReturn, useHistoryMonth } from "./useHistoryMonth";
 
 interface IUseHistoryReturn {
@@ -22,6 +23,9 @@ interface IUseHistoryReturn {
 	// Calendário: escolhe o mês do resumo e da lista
 	calendar: IUseHistoryMonthReturn;
 	showInvalidNote: boolean;
+	// Pontos da roleta: embaixo da corrida do desafio ou soltos no topo
+	gameOf: (runId: IRun["id"]) => IGameEntry | null;
+	looseGames: IGameEntry[];
 	openRun: (id: IRun["id"]) => void;
 	// Arrastar para a esquerda exclui (só as minhas corridas, não as da equipe)
 	removeRun: (run: IRun) => Promise<boolean>;
@@ -36,7 +40,8 @@ export const useHistory = (): IUseHistoryReturn => {
 	const { stats } = useMyStats();
 	const team = useTeamRunList();
 	const { remove } = useRemoveRun();
-	const calendar = useHistoryMonth(saved, stats);
+	const { games } = useMyGamePoints();
+	const calendar = useHistoryMonth(saved, stats, games);
 	const isTeam = filter === TEAM_FILTER;
 
 	const runs = useMemo(() => {
@@ -46,6 +51,9 @@ export const useHistory = (): IUseHistoryReturn => {
 		if (filter === "Pendentes") return inMonth.filter((r) => r.status !== "valid");
 		return inMonth;
 	}, [filter, allRuns, isTeam, team.runs, calendar]);
+	const runIds = useMemo(() => runs.map((r) => String(r.id)), [runs]);
+	const gameRows = useHistoryGames(calendar.games, runIds);
+	const hasGames = !isTeam && filter !== "Pendentes";
 	const isListLoading = isTeam ? team.isLoading : isLoading;
 
 	return {
@@ -60,6 +68,8 @@ export const useHistory = (): IUseHistoryReturn => {
 		calendar,
 		showInvalidNote:
 			!isTeam && allRuns.some((r) => r.status === "invalid") && filter !== "Validadas",
+		gameOf: (runId) => (hasGames ? (gameRows.byRun.get(String(runId)) ?? null) : null),
+		looseGames: hasGames ? gameRows.loose : [],
 		// Corrida da equipe abre pelo id da equipe (pode ser de um colega)
 		openRun: (id) => {
 			const key = isTeam ? "teamRun" : "id";

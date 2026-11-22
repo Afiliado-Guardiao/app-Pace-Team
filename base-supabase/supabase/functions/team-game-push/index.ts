@@ -4,6 +4,8 @@
 // O app de quem chamou a roleta da equipe chama quando ela termina de girar.
 // Manda para cada participante o desafio dele ("Fulano sorteou para você: 5 km
 // no pace 4'00"/km"); tocar na notificação abre a roleta no app.
+// Com kind "result", avisa quem jogou que a roleta terminou (RPC
+// team_game_result_targets: só quem jogou pede, uma vez por roleta).
 //
 // Seguranca: verify_jwt ligado. A RPC team_game_push_targets roda com o JWT de
 // quem chamou: só quem chamou a roleta pede, uma vez, até 30 min depois.
@@ -74,11 +76,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
     return json({ error: "not_authenticated" }, 401);
   }
 
-  const input = await req.json().catch(() => null) as { gameId?: unknown } | null;
+  const input = await req.json().catch(() => null) as { gameId?: unknown; kind?: unknown } | null;
   const gameId = typeof input?.gameId === "string" ? input.gameId : "";
   if (!/^[0-9a-f-]{36}$/i.test(gameId)) {
     return json({ error: "invalid_game" }, 400);
   }
+
+  const isResult = input?.kind === "result";
+  const rpc = isResult ? "team_game_result_targets" : "team_game_push_targets";
+  const type = isResult ? "team_game_result" : "team_game";
 
   const userClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -89,7 +95,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     },
   );
 
-  const { data, error } = await userClient.rpc("team_game_push_targets", { p_game: gameId });
+  const { data, error } = await userClient.rpc(rpc, { p_game: gameId });
   if (error) {
     const status = error.message.includes("not_authenticated") ? 401 : 500;
     return json({ error: "targets_failed", detail: error.message }, status);
@@ -105,7 +111,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     title: targets.title,
     body: r.body,
     sound: "default",
-    data: { type: "team_game", gameId: targets.gameId },
+    data: { type, gameId: targets.gameId },
   }));
   const tickets = await sendExpo(messages);
 
@@ -117,7 +123,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
   await admin.from("push_log").insert(targets.recipients.map((r, i) => ({
-    kind: "team_game",
+    kind: type,
     from_user: null,
     to_user: r.userId,
     status: tickets[i]?.status ?? "error",

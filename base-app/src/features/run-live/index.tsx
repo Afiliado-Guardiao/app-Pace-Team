@@ -11,24 +11,18 @@ import {
 	Highlight,
 	Icon,
 	IconButton,
-	Sheet,
 	TopBar,
 	useLayoutSize,
 } from "@/components/pace";
 import { GpsDot } from "@/components/shared/GpsDot";
 import { RunMap } from "@/components/shared/RunMap";
 import { useTheme } from "@/theme";
-import {
-	distanceParts,
-	formatDistance,
-	formatDuration,
-	formatDurationText,
-	formatPace,
-	formatSpeed,
-} from "@/lib/pace";
+import { distanceParts, formatDuration, formatPace, formatSpeed } from "@/lib/pace";
 
+import { FinishSheet } from "./components/FinishSheet";
 import { MetricPill } from "./components/MetricPill";
 import { RUN_LIVE_COPY } from "./constants";
+import { useLiveCamera } from "./hooks/useLiveCamera";
 import { useLiveCrew } from "./hooks/useLiveCrew";
 import { useRunLive } from "./hooks/useRunLive";
 import { createRunLiveStyles, SCRIM_BOTTOM, SCRIM_TOP } from "./styles";
@@ -40,6 +34,7 @@ export const RunLiveScreen: React.FC = () => {
 	const { size, onLayout } = useLayoutSize();
 	const live = useRunLive();
 	const crew = useLiveCrew(live.isTeam);
+	const camera = useLiveCamera();
 	const styles = createRunLiveStyles(theme, insets);
 	const pace = formatPace(live.km > 0 ? live.seconds / live.km : 0);
 	// Abaixo de 1 km em metros ("620 m"), para não confundir com 62 km
@@ -54,8 +49,11 @@ export const RunLiveScreen: React.FC = () => {
 				friends={live.friends}
 				leaderTrail={live.leaderTrail}
 				showMe
-				interactive={false}
+				interactive
 				follow
+				followPaused={camera.isPaused}
+				onUserMove={camera.handleMove}
+				recenter={camera.recenter}
 			/>
 			{size ? (
 				<>
@@ -75,7 +73,7 @@ export const RunLiveScreen: React.FC = () => {
 					</View>
 				</>
 			) : null}
-			<View style={styles.top}>
+			<View style={styles.top} pointerEvents="box-none">
 				<TopBar
 					title={
 						<View style={styles.titlePill}>
@@ -88,7 +86,7 @@ export const RunLiveScreen: React.FC = () => {
 					onBack={live.goBack}
 					right={{ icon: "map", label: "Mapa", onPress: live.openMap }}
 				/>
-				<Text style={styles.title}>
+				<Text style={styles.title} pointerEvents="none">
 					{live.isTeam ? (
 						<>
 							{RUN_LIVE_COPY.titleTeamStart}{" "}
@@ -99,7 +97,7 @@ export const RunLiveScreen: React.FC = () => {
 					)}
 				</Text>
 				{crew.isVisible ? (
-					<View style={styles.crew}>
+					<View style={styles.crew} pointerEvents="none">
 						{crew.photos.length > 0 ? (
 							<View style={styles.photos}>
 								{crew.photos.map((photo, i) => (
@@ -117,14 +115,23 @@ export const RunLiveScreen: React.FC = () => {
 					</View>
 				) : null}
 			</View>
-			<View style={styles.bottom}>
-				<View style={styles.center}>
+			<View style={styles.bottom} pointerEvents="box-none">
+				{camera.isPaused ? (
+					<IconButton
+						icon="locate-fixed"
+						label={RUN_LIVE_COPY.backToMe}
+						onPress={camera.handleBack}
+						style={styles.locate}
+						testID="run-locate"
+					/>
+				) : null}
+				<View style={styles.center} pointerEvents="none">
 					<Text style={styles.time}>{formatDuration(live.seconds)}</Text>
 					<Text style={styles.timeLabel}>
 						{live.isPaused ? RUN_LIVE_COPY.paused : RUN_LIVE_COPY.total}
 					</Text>
 				</View>
-				<View style={styles.distance}>
+				<View style={styles.distance} pointerEvents="none">
 					<GlassSurface appearance={styles.pinAppearance} radius={22} style={styles.pin}>
 						<Icon name="map-pin" size={18} />
 					</GlassSurface>
@@ -173,23 +180,14 @@ export const RunLiveScreen: React.FC = () => {
 					/>
 				</View>
 			</View>
-			<Sheet
+			<FinishSheet
 				open={live.isConfirmOpen}
-				title={RUN_LIVE_COPY.confirmTitle}
+				km={live.km}
+				seconds={live.seconds}
 				onClose={live.closeConfirm}
-				actions={
-					<>
-						<Button fullWidth size="lg" onPress={live.handleFinish} testID="run-finish">
-							{RUN_LIVE_COPY.confirmSave}
-						</Button>
-						<Button fullWidth variant="ghost" onPress={live.resume}>
-							{RUN_LIVE_COPY.confirmKeep}
-						</Button>
-					</>
-				}
-			>
-				{`${formatDistance(live.km)}${RUN_LIVE_COPY.confirmBody}${formatDurationText(live.seconds)}${RUN_LIVE_COPY.confirmNote}`}
-			</Sheet>
+				onFinish={live.handleFinish}
+				onResume={live.resume}
+			/>
 		</View>
 	);
 };

@@ -92,22 +92,22 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 	const preview = withStudio(base, draft);
 	const look = (next: IBuddyStudio) => withStudio(base, next);
 
-	// Um item por vez: a miniatura mostra só ele; tocar escolhe só ele
-	// (tocar de novo no escolhido volta ao visual de sempre)
+	// Cor, acessório e efeito somam: tocar num item troca só o dele e mantém o
+	// resto da escolha (tocar de novo no escolhido tira só ele). A miniatura
+	// mostra o Buddy como vai ficar, com tudo junto
 	const item = <K extends keyof IBuddyStudio>(
 		key: K,
 		value: NonNullable<IBuddyStudio[K]>,
 		name: string,
 	): IStudioItem => {
-		const only: IBuddyStudio = { ...EMPTY_STUDIO, [key]: value };
 		const isSelected = draft[key] === value;
 		return {
 			id: value,
 			name,
 			isSelected,
-			...look(only),
+			...look({ ...draft, [key]: value }),
 			pick: () => {
-				setDraft(isSelected ? EMPTY_STUDIO : only);
+				setDraft({ ...draft, [key]: isSelected ? null : value });
 			},
 		};
 	};

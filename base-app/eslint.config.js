@@ -32,6 +32,8 @@ module.exports = tseslint.config(
 			"*.config.ts",
 			// Plugins de configuração do Expo (Node/CommonJS, rodam no prebuild)
 			"plugins/**",
+			// Roda no npm install (Node)
+			"scripts/**",
 			"targets/**/*.config.js",
 			"babel.config.js",
 			"metro.config.js",

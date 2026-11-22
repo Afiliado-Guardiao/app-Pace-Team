@@ -20,7 +20,8 @@
     "lint": "eslint .",
     "check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" && eslint . && tsc --noEmit",
     "fix": "eslint . --fix && prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "node scripts/patch-react-native-maps.mjs"
   },
   "dependencies": {
     "@bacons/apple-targets": "^5.0.0",

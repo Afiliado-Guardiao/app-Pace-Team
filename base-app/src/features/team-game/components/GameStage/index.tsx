@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 
+import { useGameResultStore } from "@/components/core/TeamGameResult";
 import { Button } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 
@@ -35,6 +36,7 @@ export const GameStage: React.FC<IGameStageProps> = ({ s }) => {
 	const { theme } = useTheme();
 	const styles = createGameStageStyles(theme);
 	const { game, phase, wheel, me } = s;
+	const showResult = useGameResultStore((st) => st.show);
 	if (!game) return null;
 	// Só o primeiro nome cabe no anel
 	const names = game.players.map((p) => (p.isYou ? "Você" : (p.name.split(" ")[0] ?? p.name)));
@@ -116,6 +118,19 @@ export const GameStage: React.FC<IGameStageProps> = ({ s }) => {
 					accessibilityLabel={C.cancel}
 				>
 					{C.cancel}
+				</Button>
+			) : null}
+			{phase === "done" ? (
+				<Button
+					fullWidth
+					icon="list-checks"
+					onPress={() => {
+						showResult(game);
+					}}
+					testID="team-game-show-result"
+					accessibilityLabel={C.showResult}
+				>
+					{C.showResult}
 				</Button>
 			) : null}
 			{phase === "done" ? (

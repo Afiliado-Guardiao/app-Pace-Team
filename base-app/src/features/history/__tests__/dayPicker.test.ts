@@ -1,12 +1,19 @@
 import { act, renderHook } from "@testing-library/react-native";
 
-import { ISavedRun } from "@/lib/supabase";
+import { IGamePoints, ISavedRun } from "@/lib/supabase";
 
 import { useHistoryMonth } from "../hooks/useHistoryMonth";
 import { buildDayCells, dayLabel, monthKeyOf } from "../utils";
 
 const run = (id: string, startedAt: string, km: number): ISavedRun =>
 	({ id, startedAt, km, points: km * 8, status: "valid" }) as unknown as ISavedRun;
+
+// Roleta perdida no dia 3: tira 10 dos pontos do dia
+const GAME = {
+	gameId: "g",
+	at: new Date(new Date().getFullYear(), new Date().getMonth(), 3, 20).toISOString(),
+	points: -10,
+} as unknown as IGamePoints;
 
 const STATS = { monthKm: 99, monthRuns: 9, monthPoints: 999 };
 
@@ -40,7 +47,7 @@ describe("useHistoryMonth com dia", () => {
 	];
 
 	it("filtra a lista e o resumo pelo dia escolhido e volta para o mês", () => {
-		const { result } = renderHook(() => useHistoryMonth(saved, STATS));
+		const { result } = renderHook(() => useHistoryMonth(saved, STATS, [GAME]));
 		expect(result.current.selected).toBe(key);
 		expect(result.current.dayCells.find((c) => c.day === 3)?.runs).toBe(2);
 
@@ -56,6 +63,9 @@ describe("useHistoryMonth com dia", () => {
 		expect(result.current.isInMonth("c")).toBe(false);
 		expect(result.current.summary.runs).toBe("2");
 		expect(result.current.summary.label).toBe(dayLabel(key, 3));
+		// 8 km × 8 pontos − 10 da roleta
+		expect(result.current.summary.points).toBe("54");
+		expect(result.current.games).toHaveLength(1);
 
 		act(() => {
 			result.current.showWholeMonth();
@@ -67,7 +77,7 @@ describe("useHistoryMonth com dia", () => {
 	});
 
 	it("trocar o mês limpa o dia e deixa a folha aberta", () => {
-		const { result } = renderHook(() => useHistoryMonth(saved, STATS));
+		const { result } = renderHook(() => useHistoryMonth(saved, STATS, [GAME]));
 		act(() => {
 			result.current.openPicker();
 			result.current.pickDay(9);

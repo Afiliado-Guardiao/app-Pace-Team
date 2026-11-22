@@ -44,6 +44,8 @@ export interface IUseHydrationReturn {
 	during: IDuringAdvice;
 	personalRate: number | null;
 	isThirsty: boolean;
+	// Temperatura usada na conta (null = sem leitura)
+	tempC: number | null;
 }
 
 const DAY_MS = 86_400_000;
@@ -106,6 +108,7 @@ export const useHydration = (): IUseHydrationReturn => {
 			preRun: preRunMl(body),
 			during: duringAdvice(typicalMin),
 			personalRate: personalSweatRate(st.tests),
+			tempC: weather.temp,
 			isThirsty: targetMl !== null && isThirstyNow({ drankMl, targetMl, now }),
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- "agora" muda a cada render; o dia basta

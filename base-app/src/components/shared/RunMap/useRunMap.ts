@@ -10,6 +10,7 @@ interface IUseRunMapOptions {
 	progress: number;
 	me?: ILatLng | null;
 	follow?: boolean;
+	followPaused?: boolean;
 	recenter?: number;
 	// Outros pontos que precisam caber no enquadramento (percursos dos colegas)
 	extra?: readonly ILatLng[];
@@ -18,6 +19,8 @@ interface IUseRunMapOptions {
 interface IUseRunMapReturn {
 	ref: React.RefObject<MapView | null>;
 	initialRegion: Region;
+	// Onde ficam, invisíveis, os itens que não aparecem (não muda)
+	home: LatLng;
 	drawn: readonly ILatLng[];
 	fullCoords: LatLng[];
 	drawnCoords: LatLng[];
@@ -43,6 +46,7 @@ export const useRunMap = ({
 	progress,
 	me,
 	follow = false,
+	followPaused = false,
 	recenter,
 	extra,
 }: IUseRunMapOptions): IUseRunMapReturn => {
@@ -56,6 +60,7 @@ export const useRunMap = ({
 	const last = route.at(-1);
 	const tip = drawn.at(-1);
 	const center = (follow ? (me ?? tip) : me) ?? first ?? FALLBACK;
+	const home = useRef(toLatLng(center)).current;
 	const target = follow ? (me ?? tip) : me;
 	const targetLat = target?.[0];
 	const targetLng = target?.[1];
@@ -79,17 +84,18 @@ export const useRunMap = ({
 		fit();
 	}, [fit]);
 
-	// Correndo: a câmera vai junto a cada posição nova. Parado (preparar
-	// corrida): centraliza uma vez e deixa o atleta arrastar e dar zoom.
+	// Correndo: a câmera vai junto a cada posição nova, até o atleta arrastar
+	// ou dar zoom (aí só volta na mira). Parado (preparar corrida): centraliza
+	// uma vez e deixa o atleta arrastar e dar zoom.
 	useEffect(() => {
-		if (targetLat === undefined || targetLng === undefined) return;
+		if (followPaused || targetLat === undefined || targetLng === undefined) return;
 		if (!follow && (hasCentered.current || route.length > 1)) return;
 		hasCentered.current = true;
 		ref.current?.animateCamera(
 			{ center: { latitude: targetLat, longitude: targetLng } },
 			{ duration: follow ? FOLLOW_MS : 400 },
 		);
-	}, [follow, targetLat, targetLng, route.length]);
+	}, [follow, followPaused, targetLat, targetLng, route.length]);
 
 	// Mira: vai até o atleta, bem perto. Só quando a pessoa toca na mira (a
 	// posição fica guardada à parte para não mover a câmera a cada passo).
@@ -111,6 +117,7 @@ export const useRunMap = ({
 
 	return {
 		ref,
+		home,
 		initialRegion: {
 			latitude: center[0],
 			longitude: center[1],

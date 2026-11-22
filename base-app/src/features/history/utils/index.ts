@@ -1,5 +1,5 @@
 import { formatKm, formatPoints } from "@/lib/pace";
-import { ISavedRun } from "@/lib/supabase";
+import { IGamePoints, ISavedRun } from "@/lib/supabase";
 
 import { MONTH_NAMES } from "../constants";
 
@@ -78,8 +78,20 @@ export const buildDayCells = (
 	return [...blanks, ...days];
 };
 
-// Soma das corridas validadas (km, quantidade e pontos)
-export const summarize = (label: string, runs: readonly ISavedRun[]): ISummary => {
+// Roletas do mês (e do dia, se escolhido)
+export const gamesIn = (
+	games: readonly IGamePoints[],
+	month: string,
+	day: number | null,
+): IGamePoints[] =>
+	games.filter((g) => {
+		const date = runDateOf(g.at);
+		return date.month === month && (day === null || date.day === day);
+	});
+
+// Soma das corridas validadas (km, quantidade e pontos) com os pontos da
+// roleta da equipe (ganhos ou perdidos; nunca abaixo de zero)
+export const summarize = (label: string, runs: readonly ISavedRun[], gamePoints = 0): ISummary => {
 	const valid = runs.filter((r) => r.status === "valid");
 	return {
 		label,
@@ -88,6 +100,6 @@ export const summarize = (label: string, runs: readonly ISavedRun[]): ISummary =
 			1,
 		),
 		runs: String(valid.length),
-		points: formatPoints(valid.reduce((sum, r) => sum + r.points, 0)),
+		points: formatPoints(Math.max(0, valid.reduce((sum, r) => sum + r.points, 0) + gamePoints)),
 	};
 };
