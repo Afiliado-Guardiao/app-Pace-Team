@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { useMyPro } from "@/lib/data";
+import { useProPurchase } from "@/lib/pro";
 import { IPlan, openManageSubscriptions, usePlans } from "@/lib/purchases";
 import { IMyPro, linkMyProToTeam } from "@/lib/supabase";
 import { openLegalPage } from "@/constants/legal";
@@ -13,12 +14,10 @@ import { ROUTES } from "@/constants/routes";
 import { PRO_STATUS_COPY, PRO_TOASTS } from "../constants";
 import { IProStateKind, proStateOf, savingsOf } from "../utils/proState";
 
-import { useProPurchase } from "./useProPurchase";
-
 interface IUseProScreenReturn {
 	pro: IMyPro | null;
 	kind: IProStateKind;
-	// Só o capitão de uma equipe ainda no Free vê os planos
+	// Quem ainda não tem o Pro vê os planos (com ou sem equipe, capitão ou não)
 	showPlans: boolean;
 	plans: IPlan[];
 	selected: IPlan | null;
@@ -76,7 +75,7 @@ export const useProScreen = (): IUseProScreenReturn => {
 	return {
 		pro,
 		kind,
-		showPlans: kind === "captainFree",
+		showPlans: !pro?.isPro && kind !== "loading" && kind !== "canLink",
 		plans,
 		selected,
 		savings: savingsOf(plans),

@@ -18,9 +18,6 @@ export const STUDIO_COPY = {
 	applied: "Aplicado",
 	reset: "Voltar ao visual conquistado",
 	tryHint: "Toque para experimentar. Nada muda até você aplicar.",
-	lockedTitle: "Disponível no PACE TEAM PRO",
-	lockedBody: "Experimente à vontade. Para usar no seu Buddy, a sua equipe precisa ter o Team Pro.",
-	lockedCta: "Conhecer o Team Pro",
 	fair: "Tudo o que você conquista correndo continua seu e grátis. O Studio é só estilo, sem vantagem no ranking.",
 	effectHint: {
 		faiscas: "Faíscas laranja em volta",

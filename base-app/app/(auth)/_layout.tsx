@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 
 import { BuddyFlight, BuddyLivePanel } from "@/components/buddy";
 import { HydroNotice } from "@/components/core/HydroNotice";
+import { ProOffer } from "@/components/core/ProOffer";
 import { TeamGameInvite } from "@/components/core/TeamGameInvite";
 import { TeamGameResult } from "@/components/core/TeamGameResult";
 import { PrizeLayer } from "@/components/shared/PrizeLayer";
@@ -49,6 +50,8 @@ export default function AuthLayout() {
 			<TeamGameResult />
 			{/* Tocou no aviso de água depois da corrida: a conta completa */}
 			<HydroNotice />
+			{/* Janela do Team Pro: planos e assinatura, de qualquer recurso Pro */}
+			<ProOffer />
 		</>
 	);
 }

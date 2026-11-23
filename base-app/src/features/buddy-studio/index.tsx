@@ -7,7 +7,6 @@ import {
 	ScreenBackground,
 	ScreenScroll,
 	SegmentedControl,
-	Sheet,
 	TopBar,
 } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
@@ -42,12 +41,6 @@ const createBuddyStudioStyles = (theme: ITheme) => {
 			fontSize: typography.sizes.xs,
 			color: colors.textTertiary,
 			textAlign: "center" as const,
-		},
-		lockText: {
-			fontFamily: typography.fonts.medium,
-			fontSize: typography.sizes.sm,
-			lineHeight: typography.sizes.sm * 1.45,
-			color: colors.textSecondary,
 		},
 	};
 };
@@ -94,18 +87,6 @@ export const BuddyStudioScreen: React.FC = () => {
 					<Text style={styles.fair}>{C.fair}</Text>
 				</View>
 			</ScreenScroll>
-			<Sheet
-				open={studio.isLockOpen}
-				title={C.lockedTitle}
-				onClose={studio.closeLock}
-				actions={
-					<Button fullWidth icon="crown" onPress={studio.openPro} testID="studio-open-pro">
-						{C.lockedCta}
-					</Button>
-				}
-			>
-				<Text style={styles.lockText}>{C.lockedBody}</Text>
-			</Sheet>
 			<FloatingToast toast={studio.toast} />
 		</View>
 	);

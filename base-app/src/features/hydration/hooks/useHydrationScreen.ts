@@ -1,9 +1,6 @@
-import { useEffect } from "react";
-
 import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
-import { useMyPro } from "@/lib/data";
 import {
 	formatMl,
 	IHydroKind,
@@ -12,7 +9,7 @@ import {
 	useHydration,
 	useHydrationStore,
 } from "@/lib/hydration";
-import { IS_PREVIEW } from "@/constants/preview";
+import { useProGate } from "@/lib/pro";
 import { ROUTES } from "@/constants/routes";
 
 import { HYDRO_COPY } from "../constants";
@@ -36,10 +33,10 @@ export interface IHydrationScreen {
 }
 
 // PACE HYDRATION (Team Pro): estimativa do dia, registro, corrida, suor e
-// lembretes. Sem Pro, a apresentação do recurso explica o que ele faz.
+// lembretes. Sem o Pro a tela é uma vitrine: usar abre a janela do Team Pro.
 export const useHydrationScreen = (): IHydrationScreen => {
 	const router = useRouter();
-	const { isPro, isLoading } = useMyPro();
+	const gate = useProGate("hydration");
 	const hydro = useHydration();
 	const st = useHydrationStore();
 	const { toast, showToast } = useFloatingToast();
@@ -51,33 +48,36 @@ export const useHydrationScreen = (): IHydrationScreen => {
 		});
 	};
 	const goBack = () => {
+		gate.leave();
 		if (router.canGoBack()) router.back();
 		else router.replace(ROUTES.HOME);
 	};
-	const setup = useHydroSetup(goBack);
+	const setup = useHydroSetup(goBack, gate.isPro);
+	// Sem o Pro, cada ação abre a janela do Team Pro em vez de agir
+	const guard =
+		<A extends unknown[]>(fn: (...args: A) => void) =>
+		(...args: A) => {
+			if (gate.isPro) fn(...args);
+			else gate.ask();
+		};
+	const sweat = useSweatForm();
 	const amount = useAmountForm(() => {
 		saved();
 	});
-
-	useEffect(() => {
-		if (!IS_PREVIEW && !isLoading && !isPro) {
-			router.replace({ pathname: ROUTES.PRO_FEATURE, params: { id: "hydration" } });
-		}
-	}, [isPro, isLoading, router]);
 
 	return {
 		hydro,
 		reminders: st.reminders,
 		toast,
-		amount,
-		setup,
-		sweat: useSweatForm(),
-		add: (ml, kind = "day") => {
+		amount: { ...amount, open: guard(amount.open) },
+		setup: { ...setup, open: guard(setup.open) },
+		sweat: { ...sweat, open: guard(sweat.open) },
+		add: guard((ml: number, kind: IHydroKind = "day") => {
 			st.addLog(ml, kind);
 			saved(ml);
-		},
-		remove: st.removeLog,
-		setReminders: st.setReminders,
+		}),
+		remove: guard(st.removeLog),
+		setReminders: guard(st.setReminders),
 		goBack,
 	};
 };

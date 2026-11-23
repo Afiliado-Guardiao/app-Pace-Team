@@ -36,7 +36,11 @@ export const PRO_COPY = {
 // Cartão de status: o que muda para cada situação do atleta
 export const PRO_STATUS_COPY = {
 	noTeamTitle: "O Team Pro é da equipe",
-	noTeamBody: "Crie sua equipe ou entre em uma. Aí o capitão pode tornar a equipe PRO.",
+	noTeamBody:
+		"Assine aqui e depois monte a sua equipe: uma assinatura vale para você e mais 9 pessoas.",
+	soloProTitle: "Você já é PRO",
+	soloProBody:
+		"Agora monte a sua equipe e convide até 9 pessoas: a assinatura passa a valer para elas também.",
 	noTeamCta: "Criar minha equipe",
 	proTitle: " é PRO",
 	covered: " de 10 integrantes com o Pro",
@@ -47,9 +51,9 @@ export const PRO_STATUS_COPY = {
 	overTitle: "As 10 vagas Pro estão ocupadas",
 	overBody:
 		"Sua equipe é PRO, mas o Team Pro cobre 10 integrantes pela ordem de entrada. Você segue no Free, com tudo de corrida e ranking liberado.",
-	memberTitle: "Só o capitão assina",
+	memberTitle: "A equipe ainda não é PRO",
 	memberBody:
-		"Quando o capitão tornar a equipe PRO, até 10 integrantes ganham os recursos. Que tal avisar?",
+		"Você mesmo pode assinar o Team Pro aqui embaixo e liberar para até 10 da equipe. Ou avise o capitão.",
 	memberCta: "Avisar o capitão",
 	memberShare:
 		"Capitão, bora tornar nossa equipe PRO no PACE TEAM? Uma assinatura libera o PACE AI, o Buddy Studio, o Team Analytics e o PACE Hydration para até 10 de nós.",

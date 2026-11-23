@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import { useRouter } from "expo-router";
 
-import { useMyPro } from "@/lib/data";
 import { IRoute, ROUTES } from "@/constants/routes";
 
 import { IPanelSectionId, IProSectionId } from "../constants";
@@ -30,18 +29,14 @@ const ROUTE_OF: Partial<Record<IPanelAction, IRoute>> = {
 
 const TABS: readonly IRoute[] = [ROUTES.RUN, ROUTES.RANKING, ROUTES.TEAM];
 
-// Abre a tela do atalho. Recurso Pro sem o Pro: a apresentação do recurso
+// Abre a tela do atalho. Recurso Pro abre sempre: sem o Pro a tela é uma
+// vitrine e usar abre a janela do Team Pro
 export const usePanelActions = (): { open: (id: IPanelAction) => void } => {
 	const router = useRouter();
-	const { isPro } = useMyPro();
-
 	const open = useCallback(
 		(id: IPanelAction) => {
 			if (isProId(id)) {
-				// Studio e Analytics abrem sempre: sem o Pro dá para ver, e usar pede
-				// a assinatura dentro da tela
-				if (isPro || id === "studio" || id === "analytics") router.push(PRO_ROUTES[id]);
-				else router.push({ pathname: ROUTES.PRO_FEATURE, params: { id } });
+				router.push(PRO_ROUTES[id]);
 				return;
 			}
 			const route = ROUTE_OF[id];
@@ -49,7 +44,7 @@ export const usePanelActions = (): { open: (id: IPanelAction) => void } => {
 			if (TABS.includes(route)) router.navigate(route);
 			else router.push(route);
 		},
-		[router, isPro],
+		[router],
 	);
 
 	return { open };

@@ -4,7 +4,7 @@ import { IFloatingToastData } from "@/components/pace";
 import { useMyPro } from "@/lib/data";
 import { purchasePlan, restorePurchases } from "@/lib/purchases";
 
-import { PRO_TOASTS } from "../constants";
+import { PRO_PURCHASE_TOASTS as PRO_TOASTS } from "./constants";
 
 interface IUseProPurchaseReturn {
 	isBusy: boolean;
@@ -24,6 +24,7 @@ const wait = (ms: number) =>
 
 // Compra do Team Pro: o Pro só libera quando o servidor recebe a confirmação
 // da Apple (webhook). Depois de comprar, pergunta ao servidor por até ~30 s.
+// Quem paga tem o Pro na hora, com ou sem equipe (a equipe vem depois).
 export const useProPurchase = (
 	showToast: (t: IFloatingToastData) => void,
 ): IUseProPurchaseReturn => {
@@ -35,8 +36,8 @@ export const useProPurchase = (
 	const confirm = useCallback(async () => {
 		setIsConfirming(true);
 		for (let i = 0; i < POLL_TRIES; i += 1) {
-			const result = (await refresh()) as { data?: { teamPro?: boolean } } | undefined;
-			if (result?.data?.teamPro) {
+			const result = (await refresh()) as { data?: { isPro?: boolean } } | undefined;
+			if (result?.data?.isPro) {
 				setIsConfirming(false);
 				setIsDone(true);
 				return;

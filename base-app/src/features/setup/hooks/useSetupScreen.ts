@@ -45,6 +45,8 @@ export const useSetupScreen = () => {
 	const user = useStore((s) => s.user);
 	const savedName = useStore((s) => s.answers[SETUP_KEYS.name]);
 	const savedHandle = useStore((s) => s.answers[SETUP_KEYS.handle]);
+	// Entrou sem a apresentação: na escolha da equipe não há "voltar"
+	const isShortStart = useStore((s) => s.answers[SETUP_KEYS.short] === "1") && flow.step === "team";
 	const savedGoal = useStore((s) => s.answers[SETUP_KEYS.goal]);
 	const setAnswer = useStore((s) => s.setAnswer);
 	const [isMedalOpen, setIsMedalOpen] = useState(false);
@@ -66,7 +68,7 @@ export const useSetupScreen = () => {
 
 	return {
 		step: flow.step,
-		canBack: flow.step !== SETUP_STEPS[0] && flow.step !== "done",
+		canBack: flow.step !== SETUP_STEPS[0] && flow.step !== "done" && !isShortStart,
 		toast,
 		team,
 		inv,

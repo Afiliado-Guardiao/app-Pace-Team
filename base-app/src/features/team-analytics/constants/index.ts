@@ -30,7 +30,43 @@ export const ANALYTICS_COPY = {
 	errorTitle: "Não deu para carregar agora",
 	errorBody: "Confira a internet e tente de novo.",
 	retry: "Tentar de novo",
-	lockedTitle: "Team Analytics é do Team Pro",
-	lockedBody: "Quando o capitão tornar a equipe PRO, os números aparecem aqui.",
-	lockedCta: "Conhecer o Team Pro",
+	previewTitle: "Os relatórios da sua equipe",
+	previewBody:
+		"Com o Team Pro, estes relatórios aparecem com os números reais da sua equipe, atualizados a cada corrida.",
+	previewCta: "Ver os relatórios da minha equipe",
+	previewLock: "PRO",
 } as const;
+
+// O que o Team Analytics mostra (vitrine para quem ainda não tem o Pro)
+export const ANALYTICS_PREVIEW = [
+	{
+		icon: "trending-up",
+		title: "Esta semana",
+		text: "Km da equipe, quantos correram e a posição na cidade.",
+	},
+	{
+		icon: "lightbulb",
+		title: "Destaques",
+		text: "Frases simples sobre o que melhorou e o que precisa de força.",
+	},
+	{
+		icon: "chart-column",
+		title: "Últimas 8 semanas",
+		text: "Os km da equipe semana a semana, no gráfico.",
+	},
+	{
+		icon: "swords",
+		title: "Disputa da semana",
+		text: "Quanto falta para alcançar a equipe da frente.",
+	},
+	{
+		icon: "trophy",
+		title: "Posição no ranking",
+		text: "Como a equipe subiu ou caiu na cidade e na categoria.",
+	},
+	{
+		icon: "users",
+		title: "Integrantes",
+		text: "Km e dias com corrida de cada um, o mais constante e quem precisa de força.",
+	},
+] as const;

@@ -19,8 +19,7 @@ import {
 	withStudio,
 	wornAccessories,
 } from "@/lib/buddy";
-import { useMyPro } from "@/lib/data";
-import { IS_PREVIEW } from "@/constants/preview";
+import { useProGate } from "@/lib/pro";
 import { ROUTES } from "@/constants/routes";
 
 import { IStudioTab, STUDIO_TOASTS } from "../constants";
@@ -46,12 +45,9 @@ interface IUseBuddyStudioReturn {
 	items: IStudioItem[];
 	isPro: boolean;
 	isDirty: boolean;
-	isLockOpen: boolean;
 	toast: IFloatingToastData | null;
 	apply: () => void;
 	reset: () => void;
-	closeLock: () => void;
-	openPro: () => void;
 	goBack: () => void;
 }
 
@@ -68,7 +64,7 @@ const same = (a: IBuddyStudio, b: IBuddyStudio): boolean =>
 export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 	const router = useRouter();
 	const { toast, showToast } = useFloatingToast();
-	const { isPro } = useMyPro();
+	const gate = useProGate("studio");
 	const ctx = useBuddyContext();
 	const color = useBuddyStore((s) => s.color);
 	const lastFree = useBuddyStore((s) => s.lastFree);
@@ -79,8 +75,7 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 	const setStudio = useBuddyStore((s) => s.setStudio);
 	const [tab, setTabState] = useState<IStudioTab>("cores");
 	const [draft, setDraft] = useState<IBuddyStudio>(saved);
-	const [isLockOpen, setIsLockOpen] = useState(false);
-	const canApply = IS_PREVIEW || isPro;
+	const canApply = gate.isPro;
 
 	const base = useMemo(
 		() => ({
@@ -127,11 +122,11 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 		items: byTab[tab](),
 		isPro: canApply,
 		isDirty: !same(draft, saved),
-		isLockOpen,
 		toast,
 		apply: () => {
+			// Sem o Pro: vê e experimenta tudo; para usar, a janela do Team Pro
 			if (!canApply) {
-				setIsLockOpen(true);
+				gate.ask();
 				return;
 			}
 			setStudio(draft);
@@ -144,14 +139,8 @@ export const useBuddyStudio = (): IUseBuddyStudioReturn => {
 				showToast(STUDIO_TOASTS.reset);
 			}
 		},
-		closeLock: () => {
-			setIsLockOpen(false);
-		},
-		openPro: () => {
-			setIsLockOpen(false);
-			router.push(ROUTES.PRO);
-		},
 		goBack: () => {
+			gate.leave();
 			if (router.canGoBack()) router.back();
 			else router.replace(ROUTES.HOME);
 		},

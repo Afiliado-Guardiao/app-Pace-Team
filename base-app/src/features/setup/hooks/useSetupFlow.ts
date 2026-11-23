@@ -40,7 +40,9 @@ export const useSetupFlow = (): IUseSetupFlowReturn => {
 		[setAnswer],
 	);
 
-	const skipPro = !pro?.isCaptain || pro.teamPro;
+	const isShort = useStore((s) => s.answers[SETUP_KEYS.short] === "1");
+	// Entrou sem a apresentação: depois da equipe e dos convites, já entra no app
+	const skipPro = !pro?.isCaptain || pro.teamPro || isShort;
 	const next = useCallback(() => {
 		const after = SETUP_STEPS[SETUP_STEPS.indexOf(step) + 1] ?? "done";
 		if (after === "invites" && !hasTeam) go("done");

@@ -6,6 +6,7 @@ import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
 
 import { AnalyticsHero } from "./components/AnalyticsHero";
+import { AnalyticsPreview } from "./components/AnalyticsPreview";
 import { InsightsCard } from "./components/InsightsCard";
 import { MembersCard } from "./components/MembersCard";
 import { RankCard } from "./components/RankCard";
@@ -54,17 +55,7 @@ export const TeamAnalyticsScreen: React.FC = () => {
 			<ScreenScroll contentStyle={styles.content}>
 				<TopBar title={C.title} onBack={screen.goBack} />
 				{screen.isLoading ? <ActivityIndicator color={styles.spinner} /> : null}
-				{screen.isLocked ? (
-					<GlassCard>
-						<View style={styles.box}>
-							<Text style={styles.title}>{C.lockedTitle}</Text>
-							<Text style={styles.text}>{C.lockedBody}</Text>
-							<Button fullWidth icon="crown" onPress={screen.openPro} testID="analytics-open-pro">
-								{C.lockedCta}
-							</Button>
-						</View>
-					</GlassCard>
-				) : null}
+				{screen.isLocked ? <AnalyticsPreview onAsk={screen.openPro} /> : null}
 				{screen.isError ? (
 					<GlassCard>
 						<View style={styles.box}>

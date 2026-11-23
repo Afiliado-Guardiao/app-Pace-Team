@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { ScrollView } from "react-native";
 
 import { useRouter } from "expo-router";
 
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
-import { useAiContext, useMyPro } from "@/lib/data";
+import { useAiContext } from "@/lib/data";
+import { useProGate } from "@/lib/pro";
 import { useStore } from "@/store";
-import { IS_PREVIEW } from "@/constants/preview";
 import { ROUTES } from "@/constants/routes";
 
 import { IAiComposerModel } from "../components/AiComposer";
@@ -34,6 +34,8 @@ interface IUsePaceAiScreenReturn {
 	ask: (question: string) => void;
 	openHistory: () => void;
 	goBack: () => void;
+	// Tem o Team Pro (sem ele, a tela é uma vitrine: enviar abre os planos)
+	isPro: boolean;
 }
 
 const firstName = (name: string | null | undefined): string =>
@@ -43,8 +45,8 @@ const firstName = (name: string | null | undefined): string =>
 export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 	const router = useRouter();
 	const { toast, showToast } = useFloatingToast();
-	const { isPro, isLoading: isProLoading } = useMyPro();
-	const isAllowed = IS_PREVIEW || isPro;
+	const gate = useProGate("ai");
+	const isAllowed = gate.isPro;
 	const { context, refresh } = useAiContext(isAllowed);
 	const chat = usePaceAiChat(context, showToast);
 	const userName = useStore((s) => s.user?.name);
@@ -52,13 +54,6 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 	const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 	const scrollRef = useRef<ScrollView | null>(null);
 	const week = useMemo(() => (context ? aiWeekView(context) : null), [context]);
-
-	// Sem Team Pro, a tela de apresentação explica o recurso
-	useEffect(() => {
-		if (!IS_PREVIEW && !isProLoading && !isPro) {
-			router.replace({ pathname: ROUTES.PRO_FEATURE, params: { id: "ai" } });
-		}
-	}, [isPro, isProLoading, router]);
 
 	const scrollToEnd = useCallback(() => {
 		setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 80);
@@ -71,6 +66,11 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		(question: string) => {
 			// Campo vazio: não faz nada (antes ia e voltava sem enviar)
 			if (!question.trim()) return;
+			// Sem o Pro: a pergunta fica no campo e abre a janela do Team Pro
+			if (!isAllowed) {
+				gate.ask();
+				return;
+			}
 			setDraft("");
 			scrollToEnd();
 			void chat.send(question).then((reply) => {
@@ -80,7 +80,7 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 				void refresh();
 			});
 		},
-		[chat, refresh, scrollToEnd],
+		[chat, refresh, scrollToEnd, isAllowed, gate],
 	);
 	// A fala entra no campo (somando ao que já está escrito); só vai no Enviar
 	const voice = useAiVoice(
@@ -130,9 +130,12 @@ export const usePaceAiScreen = (): IUsePaceAiScreenReturn => {
 		history,
 		ask,
 		openHistory: () => {
-			setIsHistoryOpen(true);
+			if (isAllowed) setIsHistoryOpen(true);
+			else gate.ask();
 		},
+		isPro: isAllowed,
 		goBack: () => {
+			gate.leave();
 			if (router.canGoBack()) router.back();
 			else router.replace(ROUTES.HOME);
 		},

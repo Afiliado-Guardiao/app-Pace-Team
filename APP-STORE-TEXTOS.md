@@ -42,7 +42,7 @@ PACE BUDDY
 • O mascote do PACE TEAM fora do app: widget na tela inicial, atalho com dois toques atrás do iPhone (Toque Traseiro), corrida na Dynamic Island e despertador de corrida.
 
 TEAM PRO (OPCIONAL)
-O app de corrida, o ranking e o feed são grátis. O Team Pro é uma assinatura do capitão que libera, para até 10 integrantes da equipe:
+O app de corrida, o ranking e o feed são grátis. O Team Pro é uma assinatura que libera, para você e mais 9 da sua equipe (10 no total):
 • PACE AI: o Buddy responde perguntas sobre as suas corridas, por texto ou voz.
 • Buddy Studio: cores, acessórios e efeitos para o Buddy.
 • Team Analytics: relatórios do desempenho da equipe.
@@ -103,7 +103,7 @@ No Perfil › Configurações: **Gerenciar assinatura**, **Restaurar compras** e
 ```
 Demo account: [e-mail] / [password] (already in a team with Team Pro, runs and posts)
 
-• The core app (running, teams, ranking, feed) is free. "Team Pro" is an optional auto-renewable subscription bought in-app with Apple IAP (RevenueCat). It unlocks PACE AI, Buddy Studio, Team Analytics and PACE Hydration for up to 10 members of the subscriber's team. It gives no points or ranking advantage.
+• The core app (running, teams, ranking, feed) is free. "Team Pro" is an optional auto-renewable subscription bought in-app with Apple IAP (RevenueCat). Any user can subscribe from the Team Pro sheet (shown when a free user tries a Pro feature, which can be previewed but not used). It unlocks PACE AI, Buddy Studio, Team Analytics and PACE Hydration for the subscriber and up to 10 members of their team. It gives no points or ranking advantage.
 • Background location: used only during a run the user starts, to measure distance and route with the screen locked. The iOS blue indicator is shown while the run is active. "Always" is only requested if the user turns on the Back Tap shortcut to start a run.
 • HealthKit: read-only. Imports the user's running workouts (distance, time, route, average heart rate) from watches into the run history. Never written, never used for advertising.
 • PACE AI: uses Anthropic's Claude. Before the first use, the app shows a consent screen explaining what is sent (question, run summary, first name, team km) and to whom. Nothing is sent without "Concordo". Voice is transcribed on-device.

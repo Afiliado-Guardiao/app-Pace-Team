@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { authErrorMessage } from "@/lib/auth/authErrors";
 import { pickFromGallery } from "@/lib/media";
+import { startShortSetup } from "@/lib/onboarding";
 import { signUpWithEmail, uploadAvatar } from "@/lib/supabase";
 import { useStore } from "@/store";
 import { ROUTES } from "@/constants/routes";
@@ -75,7 +76,12 @@ export const useSignupScreen = (): IUseSignupScreenReturn => {
 				const { answers } = useStore.getState();
 				setHasTeam(false);
 				if (answers.setupWantsPro === "1") router.replace(ROUTES.PRO);
-				else router.replace(answers.setupDone === "1" ? ROUTES.HOME : ROUTES.SETUP);
+				else if (answers.setupDone === "1") router.replace(ROUTES.HOME);
+				else {
+					// Pulou a apresentação: vai direto montar a equipe ou correr sozinho
+					startShortSetup();
+					router.replace(ROUTES.SETUP);
+				}
 			})
 			.catch((error: unknown) => {
 				showToast({ ...SIGNUP_TOASTS.error, message: authErrorMessage(error) });

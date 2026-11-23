@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { IFloatingToastData, useFloatingToast } from "@/components/pace";
 import { signInWithAppleNative } from "@/lib/auth/appleSignIn";
 import { GOOGLE_SIGN_IN_ENABLED } from "@/lib/auth/providers";
+import { startShortSetup } from "@/lib/onboarding";
 import { useStore } from "@/store";
 import { openLegalPage } from "@/constants/legal";
 import { IS_PREVIEW } from "@/constants/preview";
@@ -39,7 +40,9 @@ const afterSignIn = () => {
 		return ROUTES.PRO;
 	}
 	const isNew = user ? Date.now() - new Date(user.createdAt).getTime() < NEW_ACCOUNT_MS : false;
-	return isNew && answers.setupDone !== "1" ? ROUTES.SETUP : ROUTES.HOME;
+	if (!isNew || answers.setupDone === "1") return ROUTES.HOME;
+	startShortSetup();
+	return ROUTES.SETUP;
 };
 
 // Boas-vindas: Apple (nativo + Supabase), Google (em breve) e e-mail.

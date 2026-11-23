@@ -43,6 +43,8 @@ export const SETUP_KEYS = {
 	handle: "setupHandle",
 	// "1" = quis o Team Pro no onboarding: abre a assinatura depois do login
 	wantsPro: "setupWantsPro",
+	// "1" = entrou sem a apresentação: começa na equipe e não volta para trás
+	short: "setupShort",
 } as const;
 
 // 3a · os 8 acessórios da grade 4×2 (a coroa é só do líder)

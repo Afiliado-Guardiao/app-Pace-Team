@@ -31,6 +31,15 @@ export const statusContent = (
 	if (!pro) return null;
 	switch (kind) {
 		case "noTeam":
+			if (pro.isPro) {
+				return {
+					icon: "crown",
+					title: C.soloProTitle,
+					body: C.soloProBody,
+					cta: C.noTeamCta,
+					isGold: true,
+				};
+			}
 			return {
 				icon: "users",
 				title: C.noTeamTitle,

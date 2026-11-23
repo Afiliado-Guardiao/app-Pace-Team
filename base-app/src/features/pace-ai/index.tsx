@@ -91,7 +91,7 @@ export const PaceAiScreen: React.FC = () => {
 			</KeyboardAvoidingView>
 			<AiHistorySheet model={screen.history} />
 			<AiConsentSheet
-				isOpen={!consent.hasConsent}
+				isOpen={screen.isPro && !consent.hasConsent}
 				onAccept={consent.accept}
 				onDecline={screen.goBack}
 				onPrivacy={openPrivacy}

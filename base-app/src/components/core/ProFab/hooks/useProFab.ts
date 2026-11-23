@@ -4,7 +4,6 @@ import { useRouter, useSegments } from "expo-router";
 
 import { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 
-import { useMyPro } from "@/lib/data";
 import { ROUTES } from "@/constants/routes";
 
 import { IProFeatureId } from "../constants";
@@ -29,7 +28,6 @@ const RISE = 18;
 export const useProFab = (): IUseProFabReturn => {
 	const router = useRouter();
 	const segments = useSegments();
-	const { isPro } = useMyPro();
 	const [isOpen, setIsOpen] = useState(false);
 	const t = useSharedValue(0);
 
@@ -63,12 +61,11 @@ export const useProFab = (): IUseProFabReturn => {
 		},
 		open: (id) => {
 			setOpen(false);
-			// Recurso pronto e liberado abre direto; senão, a apresentação
-			if (isPro && id === "analytics") router.push(ROUTES.PRO_ANALYTICS);
-			else if (isPro && id === "ai") router.push(ROUTES.PACE_AI);
-			else if (isPro && id === "studio") router.push(ROUTES.BUDDY_STUDIO);
-			else if (isPro && id === "hydration") router.push(ROUTES.HYDRATION);
-			else router.push({ pathname: ROUTES.PRO_FEATURE, params: { id } });
+			// Abre sempre o recurso: sem o Pro ele é uma vitrine (usar pede o plano)
+			if (id === "analytics") router.push(ROUTES.PRO_ANALYTICS);
+			else if (id === "ai") router.push(ROUTES.PACE_AI);
+			else if (id === "studio") router.push(ROUTES.BUDDY_STUDIO);
+			else router.push(ROUTES.HYDRATION);
 		},
 		backdropStyle: useAnimatedStyle(() => ({ opacity: Math.min(1, t.value) })),
 		fabStyle: useAnimatedStyle(() => ({ transform: [{ rotate: `${String(t.value * -10)}deg` }] })),

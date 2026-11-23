@@ -42,7 +42,8 @@ const DEFAULTS = { weight: 70, height: 170, age: 30 } as const;
 
 // Seus dados do PACE HYDRATION em 4 passos (peso, altura, idade e saúde).
 // Abre sozinho na primeira vez (sem peso salvo); depois, pelo "Editar dados".
-export const useHydroSetup = (onLeave: () => void): IHydroSetup => {
+// Sem o Team Pro não abre sozinho (a tela é vitrine; usar abre os planos).
+export const useHydroSetup = (onLeave: () => void, canAutoOpen: boolean): IHydroSetup => {
 	const st = useHydrationStore();
 	const birthday = useStore((s) => s.user?.birthday);
 	const [isOpen, setIsOpen] = useState(false);
@@ -66,6 +67,7 @@ export const useHydroSetup = (onLeave: () => void): IHydroSetup => {
 
 	// Primeira vez (depois de ler o que está salvo no aparelho): já pede os dados
 	useEffect(() => {
+		if (!canAutoOpen) return undefined;
 		const check = () => {
 			if (!useHydrationStore.getState().body.weightKg) open();
 		};
@@ -74,8 +76,8 @@ export const useHydroSetup = (onLeave: () => void): IHydroSetup => {
 			return undefined;
 		}
 		return useHydrationStore.persist.onFinishHydration(check);
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- só ao abrir a tela
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- ao abrir (e quando o Pro chega)
+	}, [canAutoOpen]);
 
 	const isLast = step === SETUP_STEPS.length - 1;
 	const info = SETUP_STEPS[step] ?? SETUP_STEPS[0];
