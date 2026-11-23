@@ -22,7 +22,6 @@ const STROKE = 12;
 const R = (RING - STROKE) / 2;
 const LEN = 2 * Math.PI * R;
 const BUD_SCALE = 0.5;
-const WATER = "#8FD9FF";
 
 const createHydroTodayStyles = (theme: ITheme) => {
 	const { colors, spacing, typography } = theme.pace;
@@ -119,7 +118,7 @@ export const HydroToday: React.FC<IHydroTodayProps> = ({ hydro, onAdd, onOther, 
 								cx={RING / 2}
 								cy={RING / 2}
 								r={R}
-								stroke={WATER}
+								stroke={theme.pace.colors.water}
 								strokeWidth={STROKE}
 								fill="none"
 								strokeLinecap="round"

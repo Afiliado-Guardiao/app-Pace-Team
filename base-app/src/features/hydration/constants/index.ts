@@ -13,6 +13,7 @@ export const HYDRO_COPY = {
 	addTitle: "Registrar água",
 	other: "Outro",
 	logTitle: "Registros de hoje",
+	logTotal: "Total de hoje",
 	logEmpty: "Nenhum registro hoje ainda. Toque num copo acima.",
 	remove: "Apagar registro",
 	weekTitle: "Últimos 7 dias",

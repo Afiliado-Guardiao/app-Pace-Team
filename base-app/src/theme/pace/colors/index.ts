@@ -159,6 +159,9 @@ export const paceColors = {
 	trophyGold: "#F4D646",
 	trophyGlow: "rgba(244,214,70,.22)",
 	textMuted: "rgba(255,255,255,.62)",
+	// Água do PACE HYDRATION (o anel do dia e o copo cheio do total)
+	water: "#8FD9FF",
+	waterFill: "rgba(143,217,255,.45)",
 
 	// Tendência no ranking (feed)
 	trendUp: "#2FD08A",

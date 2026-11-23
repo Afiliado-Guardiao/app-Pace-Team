@@ -7,18 +7,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FloatingToast, InfoNote, ScreenBackground, TopBar } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { PHOTOS } from "@/lib/pace";
+import { openLegalPage } from "@/constants/legal";
 
 import { AiBubble } from "./components/AiBubble";
 import { AiComposer } from "./components/AiComposer";
+import { AiConsentSheet } from "./components/AiConsentSheet";
 import { AiHello } from "./components/AiHello";
 import { AiHistorySheet } from "./components/AiHistorySheet";
 import { AiSuggestions } from "./components/AiSuggestions";
 import { AiThinking } from "./components/AiThinking";
 import { AiWeekCard } from "./components/AiWeekCard";
 import { PACE_AI_COPY as C } from "./constants";
+import { useAiConsent } from "./hooks/useAiConsent";
 import { usePaceAiScreen } from "./hooks/usePaceAiScreen";
 
 const GUTTER = 22;
+
+const openPrivacy = (): void => {
+	openLegalPage("privacy");
+};
 
 const createPaceAiStyles = (theme: ITheme, top: number) => {
 	const { colors, spacing, typography } = theme.pace;
@@ -41,6 +48,7 @@ export const PaceAiScreen: React.FC = () => {
 	const { theme } = useTheme();
 	const insets = useSafeAreaInsets();
 	const screen = usePaceAiScreen();
+	const consent = useAiConsent();
 	const styles = createPaceAiStyles(theme, insets.top);
 	const isEmpty = screen.messages.length === 0;
 
@@ -82,6 +90,12 @@ export const PaceAiScreen: React.FC = () => {
 				<AiComposer model={screen.composer} bottom={insets.bottom} />
 			</KeyboardAvoidingView>
 			<AiHistorySheet model={screen.history} />
+			<AiConsentSheet
+				isOpen={!consent.hasConsent}
+				onAccept={consent.accept}
+				onDecline={screen.goBack}
+				onPrivacy={openPrivacy}
+			/>
 			<FloatingToast toast={screen.toast} />
 		</View>
 	);

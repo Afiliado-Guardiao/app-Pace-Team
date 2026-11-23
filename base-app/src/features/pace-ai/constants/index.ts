@@ -94,3 +94,19 @@ export const VOICE_ERRORS = {
 		message: "A conversa por voz não está disponível neste aparelho.",
 	},
 } as const;
+
+// Permissão antes do primeiro uso (regra 5.1.2(i) da Apple: dados para IA de
+// outra empresa só com o atleta sabendo o quê, para quem e concordando)
+export const AI_CONSENT_COPY = {
+	title: "Antes de conversar com o Buddy",
+	lead: "Para responder, a PACE AI envia para a Anthropic, empresa que faz a IA Claude:",
+	items: [
+		"a sua pergunta e as mensagens desta conversa;",
+		"o resumo das suas corridas no PACE TEAM, inclusive as que vieram do relógio pelo app Saúde (distância, tempo, ritmo e datas), e o seu primeiro nome;",
+		"o nome e os km da sua equipe e dos colegas, que vocês já veem dentro da equipe.",
+	],
+	use: "Esses dados servem só para gerar a resposta: a Anthropic não usa para treinar a IA nem para publicidade. Percurso GPS, batimentos e e-mail não são enviados. As conversas ficam salvas na sua conta e você pode apagar quando quiser.",
+	privacy: "Ver a Política de Privacidade",
+	accept: "Concordo, vamos conversar",
+	decline: "Agora não",
+} as const;

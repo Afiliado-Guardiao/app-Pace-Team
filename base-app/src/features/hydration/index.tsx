@@ -53,7 +53,7 @@ export const HydrationScreen: React.FC = () => {
 					}}
 					onEditData={s.setup.open}
 				/>
-				<HydroLog logs={hydro.todayLogs} onRemove={s.remove} />
+				<HydroLog logs={hydro.todayLogs} totalMl={hydro.drankMl} onRemove={s.remove} />
 				<HydroRunCard
 					hydro={hydro}
 					onLogPost={(ml) => {

@@ -110,7 +110,7 @@ export const SETUP_COPY = {
 	thinking: "Pensando…",
 	back: "Voltar",
 	// Antes do nome: o gráfico da evolução e o caminho até o prêmio
-	boostBubble: "Quando você entra em uma equipe, seu desempenho aumenta 35%.",
+	boostBubble: "Correndo em equipe, fica mais fácil manter a constância e evoluir.",
 	// Textos dos rascunhos do dono do app (com a ortografia revisada)
 	boostTitle: "E ainda melhor: fazer sua\nprópria equipe com os amigos",
 	boostCardTitle: "E você vai ver toda a evolução.",
@@ -245,7 +245,6 @@ export const SETUP_COPY = {
 	proBadge: "PACE TEAM PRO",
 	proTitle: "Você lidera. Sua equipe evolui junto.",
 	proSub: "Transforme sua equipe inteira em Premium.",
-	proPrice: "R$ 39,90",
 	proPer: "/mês",
 	proUpTo: "Até 10 integrantes",
 	proOne: "Uma assinatura",

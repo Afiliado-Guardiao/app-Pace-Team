@@ -9,6 +9,8 @@ import { HYDRO_COPY as C } from "../../constants";
 
 interface IHydroLogProps {
 	logs: readonly IHydroLog[];
+	// Quanto bebeu hoje (a soma dos registros)
+	totalMl: number;
 	onRemove: (id: string) => void;
 }
 
@@ -52,7 +54,26 @@ const createHydroLogStyles = (theme: ITheme) => {
 			fontSize: typography.sizes.sm,
 			color: colors.textTertiary,
 		},
+		total: {
+			flexDirection: "row" as const,
+			alignItems: "center" as const,
+			gap: spacing[2],
+			marginTop: spacing[3],
+		},
+		totalLabel: {
+			flex: 1,
+			fontFamily: typography.fonts.bold,
+			fontSize: typography.sizes.sm,
+			color: colors.textPrimary,
+		},
+		totalMl: {
+			fontFamily: typography.numericFonts.bold,
+			fontSize: typography.sizes.lg,
+			color: colors.textPrimary,
+		},
 		icon: colors.textTertiary,
+		cup: colors.water,
+		cupFill: colors.waterFill,
 	};
 };
 
@@ -61,8 +82,9 @@ const time = (t: number): string => {
 	return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 
-// O que foi registrado hoje (dá para apagar um registro errado)
-export const HydroLog: React.FC<IHydroLogProps> = ({ logs, onRemove }) => {
+// O que foi registrado hoje (dá para apagar um registro errado) e, no fim,
+// o total que bebeu no dia
+export const HydroLog: React.FC<IHydroLogProps> = ({ logs, totalMl, onRemove }) => {
 	const { theme } = useTheme();
 	const styles = createHydroLogStyles(theme);
 
@@ -89,6 +111,13 @@ export const HydroLog: React.FC<IHydroLogProps> = ({ logs, onRemove }) => {
 					</View>
 				))}
 			</View>
+			{logs.length > 0 ? (
+				<View style={styles.total} testID="hydro-log-total">
+					<Icon name="glass-water" size={24} color={styles.cup} fill={styles.cupFill} />
+					<Text style={styles.totalLabel}>{C.logTotal}</Text>
+					<Text style={styles.totalMl}>{formatMl(totalMl)}</Text>
+				</View>
+			) : null}
 		</GlassCard>
 	);
 };

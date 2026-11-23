@@ -1,12 +1,12 @@
 import React from "react";
-import { Text, View } from "react-native";
-import { Image } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import { Button, GlassCard, Icon } from "@/components/pace";
 import { ITheme, useTheme } from "@/theme";
 import { CREW } from "@/lib/pace";
 
 import { SETUP_COPY as C } from "../../constants";
+import { useProPrice } from "../../hooks/useProPrice";
 
 interface IStepProProps {
 	teamName: string;
@@ -16,8 +16,7 @@ interface IStepProProps {
 
 const DOT = 40;
 const FACE = 30;
-// Fileira de rostos de corredores ("a sua equipe inteira")
-const FACES = CREW.slice(0, 5);
+const FACES = CREW.slice(0, 5); // rostos de corredores ("a sua equipe inteira")
 
 const createStepProStyles = (theme: ITheme) => {
 	const { colors, spacing, typography, radii } = theme.pace;
@@ -128,11 +127,11 @@ const createStepProStyles = (theme: ITheme) => {
 	};
 };
 
-// 07 · Team Pro para o capitão (pulado se a equipe já é PRO). A compra em si
-// acontece na tela PACE TEAM PRO, com os preços da Apple.
+// 07 · Team Pro para o capitão. A compra acontece na tela PRO, com o preço da Apple.
 export const StepPro: React.FC<IStepProProps> = ({ teamName, onPro, onSkip }) => {
 	const { theme } = useTheme();
 	const styles = createStepProStyles(theme);
+	const price = useProPrice();
 
 	return (
 		<View style={styles.root}>
@@ -148,12 +147,14 @@ export const StepPro: React.FC<IStepProProps> = ({ teamName, onPro, onSkip }) =>
 				<View style={styles.price}>
 					<Text style={styles.team}>{teamName}</Text>
 					<View style={styles.priceLine}>
-						<View style={styles.priceRow}>
-							<Text style={styles.value} numberOfLines={1}>
-								{C.proPrice}
-							</Text>
-							<Text style={styles.per}>{C.proPer}</Text>
-						</View>
+						{price ? (
+							<View style={styles.priceRow}>
+								<Text style={styles.value} numberOfLines={1}>
+									{price}
+								</Text>
+								<Text style={styles.per}>{C.proPer}</Text>
+							</View>
+						) : null}
 						<View style={styles.faces}>
 							{FACES.map((face, i) => (
 								<Image
